@@ -6,7 +6,7 @@
    - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
      à jour en arrière-plan. Les PDF sont mis en cache à la première
      consultation, donc consultables ensuite hors-ligne. */
-const VERSION = 'mri-proc-v3';
+const VERSION = 'mri-proc-v4';
 const CORE = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const CORE = [
   './config.js',
   './data.js',
   './quiz.js',
+  './formation.js',
   './app.js',
   './manifest.webmanifest',
   './images/logo_roger.png',
@@ -44,7 +45,7 @@ self.addEventListener('fetch', (e) => {
 
   const netFirst = req.mode === 'navigate' ||
     url.pathname === '/' ||
-    /\/(index\.html|data\.js|config\.js|quiz\.js)$/.test(url.pathname);
+    /\/(index\.html|data\.js|config\.js|quiz\.js|formation\.js)$/.test(url.pathname);
 
   if (netFirst) {
     e.respondWith(
