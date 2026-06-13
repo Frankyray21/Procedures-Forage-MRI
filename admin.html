@@ -55,25 +55,14 @@
 </head>
 <body>
 
-<div class="gate" id="gate">
-  <form class="gc" id="gateForm" autocomplete="off">
-    <img src="images/logo_roger.png" alt="MRI">
-    <h2>Édition — accès réservé</h2>
-    <p>Outil de gestion des procédures de Machines Roger International.</p>
-    <input type="password" id="gateInput" placeholder="Mot de passe" aria-label="Mot de passe">
-    <button type="submit">Accéder</button>
-    <div class="err" id="gateErr"></div>
-  </form>
-</div>
-
-<header class="adminbar" hidden id="bar">
+<header class="adminbar" id="bar">
   <b>Édition des procédures</b>
   <span class="muted">Modifications locales — pensez à exporter <code>data.js</code></span>
   <span class="sp"></span>
   <a class="home" href="index.html">↩ Retour au site</a>
 </header>
 
-<main class="adminwrap" hidden id="wrap">
+<main class="adminwrap" id="wrap">
   <aside class="panel side">
     <button class="btn" id="newProc" style="width:100%">＋ Nouvelle procédure</button>
     <input class="f" id="filter" placeholder="Filtrer…">

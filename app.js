@@ -36,39 +36,8 @@
     doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'
   };
 
-  /* ---------- porte d'accès ---------- */
-  function unlocked() { try { return localStorage.getItem('mri_ok') === '1'; } catch (e) { return false; } }
-  function reveal() {
-    $('#gate').classList.add('hide');
-    $('#appbar').hidden = false; $('#view').hidden = false; $('#foot').hidden = false;
-    route();
-  }
-  function initGate() {
-    if (unlocked()) { reveal(); return; }
-    var form = $('#gateForm'), err = $('#gateErr');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var v = $('#gateInput').value.trim();
-      if (v && v.toLowerCase() === String(CFG.accessCode || '').toLowerCase()) {
-        try { localStorage.setItem('mri_ok', '1'); } catch (e2) {}
-        reveal();
-      } else {
-        err.textContent = 'Mot de passe incorrect.';
-        $('#gateInput').value = ''; $('#gateInput').focus();
-      }
-    });
-    $('#gateInput').focus();
-  }
-  function initLock() {
-    $('#lockBtn').addEventListener('click', function () {
-      try { localStorage.removeItem('mri_ok'); } catch (e) {}
-      location.hash = '#/'; location.reload();
-    });
-  }
-
   /* ---------- routage ---------- */
   function route() {
-    if (!unlocked()) return;
     var h = location.hash || '#/';
     var view = $('#view');
     window.scrollTo(0, 0);
@@ -622,6 +591,6 @@
   /* ---------- démarrage ---------- */
   window.addEventListener('hashchange', route);
   document.addEventListener('DOMContentLoaded', function () {
-    initGate(); initLock(); initInstall(); initChecklistEvents();
+    route(); initInstall(); initChecklistEvents();
   });
 })();

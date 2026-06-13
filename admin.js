@@ -26,20 +26,6 @@
   }
   function toast(m) { var t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 3500); }
 
-  /* ---- gate ---- */
-  function unlocked() { try { return localStorage.getItem('mri_ok') === '1'; } catch (e) { return false; } }
-  function reveal() { $('#gate').classList.add('hide'); $('#bar').hidden = false; $('#wrap').hidden = false; renderList(); }
-  function initGate() {
-    if (unlocked()) { reveal(); return; }
-    $('#gateForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      var v = $('#gateInput').value.trim();
-      if (v && v.toLowerCase() === String(CFG.accessCode || '').toLowerCase()) {
-        try { localStorage.setItem('mri_ok', '1'); } catch (e2) {}
-        reveal();
-      } else { $('#gateErr').textContent = 'Mot de passe incorrect.'; }
-    });
-  }
 
   /* ---- liste ---- */
   function renderList() {
@@ -221,7 +207,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initGate();
+    renderList();
     $('#newProc').addEventListener('click', function () { var o = blank(); PROCS.push(o); editing = o; renderList(); buildForm(o); });
     $('#filter').addEventListener('input', renderList);
     $('#editCode').addEventListener('click', editCode);

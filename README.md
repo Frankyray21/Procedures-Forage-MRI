@@ -7,7 +7,7 @@ toutes les procédures de travail de forage de M.R.I. :
   consignes, valeurs clés) **et** conserve son **PDF officiel** consultable et téléchargeable.
 - Un **Code de sécurité du forage** regroupe toutes les consignes obligatoires, classées par
   thème, chaque article citant ses procédures sources.
-- Accès **réservé par mot de passe**. Interface en **français**, design Barlow / rouge (M.R.I.).
+- **Accès libre** (aucun mot de passe). Interface en **français**, design Barlow / rouge (M.R.I.).
 
 ---
 
@@ -22,17 +22,11 @@ python -m http.server 5050
 Puis ouvrir <http://localhost:5050>. (Un double-clic sur `index.html` fonctionne aussi, mais
 servir via http est recommandé pour le service worker et les PDF.)
 
-## 2. Changer le mot de passe d'accès
+## 2. Accès
 
-Ouvrir **`config.js`** et modifier la ligne :
-
-```js
-accessCode: "Forage2024",   // ← votre nouveau mot de passe
-```
-
-> ⚠ **Sécurité** — ce mot de passe filtre l'accès courant mais reste lisible dans le code
-> source d'un site statique. Pour une **vraie confidentialité**, activer une protection
-> côté serveur (mot de passe de site Netlify, identifiants, etc.).
+Le site est en **accès libre** (aucun mot de passe). Si une protection devient nécessaire un
+jour, le plus simple est un **mot de passe de site côté hébergeur** (ex. Netlify), bien plus
+fiable qu'un mot de passe dans le code d'un site statique.
 
 ## 3. Ajouter ou modifier une procédure
 
@@ -89,7 +83,7 @@ Le plus simple : **Netlify** (comme le site Prévention TMS).
 ```
 index.html            coquille de l'app (porte d'accès, barre, vues)
 styles.css            design system Barlow / rouge
-config.js             mot de passe + libellés
+config.js             libellés (organisation, titre)
 data.js               TOUTES les procédures + le Code de sécurité  ← contenu
 app.js                logique (accès, recherche, filtres, rendu, PWA)
 manifest.webmanifest  métadonnées de l'app installable
