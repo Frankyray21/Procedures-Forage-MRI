@@ -118,18 +118,10 @@
     F.application = area(p.application); add(field('Application', F.application));
     F.responsabilites = area(p.responsabilites); add(field('Responsabilités', F.responsabilites));
     F.epi = linesArea(p.epi, 'Un EPI par ligne'); add(field('EPI (une par ligne)', F.epi));
-    F.equipements = linesArea(p.equipements, 'Un équipement par ligne'); add(field('Équipements & outils (une par ligne)', F.equipements));
-    F.prerequis = linesArea(p.prerequis, 'Un prérequis par ligne'); add(field('Avant de commencer (une par ligne)', F.prerequis));
-    F.avertissements = linesArea(p.avertissements, 'Un avertissement par ligne'); add(field('Avertissements (une par ligne)', F.avertissements));
+    F.avertissements = linesArea(p.avertissements, 'Une mise en garde par ligne'); add(field('Mises en garde et avertissements (une par ligne)', F.avertissements,
+      'La marche à suivre (étapes) demeure dans le PDF officiel — seules les consignes de sécurité sont affichées sur le site.'));
 
-    add(h('label', { class: 'fl', text: 'Étapes' }));
-    F.etapes = repeater(p.etapes, [
-      { key: 'num', ph: '#', cls: 'num' },
-      { key: 'texte', ph: 'Texte de l\'étape', ta: true },
-      { key: 'danger', ph: 'Avertissement intégré (optionnel)', ta: true }
-    ], '＋ Ajouter une étape'); add(F.etapes);
-
-    add(h('label', { class: 'fl', text: 'Consignes de sécurité' }));
+    add(h('label', { class: 'fl', text: 'Consignes et interdictions à respecter' }));
     F.consignes_securite = repeater(p.consignes_securite, [
       { key: 'regle', ph: 'Règle', ta: true },
       { key: 'theme', select: THEMES },
@@ -166,9 +158,9 @@
       p.machines = readLines(F.machines); p.resume = F.resume.value.trim();
       p.objectif = F.objectif.value.trim(); p.application = F.application.value.trim();
       p.responsabilites = F.responsabilites.value.trim();
-      p.epi = readLines(F.epi); p.equipements = readLines(F.equipements); p.prerequis = readLines(F.prerequis);
+      p.epi = readLines(F.epi);
       p.avertissements = readLines(F.avertissements);
-      p.etapes = F.etapes._read(); p.consignes_securite = F.consignes_securite._read();
+      p.consignes_securite = F.consignes_securite._read();
       p.valeurs_cles = F.valeurs_cles._read(); p.historique = F.historique._read();
       p.date_creation = F.date_creation.value.trim(); p.date_revision = F.date_revision.value.trim();
       p.source_pdf = F.source_pdf.value.trim(); p.notes = F.notes.value.trim();

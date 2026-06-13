@@ -234,6 +234,16 @@ footer b{color:var(--muted)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast b{color:#fff}.toast button{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:.4rem .7rem;font-weight:700;font-size:.82rem}
 
+/* ===== renvoi au PDF ===== */
+.pdfcue{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
+  background:linear-gradient(160deg,rgba(210,35,37,.13),rgba(17,24,39,.5));
+  border:1px solid rgba(210,35,37,.35);border-radius:14px;padding:1.1rem 1.25rem}
+.pdfcue > svg{flex:none;width:26px;height:26px;color:var(--accent-l)}
+.pdfcue .cuetxt{flex:1;min-width:220px;display:flex;flex-direction:column;gap:.15rem}
+.pdfcue .cuetxt b{font-size:1.02rem}
+.pdfcue .cuetxt span{color:var(--muted);font-size:.88rem;line-height:1.45}
+.pdfcue .btn{flex:none}
+
 /* ===== responsive ===== */
 @media(max-width:860px){
   .code-layout{grid-template-columns:1fr}

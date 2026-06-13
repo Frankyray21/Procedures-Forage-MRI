@@ -193,29 +193,29 @@
 
     if (p.resume) h += '<div class="sec"><div class="lead2">' + esc(p.resume) + '</div></div>';
 
+    // Renvoi au PDF : la marche à suivre détaillée demeure dans le document officiel
+    var pdfUrl = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
+    h += '<div class="sec"><div class="pdfcue">' + ICON.doc +
+      '<div class="cuetxt"><b>La marche à suivre complète est dans le document officiel (PDF).</b>' +
+      '<span>Cette fiche présente uniquement les mises en garde, interdictions, responsabilités et consignes de sécurité. Pour les étapes détaillées, consultez le PDF officiel.</span></div>' +
+      '<a class="btn" href="' + pdfUrl + '" target="_blank" rel="noopener">Ouvrir le PDF</a></div></div>';
+
     if (p.objectif) h += sec('Objectif', '<p>' + esc(p.objectif) + '</p>');
     var ap = '';
     if (p.application) ap += '<p><b>Application :</b> ' + esc(p.application) + '</p>';
     if (p.responsabilites) ap += '<p style="margin-top:.5rem"><b>Responsabilités :</b> ' + esc(p.responsabilites) + '</p>';
-    if (ap) h += sec('Portée', ap);
+    if (ap) h += sec('Portée et responsabilités', ap);
 
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
-    if (p.equipements && p.equipements.length) h += sec('Équipements & outils', pills(p.equipements, ''));
-    if (p.prerequis && p.prerequis.length) h += sec('Avant de commencer', '<div class="rules">' + p.prerequis.map(function (x) {
-      return '<div class="rule"><span class="chk">' + ICON.check + '</span><div class="rt">' + esc(x) + '</div></div>'; }).join('') + '</div>');
 
-    if (p.avertissements && p.avertissements.length) h += sec('Avertissements', p.avertissements.map(function (w) {
+    // Mises en garde = encadrés d'avertissement + avertissements intégrés aux étapes (sans le texte des étapes)
+    var warns = (p.avertissements || []).slice();
+    (p.etapes || []).forEach(function (s) { if (s.danger) warns.push(s.danger); });
+    if (warns.length) h += sec('Mises en garde et avertissements', warns.map(function (w) {
       return '<div class="warn"><span class="wic">' + ICON.warn + '</span><p>' + esc(w) + '</p></div>'; }).join(''));
 
-    if (p.etapes && p.etapes.length) {
-      h += sec('Étapes de la procédure', '<div class="steps">' + p.etapes.map(function (s, i) {
-        return '<div class="step"><div class="n">' + esc(s.num || (i + 1)) + '</div><div class="sx"><p>' + esc(s.texte) + '</p>' +
-          (s.danger ? '<div class="danger">' + ICON.warn + '<span>' + esc(s.danger) + '</span></div>' : '') + '</div></div>';
-      }).join('') + '</div>');
-    }
-
     if (p.consignes_securite && p.consignes_securite.length) {
-      h += sec('Consignes de sécurité', '<div class="rules">' + p.consignes_securite.map(function (c) {
+      h += sec('Consignes et interdictions à respecter', '<div class="rules">' + p.consignes_securite.map(function (c) {
         return '<div class="rule"><span class="chk">' + ICON.check + '</span><div class="rt">' + esc(c.regle) +
           (c.source ? '<div class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</div>' : '') + '</div></div>';
       }).join('') + '</div>');
