@@ -73,6 +73,7 @@
     var view = $('#view');
     window.scrollTo(0, 0);
     if (h.indexOf('#/p/') === 0) { renderProcedure(view, h.slice(4)); setNav(''); }
+    else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
     else if (h.indexOf('#/code') === 0) { renderCode(view); setNav('code'); }
     else { renderHome(view); setNav('home'); }
   }
@@ -215,10 +216,16 @@
       return '<div class="warn"><span class="wic">' + ICON.warn + '</span><p>' + esc(w) + '</p></div>'; }).join(''));
 
     if (p.consignes_securite && p.consignes_securite.length) {
-      h += sec('Consignes et interdictions à respecter', '<div class="rules">' + p.consignes_securite.map(function (c) {
-        return '<div class="rule"><span class="chk">' + ICON.check + '</span><div class="rt">' + esc(c.regle) +
-          (c.source ? '<div class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</div>' : '') + '</div></div>';
-      }).join('') + '</div>');
+      var ckhead = '<div class="ckhead"><div class="ckbar"><i></i></div><span class="ckcount"></span>' +
+        '<button class="ckreset" type="button">Réinitialiser</button></div>';
+      var ckitems = p.consignes_securite.map(function (c, i) {
+        return '<label class="ck"><input type="checkbox" data-i="' + i + '"><span class="ckbox">' + ICON.check + '</span>' +
+          '<span class="rt">' + esc(c.regle) +
+          (c.source ? '<span class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</span>' : '') +
+          '</span></label>';
+      }).join('');
+      h += sec('Liste de vérification — consignes et interdictions',
+        '<div class="checklist" data-proc="' + esc(p.id) + '">' + ckhead + ckitems + '</div>');
     }
 
     if (p.historique && p.historique.length) {
@@ -242,8 +249,43 @@
     }
     h += '</div></div>';
     view.innerHTML = h;
+    initChecklistState();
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
+
+  /* ---------- liste de vérification (checklist) ---------- */
+  function ckGet(id) { try { return JSON.parse(localStorage.getItem('ck_' + id) || '[]'); } catch (e) { return []; } }
+  function ckSet(id, a) { try { localStorage.setItem('ck_' + id, JSON.stringify(a)); } catch (e) {} }
+  function ckUpdate(box) {
+    var cbs = box.querySelectorAll('input[type=checkbox]');
+    var n = cbs.length, c = [].filter.call(cbs, function (x) { return x.checked; }).length;
+    box.querySelector('.ckbar i').style.width = (n ? Math.round(c / n * 100) : 0) + '%';
+    box.querySelector('.ckcount').textContent = c + ' / ' + n + ' vérifié' + (c > 1 ? 's' : '');
+    box.classList.toggle('done', n > 0 && c === n);
+  }
+  function initChecklistState() {
+    var box = document.querySelector('.checklist'); if (!box) return;
+    var done = ckGet(box.getAttribute('data-proc'));
+    [].forEach.call(box.querySelectorAll('input[type=checkbox]'), function (cb) {
+      cb.checked = done.indexOf(parseInt(cb.getAttribute('data-i'), 10)) >= 0;
+    });
+    ckUpdate(box);
+  }
+  function initChecklistEvents() {
+    document.addEventListener('change', function (e) {
+      var box = e.target.closest ? e.target.closest('.checklist') : null;
+      if (!box || e.target.type !== 'checkbox') return;
+      var checked = [].filter.call(box.querySelectorAll('input[type=checkbox]'), function (x) { return x.checked; })
+        .map(function (x) { return parseInt(x.getAttribute('data-i'), 10); });
+      ckSet(box.getAttribute('data-proc'), checked); ckUpdate(box);
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.classList || !e.target.classList.contains('ckreset')) return;
+      var box = e.target.closest('.checklist'); if (!box) return;
+      [].forEach.call(box.querySelectorAll('input[type=checkbox]'), function (cb) { cb.checked = false; });
+      ckSet(box.getAttribute('data-proc'), []); ckUpdate(box);
+    });
+  }
   function pills(arr, cls) {
     return '<div class="pill-list">' + arr.map(function (x) { return '<span class="pill ' + cls + '">' + esc(x) + '</span>'; }).join('') + '</div>';
   }
@@ -293,6 +335,76 @@
     document.querySelectorAll('.chap').forEach(function (s) { obs.observe(s); });
   }
 
+  /* ---------- quiz éclair sécurité ---------- */
+  var QUIZ = window.QUIZ || [];
+  var quizSt = null;
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  function renderQuiz(view) {
+    if (!QUIZ.length) { view.innerHTML = '<div class="wrap"><div class="empty">Le quiz n\'est pas encore disponible.</div></div>'; return; }
+    quizSt = null;
+    var cats = {}; QUIZ.forEach(function (q) { cats[q.categorie] = (cats[q.categorie] || 0) + 1; });
+    var catOpts = '<option value="">Toutes les catégories</option>' + Object.keys(cats).sort().map(function (c) {
+      return '<option value="' + esc(c) + '">' + esc(c) + ' (' + cats[c] + ')</option>'; }).join('');
+    view.innerHTML = '<section class="quizhero"><div class="wrap">' +
+      '<span class="eyebrow">Auto-vérification · pas une formation</span>' +
+      '<h1>Quiz éclair <span class="hl">sécurité</span></h1>' +
+      '<p class="lead">Teste tes réflexes sur les consignes, distances et interdictions des procédures. ' + QUIZ.length + ' questions au total, tirées au hasard.</p>' +
+      '<div class="quizstart">' +
+        '<label class="qsf"><span>Nombre de questions</span><select class="f" id="qN"><option>5</option><option selected>10</option><option>15</option><option value="999">Toutes</option></select></label>' +
+        '<label class="qsf"><span>Catégorie</span><select class="f" id="qCat">' + catOpts + '</select></label>' +
+        '<button class="btn" id="qStart">Démarrer le quiz</button>' +
+      '</div>' +
+    '</div></section>';
+    $('#qStart').onclick = function () {
+      var n = parseInt($('#qN').value, 10), cat = $('#qCat').value;
+      var pool = QUIZ.filter(function (q) { return !cat || q.categorie === cat; });
+      pool = shuffle(pool).slice(0, Math.min(n, pool.length));
+      quizSt = { pool: pool, idx: 0, score: 0, answered: false };
+      renderQ(view);
+    };
+  }
+  function renderQ(view) {
+    var s = quizSt, q = s.pool[s.idx];
+    view.innerHTML = '<div class="wrap quizwrap">' +
+      '<div class="qtop"><a class="back" href="#/quiz">' + ICON.back + ' Quitter</a>' +
+        '<span class="qscore">Score : ' + s.score + '</span></div>' +
+      '<div class="qbar"><i style="width:' + Math.round(s.idx / s.pool.length * 100) + '%"></i></div>' +
+      '<div class="qcard"><div class="qtag">' + esc(q.code || q.categorie) + ' · Question ' + (s.idx + 1) + '/' + s.pool.length + '</div>' +
+        '<h2 class="qq">' + esc(q.question) + '</h2>' +
+        '<div class="qopts">' + q.options.map(function (o, i) { return '<button class="qopt" data-i="' + i + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
+        '<div class="qfb" id="qfb"></div>' +
+      '</div></div>';
+    [].forEach.call(document.querySelectorAll('.qopt'), function (b) {
+      b.onclick = function () { pick(view, parseInt(b.getAttribute('data-i'), 10)); };
+    });
+  }
+  function pick(view, i) {
+    var s = quizSt; if (s.answered) return; s.answered = true;
+    var q = s.pool[s.idx], correct = q.answer;
+    if (i === correct) s.score++;
+    [].forEach.call(document.querySelectorAll('.qopt'), function (b, bi) {
+      b.classList.add('locked');
+      if (bi === correct) b.classList.add('ok'); else if (bi === i) b.classList.add('bad');
+    });
+    var src = q.sourceId ? '<div class="qsrc">Source : <a href="#/p/' + esc(q.sourceId) + '">' + esc(q.code || q.titre) + '</a></div>' : '';
+    $('#qfb').innerHTML = '<div class="qexp ' + (i === correct ? 'good' : 'wrong') + '">' +
+      '<b>' + (i === correct ? '✓ Bonne réponse' : '✗ Mauvaise réponse') + '</b>' +
+      '<p>' + esc(q.explication) + '</p>' + src +
+      '<button class="btn" id="qNext">' + (s.idx + 1 < s.pool.length ? 'Question suivante' : 'Voir le résultat') + '</button></div>';
+    $('#qNext').onclick = function () { s.idx++; s.answered = false; if (s.idx >= s.pool.length) renderResult(view); else renderQ(view); };
+  }
+  function renderResult(view) {
+    var s = quizSt, pct = Math.round(s.score / s.pool.length * 100);
+    var msg = pct >= 80 ? 'Excellent — des réflexes solides.' : pct >= 60 ? 'Correct, mais quelques consignes à revoir.' : 'À retravailler : consulte les fiches et les PDF officiels.';
+    view.innerHTML = '<div class="wrap quizwrap"><div class="qresult">' +
+      '<div class="qring" style="--p:' + pct + '"><span>' + pct + '%</span></div>' +
+      '<h2>' + s.score + ' / ' + s.pool.length + '</h2><p class="lead">' + esc(msg) + '</p>' +
+      '<div class="qacts"><button class="btn" id="qAgain">Recommencer</button>' +
+        '<a class="btn ghost" href="#/">Retour aux procédures</a></div></div></div>';
+    $('#qAgain').onclick = function () { renderQuiz(view); };
+  }
+
   /* ---------- installation PWA ---------- */
   var deferredPrompt = null;
   window.addEventListener('beforeinstallprompt', function (e) {
@@ -319,6 +431,6 @@
   /* ---------- démarrage ---------- */
   window.addEventListener('hashchange', route);
   document.addEventListener('DOMContentLoaded', function () {
-    initGate(); initLock(); initInstall();
+    initGate(); initLock(); initInstall(); initChecklistEvents();
   });
 })();
