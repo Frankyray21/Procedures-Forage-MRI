@@ -268,6 +268,23 @@ footer b{color:var(--muted)}
 .pdfcue .cuetxt span{color:var(--muted);font-size:.88rem;line-height:1.45}
 .pdfcue .btn{flex:none}
 
+/* ===== disponibilité hors-ligne ===== */
+.offline:empty{display:none}
+.offcard{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.2rem;
+  background:linear-gradient(160deg,rgba(59,130,246,.10),rgba(17,24,39,.5));
+  border:1px solid rgba(59,130,246,.3);border-radius:14px;padding:.9rem 1.1rem}
+.offcard.ok{background:linear-gradient(160deg,rgba(16,185,129,.10),rgba(17,24,39,.5));border-color:rgba(16,185,129,.35)}
+.offic{flex:none;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  background:rgba(59,130,246,.15);color:var(--info)}
+.offcard.ok .offic{background:rgba(16,185,129,.15);color:var(--success)}
+.offtxt{flex:1;min-width:200px;display:flex;flex-direction:column;gap:.1rem}
+.offtxt b{font-size:.98rem}
+.offtxt > span{color:var(--muted);font-size:.85rem}
+.offcard .btn{flex:none}
+.offbar{height:7px;background:var(--card-2);border:1px solid var(--border);border-radius:50px;overflow:hidden;margin:.45rem 0 .3rem}
+.offbar i{display:block;height:100%;width:0;background:linear-gradient(135deg,#3b82f6,#10b981);transition:width .2s}
+#offstat{font-size:.78rem;color:var(--dim);font-weight:700}
+
 /* ===== quiz ===== */
 .quizhero{padding:clamp(2rem,5vw,3.4rem) 0 1rem}
 .quizhero h1{font-family:var(--font-display);font-size:clamp(2.1rem,6vw,3.6rem);font-weight:800;text-transform:uppercase;line-height:1;margin:.8rem 0 .5rem}

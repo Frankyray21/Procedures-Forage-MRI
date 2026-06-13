@@ -113,6 +113,7 @@
           '<div class="stat"><b><a href="#/code" style="color:var(--accent-l)">Code&nbsp;»</a></b><span>de sécurité</span></div>' +
         '</div>' +
       '</div></section>' +
+      '<div class="wrap"><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="search">' + ICON.search +
           '<input id="q" type="search" placeholder="Rechercher une procédure, une machine, une consigne…" autocomplete="off">' +
@@ -132,6 +133,58 @@
     bindChips('#catChips', 'cat');
     bindChips('#machChips', 'mach');
     drawList();
+    renderOffline();
+  }
+
+  /* ---------- disponibilité hors-ligne (pré-téléchargement des PDF) ---------- */
+  var DL_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>';
+  function offlineAssets() {
+    var u = ['./', 'index.html', 'styles.css', 'config.js', 'data.js', 'quiz.js', 'app.js',
+      'manifest.webmanifest', 'images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png'];
+    DATA.forEach(function (p) { u.push('pdf/' + encodeURIComponent(p.id) + '.pdf'); });
+    u.push('pdf/centralisateur-dessin.pdf');
+    return u;
+  }
+  function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
+  function renderOffline() {
+    var box = $('#offline'); if (!box) return;
+    if (!('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
+    var nPdf = DATA.length + 1;
+    if (offlineReady()) {
+      box.innerHTML = '<div class="offcard ok"><span class="offic">' + ICON.check + '</span>' +
+        '<div class="offtxt"><b>Disponible hors-ligne</b><span>Toutes les fiches et les ' + nPdf + ' PDF sont enregistrés sur cet appareil.</span></div>' +
+        '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
+    } else {
+      box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
+        '<div class="offtxt"><b>Préparer la consultation hors-ligne</b><span>Télécharge toutes les fiches et les ' + nPdf + ' PDF pour les consulter sans réseau (sous terre).</span></div>' +
+        '<button class="btn" id="offBtn">Tout télécharger</button></div>';
+    }
+    $('#offBtn').onclick = startPrecache;
+  }
+  function startPrecache() {
+    var box = $('#offline'); if (!box) return;
+    var urls = offlineAssets(), total = urls.length, done = 0, failed = 0, i = 0;
+    box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
+      '<div class="offtxt" style="flex:1"><b>Téléchargement en cours…</b>' +
+      '<div class="offbar"><i id="offbar"></i></div><span id="offstat">0 / ' + total + '</span></div></div>';
+    function step() {
+      if (i >= urls.length) {
+        try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
+        renderOffline();
+        if (failed) toast(failed + ' fichier(s) non téléchargé(s) — réessayez avec une meilleure connexion.');
+        return;
+      }
+      var u = urls[i++];
+      fetch(u, { cache: 'reload' }).then(function (r) { if (!r || r.status !== 200) failed++; }, function () { failed++; })
+        .then(function () {
+          done++;
+          var pct = Math.round(done / total * 100);
+          var bar = $('#offbar'); if (bar) bar.style.width = pct + '%';
+          var st = $('#offstat'); if (st) st.textContent = done + ' / ' + total;
+          step();
+        });
+    }
+    step();
   }
   function bindChips(sel, key) {
     var box = $(sel);
