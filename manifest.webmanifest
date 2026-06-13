@@ -1,0 +1,19 @@
+{
+  "name": "Procédures de forage — Machines Roger International",
+  "short_name": "Procédures MRI",
+  "description": "Procédures de travail et Code de sécurité du forage. Réservé aux travailleurs de Machines Roger International.",
+  "lang": "fr-CA",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0e17",
+  "theme_color": "#0a0e17",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

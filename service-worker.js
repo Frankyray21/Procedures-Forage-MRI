@@ -1,0 +1,73 @@
+/* Service worker — cache hors-ligne (app shell + données + PDF consultés).
+   Stratégie :
+   - data.js / config.js / pages : RÉSEAU D'ABORD (toujours frais en ligne,
+     cache en secours hors-ligne) → les modifications de contenu s'affichent
+     immédiatement après rechargement.
+   - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
+     à jour en arrière-plan. Les PDF sont mis en cache à la première
+     consultation, donc consultables ensuite hors-ligne. */
+const VERSION = 'mri-proc-v2';
+const CORE = [
+  './',
+  './index.html',
+  './styles.css',
+  './config.js',
+  './data.js',
+  './app.js',
+  './manifest.webmanifest',
+  './images/logo_roger.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
+];
+
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(VERSION).then((c) => Promise.all(CORE.map((u) => c.add(u).catch(() => null))))
+  );
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+
+  const netFirst = req.mode === 'navigate' ||
+    url.pathname === '/' ||
+    /\/(index\.html|data\.js|config\.js)$/.test(url.pathname);
+
+  if (netFirst) {
+    e.respondWith(
+      fetch(req).then((res) => {
+        if (res && res.status === 200) {
+          const copy = res.clone();
+          caches.open(VERSION).then((c) => c.put(req, copy));
+        }
+        return res;
+      }).catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // stale-while-revalidate
+  e.respondWith(
+    caches.open(VERSION).then((cache) =>
+      cache.match(req).then((cached) => {
+        const network = fetch(req).then((res) => {
+          if (res && res.status === 200) cache.put(req, res.clone());
+          return res;
+        }).catch(() => cached);
+        return cached || network;
+      })
+    )
+  );
+});
