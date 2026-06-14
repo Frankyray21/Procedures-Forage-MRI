@@ -286,10 +286,6 @@
     }
 
     if (p.objectif) h += sec('Objectif', '<p>' + esc(p.objectif) + '</p>');
-    var ap = '';
-    if (p.application) ap += '<p><b>Application :</b> ' + esc(p.application) + '</p>';
-    if (p.responsabilites) ap += '<p style="margin-top:.5rem"><b>Responsabilités :</b> ' + esc(p.responsabilites) + '</p>';
-    if (ap) h += sec('Portée et responsabilités', ap);
 
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
 
