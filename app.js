@@ -633,9 +633,21 @@
     toastT = setTimeout(function () { t.classList.remove('show'); }, 5000);
   }
 
+  /* ---------- masquer la barre de filtres au défilement ---------- */
+  function initScrollHide() {
+    var last = 0;
+    window.addEventListener('scroll', function () {
+      var tb = document.querySelector('.toolbar'); if (!tb) return;
+      var y = window.scrollY || document.documentElement.scrollTop || 0;
+      if (y > last && y > 160) tb.classList.add('hidden');
+      else if (y < last) tb.classList.remove('hidden');
+      last = y;
+    }, { passive: true });
+  }
+
   /* ---------- démarrage ---------- */
   window.addEventListener('hashchange', route);
   document.addEventListener('DOMContentLoaded', function () {
-    route(); initInstall(); initChecklistEvents();
+    route(); initInstall(); initChecklistEvents(); initScrollHide();
   });
 })();
