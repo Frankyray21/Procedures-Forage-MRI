@@ -3,209 +3,1044 @@
    =========================================================================== */
 window.ESSENTIEL = {
   "centralisateur": [
-    "Réaliser TOUJOURS l'installation du centralisateur à deux (2) travailleurs.",
-    "Se positionner correctement AVANT de soulever ou manipuler une pièce : chaque pièce pèse 46 livres (2 pièces, poids total 93 lbs).",
-    "Vérifier la présence de tout le matériel avant le serrage : 12 boulons (1/2 X 1''3/8), 12 locknuts (1/2) et 12 lockwashers (1/2).",
-    "Insérer les boulons dans les trous prévus SANS endommager leurs filets.",
-    "Serrer tous les boulons en maintenant une tension sur les lockwashers à l'aide de l'outil adéquat (clé ou box).",
-    "Ne JAMAIS utiliser un wescot ni un pipe wrench pour serrer les boulons (outil non adéquat).",
-    "Vérifier que les boulons sont répartis 6 dans un sens et 6 dans l'autre (aucune séquence imposée).",
-    "Respecter l'espacement d'installation des centralisateurs : un tous les 40 pieds (ou selon les conditions du site).",
-    "S'assurer que le travailleur responsable connaît et applique cette procédure approuvée (Christian St-Amour, Directeur des Opérations, M.R.I.)."
+    {
+      "texte": "Toujours 2 travailleurs",
+      "type": "verification",
+      "valeur": "2"
+    },
+    {
+      "texte": "Pièces lourdes : 46 livres",
+      "type": "danger",
+      "valeur": "46 lb"
+    },
+    {
+      "texte": "Bien se placer avant de lever",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Plier les genoux, dos droit",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Compter 12 boulons",
+      "type": "verification",
+      "valeur": "12"
+    },
+    {
+      "texte": "Compter 12 locknuts",
+      "type": "verification",
+      "valeur": "12"
+    },
+    {
+      "texte": "Compter 12 lockwashers",
+      "type": "verification",
+      "valeur": "12"
+    },
+    {
+      "texte": "Jamais de pipe wrench",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais de wescot",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Serrer avec clé ou box",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Tension sur les lockwashers",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Ne pas abîmer les filets",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Entrer les boulons droit",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Un centralisateur aux 40 pieds",
+      "type": "valeur",
+      "valeur": "40 pi"
+    },
+    {
+      "texte": "Gants obligatoires",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention aux doigts coincés",
+      "type": "danger",
+      "valeur": ""
+    }
   ],
   "pro-mec-011": [
-    "Cadenasser (lock out) la foreuse avant tout travail de changement de coupling.",
-    "S'assurer que le travailleur est qualifie pour la tache et connait la procedure (responsabilite du superviseur).",
-    "Lors de la pose de la sangle a cliquet autour de la pompe et du cadre, ne pas coincer le fil de detection du systeme a feu.",
-    "Lors du retrait de la pompe, la retenir avec les mains sur les boyaux : elle n'est plus tenue que par les boyaux hydrauliques et la sangle.",
-    "Ne jamais se mettre les mains sous la pompe et proteger ses doigts contre les coincements.",
-    "Desserrer la sangle et placer la pompe de facon qu'elle ne puisse pas se deplacer et frapper le travailleur.",
-    "Le bell housing etant en aluminium, le decoller uniquement avec une masse de caoutchouc pour ne pas l'endommager.",
-    "Si la coupling est collee : retirer le bell housing, puis frapper la pry bar avec une masse/marteau en evitant d'endommager le shaft du moteur electrique.",
-    "Avant remontage, bien nettoyer le shaft et l'epaulement de la pompe ainsi que le shaft du moteur electrique.",
-    "Appliquer de l'antiseize sur le shaft de la pompe et sur le shaft du moteur electrique.",
-    "S'assurer que la coupling est FLUSH au shaft avant de serrer la barrure au maximum (cle Allen 5/16 pompe, 3/16 moteur).",
-    "Inserer a la main les 2 boulons de la pompe pour verifier le bon alignement avant de serrer a la cle (15/16).",
-    "Verifier les 4 boulons reliant le bell housing au moteur electrique avec la cle appropriee (15/16 ou Allen 1/2).",
-    "Remettre le couvercle de plastique a la fin pour retablir la protection (un debut d'incendie a deja ete cause par surchauffe du bell housing et du couvercle).",
-    "Toute demande de modification ou interpretation de la procedure doit etre adressee au directeur entretien."
+    {
+      "texte": "Cadenasser avant tout",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Mains hors de la pompe",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Tenir la pompe par les boyaux",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention aux coincements de doigts",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Bloquer la pompe qui glisse",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Bell housing en aluminium",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Seulement masse en caoutchouc",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Ne pas abîmer le shaft",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Ne pas coincer le fil à feu",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Nettoyer les shafts",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Appliquer de l'antiseize",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Coupling FLUSH au shaft",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Boulons à la main d'abord",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Remettre le couvercle plastique",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Risque de feu si surchauffe",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Clé Allen 5/16 barrure pompe",
+      "type": "valeur",
+      "valeur": "5/16"
+    }
   ],
   "pro-op-ith-002": [
-    "Appliquer la procédure de cadenassage (LOTO) sur l'équipement AVANT toute intervention pour dévisser des tiges ou un marteau coincé.",
-    "Ne retirer les clés et décadenasser l'équipement qu'UNE FOIS l'opération terminée, avant de reprendre les travaux.",
-    "Désigner le travailleur responsable du forage pour coordonner la tâche et superviser l'application de la procédure.",
-    "Inspecter tous les outils nécessaires AVANT d'amorcer la tâche; écarter tout outil défectueux.",
-    "N'utiliser QU'UN tire-fort dont les crochets sont munis de linguet de sécurité.",
-    "Utiliser 2 manilles 3/4 conformes pour le montage du tire-fort.",
-    "Ne JAMAIS dépasser la charge certifiée de l'ancrage du mât: 2500 kg, lors de la mise en tension du tire-fort.",
-    "Positionner le mât à l'HORIZONTALE avant d'installer la clé à saver sub, pour l'empêcher de tomber.",
-    "Placer le gearbox le plus loin possible des tables afin de dégager l'espace requis pour installer la clé.",
-    "Avant un coup de masse sur le manche de la clé, s'assurer d'avoir les pieds sur une surface solide et stable.",
-    "Avant un coup de masse, s'assurer que PERSONNE ne se trouve dans la ligne de la masse advenant qu'elle soit échappée.",
-    "Vérifier la séparation des tiges après le coup de masse et garder la zone dégagée pendant la manoeuvre."
+    {
+      "texte": "Cadenasser avant tout",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Inspecter les outils d'abord",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Crochets avec linguet seulement",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Un seul tire-fort",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Mât à l'horizontale",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Gearbox loin des tables",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Pieds sur surface solide",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Personne dans l'axe de la masse",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention masse échappée",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Clé peut tomber",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais dépasser l'ancrage",
+      "type": "interdiction",
+      "valeur": "2500 kg"
+    },
+    {
+      "texte": "Ne pas décadenasser trop tôt",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Charge max ancrage",
+      "type": "valeur",
+      "valeur": "2500 kg"
+    },
+    {
+      "texte": "Deux manilles requises",
+      "type": "valeur",
+      "valeur": "3/4"
+    },
+    {
+      "texte": "Casque et lunettes",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Gants et bottes",
+      "type": "epi",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-002a": [
-    "Appliquer la procedure de cadenassage et d'etiquetage (lock out / tag out) avant de manipuler les cles et les tiges.",
-    "Le responsable du forage a inspecte les outils necessaires et coordonne la tache avant de debuter.",
-    "Verifier que les crochets du palan a levier (come along) sont munis de linguets de securite.",
-    "Utiliser uniquement un ancrage certifie pour une charge de 2500 kg.",
-    "Ne jamais depasser la charge certifiee de l'ancrage (2500 kg) lors de la mise en tension.",
-    "Utiliser un seul palan a levier (come along) et 2 manilles 3/4 pour le montage.",
-    "Avant de frapper le manche de la cle avec la masse, s'assurer que ses pieds reposent sur une surface solide.",
-    "Avant de frapper avec la masse, s'assurer que personne ne se trouve dans l'axe (ligne de chute) si la masse tombe.",
-    "Mettre la fleche (boom) en position horizontale pour eviter que la cle a saver sub ne tombe.",
-    "Eloigner le reducteur (gearbox) le plus possible des tables pour disposer de l'espace requis a l'installation de la cle.",
-    "S'assurer que la cle a saver sub est en place avant de travailler sur une tige ou un marteau coince.",
-    "A la fin de l'operation, retirer les deux cles et decadenasser l'equipement avant de reprendre le travail."
+    {
+      "texte": "Cadenasser avant tout",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Inspecter les outils d'abord",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Crochets avec linguets",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Ancrage certifié seulement",
+      "type": "verification",
+      "valeur": "2500 kg"
+    },
+    {
+      "texte": "Jamais dépasser la charge",
+      "type": "interdiction",
+      "valeur": "2500 kg"
+    },
+    {
+      "texte": "Pieds sur surface solide",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Personne dans l'axe de la masse",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Boom à l'horizontale",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention clé qui tombe",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Éloigner le gearbox des tables",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Utiliser 2 manilles",
+      "type": "valeur",
+      "valeur": "2 x 3/4"
+    },
+    {
+      "texte": "Un seul come along",
+      "type": "valeur",
+      "valeur": "1"
+    },
+    {
+      "texte": "Retirer les 2 clés après",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Décadenasser à la fin",
+      "type": "verification",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-003": [
-    "Inspecter tous les accessoires de levage avant usage et remplacer obligatoirement tout accessoire défectueux avant le déplacement.",
-    "N'utiliser que des composantes approuvées : aucune modification n'est autorisée.",
-    "Cadenasser/couper l'alimentation : fermer le disjoncteur du panneau électrique et l'interrupteur de la mine (GFP) avant de manipuler le câble; ne remettre l'alimentation qu'au dernier moment.",
-    "Fermer les valves à air et à eau et purger les boyaux, le filtre à air, le receiver et le boyau à eau AVANT de les découpler.",
-    "Placer le mât en position de transport (tête à l'opposé des tables) et l'attacher à la foreuse avec tire-fort ou palan à chaîne avant tout déplacement.",
-    "Verrouiller la barre de tir du compresseur avec son boulon une fois rabaissée et s'assurer que les 2 boulons sont en place pour limiter le pivot.",
-    "Relier le traîneau/la remorque au véhicule avec au moins 2 élingues de 1'' x 8 pieds, fixées par des manilles de 1''1/4 minimum.",
-    "Niveler et nettoyer le traîneau (roches, boue) et positionner la remorque à angle pour éviter tout contrecoup au chargement.",
-    "Privilégier la main dans le godet d'une chargeuse plutôt que d'attacher la remorque directement à l'arrière d'un véhicule; vérifier le bon fonctionnement de la main d'attelage du scoop.",
-    "Lors de l'embarquement de la foreuse, l'opérateur doit toujours se tenir dans le panier avec la chaîne garde-corps en place.",
-    "Arrimer la foreuse des deux côtés (anti-recul/anti-avancée), attacher la console au Slideover et fixer les boyaux haute pression pour qu'ils ne soient pas accrochants.",
-    "S'assurer qu'aucune pièce libre ni outil ne reste sur la foreuse avant le transport.",
-    "Assurer la stabilité du compresseur lors de l'accouplement/désaccouplement (stabilisateurs ou cales de roues), relier l'attache avec manilles de 1''1/4 min et fixer les 2 chaînes de sécurité au véhicule.",
-    "Ne déplacer la foreuse sans remorque qu'à plat, sur de courtes distances et à basse vitesse; INTERDIT de la déplacer sans remorque dans la rampe.",
-    "Sans remorque : installer la barre de tir avec manilles 3/4'', raccorder à la chargeuse-navette avec manille 1 1/4'' et poser une chaîne de sécurité; maintenir une bonne communication avec l'opérateur de la chargeuse.",
-    "Ne JAMAIS attacher le traîneau au mur après déplacement : le laisser au sol et le signaler avec un ruban jaune; appliquer la politique du site sur les escortes."
+    {
+      "texte": "Inspecter accessoires de levage",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Pièce abîmée : remplacer",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Aucune modification permise",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Cadenasser avant de débrancher",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Fermer disjoncteur avant le câble",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Purger boyaux air et eau",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "2 élingues 1'' x 8 pieds",
+      "type": "valeur",
+      "valeur": "1'' x 8 pi"
+    },
+    {
+      "texte": "Manilles minimum",
+      "type": "valeur",
+      "valeur": "1''1/4"
+    },
+    {
+      "texte": "Opérateur dans le panier",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Mettre la chaîne garde-corps",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Arrimer foreuse des 2 côtés",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Rien de libre sur foreuse",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais attacher traîneau au mur",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Verrouiller barre de tir : 2 boulons",
+      "type": "verification",
+      "valeur": "2 boulons"
+    },
+    {
+      "texte": "Sans remorque : interdit en rampe",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Sans remorque : basse vitesse",
+      "type": "danger",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-004": [
-    "Faire une inspection visuelle rigoureuse de l'équipement, de la ventilation, de l'alimentation d'énergie, des huiles, jauges et fuites avant toute opération.",
-    "Mettre tous les leviers de commande au neutre (point mort) avant de mettre l'unité de forage sous tension.",
-    "Vérifier les explosifs : laver la zone à partir des headers et inspecter pour déceler tout explosif restant ou non détonné avant de déplacer l'unité à la ligne de forage.",
-    "Faire appel à un électricien de la compagnie pour reconnecter la rotation du moteur ; manipuler l'extension du câble sous tension uniquement avec le crochet de plastique.",
-    "Au point de forage, mettre la foreuse hors tension avec le E-STOP, puis accrocher le câble électrique au mur au niveau de la poitrine (4 à 5 pieds du banc).",
-    "Sur les CUBEX et surcompresseurs, n'utiliser que le boyau prescrit pour les boyaux tressés haute température (800 °F) des compresseurs.",
-    "Souffler les boyaux à air avant connexion et installer un dispositif de retenue (whip check) à chaque joint ; vérifier le câble métallique et les mécanismes de serrage.",
-    "Inspecter minutieusement raccords et boyaux : collets bien serrés, filets en bon état, aucune anomalie ; pressuriser les lignes d'eau et d'air avec soin et déceler les fuites.",
-    "Suspendre tous les boyaux sous le câble électrique (ou les surélever et les rendre visibles) pour éviter contact et écrasement.",
-    "Respecter obligatoirement une distance minimale de 1,5 m entre le mât et la console ; aucun travailleur entre la console et le mât ni à moins de 1,5 m du mât quand une pièce est en mouvement.",
-    "Installer des barricades ou affiches pour les opérations en cours et laisser au moins 3 m (10 pieds) entre la barricade d'entrée et les premières pièces de matériel.",
-    "Avant de manipuler les tiges, relever et arrêter la boîte de vitesse et mettre la foreuse au neutre (point mort).",
-    "Au défoncement de trous, pousser SANS ROTATION 1 tige de plus que la longueur du défoncement.",
-    "Pour les trous de plus de 6 ½ po, utiliser le chariot de transport (stable) ou la cloche et la chaîne ; manipuler trépans et marteaux en évaluant les distances pour éviter les coincements.",
-    "Privilégier un 2e travailleur pour le forage et l'arrachement des tiges des trous de 200 pieds et plus ; sinon, prévoir des pauses.",
-    "Maintenir une distance de 7 mètres entre la foreuse et le surcompresseur."
+    {
+      "texte": "Inspecter tout avant de forer",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Leviers au neutre d'abord",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Câble sous tension : crochet plastique",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "E-STOP au point de forage",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Boyaux : whip check partout",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention boyaux 800 °F",
+      "type": "danger",
+      "valeur": "800 °F"
+    },
+    {
+      "texte": "Souffler les boyaux avant branchement",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Barricade : 3 m du matériel",
+      "type": "valeur",
+      "valeur": "3 m"
+    },
+    {
+      "texte": "1,5 m mât-console obligatoire",
+      "type": "valeur",
+      "valeur": "1,5 m"
+    },
+    {
+      "texte": "Jamais entre console et mât",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Personne à moins de 1,5 m du mât",
+      "type": "valeur",
+      "valeur": "1,5 m"
+    },
+    {
+      "texte": "Défoncement : pousser SANS rotation",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Tiges : foreuse au point mort",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Explosifs non détonnés : danger",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "2 travailleurs dès 200 pieds",
+      "type": "valeur",
+      "valeur": "200 pi"
+    },
+    {
+      "texte": "7 m foreuse-surcompresseur",
+      "type": "valeur",
+      "valeur": "7 m"
+    }
   ],
   "pro-op-ith-005": [
-    "Avant tout forage de V-30 en descendant, installer en tout temps le couvert protecteur (M.R.I. ou client) sur la monterie; ne le retirer que pour entretien ou changement de forets, et le réinstaller avant de continuer.",
-    "Lorsque le couvert est enlevé ou remis, attacher tout employé près de la monterie au moyen d'une longe restrictive ajustable ou d'un harnais antichute avec bloc rétractable approuvé par le client, relié à des points d'ancrage approuvés.",
-    "Interdire STRICTEMENT à tout employé d'entrer dans la monterie de 30 pouces pour récupérer quoi que ce soit; utiliser uniquement les équipements adaptés de M.R.I.",
-    "Ne jamais se tenir dans l'axe de déplacement possible de la tête V-30 si elle se décroche, et s'assurer que les contrôles sont en position neutre.",
-    "Interdire toute circulation en avant de la foreuse pendant le forage du trou.",
-    "Mettre tous les leviers de commande au neutre avant la mise sous tension, et placer la foreuse au point mort (homme mort) avec la boîte de vitesse relevée et arrêtée avant de manipuler les tiges.",
-    "Inspecter le plancher et les bas de murs pour déceler tout explosif non détonné avant de déplacer la foreuse à la ligne de forage.",
-    "Mettre la foreuse hors tension avec le E-STOP au point de forage, accrocher le câble électrique au mur à hauteur de poitrine (4 à 5 pieds du banc) et l'inspecter; manipuler l'extension sous tension uniquement avec le crochet de plastique.",
-    "Vérifier les boyaux tressés haute température (800 °F) des compresseurs CUBEX/surcompresseurs et n'utiliser que le type de boyau approuvé; ne jamais interchanger les boyaux basse et haute pression.",
-    "Installer les dispositifs de retenue (whip check) à chaque joint et connexion des boyaux d'air, vérifier le câble métallique et les mécanismes de serrage, et inspecter raccords et boyaux (collets serrés, filets en bon état, aucune anomalie).",
-    "Suspendre tous les boyaux sous le câble électrique pour éviter tout contact avec roches branlantes ou équipement minier, puis pressuriser les lignes d'eau et d'air avec soin en vérifiant l'absence de fuites.",
-    "Positionner la console de la foreuse à au moins 1,5 mètre du mât pour protéger les travailleurs des projections de roches, et maintenir 7 mètres entre la foreuse et le surcompresseur.",
-    "Installer un centralisateur pour stabiliser les tiges lorsque la monterie dépasse 40 pieds de forage, et prévoir un 2e travailleur (ou des pauses) pour le forage et l'arrachement des tiges des trous de 200 pieds et plus.",
-    "Lors du défoncement de trous, pousser SANS ROTATION 1 tige de plus que la longueur du défoncement.",
-    "En cas de bris de tige : arrêter immédiatement le forage, couper l'alimentation électrique et l'air comprimé, barricader l'accès avec ruban rouge/affiches ACCÈS INTERDIT, aviser le contremaître (présence requise jusqu'à la récupération) et n'opérer qu'avec les contrôles à distance placés à l'écart de la foreuse.",
-    "Signaler toute condition de trou ouvert avec barricade et/ou affiches, en laissant au moins 3 mètres (10 pieds) entre la barricade à l'entrée du chantier et les premières pièces de matériel; installer le couvercle d'acier dès la fin du forage et le laisser en place jusqu'à son retrait par l'équipe de dynamitage."
+    {
+      "texte": "Couvert sur monterie: obligatoire",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais entrer dans la monterie",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais dans l'axe de la tête",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Personne devant la foreuse",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Harnais antichute attaché",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Longe restrictive près du trou",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Leviers au neutre avant courant",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "E-STOP avant de toucher",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Boyaux: whip check partout",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais inverser haute/basse pression",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Boyaux brûlants",
+      "type": "danger",
+      "valeur": "800 °F"
+    },
+    {
+      "texte": "Console à distance du mât",
+      "type": "valeur",
+      "valeur": "1,5 m"
+    },
+    {
+      "texte": "Distance foreuse-surcompresseur",
+      "type": "valeur",
+      "valeur": "7 m"
+    },
+    {
+      "texte": "Toujours 2 travailleurs",
+      "type": "verification",
+      "valeur": "200 pi"
+    },
+    {
+      "texte": "Centralisateur si monterie longue",
+      "type": "valeur",
+      "valeur": "40 pi"
+    },
+    {
+      "texte": "Bris de tige: tout arrêter, avertir",
+      "type": "danger",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-006": [
-    "Avant la mise sous tension de l'unité, vérifier que tous les leviers de commande sont au neutre (point mort); confier à un électricien de la compagnie toute reconnexion de la rotation du moteur.",
-    "Avant de déplacer l'unité à la première ligne de forage, laver la zone, vérifier l'écaillage et inspecter pour déceler tout explosif restant ou non détonné.",
-    "Au point de forage, mettre la foreuse hors tension avec le E-STOP avant toute intervention; accrocher le câble électrique au mur au niveau de la poitrine (4 à 5 pieds du banc) et l'inspecter visuellement pour déceler tout bris.",
-    "Ne manipuler une extension de câble sous tension qu'avec le crochet de plastique.",
-    "Installer des barricades ou affiches de trou ouvert/forage et laisser au moins 3 mètres (10 pieds) entre la barricade d'entrée et les premières pièces de matériel.",
-    "Installer un dispositif de retenue (whip check) à chaque joint de boyau d'air et à chaque connexion haute pression; vérifier le câble métallique et le bon serrage des mécanismes.",
-    "Inspecter minutieusement raccords et boyaux : collets bien serrés, filets en bon état, aucune anomalie; ne jamais interchanger les boyaux basse et haute pression (stem nuts des boyaux 2½ po).",
-    "Sur CUBEX et surcompresseurs, surveiller les boyaux tressés haute température (800 °F) et n'utiliser que le type de boyau prescrit.",
-    "Suspendre tous les boyaux sous le câble électrique; à défaut, les étendre, les surélever (bidons/trépieds en bois) et les rendre visibles pour éviter écrasement et contact.",
-    "Pressuriser les lignes d'eau et d'air avec soin et les inspecter pour déceler toute fuite.",
-    "Porter tout l'EPI requis lors de l'affûtage et du façonnement des forets.",
-    "Pendant le forage, interdire à toute personne de circuler en avant de la foreuse.",
-    "Avant de manipuler les tiges, relever et arrêter la boîte de vitesse et placer la foreuse au point mort; s'assurer que le chariot de transport est stable avant d'y déposer le marteau.",
-    "Privilégier un 2e travailleur pour le forage et l'arrachement des tiges des trous de 200 pieds et plus (sinon prévoir des pauses); maintenir 7 mètres entre la foreuse et le surcompresseur.",
-    "Lors du raccordement de la tête V-30 : disposer d'une communication (radio/femco) fonctionnelle entre niveaux, utiliser le raccord obligatoire V-30/tige et une chaîne grade 80 (7100 lbs); n'autoriser que les personnes autorisées et protéger le trou ouvert (pilier de couronne ou plaque d'acier identifiée).",
-    "En cas de bris de tige, arrêter immédiatement le forage, couper l'interrupteur électrique et l'air comprimé, barricader l'accès et aviser le contremaître; aucun forage avant son arrivée et sa présence requise jusqu'à la fin de la récupération."
+    {
+      "texte": "Tout au neutre avant tension",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "E-STOP avant d'intervenir",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Câble sous tension : crochet plastique",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Câble au mur, hauteur poitrine",
+      "type": "valeur",
+      "valeur": "4-5 pi"
+    },
+    {
+      "texte": "Whip check à chaque joint",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais interchanger les boyaux",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Boyaux compresseur très chauds",
+      "type": "danger",
+      "valeur": "800 °F"
+    },
+    {
+      "texte": "Foreuse-surcompresseur : 7 mètres",
+      "type": "valeur",
+      "valeur": "7 m"
+    },
+    {
+      "texte": "Barricade-matériel : 3 mètres",
+      "type": "valeur",
+      "valeur": "3 m"
+    },
+    {
+      "texte": "Personne devant la foreuse",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Tiges : boîte relevée, point mort",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Défoncement : pousser sans rotation",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "2 travailleurs dès 200 pieds",
+      "type": "valeur",
+      "valeur": "200 pi"
+    },
+    {
+      "texte": "Affûtage forets : porter EPI",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Soufflage déblais : porter masque",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Bris tige : couper courant et air",
+      "type": "verification",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-007": [
-    "Avant la mise sous tension, mettre tous les leviers de commande au neutre (point mort) et vérifier que le câble électrique a été déchargé, inspecté et branché au ground fault box; faire appel à un électricien de la mine si la rotation du moteur est inversée.",
-    "Mettre la foreuse hors tension avec le E-STOP au point de forage, puis suspendre le câble au mur à 4-5 pieds du plancher (niveau de la poitrine) à l'écart des roches branlantes et des véhicules; ne manipuler tout câble sous tension qu'avec le crochet de plastique.",
-    "Inspecter visuellement avant tout déplacement l'équipement, la ventilation, l'alimentation d'énergie, la distribution d'eau et d'air, ainsi que huiles, jauges et fuites.",
-    "Laver la zone, vérifier l'écaillage et inspecter le chantier pour déceler tout explosif restant ou non détonné avant de déplacer l'unité à la première ligne de forage.",
-    "Porter une attention particulière aux boyaux tressés haute température (800 °F) des compresseurs et n'utiliser que le type de boyau approuvé.",
-    "Installer un whip check à chaque joint des boyaux d'air, ne jamais interchanger les boyaux basse et haute pression (stem nuts de 2½ po), et inspecter raccords et boyaux (collets serrés, filets en bon état, aucune anomalie) avant de pressuriser et de vérifier l'absence de fuites.",
-    "Suspendre tous les boyaux sous le câble électrique pour éviter tout contact avec roches branlantes et équipement minier; garder les accès entre contrôles, mât et support à tige libres en tout temps.",
-    "Interdire toute circulation à moins de 5 m du mât pendant le forage et positionner la commande de forage à 5 m du point de forage, à l'abri des projections de roche.",
-    "Ne jamais se tenir dans l'axe de déplacement possible de la tête V-30 si elle se décroche et s'assurer que les contrôles sont en position neutre durant l'installation.",
-    "Maintenir 7 m entre la foreuse et le compresseur (surcompresseur) et au moins 3 m (10 pieds) entre la barricade d'entrée et les premières pièces de matériel.",
-    "Abaisser et arrêter le gear box et mettre la foreuse au point mort (position neutre) avant toute manipulation des tiges de forage.",
-    "Arrêter la foreuse, puis installer la cage de protection à grillage soudé pour canaliser les débris loin de l'opérateur; nettoyer déflecteurs et grillages avant de s'exposer en dessous.",
-    "Porter un masque lors du soufflage des déblais et ne jamais s'exposer directement sous le trou de la V-30.",
-    "En cas de bris de tige, arrêter immédiatement le forage, couper l'alimentation électrique ET l'air comprimé, barricader l'accès et aviser le superviseur; aucun forage avant son arrivée et présence requise jusqu'à la fin de la récupération.",
-    "Effectuer une analyse de risque et opérer la foreuse à distance, manette placée à 5 m de la ligne de forage et hors de la ligne de tir, pour récupérer une tige brisée.",
-    "Installer des centralisateurs aux 40 pieds lorsque la monterie dépasse 40 pieds, utiliser une chaîne grade 80 de 12 pieds pour le hissage, et prévoir l'aide d'un 2e travailleur ou aide-foreur pour les trous de 200 pieds et plus."
+    {
+      "texte": "Cadenasser avant tout travail",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Leviers au neutre d'abord",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Câble sous tension : crochet plastique",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Personne à moins de 5 m",
+      "type": "valeur",
+      "valeur": "5 m"
+    },
+    {
+      "texte": "Foreuse-compresseur : 7 m",
+      "type": "valeur",
+      "valeur": "7 m"
+    },
+    {
+      "texte": "Boyaux : whip check obligatoire",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais mélanger basse/haute pression",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention boyaux : 800 °F",
+      "type": "danger",
+      "valeur": "800 °F"
+    },
+    {
+      "texte": "Jamais dans l'axe de la tête",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Cage de protection installée",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais sous le trou V-30",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Masque au soufflage",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Bris de tige : tout couper",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Centralisateur aux 40 pieds",
+      "type": "valeur",
+      "valeur": "40 pi"
+    },
+    {
+      "texte": "Chariot pour le marteau",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Garder les accès dégagés",
+      "type": "danger",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-008": [
-    "INTERDICTION ABSOLUE : ne jamais descendre au fond de la monterie pour dégager ou récupérer un taillant, des pièces métalliques, des outils ou tout autre équipement — pour quiconque et en tout temps.",
-    "Sortir d'abord la V-30 de la monterie en enlevant les tiges de forage avant d'entreprendre la récupération du taillant brisé.",
-    "Porter le harnais de sécurité OBLIGATOIRE avant d'enlever le couvercle de la monterie (risque de chute dans la monterie).",
-    "S'attacher à un ancrage ou à une ligne de vie AVANT de retirer le couvercle de la monterie.",
-    "Demeurer attaché à l'ancrage ou à la ligne de vie pendant TOUTE manipulation du couvercle et tant que le couvercle est retiré.",
-    "Récupérer le taillant ou les pièces brisées au fond UNIQUEMENT avec le racloir de monterie (raise scraper) conçu à cet effet.",
-    "Remettre le couvercle sur la monterie entre chaque manipulation du racloir.",
-    "Couvrir la monterie de façon sécuritaire une fois les travaux de récupération terminés.",
-    "Avertir le superviseur de la mine si un taillant brisé demeure présent et que le niveau inférieur n'est pas accessible pour le récupérer.",
-    "S'assurer d'appliquer cette procédure et de respecter les consignes du département d'ingénierie (travailleur responsable du forage)."
+    {
+      "texte": "Jamais descendre dans la monterie",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais récupérer pièces au fond",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Interdit à tous, tout temps",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Toujours porter le harnais",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "S'attacher avant d'ouvrir",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Rester attaché tout le temps",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Ligne de vie obligatoire",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "Couvercle ouvert : risque de chute",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Monterie ouverte : trou béant",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Récupérer avec le racloir seulement",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Remettre le couvercle entre chaque",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Couvrir la monterie à la fin",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Sortir la V-30 d'abord",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Enlever les tiges avant tout",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Avertir le superviseur",
+      "type": "verification",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-012": [
-    "Installer le système de commande à distance à au moins 50 pi (15 m) entre le foreur et le trou à forer.",
-    "Vérifier que la zone de forage est évacuée et que la foreuse est opérée par commande à distance sous surveillance (art. 440).",
-    "Positionner le foreur et l'aide-foreur du côté de la sortie, en s'assurant que rien ne bloque l'accès.",
-    "Ne jamais se tenir dans la ligne de sautage.",
-    "Si le client l'exige, se placer derrière une protection (galerie perpendiculaire, équipement ou amas de roche).",
-    "Demeurer en tout temps dans la zone sécuritaire pendant le forage.",
-    "Barricader tous les accès au lieu de forage (clôture selon les exigences du client) ou les faire garder par un travailleur.",
-    "Apposer la signalisation requise sur les barricades : ACCÈS INTERDIT, FORAGE EN COURS, FORAGE À DISTANCE.",
-    "Placer la procédure dans un sac étanche sur les clôtures de tous les accès et la faire signer par le foreur avant le début du forage, au début de chaque quart.",
-    "Pour toute visite des lieux, contacter l'opérateur par radio; à défaut, c'est le foreur qui se déplace vers les visiteurs avec contact visuel.",
-    "Au déblocage, surveiller le matériel qui sort du trou; en cas de présence d'explosif, arrêter immédiatement l'opération et aviser le superviseur.",
-    "Pour un trou dynamité à l'ANFO (amex), mettre de l'eau dans les tiges de forage pour réduire le risque d'explosion.",
-    "Respecter toutes les procédures de forage applicables à la CUBEX ou à l'équipement utilisé (minimum exigé par MRI).",
-    "S'assurer qu'une analyse de risque a été initiée par l'ingénierie du client, avec plans et devis de forage à distance approuvés."
+    {
+      "texte": "Foreur à 15 m du trou",
+      "type": "valeur",
+      "valeur": "50' (15 m)"
+    },
+    {
+      "texte": "Toujours commande à distance",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais dans la ligne de sautage",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Rester côté sortie",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Accès jamais bloqué",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Se cacher derrière une protection",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Barricader tous les accès",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Afficher ACCÈS INTERDIT",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Procédure signée chaque quart",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Radio avant toute visite",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Rester en zone sécuritaire",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Zone évacuée avant forage",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Surveiller matériel qui sort",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Explosif vu: arrêter, aviser",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "ANFO: eau dans les tiges",
+      "type": "danger",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-014": [
-    "Ne JAMAIS placer une partie de son corps sous les tables tant que le marteau n'est pas monté au-delà des tables ET que la slip-plate n'est pas fermée.",
-    "Respecter en tout temps une distance minimale de 1,5 m entre le mât et la console (obligatoire).",
-    "Ne jamais se placer entre la console et le mât, ni à moins de 1,5 m du mât (de tous les côtés), lorsqu'une pièce est en mouvement.",
-    "Avant tout nettoyage : monter le marteau au-delà des tables, fermer la slip-plate ou les jaws, appuyer la bit dessus, puis fermer l'interrupteur de la foreuse.",
-    "Lors d'un changement de bit : remonter la bit au-delà des tables avant toute manipulation.",
-    "Visser le marteau au saver sub au complet, sans le serrer avec force.",
-    "Vérifier que la foreuse est bien alignée selon les plans de forage avant d'installer le tubage.",
-    "S'assurer que la procédure de forage PRO-OP-ITH-004 (3 7/8\" à 6 1/2\") a été respectée au préalable.",
-    "Installer le tubage au collet du trou pour protéger contre la chute de roches qui pourrait bloquer le trou.",
-    "Ancrer chaque tubage à au moins 1 pied dans le roc solide (2e forage : casing 4\", 6\" ou 10\").",
-    "Ne pas laisser les tubages dépasser trop longs hors du plancher; garder le trajet des travailleurs exempt de tubages qui dépassent (risque de trébuchement).",
-    "Réévaluer la longueur de dépassement des tubages en cours de forage, car l'accumulation de boue la fait varier.",
-    "Suivre rigoureusement la séquence d'opération établie pour garantir la qualité de l'installation et éviter tout accident.",
-    "S'assurer que la procédure est appliquée et supervisée (responsabilité partagée travailleurs / superviseur)."
+    {
+      "texte": "Jamais le corps sous les tables",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Marteau monté avant tout",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Fermer la slip-plate avant",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Mât-console : garder 1,5 m",
+      "type": "valeur",
+      "valeur": "1,5 m"
+    },
+    {
+      "texte": "Jamais entre console et mât",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "1,5 m autour du mât",
+      "type": "valeur",
+      "valeur": "1,5 m"
+    },
+    {
+      "texte": "Loin des pièces en mouvement",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Couper la foreuse avant nettoyage",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Remonter la bit au-dessus",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Visser marteau sans forcer",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Tubages : pas trop longs",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Chemin libre de tubages",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention chute de roches",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Vérifier alignement foreuse",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Casing : 1 pied dans le roc",
+      "type": "valeur",
+      "valeur": "1 pied"
+    },
+    {
+      "texte": "Suivre PRO-OP-ITH-004 avant",
+      "type": "verification",
+      "valeur": ""
+    }
   ],
   "pro-op-ith-016": [
-    "Transporter en tout temps les marteaux de 6\" (211 lbs) à l'aide du chariot conçu à cet effet.",
-    "Installer le DRIVER SUB sur les marteaux en tout temps durant la manipulation.",
-    "Installer les marteaux de 3\" (60 lbs) et 4\" (89 lbs) manuellement sur le GEAR BOX, de la même façon que les tiges, puis appliquer la procédure à partir du point #8.",
-    "Avant d'exposer les mains sous le marteau, valider chaque fois qu'il est bien vissé au GEAR BOX.",
-    "Ne JAMAIS s'exposer les mains lors du dévissage manuel du marteau.",
-    "Maintenir une bonne communication entre le foreur et l'aide-foreur durant toute la manipulation (responsabilité du foreur).",
-    "S'assurer que le superviseur fait respecter la procédure par toute l'équipe.",
-    "Attacher le marteau avec la chaîne de retenue avant de sortir le chariot.",
-    "Retirer la chaîne de sûreté du chariot seulement après avoir vissé et accoté le marteau dans le SAVER SUB.",
-    "Respecter la séquence de travail établie pour éviter la chute d'un marteau et le développement de TMS.",
-    "Tenir compte du poids des marteaux (3\" : 60 lbs, 4\" : 89 lbs, 6\" : 211 lbs) et se positionner correctement pour prévenir les TMS.",
-    "Limiter le dévissage final du marteau à 1 tour seulement (étape 29).",
-    "Utiliser uniquement des bits de 6\", 8\" ou 10\" sur le marteau de 6\".",
-    "Confirmer que le chariot est stable et la chaîne en place avant toute manipulation du marteau."
+    {
+      "texte": "Marteau 6\" : toujours chariot",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Toujours installer le Driver Sub",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Marteau bien vissé au Gear Box",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Jamais les mains sous le marteau",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Mains hors du dévissage",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Toujours parler foreur-aide",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Attacher avant de sortir chariot",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Chaîne enlevée en dernier",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Danger : chute de marteau",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Attention au dos : TMS",
+      "type": "danger",
+      "valeur": ""
+    },
+    {
+      "texte": "Suivre la séquence",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Marteau 3\" : poids",
+      "type": "valeur",
+      "valeur": "60 lbs"
+    },
+    {
+      "texte": "Marteau 4\" : poids",
+      "type": "valeur",
+      "valeur": "89 lbs"
+    },
+    {
+      "texte": "Marteau 6\" : poids",
+      "type": "valeur",
+      "valeur": "211 lbs"
+    },
+    {
+      "texte": "Dévissage final",
+      "type": "valeur",
+      "valeur": "1 tour"
+    }
   ]
 };

@@ -36,6 +36,14 @@
     check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
     doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'
   };
+  // pictogrammes par type de point de la checklist
+  var TYPE_ICON = {
+    interdiction: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>',
+    verification: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    danger: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
+    epi: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17a9 9 0 0 1 18 0"/><path d="M2 17h20"/><path d="M9 9.5V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3.5"/></svg>',
+    valeur: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l5-5 12 12-5 5z"/><path d="M8 9l1.5 1.5M11 6l1.5 1.5M14 9l1.5 1.5"/></svg>'
+  };
 
   /* ---------- routage ---------- */
   function route() {
@@ -296,15 +304,26 @@
       return '<div class="warn"><span class="wic">' + ICON.warn + '</span><p>' + esc(w) + '</p></div>'; }).join(''));
 
     var essList = (window.ESSENTIEL && window.ESSENTIEL[p.id]);
-    var ckData = (essList && essList.length) ? essList.map(function (t) { return { regle: t, source: '' }; }) : (p.consignes_securite || []);
+    var ckData;
+    if (essList && essList.length) {
+      ckData = essList.map(function (it) {
+        return (typeof it === 'string') ? { regle: it, type: '', valeur: '' }
+          : { regle: it.texte, type: it.type || '', valeur: it.valeur || '' };
+      });
+    } else {
+      ckData = (p.consignes_securite || []).map(function (c) { return { regle: c.regle, type: '', valeur: '', source: c.source, theme: c.theme }; });
+    }
     if (ckData.length) {
       var ckhead = '<div class="ckhead"><div class="ckbar"><i></i></div><span class="ckcount"></span>' +
         '<button class="ckreset" type="button">Réinitialiser</button></div>';
       var ckitems = ckData.map(function (c, i) {
-        return '<label class="ck"><input type="checkbox" data-i="' + i + '"><span class="ckbox">' + ICON.check + '</span>' +
-          '<span class="rt">' + esc(c.regle) +
-          (c.source ? '<span class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</span>' : '') +
-          '</span></label>';
+        var ico = TYPE_ICON[c.type] || ICON.check;
+        var val = c.valeur ? '<b class="ckval">' + esc(c.valeur) + '</b> ' : '';
+        return '<label class="ck' + (c.type ? ' ck-' + c.type : '') + '"><input type="checkbox" data-i="' + i + '">' +
+          '<span class="cktype">' + ico + '</span>' +
+          '<span class="rt">' + val + esc(c.regle) +
+          (c.source ? '<span class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</span>' : '') + '</span>' +
+          '<span class="ckbox">' + ICON.check + '</span></label>';
       }).join('');
       h += sec('Liste de vérification — points essentiels',
         '<div class="checklist" data-proc="' + esc(p.id) + '">' + ckhead + ckitems + '</div>');
