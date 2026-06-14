@@ -403,6 +403,7 @@ footer b{color:var(--muted)}
   border-left:3px solid var(--cat,var(--brand));border-radius:11px;padding:.65rem .85rem;
   transition:transform .15s,border-color .15s,background .15s}
 .prow:hover{border-color:rgba(210,35,37,.4);background:var(--card-2);transform:translateX(3px)}
+.prow .pnum{flex:none;font-family:var(--font-display);font-size:.98rem;font-weight:800;color:var(--accent-l);min-width:2.4em}
 .prow .pcode{flex:none;font-family:var(--font-display);font-size:.72rem;font-weight:700;letter-spacing:.04em;
   color:var(--dim);background:var(--bg-2);border:1px solid var(--border);border-radius:6px;padding:.16rem .4rem}
 .prow .ptitle{flex:1;font-weight:700;font-size:.95rem;line-height:1.25;min-width:0}
