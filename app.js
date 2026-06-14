@@ -5,6 +5,7 @@
   'use strict';
 
   var CFG   = window.SITE_CONFIG || {};
+  var DEMO  = !!(CFG && CFG.demo);
   var DATA  = (window.PROCEDURES || []).slice();
   var CODE  = window.CODE_SECURITE || null;
 
@@ -98,7 +99,7 @@
           '<button class="chip on" data-mach="">Toutes machines</button>' + machChips +
         '</div>' +
       '</div></div>' +
-      '<div class="wrap"><div class="count" id="count"></div><div class="grid" id="grid"></div></div>';
+      '<div class="wrap"><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>';
 
     var q = $('#q');
     q.value = state.q;
@@ -121,7 +122,7 @@
   function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
   function renderOffline() {
     var box = $('#offline'); if (!box) return;
-    if (!('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
+    if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
     var nPdf = DATA.length + 1;
     if (offlineReady()) {
       box.innerHTML = '<div class="offcard ok"><span class="offic">' + ICON.check + '</span>' +
@@ -188,15 +189,10 @@
   }
   function card(p) {
     var col = catColor(p.categorie);
-    return '<a class="pcard" href="#/p/' + esc(p.id) + '" style="--cat:' + col + '">' +
-      '<div class="tags"><span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span>' +
-        (p.code ? '<span class="code-tag">' + esc(p.code) + '</span>' : '') + '</div>' +
-      '<h3>' + esc(p.titre) + '</h3>' +
-      '<p>' + esc(p.resume) + '</p>' +
-      (p.machines && p.machines.length ? '<div class="mach">' + p.machines.map(function (m) {
-        return '<span class="mbadge">' + esc(m) + '</span>'; }).join('') + '</div>' : '') +
-      '<span class="go">Consulter ' + ICON.arrow + '</span>' +
-    '</a>';
+    return '<a class="prow" href="#/p/' + esc(p.id) + '" style="--cat:' + col + '">' +
+      (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
+      '<span class="ptitle">' + esc(p.titre) + '</span>' +
+      '<span class="parrow">' + ICON.arrow + '</span></a>';
   }
 
   /* ---------- vue : procédure ---------- */
@@ -225,7 +221,7 @@
     h += '<div class="sec"><div class="pdfcue">' + ICON.doc +
       '<div class="cuetxt"><b>La marche à suivre complète est dans le document officiel (PDF).</b>' +
       '<span>Cette fiche présente uniquement les mises en garde, interdictions, responsabilités et consignes de sécurité. Pour les étapes détaillées, consultez le PDF officiel.</span></div>' +
-      '<a class="btn" href="' + pdfUrl + '" target="_blank" rel="noopener">Ouvrir le PDF</a></div></div>';
+      (DEMO ? '</div></div>' : '<a class="btn" href="' + pdfUrl + '" target="_blank" rel="noopener">Ouvrir le PDF</a></div></div>');
 
     if (p.objectif) h += sec('Objectif', '<p>' + esc(p.objectif) + '</p>');
     var ap = '';
@@ -261,19 +257,25 @@
     }
 
     // PDF officiel
-    var pdf = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
-    h += '<div class="sec"><h2>Document officiel (PDF)</h2><div class="pdfbox">' +
-      '<div class="bar">' + ICON.doc + '<b>' + esc(p.code || p.titre) + '</b><span class="sp"></span>' +
-        '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
-        '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
-      '<iframe src="' + pdf + '#view=FitH" title="PDF de la procédure" loading="lazy"></iframe>' +
-    '</div>';
-    if (p.id === 'centralisateur') {
-      h += '<div class="pdfbox" style="margin-top:1rem"><div class="bar">' + ICON.doc + '<b>Dessin technique du centralisateur</b><span class="sp"></span>' +
-        '<a class="dl" href="pdf/centralisateur-dessin.pdf" target="_blank" rel="noopener">Ouvrir</a></div>' +
-        '<iframe src="pdf/centralisateur-dessin.pdf#view=FitH" title="Dessin technique" loading="lazy"></iframe></div>';
+    if (DEMO) {
+      h += '<div class="sec"><h2>Document officiel (PDF)</h2>' +
+        '<div class="pdfcue"><span class="offic">' + ICON.doc + '</span><div class="cuetxt"><b>PDF non inclus dans cette démonstration publique</b>' +
+        '<span>Les documents officiels (PDF) sont réservés à la version interne de Machines Roger International.</span></div></div></div>';
+    } else {
+      var pdf = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
+      var pdfInner = '<div class="pdfbox">' +
+        '<div class="bar">' + ICON.doc + '<b>' + esc(p.code || p.titre) + '</b><span class="sp"></span>' +
+          '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
+          '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
+        '<iframe src="' + pdf + '#view=FitH" title="PDF de la procédure" loading="lazy"></iframe></div>';
+      if (p.id === 'centralisateur') {
+        pdfInner += '<div class="pdfbox" style="margin-top:1rem"><div class="bar">' + ICON.doc + '<b>Dessin technique du centralisateur</b><span class="sp"></span>' +
+          '<a class="dl" href="pdf/centralisateur-dessin.pdf" target="_blank" rel="noopener">Ouvrir</a></div>' +
+          '<iframe src="pdf/centralisateur-dessin.pdf#view=FitH" title="Dessin technique" loading="lazy"></iframe></div>';
+      }
+      h += '<div class="sec"><h2>Document officiel (PDF)</h2>' + pdfInner + '</div>';
     }
-    h += '</div></div>';
+    h += '</div>';
     view.innerHTML = h;
     initChecklistState();
   }
@@ -524,7 +526,7 @@
     var pdf = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
     h += '<div class="sec"><div class="pdfcue">' + ICON.doc + '<div class="cuetxt"><b>La marche à suivre est dans le PDF officiel.</b>' +
       '<span>Consulte la procédure complète et sa fiche de consignes dans la base de connaissances.</span></div>' +
-      '<a class="btn ghost" href="#/p/' + esc(p.id) + '">Voir la fiche</a><a class="btn" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir le PDF</a></div></div>';
+      '<a class="btn ghost" href="#/p/' + esc(p.id) + '">Voir la fiche</a>' + (DEMO ? '' : '<a class="btn" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir le PDF</a>') + '</div></div>';
     h += '<div class="sec"><h2>Évaluation</h2>';
     if (qn) h += '<div class="evalcard"><p>' + qn + ' questions pour valider ce module — réussite à 80 %.' + (sc ? ' Meilleur score : <b>' + sc + ' %</b>.' : '') + '</p>' +
       '<button class="btn" id="mEval">' + (done ? 'Refaire l\'évaluation' : 'Démarrer l\'évaluation') + '</button></div>';
