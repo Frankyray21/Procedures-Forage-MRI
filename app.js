@@ -109,7 +109,7 @@
       '<div class="wrap"><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="search">' + ICON.search +
-          '<input id="q" type="search" placeholder="Rechercher une procédure, une machine, une consigne…" autocomplete="off">' +
+          '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" autocomplete="off">' +
         '</div>' +
         '<div class="chips" id="catChips">' +
           '<button class="chip on" data-cat="">Toutes</button>' + catChips +
@@ -149,7 +149,7 @@
       return '<button class="chip' + (state.mach === m ? ' on' : '') + '" data-mach="' + esc(m) + '">' +
         esc(m) + ' <span class="ct">' + machs[m] + '</span></button>';
     }).join('');
-    box.innerHTML = '<button class="chip' + (state.mach === '' ? ' on' : '') + '" data-mach="">Toutes machines</button>' + chips;
+    box.innerHTML = '<button class="chip' + (state.mach === '' ? ' on' : '') + '" data-mach="">Tous les équipements</button>' + chips;
     box.style.display = 'flex';
   }
 
