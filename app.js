@@ -61,10 +61,10 @@
   var state = { q: '', cat: '', mach: '' };
   // Classement des filtres : catégories par flux de travail, machines regroupées
   var CAT_ORDER = ['Forage', 'Alésage', 'Installation', 'Manutention', 'Maintenance', 'Intervention', 'Démobilisation'];
-  var MACH_ORDER = ['ITH', 'V-30', 'CUBEX', 'Centralisateur', 'Marteau', 'Compresseur'];
+  var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur'];
   function mainMachine(m) {
     var s = norm(m);
-    if (s.indexOf('cubex') >= 0) return 'CUBEX';
+    if (s.indexOf('cubex') >= 0) return 'ITH';   // CUBEX = foreuse ITH (même chose)
     if (s.indexOf('v-30') >= 0 || s.indexOf('v30') >= 0 || s.indexOf('aleseuse') >= 0) return 'V-30';
     if (s.indexOf('centralisateur') >= 0) return 'Centralisateur';
     if (s.indexOf('marteau') >= 0) return 'Marteau';
@@ -114,19 +114,43 @@
         '<div class="chips" id="catChips">' +
           '<button class="chip on" data-cat="">Toutes</button>' + catChips +
         '</div>' +
-        '<div class="chips" id="machChips">' +
-          '<button class="chip on" data-mach="">Toutes machines</button>' + machChips +
-        '</div>' +
+        '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
       '<div class="wrap"><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>';
 
     var q = $('#q');
     q.value = state.q;
     q.addEventListener('input', function () { state.q = q.value; drawList(); });
-    bindChips('#catChips', 'cat');
+    $('#catChips').addEventListener('click', function (e) {
+      var b = e.target.closest('.chip'); if (!b) return;
+      state.cat = b.getAttribute('data-cat') || '';
+      $('#catChips').querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
+      b.classList.add('on');
+      state.mach = '';            // la machine dépend de la tâche : on réinitialise
+      updateMachChips();
+      drawList();
+    });
     bindChips('#machChips', 'mach');
+    updateMachChips();
     drawList();
     renderOffline();
+  }
+  // Filtre machine conditionnel à la tâche : visible seulement si une catégorie
+  // est choisie ET qu'elle compte plusieurs machines pertinentes.
+  function updateMachChips() {
+    var box = $('#machChips'); if (!box) return;
+    var machs = {};
+    if (state.cat) DATA.forEach(function (p) {
+      if (p.categorie === state.cat) machinesOf(p).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
+    });
+    var keys = MACH_ORDER.filter(function (m) { return machs[m]; });
+    if (!state.cat || keys.length < 2) { box.innerHTML = ''; box.style.display = 'none'; return; }
+    var chips = keys.map(function (m) {
+      return '<button class="chip' + (state.mach === m ? ' on' : '') + '" data-mach="' + esc(m) + '">' +
+        esc(m) + ' <span class="ct">' + machs[m] + '</span></button>';
+    }).join('');
+    box.innerHTML = '<button class="chip' + (state.mach === '' ? ' on' : '') + '" data-mach="">Toutes machines</button>' + chips;
+    box.style.display = 'flex';
   }
 
   /* ---------- disponibilité hors-ligne (pré-téléchargement des PDF) ---------- */
