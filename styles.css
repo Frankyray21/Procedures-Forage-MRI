@@ -79,8 +79,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
   background:var(--card);border:1px solid var(--border);border-radius:13px;transition:.2s}
 .search input::placeholder{color:var(--dim)}
 .search input:focus{border-color:var(--brand);background:var(--card-2);box-shadow:0 0 0 4px rgba(210,35,37,.12)}
-.chips{display:flex;gap:.5rem;overflow-x:auto;padding:.8rem 0 .3rem;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;padding:.8rem 0 .3rem}
 .chip{flex:none;display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border-radius:50px;
   font-size:.85rem;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);
   transition:.18s;white-space:nowrap;cursor:pointer}
@@ -88,6 +87,12 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .chip.on{color:#fff;background:rgba(210,35,37,.16);border-color:var(--brand)}
 .chip .ct{font-size:.72rem;color:var(--dim)}
 .chip.on .ct{color:var(--accent-l)}
+/* couleur de catégorie sur les filtres (cohérent avec les procédures) */
+.chip[data-cat]:not([data-cat=""])::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.chip[data-cat]:not([data-cat=""]):hover{border-color:var(--c);color:#fff}
+.chip[data-cat]:not([data-cat=""]).on{background:var(--c);border-color:var(--c);color:#fff}
+.chip[data-cat]:not([data-cat=""]).on::before{background:#fff}
+.chip[data-cat]:not([data-cat=""]).on .ct{color:rgba(255,255,255,.85)}
 
 /* ===== procedure cards ===== */
 .count{color:var(--dim);font-size:.85rem;margin:.4rem 0 1rem;font-weight:600}
