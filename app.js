@@ -246,9 +246,10 @@
     var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
     var h = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Toutes les procédures</a>' +
       '<div class="phead">' +
-        (p.code ? '<div class="tags"><span class="code-tag">' + esc(p.code) + '</span></div>' : '') +
         '<h1>' + esc(p.titre) + '</h1>' +
-        '<div class="tags" style="margin-top:.55rem"><span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span></div>' +
+        '<div class="tags" style="margin-top:.55rem">' +
+          (p.code ? '<span class="code-tag">' + esc(p.code) + '</span>' : '') +
+          '<span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span></div>' +
         '<div class="meta">' +
           (p.machines || []).map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('<span class="dot"></span>') +
           (dates ? '<span class="dot"></span><span>' + esc(dates) + '</span>' : '') +
