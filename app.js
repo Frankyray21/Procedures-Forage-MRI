@@ -246,9 +246,9 @@
     var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
     var h = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Toutes les procédures</a>' +
       '<div class="phead">' +
-        '<div class="tags"><span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span>' +
-          (p.code ? '<span class="code-tag">' + esc(p.code) + '</span>' : '') + '</div>' +
+        (p.code ? '<div class="tags"><span class="code-tag">' + esc(p.code) + '</span></div>' : '') +
         '<h1>' + esc(p.titre) + '</h1>' +
+        '<div class="tags" style="margin-top:.55rem"><span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span></div>' +
         '<div class="meta">' +
           (p.machines || []).map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('<span class="dot"></span>') +
           (dates ? '<span class="dot"></span><span>' + esc(dates) + '</span>' : '') +
@@ -259,12 +259,25 @@
 
     if (p.resume) h += '<div class="sec"><div class="lead2">' + esc(p.resume) + '</div></div>';
 
-    // Renvoi au PDF : la marche à suivre détaillée demeure dans le document officiel
-    var pdfUrl = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
-    h += '<div class="sec"><div class="pdfcue">' + ICON.doc +
-      '<div class="cuetxt"><b>La marche à suivre complète est dans le document officiel (PDF).</b>' +
-      '<span>Cette fiche présente uniquement les mises en garde, interdictions, responsabilités et consignes de sécurité. Pour les étapes détaillées, consultez le PDF officiel.</span></div>' +
-      (DEMO ? '</div></div>' : '<a class="btn" href="' + pdfUrl + '" target="_blank" rel="noopener">Ouvrir le PDF</a></div></div>');
+    // Document officiel (PDF) — AU DÉBUT de la fiche
+    if (DEMO) {
+      h += '<div class="sec"><h2>Document officiel (PDF)</h2>' +
+        '<div class="pdfcue"><span class="offic">' + ICON.doc + '</span><div class="cuetxt"><b>PDF non inclus dans cette démonstration publique</b>' +
+        '<span>Les documents officiels (PDF) sont réservés à la version interne de Machines Roger International.</span></div></div></div>';
+    } else {
+      var pdf = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
+      var pdfInner = '<div class="pdfbox">' +
+        '<div class="bar">' + ICON.doc + '<b>' + esc(p.code || p.titre) + '</b><span class="sp"></span>' +
+          '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
+          '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
+        '<iframe src="' + pdf + '#view=FitH" title="PDF de la procédure" loading="lazy"></iframe></div>';
+      if (p.id === 'centralisateur') {
+        pdfInner += '<div class="pdfbox" style="margin-top:1rem"><div class="bar">' + ICON.doc + '<b>Dessin technique du centralisateur</b><span class="sp"></span>' +
+          '<a class="dl" href="pdf/centralisateur-dessin.pdf" target="_blank" rel="noopener">Ouvrir</a></div>' +
+          '<iframe src="pdf/centralisateur-dessin.pdf#view=FitH" title="Dessin technique" loading="lazy"></iframe></div>';
+      }
+      h += '<div class="sec"><h2>Document officiel (PDF)</h2>' + pdfInner + '</div>';
+    }
 
     if (p.objectif) h += sec('Objectif', '<p>' + esc(p.objectif) + '</p>');
     var ap = '';
@@ -299,25 +312,6 @@
         '</tbody></table>');
     }
 
-    // PDF officiel
-    if (DEMO) {
-      h += '<div class="sec"><h2>Document officiel (PDF)</h2>' +
-        '<div class="pdfcue"><span class="offic">' + ICON.doc + '</span><div class="cuetxt"><b>PDF non inclus dans cette démonstration publique</b>' +
-        '<span>Les documents officiels (PDF) sont réservés à la version interne de Machines Roger International.</span></div></div></div>';
-    } else {
-      var pdf = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
-      var pdfInner = '<div class="pdfbox">' +
-        '<div class="bar">' + ICON.doc + '<b>' + esc(p.code || p.titre) + '</b><span class="sp"></span>' +
-          '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
-          '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
-        '<iframe src="' + pdf + '#view=FitH" title="PDF de la procédure" loading="lazy"></iframe></div>';
-      if (p.id === 'centralisateur') {
-        pdfInner += '<div class="pdfbox" style="margin-top:1rem"><div class="bar">' + ICON.doc + '<b>Dessin technique du centralisateur</b><span class="sp"></span>' +
-          '<a class="dl" href="pdf/centralisateur-dessin.pdf" target="_blank" rel="noopener">Ouvrir</a></div>' +
-          '<iframe src="pdf/centralisateur-dessin.pdf#view=FitH" title="Dessin technique" loading="lazy"></iframe></div>';
-      }
-      h += '<div class="sec"><h2>Document officiel (PDF)</h2>' + pdfInner + '</div>';
-    }
     h += '</div>';
     view.innerHTML = h;
     initChecklistState();
