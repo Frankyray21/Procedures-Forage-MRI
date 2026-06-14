@@ -233,8 +233,13 @@
   function card(p) {
     var col = catColor(p.categorie);
     return '<a class="prow" href="#/p/' + esc(p.id) + '" style="--cat:' + col + '">' +
-      (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
-      '<span class="ptitle">' + esc(p.titre) + '</span>' +
+      '<div class="prow-main">' +
+        '<span class="ptitle">' + esc(p.titre) + '</span>' +
+        '<div class="prow-tags">' +
+          '<span class="cat-tag mini" style="--cat:' + col + '">' + esc(p.categorie) + '</span>' +
+          (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
+        '</div>' +
+      '</div>' +
       '<span class="parrow">' + ICON.arrow + '</span></a>';
   }
 
