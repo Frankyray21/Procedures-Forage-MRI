@@ -236,7 +236,7 @@
       '<div class="prow-main">' +
         '<span class="ptitle">' + esc(p.titre) + '</span>' +
         '<div class="prow-tags">' +
-          '<span class="cat-tag mini" style="--cat:' + col + '">' + esc(p.categorie) + '</span>' +
+          '<span class="pcat"><i style="background:' + col + '"></i>' + esc(p.categorie) + '</span>' +
           (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
         '</div>' +
       '</div>' +
