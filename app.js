@@ -19,9 +19,6 @@
   // index code -> procedure id (pour les liens du Code de sécurité)
   var CODE_TO_ID = {};
   DATA.forEach(function (p) { if (p.code) CODE_TO_ID[p.code.toUpperCase()] = p.id; });
-  // numéro de référence stable par procédure : 1.01, 1.02, …
-  var PNUM = {};
-  DATA.forEach(function (p, i) { PNUM[p.id] = '1.' + ('0' + (i + 1)).slice(-2); });
 
   /* ---------- utilitaires ---------- */
   function esc(s) {
@@ -193,7 +190,6 @@
   function card(p) {
     var col = catColor(p.categorie);
     return '<a class="prow" href="#/p/' + esc(p.id) + '" style="--cat:' + col + '">' +
-      '<span class="pnum">' + esc(PNUM[p.id] || '') + '</span>' +
       (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
       '<span class="ptitle">' + esc(p.titre) + '</span>' +
       '<span class="parrow">' + ICON.arrow + '</span></a>';
