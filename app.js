@@ -34,7 +34,9 @@
     search: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
     warn: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
     check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
-    doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'
+    doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+    fwd: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
+    close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
   };
   // pictogrammes par type de point de la checklist
   var TYPE_ICON = {
@@ -293,6 +295,17 @@
       h += '<div class="sec"><h2>Document officiel (PDF)</h2>' + pdfInner + '</div>';
     }
 
+    // Photos et schémas — galerie visuelle (extraits des PDF)
+    var figs = (window.FIGURES && window.FIGURES[p.id]) || [];
+    if (figs.length) {
+      h += '<div class="sec"><h2>Photos et schémas</h2>' +
+        '<div class="gallery">' + figs.map(function (f, i) {
+          return '<button class="gfig" type="button" data-i="' + i + '">' +
+            '<img src="' + esc(f.src) + '" alt="Image ' + (i + 1) + '" loading="lazy">' +
+            '<span class="gpage">p. ' + esc(f.page) + '</span></button>';
+        }).join('') + '</div></div>';
+    }
+
     if (p.objectif) h += sec('Objectif', '<p>' + esc(p.objectif) + '</p>');
 
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
@@ -338,8 +351,50 @@
     h += '</div>';
     view.innerHTML = h;
     initChecklistState();
+    initGallery(figs);
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
+
+  /* ---------- galerie photos / schémas + visionneuse plein écran ---------- */
+  function initGallery(figs) {
+    if (!figs || !figs.length) return;
+    var lb = document.getElementById('lightbox');
+    if (!lb) {
+      lb = document.createElement('div');
+      lb.id = 'lightbox';
+      lb.className = 'lightbox';
+      lb.innerHTML =
+        '<button class="lb-close" type="button" aria-label="Fermer">' + ICON.close + '</button>' +
+        '<button class="lb-nav lb-prev" type="button" aria-label="Précédent">' + ICON.back + '</button>' +
+        '<img class="lb-img" alt="">' +
+        '<button class="lb-nav lb-next" type="button" aria-label="Suivant">' + ICON.fwd + '</button>' +
+        '<span class="lb-count"></span>';
+      document.body.appendChild(lb);
+    }
+    var img = lb.querySelector('.lb-img'), count = lb.querySelector('.lb-count'), cur = 0;
+    function show(i) {
+      cur = (i + figs.length) % figs.length;
+      img.src = figs[cur].src;
+      count.textContent = (cur + 1) + ' / ' + figs.length + '  ·  p. ' + figs[cur].page;
+    }
+    function open(i) { show(i); lb.classList.add('on'); }
+    function close() { lb.classList.remove('on'); img.src = ''; }
+    var gal = document.querySelector('.gallery');
+    if (gal) gal.onclick = function (e) {
+      var b = e.target.closest ? e.target.closest('.gfig') : null;
+      if (b) open(parseInt(b.getAttribute('data-i'), 10));
+    };
+    lb.querySelector('.lb-close').onclick = close;
+    lb.querySelector('.lb-prev').onclick = function (e) { e.stopPropagation(); show(cur - 1); };
+    lb.querySelector('.lb-next').onclick = function (e) { e.stopPropagation(); show(cur + 1); };
+    lb.onclick = function (e) { if (e.target === lb) close(); };
+    document.onkeydown = function (e) {
+      if (!lb.classList.contains('on')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') show(cur - 1);
+      else if (e.key === 'ArrowRight') show(cur + 1);
+    };
+  }
 
   /* ---------- liste de vérification (checklist) ---------- */
   function ckGet(id) { try { return JSON.parse(localStorage.getItem('ck_' + id) || '[]'); } catch (e) { return []; } }

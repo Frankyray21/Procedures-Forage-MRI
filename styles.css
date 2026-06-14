@@ -440,3 +440,34 @@ footer b{color:var(--muted)}
   .pdfbox iframe,.pdfbox object{height:70vh}
   .stats{gap:1rem}
 }
+
+/* ===== galerie photos / schémas ===== */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.7rem}
+.gfig{position:relative;display:block;padding:0;border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;background:#fff;cursor:zoom-in;aspect-ratio:4/3;transition:.18s}
+.gfig:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.gfig img{width:100%;height:100%;object-fit:contain;display:block}
+.gfig .gpage{position:absolute;left:.4rem;bottom:.4rem;font-size:.68rem;font-weight:800;letter-spacing:.02em;
+  color:#fff;background:rgba(10,14,23,.82);padding:.12rem .45rem;border-radius:6px}
+
+/* ===== visionneuse plein écran (lightbox) ===== */
+.lightbox{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;
+  background:rgba(5,8,14,.94);backdrop-filter:blur(3px);padding:1rem}
+.lightbox.on{display:flex}
+.lightbox .lb-img{max-width:94vw;max-height:88vh;object-fit:contain;border-radius:8px;background:#fff}
+.lightbox .lb-close{position:absolute;top:1rem;right:1rem;width:46px;height:46px;display:inline-flex;
+  align-items:center;justify-content:center;border:none;border-radius:50%;color:#fff;
+  background:rgba(255,255,255,.12);cursor:pointer;transition:.18s}
+.lightbox .lb-close:hover{background:var(--brand)}
+.lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;
+  display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:50%;color:#fff;
+  background:rgba(255,255,255,.12);cursor:pointer;transition:.18s}
+.lightbox .lb-nav:hover{background:var(--brand)}
+.lightbox .lb-prev{left:1rem}
+.lightbox .lb-next{right:1rem}
+.lightbox .lb-count{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);font-size:.82rem;
+  font-weight:700;color:#fff;background:rgba(255,255,255,.1);padding:.3rem .8rem;border-radius:20px}
+@media(max-width:520px){
+  .gallery{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+  .lightbox .lb-nav{width:42px;height:42px}
+}
