@@ -140,11 +140,11 @@
   function updateMachChips() {
     var box = $('#machChips'); if (!box) return;
     var machs = {};
-    if (state.cat) DATA.forEach(function (p) {
-      if (p.categorie === state.cat) machinesOf(p).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
+    DATA.forEach(function (p) {
+      if (!state.cat || p.categorie === state.cat) machinesOf(p).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
     });
     var keys = MACH_ORDER.filter(function (m) { return machs[m]; });
-    if (!state.cat || keys.length < 2) { box.innerHTML = ''; box.style.display = 'none'; return; }
+    if (keys.length < 2) { box.innerHTML = ''; box.style.display = 'none'; return; }
     var chips = keys.map(function (m) {
       return '<button class="chip' + (state.mach === m ? ' on' : '') + '" data-mach="' + esc(m) + '">' +
         esc(m) + ' <span class="ct">' + machs[m] + '</span></button>';
