@@ -295,16 +295,18 @@
     if (warns.length) h += sec('Mises en garde et avertissements', warns.map(function (w) {
       return '<div class="warn"><span class="wic">' + ICON.warn + '</span><p>' + esc(w) + '</p></div>'; }).join(''));
 
-    if (p.consignes_securite && p.consignes_securite.length) {
+    var essList = (window.ESSENTIEL && window.ESSENTIEL[p.id]);
+    var ckData = (essList && essList.length) ? essList.map(function (t) { return { regle: t, source: '' }; }) : (p.consignes_securite || []);
+    if (ckData.length) {
       var ckhead = '<div class="ckhead"><div class="ckbar"><i></i></div><span class="ckcount"></span>' +
         '<button class="ckreset" type="button">Réinitialiser</button></div>';
-      var ckitems = p.consignes_securite.map(function (c, i) {
+      var ckitems = ckData.map(function (c, i) {
         return '<label class="ck"><input type="checkbox" data-i="' + i + '"><span class="ckbox">' + ICON.check + '</span>' +
           '<span class="rt">' + esc(c.regle) +
           (c.source ? '<span class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</span>' : '') +
           '</span></label>';
       }).join('');
-      h += sec('Liste de vérification — consignes et interdictions',
+      h += sec('Liste de vérification — points essentiels',
         '<div class="checklist" data-proc="' + esc(p.id) + '">' + ckhead + ckitems + '</div>');
     }
 
