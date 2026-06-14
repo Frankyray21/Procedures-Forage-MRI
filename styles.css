@@ -72,9 +72,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .stat span{font-size:.78rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
 
 /* ===== search + filters ===== */
-.toolbar{position:sticky;top:54px;z-index:20;padding:1rem 0 .6rem;background:linear-gradient(180deg,var(--bg) 70%,transparent);
-  transition:transform .3s cubic-bezier(.2,.7,.2,1);will-change:transform}
-.toolbar.hidden{transform:translateY(-135%)}
+.toolbar{padding:1rem 0 .6rem}
 .search{position:relative;display:flex;align-items:center}
 .search svg{position:absolute;left:1rem;color:var(--dim);pointer-events:none}
 .search input{width:100%;padding:.95rem 1rem .95rem 2.9rem;font-size:1.02rem;color:var(--text);
