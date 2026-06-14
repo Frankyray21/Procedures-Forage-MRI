@@ -59,19 +59,38 @@
 
   /* ---------- vue : accueil ---------- */
   var state = { q: '', cat: '', mach: '' };
+  // Classement des filtres : catégories par flux de travail, machines regroupées
+  var CAT_ORDER = ['Forage', 'Alésage', 'Installation', 'Manutention', 'Maintenance', 'Intervention', 'Démobilisation'];
+  var MACH_ORDER = ['ITH', 'V-30', 'CUBEX', 'Centralisateur', 'Marteau', 'Compresseur'];
+  function mainMachine(m) {
+    var s = norm(m);
+    if (s.indexOf('cubex') >= 0) return 'CUBEX';
+    if (s.indexOf('v-30') >= 0 || s.indexOf('v30') >= 0 || s.indexOf('aleseuse') >= 0) return 'V-30';
+    if (s.indexOf('centralisateur') >= 0) return 'Centralisateur';
+    if (s.indexOf('marteau') >= 0) return 'Marteau';
+    if (s.indexOf('compresseur') >= 0 || s.indexOf('booster') >= 0) return 'Compresseur';
+    if (s.indexOf('ith') >= 0 || s.indexOf('foreuse') >= 0) return 'ITH';
+    return null;
+  }
+  function machinesOf(p) {
+    var set = {};
+    (p.machines || []).forEach(function (m) { var g = mainMachine(m); if (g) set[g] = true; });
+    return Object.keys(set);
+  }
+
   function renderHome(view) {
     var cats = {}, machs = {};
     DATA.forEach(function (p) {
       cats[p.categorie] = (cats[p.categorie] || 0) + 1;
-      (p.machines || []).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
+      machinesOf(p).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
     });
     var nbConsignes = DATA.reduce(function (a, p) { return a + ((p.consignes_securite || []).length); }, 0);
 
-    var catChips = Object.keys(cats).sort().map(function (c) {
+    var catChips = CAT_ORDER.filter(function (c) { return cats[c]; }).map(function (c) {
       return '<button class="chip" data-cat="' + esc(c) + '" style="--c:' + catColor(c) + '">' +
         esc(c) + ' <span class="ct">' + cats[c] + '</span></button>';
     }).join('');
-    var machChips = Object.keys(machs).sort().map(function (m) {
+    var machChips = MACH_ORDER.filter(function (m) { return machs[m]; }).map(function (m) {
       return '<button class="chip" data-mach="' + esc(m) + '">' + esc(m) + ' <span class="ct">' + machs[m] + '</span></button>';
     }).join('');
 
@@ -172,7 +191,7 @@
   }
   function matches(p) {
     if (state.cat && p.categorie !== state.cat) return false;
-    if (state.mach && (p.machines || []).indexOf(state.mach) < 0) return false;
+    if (state.mach && machinesOf(p).indexOf(state.mach) < 0) return false;
     if (state.q) {
       var hay = norm([p.titre, p.code, p.resume, p.categorie, (p.machines || []).join(' '),
         (p.consignes_securite || []).map(function (c) { return c.regle; }).join(' ')].join(' '));
