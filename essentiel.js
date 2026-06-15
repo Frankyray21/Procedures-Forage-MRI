@@ -1,65 +1,61 @@
 /* ===========================================================================
-   CHECKLISTS ESSENTIELLES (~15 points) par procédure — généré des consignes.
+   CHECKLISTS ESSENTIELLES par procedure — points courts, sans repetition,
+   interdictions explicites, pour travailleurs lisant peu.
    =========================================================================== */
 window.ESSENTIEL = {
   "centralisateur": [
     {
-      "texte": "Toujours 2 travailleurs",
+      "texte": "Travailler à deux",
       "type": "verification",
       "valeur": "2"
     },
     {
-      "texte": "Pièces lourdes : 46 livres",
+      "texte": "Pièces lourdes à lever",
       "type": "danger",
       "valeur": "46 lb"
     },
     {
-      "texte": "Bien se placer avant de lever",
+      "texte": "Se placer avant de soulever",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Plier les genoux, dos droit",
+      "texte": "Genoux pliés, dos droit",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Compter 12 boulons",
+      "texte": "Compter les boulons",
       "type": "verification",
       "valeur": "12"
     },
     {
-      "texte": "Compter 12 locknuts",
+      "texte": "Vérifier les locknuts",
       "type": "verification",
       "valeur": "12"
     },
     {
-      "texte": "Compter 12 lockwashers",
+      "texte": "Contrôler les lockwashers",
       "type": "verification",
       "valeur": "12"
     },
     {
-      "texte": "Jamais de pipe wrench",
+      "texte": "Aucun pipe wrench ni wescot",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Jamais de wescot",
-      "type": "interdiction",
-      "valeur": ""
-    },
-    {
-      "texte": "Serrer avec clé ou box",
+      "texte": "Serrer à la clé ou box",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Tension sur les lockwashers",
+      "texte": "Tension sur lockwashers",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Ne pas abîmer les filets",
+      "texte": "Préserver les filets",
       "type": "danger",
       "valeur": ""
     },
@@ -69,7 +65,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Un centralisateur aux 40 pieds",
+      "texte": "Poser un centralisateur",
       "type": "valeur",
       "valeur": "40 pi"
     },
@@ -79,7 +75,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Attention aux doigts coincés",
+      "texte": "Garder les doigts dégagés",
       "type": "danger",
       "valeur": ""
     }
@@ -96,37 +92,37 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Tenir la pompe par les boyaux",
+      "texte": "Soutenir par les boyaux",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Attention aux coincements de doigts",
+      "texte": "Coincement de doigts",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Bloquer la pompe qui glisse",
+      "texte": "Bloquer le glissement",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Bell housing en aluminium",
+      "texte": "Bell housing aluminium fragile",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Seulement masse en caoutchouc",
+      "texte": "Masse en caoutchouc seulement",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Ne pas abîmer le shaft",
+      "texte": "Ne jamais abîmer le shaft",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Ne pas coincer le fil à feu",
+      "texte": "Pas de fil à feu coincé",
       "type": "interdiction",
       "valeur": ""
     },
@@ -136,32 +132,32 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Appliquer de l'antiseize",
+      "texte": "Appliquer antiseize",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Coupling FLUSH au shaft",
+      "texte": "Coupling flush au shaft",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Boulons à la main d'abord",
+      "texte": "Visser boulons à la main",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Remettre le couvercle plastique",
+      "texte": "Replacer couvercle plastique",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Risque de feu si surchauffe",
+      "texte": "Surchauffe : risque de feu",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Clé Allen 5/16 barrure pompe",
+      "texte": "Clé Allen barrure pompe",
       "type": "valeur",
       "valeur": "5/16"
     }
@@ -173,17 +169,17 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Inspecter les outils d'abord",
+      "texte": "Inspecter les outils",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Crochets avec linguet seulement",
+      "texte": "Crochets à linguet seulement",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Un seul tire-fort",
+      "texte": "Tire-fort unique",
       "type": "verification",
       "valeur": ""
     },
@@ -203,22 +199,22 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Personne dans l'axe de la masse",
+      "texte": "Dégager l'axe de la masse",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Attention masse échappée",
+      "texte": "Risque de masse échappée",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Clé peut tomber",
+      "texte": "Clé risque de tomber",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Jamais dépasser l'ancrage",
+      "texte": "Jamais dépasser la charge d'ancrage",
       "type": "interdiction",
       "valeur": "2500 kg"
     },
@@ -226,11 +222,6 @@ window.ESSENTIEL = {
       "texte": "Ne pas décadenasser trop tôt",
       "type": "interdiction",
       "valeur": ""
-    },
-    {
-      "texte": "Charge max ancrage",
-      "type": "valeur",
-      "valeur": "2500 kg"
     },
     {
       "texte": "Deux manilles requises",
@@ -255,32 +246,32 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Inspecter les outils d'abord",
+      "texte": "Inspecter les outils",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Crochets avec linguets",
+      "texte": "Crochets à linguets",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Ancrage certifié seulement",
+      "texte": "Ancrage certifié",
       "type": "verification",
       "valeur": "2500 kg"
     },
     {
-      "texte": "Jamais dépasser la charge",
+      "texte": "Ne jamais dépasser la charge",
       "type": "interdiction",
       "valeur": "2500 kg"
     },
     {
-      "texte": "Pieds sur surface solide",
+      "texte": "Pieds sur sol solide",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Personne dans l'axe de la masse",
+      "texte": "Personne dans l'axe",
       "type": "danger",
       "valeur": ""
     },
@@ -290,22 +281,22 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Attention clé qui tombe",
+      "texte": "Clé peut tomber",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Éloigner le gearbox des tables",
+      "texte": "Gearbox loin des tables",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Utiliser 2 manilles",
+      "texte": "Manilles 3/4",
       "type": "valeur",
-      "valeur": "2 x 3/4"
+      "valeur": "2"
     },
     {
-      "texte": "Un seul come along",
+      "texte": "Come along unique",
       "type": "valeur",
       "valeur": "1"
     },
@@ -327,7 +318,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Pièce abîmée : remplacer",
+      "texte": "Remplacer pièce abîmée",
       "type": "verification",
       "valeur": ""
     },
@@ -352,7 +343,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "2 élingues 1'' x 8 pieds",
+      "texte": "Deux élingues",
       "type": "valeur",
       "valeur": "1'' x 8 pi"
     },
@@ -367,7 +358,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Mettre la chaîne garde-corps",
+      "texte": "Poser chaîne garde-corps",
       "type": "epi",
       "valeur": ""
     },
@@ -387,7 +378,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Verrouiller barre de tir : 2 boulons",
+      "texte": "Verrouiller barre de tir",
       "type": "verification",
       "valeur": "2 boulons"
     },
@@ -397,14 +388,14 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Sans remorque : basse vitesse",
+      "texte": "Hors remorque : basse vitesse",
       "type": "danger",
       "valeur": ""
     }
   ],
   "pro-op-ith-004": [
     {
-      "texte": "Inspecter tout avant de forer",
+      "texte": "Tout inspecter avant forage",
       "type": "verification",
       "valeur": ""
     },
@@ -414,7 +405,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Câble sous tension : crochet plastique",
+      "texte": "Câble tendu : crochet plastique",
       "type": "danger",
       "valeur": ""
     },
@@ -424,42 +415,42 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Boyaux : whip check partout",
+      "texte": "Whip check sur chaque boyau",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Attention boyaux 800 °F",
+      "texte": "Conduites brûlantes",
       "type": "danger",
       "valeur": "800 °F"
     },
     {
-      "texte": "Souffler les boyaux avant branchement",
+      "texte": "Purger avant branchement",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Barricade : 3 m du matériel",
+      "texte": "Barricader autour du matériel",
       "type": "valeur",
       "valeur": "3 m"
     },
     {
-      "texte": "1,5 m mât-console obligatoire",
+      "texte": "Garder l'espace mât-console",
       "type": "valeur",
       "valeur": "1,5 m"
     },
     {
-      "texte": "Jamais entre console et mât",
+      "texte": "Ne jamais entrer entre console et mât",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Personne à moins de 1,5 m du mât",
+      "texte": "Dégager le pourtour du mât",
       "type": "valeur",
       "valeur": "1,5 m"
     },
     {
-      "texte": "Défoncement : pousser SANS rotation",
+      "texte": "Défoncer sans aucune rotation",
       "type": "interdiction",
       "valeur": ""
     },
@@ -469,39 +460,39 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Explosifs non détonnés : danger",
+      "texte": "Explosifs non détonnés",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "2 travailleurs dès 200 pieds",
+      "texte": "Deux travailleurs en profondeur",
       "type": "valeur",
       "valeur": "200 pi"
     },
     {
-      "texte": "7 m foreuse-surcompresseur",
+      "texte": "Reculer le surcompresseur",
       "type": "valeur",
       "valeur": "7 m"
     }
   ],
   "pro-op-ith-005": [
     {
-      "texte": "Couvert sur monterie: obligatoire",
+      "texte": "Couvert sur monterie posé",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Jamais entrer dans la monterie",
+      "texte": "Ne jamais entrer dans la monterie",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Jamais dans l'axe de la tête",
+      "texte": "Personne dans l'axe de la tête",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Personne devant la foreuse",
+      "texte": "Aucun travailleur devant la foreuse",
       "type": "interdiction",
       "valeur": ""
     },
@@ -526,12 +517,12 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Boyaux: whip check partout",
+      "texte": "Whip check sur chaque boyau",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Jamais inverser haute/basse pression",
+      "texte": "Ne pas inverser haute et basse pression",
       "type": "interdiction",
       "valeur": ""
     },
@@ -541,17 +532,17 @@ window.ESSENTIEL = {
       "valeur": "800 °F"
     },
     {
-      "texte": "Console à distance du mât",
+      "texte": "Console loin du mât",
       "type": "valeur",
       "valeur": "1,5 m"
     },
     {
-      "texte": "Distance foreuse-surcompresseur",
+      "texte": "Écart foreuse-surcompresseur",
       "type": "valeur",
       "valeur": "7 m"
     },
     {
-      "texte": "Toujours 2 travailleurs",
+      "texte": "Deux travailleurs ensemble",
       "type": "verification",
       "valeur": "200 pi"
     },
@@ -561,7 +552,7 @@ window.ESSENTIEL = {
       "valeur": "40 pi"
     },
     {
-      "texte": "Bris de tige: tout arrêter, avertir",
+      "texte": "Bris de tige: arrêter, avertir",
       "type": "danger",
       "valeur": ""
     }
@@ -578,7 +569,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Câble sous tension : crochet plastique",
+      "texte": "Câble tendu : crochet plastique seulement",
       "type": "interdiction",
       "valeur": ""
     },
@@ -593,22 +584,22 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Jamais interchanger les boyaux",
+      "texte": "Ne jamais interchanger les boyaux",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Boyaux compresseur très chauds",
+      "texte": "Boyaux compresseur brûlants",
       "type": "danger",
       "valeur": "800 °F"
     },
     {
-      "texte": "Foreuse-surcompresseur : 7 mètres",
+      "texte": "Distance foreuse-surcompresseur",
       "type": "valeur",
       "valeur": "7 m"
     },
     {
-      "texte": "Barricade-matériel : 3 mètres",
+      "texte": "Distance barricade-matériel",
       "type": "valeur",
       "valeur": "3 m"
     },
@@ -628,7 +619,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "2 travailleurs dès 200 pieds",
+      "texte": "Deux travailleurs dès cette profondeur",
       "type": "valeur",
       "valeur": "200 pi"
     },
@@ -638,7 +629,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Soufflage déblais : porter masque",
+      "texte": "Soufflage déblais : masque obligatoire",
       "type": "epi",
       "valeur": ""
     },
@@ -650,47 +641,47 @@ window.ESSENTIEL = {
   ],
   "pro-op-ith-007": [
     {
-      "texte": "Cadenasser avant tout travail",
+      "texte": "Cadenasser avant le travail",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Leviers au neutre d'abord",
+      "texte": "Leviers au neutre",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Câble sous tension : crochet plastique",
+      "texte": "Jamais toucher câble sous tension",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Personne à moins de 5 m",
+      "texte": "Éloigner tout le monde",
       "type": "valeur",
       "valeur": "5 m"
     },
     {
-      "texte": "Foreuse-compresseur : 7 m",
+      "texte": "Écart foreuse-compresseur",
       "type": "valeur",
       "valeur": "7 m"
     },
     {
-      "texte": "Boyaux : whip check obligatoire",
+      "texte": "Whip check sur boyaux",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Jamais mélanger basse/haute pression",
+      "texte": "Ne jamais mélanger les pressions",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Attention boyaux : 800 °F",
+      "texte": "Boyaux brûlants",
       "type": "danger",
       "valeur": "800 °F"
     },
     {
-      "texte": "Jamais dans l'axe de la tête",
+      "texte": "Personne dans l'axe de la tête",
       "type": "interdiction",
       "valeur": ""
     },
@@ -700,7 +691,7 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Jamais sous le trou V-30",
+      "texte": "Interdit de passer sous V-30",
       "type": "interdiction",
       "valeur": ""
     },
@@ -715,12 +706,12 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Centralisateur aux 40 pieds",
+      "texte": "Poser un centralisateur",
       "type": "valeur",
       "valeur": "40 pi"
     },
     {
-      "texte": "Chariot pour le marteau",
+      "texte": "Marteau sur chariot",
       "type": "verification",
       "valeur": ""
     },
@@ -732,42 +723,22 @@ window.ESSENTIEL = {
   ],
   "pro-op-ith-008": [
     {
-      "texte": "Jamais descendre dans la monterie",
+      "texte": "Ne jamais descendre dans la monterie",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Jamais récupérer pièces au fond",
+      "texte": "Aucune récupération de pièces au fond",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Interdit à tous, tout temps",
+      "texte": "Interdit à tous, en tout temps",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Toujours porter le harnais",
-      "type": "epi",
-      "valeur": ""
-    },
-    {
-      "texte": "S'attacher avant d'ouvrir",
-      "type": "verification",
-      "valeur": ""
-    },
-    {
-      "texte": "Rester attaché tout le temps",
-      "type": "verification",
-      "valeur": ""
-    },
-    {
-      "texte": "Ligne de vie obligatoire",
-      "type": "epi",
-      "valeur": ""
-    },
-    {
-      "texte": "Couvercle ouvert : risque de chute",
+      "texte": "Couvercle ouvert : chute possible",
       "type": "danger",
       "valeur": ""
     },
@@ -777,12 +748,37 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Récupérer avec le racloir seulement",
+      "texte": "Sortir la V-30 d'abord",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Remettre le couvercle entre chaque",
+      "texte": "Retirer les tiges ensuite",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Harnais et ligne de vie obligatoires",
+      "type": "epi",
+      "valeur": ""
+    },
+    {
+      "texte": "S'attacher avant d'ouvrir",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Rester attaché en tout temps",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Récupérer au racloir seulement",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Replacer le couvercle entre chaque",
       "type": "verification",
       "valeur": ""
     },
@@ -792,29 +788,19 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Sortir la V-30 d'abord",
-      "type": "verification",
-      "valeur": ""
-    },
-    {
-      "texte": "Enlever les tiges avant tout",
-      "type": "verification",
-      "valeur": ""
-    },
-    {
-      "texte": "Avertir le superviseur",
+      "texte": "Aviser le superviseur",
       "type": "verification",
       "valeur": ""
     }
   ],
   "pro-op-ith-012": [
     {
-      "texte": "Foreur à 15 m du trou",
+      "texte": "Foreur loin du trou",
       "type": "valeur",
       "valeur": "50' (15 m)"
     },
     {
-      "texte": "Toujours commande à distance",
+      "texte": "Commande à distance seulement",
       "type": "verification",
       "valeur": ""
     },
@@ -824,22 +810,22 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Rester côté sortie",
+      "texte": "Se tenir côté sortie",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Accès jamais bloqué",
+      "texte": "Voie de fuite jamais bloquée",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Se cacher derrière une protection",
+      "texte": "Travailler derrière une protection",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Barricader tous les accès",
+      "texte": "Barricader chaque accès",
       "type": "verification",
       "valeur": ""
     },
@@ -849,32 +835,32 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Procédure signée chaque quart",
+      "texte": "Procédure signée par quart",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Radio avant toute visite",
+      "texte": "Radio avant chaque visite",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Rester en zone sécuritaire",
+      "texte": "Demeurer en zone sûre",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Zone évacuée avant forage",
+      "texte": "Évacuer la zone d'abord",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Surveiller matériel qui sort",
+      "texte": "Matériel sortant: surveiller",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Explosif vu: arrêter, aviser",
+      "texte": "Explosif vu: stopper, aviser",
       "type": "danger",
       "valeur": ""
     },
@@ -886,8 +872,8 @@ window.ESSENTIEL = {
   ],
   "pro-op-ith-014": [
     {
-      "texte": "Jamais le corps sous les tables",
-      "type": "interdiction",
+      "texte": "Suivre PRO-OP-ITH-004 d'abord",
+      "type": "verification",
       "valeur": ""
     },
     {
@@ -896,32 +882,12 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Fermer la slip-plate avant",
+      "texte": "Visser sans forcer",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Mât-console : garder 1,5 m",
-      "type": "valeur",
-      "valeur": "1,5 m"
-    },
-    {
-      "texte": "Jamais entre console et mât",
-      "type": "interdiction",
-      "valeur": ""
-    },
-    {
-      "texte": "1,5 m autour du mât",
-      "type": "valeur",
-      "valeur": "1,5 m"
-    },
-    {
-      "texte": "Loin des pièces en mouvement",
-      "type": "danger",
-      "valeur": ""
-    },
-    {
-      "texte": "Couper la foreuse avant nettoyage",
+      "texte": "Fermer la slip-plate",
       "type": "verification",
       "valeur": ""
     },
@@ -931,111 +897,131 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Visser marteau sans forcer",
+      "texte": "Aligner la foreuse",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Tubages : pas trop longs",
+      "texte": "Couper avant nettoyage",
+      "type": "verification",
+      "valeur": ""
+    },
+    {
+      "texte": "Ancrer le casing dans le roc",
+      "type": "valeur",
+      "valeur": "1 pi"
+    },
+    {
+      "texte": "Garder le dégagement mât-console",
+      "type": "valeur",
+      "valeur": "1,5 m"
+    },
+    {
+      "texte": "Garder le périmètre libre",
+      "type": "valeur",
+      "valeur": "1,5 m"
+    },
+    {
+      "texte": "Corps hors des tables",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Chemin libre de tubages",
+      "texte": "Rester hors console-mât",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Pas de tubages trop longs",
+      "type": "interdiction",
+      "valeur": ""
+    },
+    {
+      "texte": "Pièces en mouvement",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Attention chute de roches",
+      "texte": "Chemin des tubages dégagé",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Vérifier alignement foreuse",
-      "type": "verification",
-      "valeur": ""
-    },
-    {
-      "texte": "Casing : 1 pied dans le roc",
-      "type": "valeur",
-      "valeur": "1 pied"
-    },
-    {
-      "texte": "Suivre PRO-OP-ITH-004 avant",
-      "type": "verification",
+      "texte": "Chute de roches",
+      "type": "danger",
       "valeur": ""
     }
   ],
   "pro-op-ith-016": [
     {
-      "texte": "Marteau 6\" : toujours chariot",
+      "texte": "Marteau 6\" sur chariot",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Toujours installer le Driver Sub",
+      "texte": "Installer le Driver Sub",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Marteau bien vissé au Gear Box",
+      "texte": "Bien visser au Gear Box",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Jamais les mains sous le marteau",
+      "texte": "Aucune main sous le marteau",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Mains hors du dévissage",
+      "texte": "Doigts loin du dévissage",
       "type": "interdiction",
       "valeur": ""
     },
     {
-      "texte": "Toujours parler foreur-aide",
+      "texte": "Parler foreur-aide",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Attacher avant de sortir chariot",
+      "texte": "Attacher avant sortie chariot",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Chaîne enlevée en dernier",
+      "texte": "Chaîne retirée en dernier",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Danger : chute de marteau",
+      "texte": "Chute de marteau",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Attention au dos : TMS",
+      "texte": "Protéger le dos, TMS",
       "type": "danger",
       "valeur": ""
     },
     {
-      "texte": "Suivre la séquence",
+      "texte": "Respecter la séquence",
       "type": "verification",
       "valeur": ""
     },
     {
-      "texte": "Marteau 3\" : poids",
+      "texte": "Modèle 3\"",
       "type": "valeur",
-      "valeur": "60 lbs"
+      "valeur": "60 lb"
     },
     {
-      "texte": "Marteau 4\" : poids",
+      "texte": "Modèle 4\"",
       "type": "valeur",
-      "valeur": "89 lbs"
+      "valeur": "89 lb"
     },
     {
-      "texte": "Marteau 6\" : poids",
+      "texte": "Modèle 6\"",
       "type": "valeur",
-      "valeur": "211 lbs"
+      "valeur": "211 lb"
     },
     {
       "texte": "Dévissage final",
