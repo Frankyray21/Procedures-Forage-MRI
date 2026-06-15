@@ -269,8 +269,6 @@
           (p.machines || []).map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('<span class="dot"></span>') +
           (dates ? '<span class="dot"></span><span>' + esc(dates) + '</span>' : '') +
         '</div>' +
-        (p.valeurs_cles && p.valeurs_cles.length ? '<div class="kv">' + p.valeurs_cles.map(function (k) {
-          return '<div class="k"><span>' + esc(k.libelle) + '</span><b>' + esc(k.valeur) + '</b></div>'; }).join('') + '</div>' : '') +
       '</div>';
 
     if (p.resume) h += '<div class="sec"><div class="lead2">' + esc(p.resume) + '</div></div>';
