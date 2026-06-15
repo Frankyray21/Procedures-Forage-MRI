@@ -6,7 +6,7 @@
    - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
      à jour en arrière-plan. Les PDF sont mis en cache à la première
      consultation, donc consultables ensuite hors-ligne. */
-const VERSION = 'mri-proc-v25';
+const VERSION = 'mri-proc-v26';
 const CORE = [
   './',
   './index.html',
@@ -51,7 +51,7 @@ self.addEventListener('fetch', (e) => {
 
   if (netFirst) {
     e.respondWith(
-      fetch(req).then((res) => {
+      fetch(req, { cache: 'reload' }).then((res) => {
         if (res && res.status === 200) {
           const copy = res.clone();
           caches.open(VERSION).then((c) => c.put(req, copy));
