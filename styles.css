@@ -497,15 +497,24 @@ footer b{color:var(--muted)}
 .pq-mark{flex:none;width:20px;height:20px;border:2px solid var(--dim);border-radius:50%;transition:.12s}
 .pq-opt input:checked~.pq-mark{border-color:var(--brand);background:radial-gradient(circle,var(--brand) 42%,transparent 46%)}
 .pq-txt{flex:1}
-.corrected .pq-opt{cursor:default}
+.pq.answered .pq-opt{cursor:default}
 .pq-opt.good{border-color:#16a34a;background:rgba(34,197,94,.12)}
 .pq-opt.good .pq-mark{border-color:#16a34a;background:#16a34a}
 .pq-opt.bad{border-color:var(--brand);background:rgba(210,35,37,.12)}
 .pq-opt.bad .pq-mark{border-color:var(--brand);background:var(--brand)}
-.pq-exp{display:none;margin-top:.55rem;font-size:.9rem;line-height:1.55;color:#cbd5e1;
-  background:var(--bg-2);border-left:3px solid var(--accent);border-radius:8px;padding:.55rem .7rem;gap:.5rem}
-.pq-exp.on{display:flex}
-.pq-exp .pq-ico{flex:none;color:var(--accent-l);margin-top:.15rem}
+/* bandeau de réponse immédiate */
+.pq-fb{display:none;align-items:center;gap:.45rem;margin-top:.6rem;font-weight:800;
+  font-family:var(--font-display);font-size:.85rem;letter-spacing:.02em;text-transform:uppercase}
+.pq-fb.on{display:flex}
+.pq-fb.ok{color:#4ade80}
+.pq-fb.no{color:var(--accent-l)}
+.pq-fb .pq-fi{display:inline-flex}
+/* explication = citation de la procédure (toujours affichée après réponse) */
+.pq-exp{display:none;margin-top:.5rem;font-size:.92rem;line-height:1.55;color:#dbe4f0;
+  background:var(--bg-2);border-left:3px solid var(--accent);border-radius:8px;padding:.6rem .75rem}
+.pq-exp.on{display:block}
+.pq-ref{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--accent-l);font-weight:800;margin-bottom:.3rem}
 .pq-actions{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
 .pq-score{font-weight:800;font-family:var(--font-display);letter-spacing:.02em}
 .pq-score.perfect,.pq-score.pass{color:#4ade80}

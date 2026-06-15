@@ -351,15 +351,14 @@
           '<div class="pq-opts">' + it.o.map(function (opt, j) {
             return '<label class="pq-opt"><input type="radio" name="pq_' + i + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(opt) + '</span></label>';
           }).join('') + '</div>' +
-          '<div class="pq-exp"></div></div>';
+          '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
       }).join('');
       h += '<div class="sec"><h2>Quiz — valider mes connaissances</h2>' +
         '<details class="pquiz" data-proc="' + esc(p.id) + '">' +
-          '<summary><span class="pqs-t">' + pqList.length + ' questions sur cette procédure</span>' +
+          '<summary><span class="pqs-t">' + pqList.length + ' questions · réponse corrigée immédiatement</span>' +
           '<span class="pqs-b">' + (best ? 'Meilleur : ' + best.s + '/' + best.n : 'Commencer') + '</span></summary>' +
           '<div class="pqbody">' + pqitems +
-            '<div class="pq-actions"><button type="button" class="btn pq-correct">Corriger</button>' +
-            '<button type="button" class="btn ghost pq-reset">Recommencer</button>' +
+            '<div class="pq-actions"><button type="button" class="btn ghost pq-reset">Recommencer</button>' +
             '<span class="pq-score" aria-live="polite"></span></div>' +
           '</div>' +
         '</details></div>';
@@ -389,43 +388,51 @@
     var list = (window.QUIZ_PROC && window.QUIZ_PROC[id]) || [];
     var box = document.querySelector('.pquiz[data-proc="' + id + '"]');
     if (!list.length || !box) return;
-    var correctBtn = box.querySelector('.pq-correct');
     var resetBtn = box.querySelector('.pq-reset');
     var scoreEl = box.querySelector('.pq-score');
+    var n = list.length;
 
-    correctBtn.onclick = function () {
-      var score = 0, unanswered = 0;
-      list.forEach(function (q, i) {
-        var card = box.querySelector('.pq[data-i="' + i + '"]');
-        var chosen = card.querySelector('input[name="pq_' + i + '"]:checked');
-        var opts = card.querySelectorAll('.pq-opt');
-        opts.forEach(function (o) { o.classList.remove('good', 'bad'); });
-        // marquer la bonne réponse
-        if (opts[q.a]) opts[q.a].classList.add('good');
-        if (!chosen) { unanswered++; }
-        else {
-          var pick = parseInt(chosen.value, 10);
-          if (pick === q.a) score++;
-          else if (opts[pick]) opts[pick].classList.add('bad');
-        }
-        var exp = card.querySelector('.pq-exp');
-        exp.innerHTML = '<span class="pq-ico">' + ICON.warn + '</span>' + esc(q.e);
-        exp.classList.add('on');
-      });
-      box.classList.add('corrected');
-      var n = list.length;
-      scoreEl.textContent = 'Score : ' + score + ' / ' + n + (unanswered ? ' (' + unanswered + ' sans réponse)' : '');
-      scoreEl.className = 'pq-score ' + (score === n ? 'perfect' : score >= Math.ceil(n * 0.8) ? 'pass' : 'fail');
-      pqSetBest(id, score, n);
-      var sb = box.querySelector('.pqs-b'); if (sb) sb.textContent = 'Meilleur : ' + Math.max(score, (pqGetBest(id) || { s: 0 }).s) + '/' + n;
-      var first = box.querySelector('.pq-exp.on'); if (first && first.scrollIntoView) first.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    };
+    function updateScore() {
+      var answered = box.querySelectorAll('.pq.answered').length;
+      var correct = box.querySelectorAll('.pq.correct').length;
+      if (!answered) { scoreEl.textContent = ''; scoreEl.className = 'pq-score'; return; }
+      scoreEl.textContent = correct + ' bonne' + (correct > 1 ? 's' : '') + ' / ' + answered + ' répondue' + (answered > 1 ? 's' : '') + ' (sur ' + n + ')';
+      if (answered === n) {
+        scoreEl.className = 'pq-score ' + (correct === n ? 'perfect' : correct >= Math.ceil(n * 0.8) ? 'pass' : 'fail');
+        pqSetBest(id, correct, n);
+        var sb = box.querySelector('.pqs-b'); if (sb) sb.textContent = 'Meilleur : ' + Math.max(correct, (pqGetBest(id) || { s: 0 }).s) + '/' + n;
+      } else { scoreEl.className = 'pq-score'; }
+    }
+
+    // rétroaction immédiate dès qu'une réponse est cochée
+    box.addEventListener('change', function (e) {
+      if (!e.target || e.target.type !== 'radio') return;
+      var card = e.target.closest('.pq');
+      if (!card || card.classList.contains('answered')) return;
+      var i = parseInt(card.getAttribute('data-i'), 10);
+      var q = list[i];
+      var pick = parseInt(e.target.value, 10);
+      var opts = card.querySelectorAll('.pq-opt');
+      var good = pick === q.a;
+      if (opts[q.a]) opts[q.a].classList.add('good');           // toujours montrer la bonne réponse
+      if (!good && opts[pick]) opts[pick].classList.add('bad');
+      [].forEach.call(card.querySelectorAll('input[type="radio"]'), function (r) { r.disabled = true; });
+      var fb = card.querySelector('.pq-fb');
+      fb.innerHTML = '<span class="pq-fi">' + (good ? ICON.check : ICON.close) + '</span>' + (good ? 'Bonne réponse' : 'Mauvaise réponse');
+      fb.className = 'pq-fb on ' + (good ? 'ok' : 'no');
+      var exp = card.querySelector('.pq-exp');                  // explication TOUJOURS (même si bonne), citée de la procédure
+      exp.innerHTML = '<span class="pq-ref">Référence à la procédure</span>' + esc(q.e);
+      exp.classList.add('on');
+      card.classList.add('answered', good ? 'correct' : 'incorrect');
+      updateScore();
+    });
 
     resetBtn.onclick = function () {
-      box.querySelectorAll('input[type="radio"]').forEach(function (r) { r.checked = false; });
-      box.querySelectorAll('.pq-opt').forEach(function (o) { o.classList.remove('good', 'bad'); });
-      box.querySelectorAll('.pq-exp').forEach(function (e) { e.classList.remove('on'); e.innerHTML = ''; });
-      box.classList.remove('corrected');
+      [].forEach.call(box.querySelectorAll('.pq'), function (c) { c.classList.remove('answered', 'correct', 'incorrect'); });
+      [].forEach.call(box.querySelectorAll('input[type="radio"]'), function (r) { r.checked = false; r.disabled = false; });
+      [].forEach.call(box.querySelectorAll('.pq-opt'), function (o) { o.classList.remove('good', 'bad'); });
+      [].forEach.call(box.querySelectorAll('.pq-fb'), function (f) { f.className = 'pq-fb'; f.innerHTML = ''; });
+      [].forEach.call(box.querySelectorAll('.pq-exp'), function (ex) { ex.classList.remove('on'); ex.innerHTML = ''; });
       scoreEl.textContent = ''; scoreEl.className = 'pq-score';
     };
   }
