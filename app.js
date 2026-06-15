@@ -342,6 +342,29 @@
         '<div class="checklist" data-proc="' + esc(p.id) + '">' + ckhead + ckitems + '</div>');
     }
 
+    // Quiz de la procédure (couvre l'information importante)
+    var pqList = (window.QUIZ_PROC && window.QUIZ_PROC[p.id]) || [];
+    if (pqList.length) {
+      var best = pqGetBest(p.id);
+      var pqitems = pqList.map(function (it, i) {
+        return '<div class="pq" data-i="' + i + '"><p class="pq-q"><b>' + (i + 1) + '.</b> ' + esc(it.q) + '</p>' +
+          '<div class="pq-opts">' + it.o.map(function (opt, j) {
+            return '<label class="pq-opt"><input type="radio" name="pq_' + i + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(opt) + '</span></label>';
+          }).join('') + '</div>' +
+          '<div class="pq-exp"></div></div>';
+      }).join('');
+      h += '<div class="sec"><h2>Quiz — valider mes connaissances</h2>' +
+        '<details class="pquiz" data-proc="' + esc(p.id) + '">' +
+          '<summary><span class="pqs-t">' + pqList.length + ' questions sur cette procédure</span>' +
+          '<span class="pqs-b">' + (best ? 'Meilleur : ' + best.s + '/' + best.n : 'Commencer') + '</span></summary>' +
+          '<div class="pqbody">' + pqitems +
+            '<div class="pq-actions"><button type="button" class="btn pq-correct">Corriger</button>' +
+            '<button type="button" class="btn ghost pq-reset">Recommencer</button>' +
+            '<span class="pq-score" aria-live="polite"></span></div>' +
+          '</div>' +
+        '</details></div>';
+    }
+
     if (p.historique && p.historique.length) {
       h += sec('Historique des révisions', '<table class="hist"><thead><tr><th>Date</th><th>Modification</th><th>Par</th></tr></thead><tbody>' +
         p.historique.map(function (r) { return '<tr><td>' + esc(r.date) + '</td><td>' + esc(r.description) + '</td><td>' + esc(r.par) + '</td></tr>'; }).join('') +
@@ -352,8 +375,60 @@
     view.innerHTML = h;
     initChecklistState();
     initGallery(figs);
+    initProcQuiz(p.id);
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
+
+  /* ---------- quiz intégré à la fiche de procédure ---------- */
+  function pqGetBest(id) { try { var v = JSON.parse(localStorage.getItem('pq_' + id)); return (v && typeof v.s === 'number') ? v : null; } catch (e) { return null; } }
+  function pqSetBest(id, s, n) {
+    var b = pqGetBest(id);
+    if (!b || s > b.s) { try { localStorage.setItem('pq_' + id, JSON.stringify({ s: s, n: n })); } catch (e) {} }
+  }
+  function initProcQuiz(id) {
+    var list = (window.QUIZ_PROC && window.QUIZ_PROC[id]) || [];
+    var box = document.querySelector('.pquiz[data-proc="' + id + '"]');
+    if (!list.length || !box) return;
+    var correctBtn = box.querySelector('.pq-correct');
+    var resetBtn = box.querySelector('.pq-reset');
+    var scoreEl = box.querySelector('.pq-score');
+
+    correctBtn.onclick = function () {
+      var score = 0, unanswered = 0;
+      list.forEach(function (q, i) {
+        var card = box.querySelector('.pq[data-i="' + i + '"]');
+        var chosen = card.querySelector('input[name="pq_' + i + '"]:checked');
+        var opts = card.querySelectorAll('.pq-opt');
+        opts.forEach(function (o) { o.classList.remove('good', 'bad'); });
+        // marquer la bonne réponse
+        if (opts[q.a]) opts[q.a].classList.add('good');
+        if (!chosen) { unanswered++; }
+        else {
+          var pick = parseInt(chosen.value, 10);
+          if (pick === q.a) score++;
+          else if (opts[pick]) opts[pick].classList.add('bad');
+        }
+        var exp = card.querySelector('.pq-exp');
+        exp.innerHTML = '<span class="pq-ico">' + ICON.warn + '</span>' + esc(q.e);
+        exp.classList.add('on');
+      });
+      box.classList.add('corrected');
+      var n = list.length;
+      scoreEl.textContent = 'Score : ' + score + ' / ' + n + (unanswered ? ' (' + unanswered + ' sans réponse)' : '');
+      scoreEl.className = 'pq-score ' + (score === n ? 'perfect' : score >= Math.ceil(n * 0.8) ? 'pass' : 'fail');
+      pqSetBest(id, score, n);
+      var sb = box.querySelector('.pqs-b'); if (sb) sb.textContent = 'Meilleur : ' + Math.max(score, (pqGetBest(id) || { s: 0 }).s) + '/' + n;
+      var first = box.querySelector('.pq-exp.on'); if (first && first.scrollIntoView) first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    };
+
+    resetBtn.onclick = function () {
+      box.querySelectorAll('input[type="radio"]').forEach(function (r) { r.checked = false; });
+      box.querySelectorAll('.pq-opt').forEach(function (o) { o.classList.remove('good', 'bad'); });
+      box.querySelectorAll('.pq-exp').forEach(function (e) { e.classList.remove('on'); e.innerHTML = ''; });
+      box.classList.remove('corrected');
+      scoreEl.textContent = ''; scoreEl.className = 'pq-score';
+    };
+  }
 
   /* ---------- galerie photos / schémas + visionneuse plein écran ---------- */
   function initGallery(figs) {

@@ -6,7 +6,7 @@
    - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
      à jour en arrière-plan. Les PDF sont mis en cache à la première
      consultation, donc consultables ensuite hors-ligne. */
-const VERSION = 'mri-proc-v27';
+const VERSION = 'mri-proc-v28';
 const CORE = [
   './',
   './index.html',
@@ -17,6 +17,7 @@ const CORE = [
   './formation.js',
   './essentiel.js',
   './figures.js',
+  './quiz_proc.js',
   './app.js',
   './manifest.webmanifest',
   './images/logo_roger.png',
@@ -48,7 +49,7 @@ self.addEventListener('fetch', (e) => {
   const isPDF = /\.pdf$/i.test(url.pathname);
   const netFirst = req.mode === 'navigate' ||
     url.pathname === '/' ||
-    /\/(index\.html|app\.js|styles\.css|data\.js|config\.js|quiz\.js|formation\.js|essentiel\.js|figures\.js)$/.test(url.pathname);
+    /\/(index\.html|app\.js|styles\.css|data\.js|config\.js|quiz\.js|formation\.js|essentiel\.js|figures\.js|quiz_proc\.js)$/.test(url.pathname);
 
   // Réseau d'abord (avec revalidation) pour l'app shell, les données ET les PDF :
   // un PDF déposé en nouvelle version s'affiche dès le rechargement quand on est
