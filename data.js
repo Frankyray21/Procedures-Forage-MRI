@@ -77,22 +77,6 @@ window.PROCEDURES = [
       {
         "libelle": "Nombre de travailleurs requis",
         "valeur": "2"
-      },
-      {
-        "libelle": "Boulons",
-        "valeur": "12 boulons 1/2 X 1'' 3/8 de long"
-      },
-      {
-        "libelle": "Locknuts / écrous",
-        "valeur": "12 locknut 1/2"
-      },
-      {
-        "libelle": "Lockwashers",
-        "valeur": "12 lockwashers 1/2"
-      },
-      {
-        "libelle": "Répartition des boulons",
-        "valeur": "6 dans un sens et 6 dans l'autre sens"
       }
     ],
     "figures": [
