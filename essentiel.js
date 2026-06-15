@@ -296,9 +296,9 @@ window.ESSENTIEL = {
       "valeur": "2"
     },
     {
-      "texte": "Come along unique",
-      "type": "valeur",
-      "valeur": "1"
+      "texte": "Un seul come along",
+      "type": "verification",
+      "valeur": ""
     },
     {
       "texte": "Retirer les 2 clés après",
