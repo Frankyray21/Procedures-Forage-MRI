@@ -25,19 +25,9 @@ window.ESSENTIEL = {
       "valeur": ""
     },
     {
-      "texte": "Compter les boulons",
+      "texte": "Compter boulons, locknuts, lockwashers",
       "type": "verification",
-      "valeur": "12"
-    },
-    {
-      "texte": "Vérifier les locknuts",
-      "type": "verification",
-      "valeur": "12"
-    },
-    {
-      "texte": "Contrôler les lockwashers",
-      "type": "verification",
-      "valeur": "12"
+      "valeur": "12 chacun"
     },
     {
       "texte": "Aucun pipe wrench ni wescot",
