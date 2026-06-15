@@ -6,7 +6,7 @@
    - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
      à jour en arrière-plan. Les PDF sont mis en cache à la première
      consultation, donc consultables ensuite hors-ligne. */
-const VERSION = 'mri-proc-v26';
+const VERSION = 'mri-proc-v27';
 const CORE = [
   './',
   './index.html',
@@ -45,19 +45,23 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
+  const isPDF = /\.pdf$/i.test(url.pathname);
   const netFirst = req.mode === 'navigate' ||
     url.pathname === '/' ||
     /\/(index\.html|app\.js|styles\.css|data\.js|config\.js|quiz\.js|formation\.js|essentiel\.js|figures\.js)$/.test(url.pathname);
 
-  if (netFirst) {
+  // Réseau d'abord (avec revalidation) pour l'app shell, les données ET les PDF :
+  // un PDF déposé en nouvelle version s'affiche dès le rechargement quand on est
+  // en ligne ; le cache sert de secours hors-ligne.
+  if (netFirst || isPDF) {
     e.respondWith(
-      fetch(req, { cache: 'reload' }).then((res) => {
+      fetch(req, { cache: isPDF ? 'no-cache' : 'reload' }).then((res) => {
         if (res && res.status === 200) {
           const copy = res.clone();
           caches.open(VERSION).then((c) => c.put(req, copy));
         }
         return res;
-      }).catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
+      }).catch(() => caches.match(req).then((r) => r || (isPDF ? undefined : caches.match('./index.html'))))
     );
     return;
   }
