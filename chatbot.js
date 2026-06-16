@@ -76,7 +76,7 @@
       (p.valeurs_cles || []).forEach(function (v) { add(v.libelle + ' : ' + v.valeur, 'Valeur', titre); });
       (p.avertissements || []).forEach(function (a) { add(a, 'Avertissement', titre); });
       if (p.resume) add(p.resume, 'Résumé', titre);
-      if (p.objectif) add(p.objectif, 'Objectif', titre);
+      // (Objectif retiré de l'index à la demande.)
     });
     // Texte INTÉGRAL des PDF (pdftext.js) — recherche dans le document complet.
     var PT = window.PDFTEXT || {};
