@@ -38,16 +38,26 @@
     'foreuse': ['foreuses', 'cubex', 'ith', 'v-30', 'v30'], 'taillant': ['taillants', 'bit', 'foret', 'forets']
   };
 
-  function tokens(s) {
+  // expand=false → mots-clés « cœur » (tels que tapés) ; expand=true → + synonymes
+  function tokens(s, expand) {
     var raw = norm(s).replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean);
     var out = [];
     raw.forEach(function (w) {
       if (w.length < 2 && !/[0-9]/.test(w)) return;
       if (STOPSET[w]) return;
       out.push(w);
-      if (SYN[w]) SYN[w].forEach(function (x) { out.push(x); });
+      if (expand && SYN[w]) SYN[w].forEach(function (x) { out.push(x); });
     });
     return out;
+  }
+  function uniq(arr) { var s = {}; return arr.filter(function (w) { return s[w] ? false : (s[w] = 1); }); }
+  function rxesc(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  // poids de correspondance d'un mot dans un texte normalisé.
+  // nombre → mot ENTIER obligatoire (« 6 » ne matche pas « 60 ») ; mot → entier=3, sous-chaîne=1.
+  function wmatch(w, hay) {
+    if (hay.indexOf(w) < 0) return 0;
+    if (/[0-9]/.test(w)) return new RegExp('(^|[^a-z0-9])' + rxesc(w) + '([^a-z0-9]|$)').test(hay) ? 4 : 0;
+    return new RegExp('(^|[^a-z0-9])' + rxesc(w)).test(hay) ? 3 : 1;
   }
 
   // ----- Construction de l'index à partir des procédures -----
@@ -56,10 +66,11 @@
     var DATA = window.PROCEDURES || [];
     DATA.forEach(function (p) {
       var titre = p.titre || '';
+      var meta = norm(titre + ' ' + (p.machines || []).join(' '));
       function add(text, kind, source) {
         if (!text) return;
         INDEX.push({ text: text, kind: kind, source: source || '', pid: p.id, ptitre: titre,
-          hay: norm(text + ' ' + titre + ' ' + (p.machines || []).join(' ')) });
+          txt: norm(text), meta: meta });
       }
       (p.consignes_securite || []).forEach(function (c) { add(c.regle, 'Consigne', c.source || c.theme); });
       (p.valeurs_cles || []).forEach(function (v) { add(v.libelle + ' : ' + v.valeur, 'Valeur', titre); });
@@ -70,25 +81,31 @@
   }
 
   function search(query) {
-    var qt = tokens(query);
+    var qt = uniq(tokens(query, true));
+    var core = uniq(tokens(query, false));
     if (!qt.length) return [];
-    var uniq = {}; qt = qt.filter(function (w) { return uniq[w] ? false : (uniq[w] = 1); });
     var scored = [];
     INDEX.forEach(function (item) {
       var score = 0, hits = 0;
       qt.forEach(function (w) {
-        if (item.hay.indexOf(w) >= 0) {
-          hits++;
-          // mot entier = poids fort ; sous-chaîne = poids faible
-          score += new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(item.hay) ? 3 : 1;
-          if (/[0-9]/.test(w)) score += 1; // les chiffres sont discriminants
-        }
+        var inTxt = wmatch(w, item.txt);
+        if (inTxt) { score += inTxt; hits++; return; }        // match dans la réponse = poids plein
+        var inMeta = wmatch(w, item.meta);
+        if (inMeta) { score += inMeta * 0.4; hits++; }        // match seulement dans le titre = faible
       });
-      if (hits) {
-        score += hits / qt.length * 4;       // bonus de couverture
-        if (item.kind === 'Valeur') score += 0.5;
-        scored.push({ item: item, score: score, hits: hits });
+      if (!hits) return;
+      score += hits / qt.length * 4;                          // couverture globale
+      // bonus : tous les mots-clés « cœur » présents dans la réponse elle-même
+      var coreInTxt = core.filter(function (w) { return wmatch(w, item.txt) > 0; }).length;
+      if (core.length >= 2 && coreInTxt === core.length) score += 7;
+      else if (core.length >= 2) score += coreInTxt / core.length * 3;
+      // bonus de phrase : deux mots-clés voisins proches dans la réponse
+      for (var j = 0; j + 1 < core.length; j++) {
+        var a = item.txt.indexOf(core[j]), b = item.txt.indexOf(core[j + 1]);
+        if (a >= 0 && b >= 0 && Math.abs(a - b) <= 28) score += 2;
       }
+      if (item.kind === 'Valeur') score += 0.6;
+      scored.push({ item: item, score: score, hits: hits, core: coreInTxt });
     });
     scored.sort(function (a, b) { return b.score - a.score; });
     // garde les meilleurs, en évitant les doublons de texte
