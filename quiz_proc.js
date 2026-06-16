@@ -654,3 +654,121 @@ window.QUIZ_PROC = {
     Q[id] = (Q[id] || []).concat(HARD[id]);
   });
 })();
+
+/* ===========================================================================
+   QUESTIONS DIFFICILES — 2e série (couverture étendue des procédures riches).
+   Mêmes règles : citation fidèle de la procédure, champ "d":"difficile".
+   =========================================================================== */
+(function () {
+  var HARD2 = {
+    "pro-mec-011": [
+      { "q": "Au retrait de la pompe, comment la retenir et pourquoi ?", "d": "difficile",
+        "o": ["Par en-dessous, à deux mains", "Avec les mains sur les boyaux, car elle n'est plus tenue que par les boyaux et la sangle", "Avec un palan seulement", "On la laisse tomber"], "a": 1,
+        "e": "« Lors du retrait de la pompe, la retenir avec les mains sur les boyaux car elle n'est plus tenue que par les boyaux hydrauliques et la sangle. »" },
+      { "q": "Avant de serrer au maximum la barrure, de quoi faut-il s'assurer ?", "d": "difficile",
+        "o": ["Que le moteur tourne", "Que la coupling est « FLUSH » au shaft", "Que la pompe est froide", "Rien"], "a": 1,
+        "e": "« S'assurer que la coupling est « FLUSH » au shaft avant de serrer au maximum la barrure. »" }
+    ],
+    "pro-op-ith-002": [
+      { "q": "Quel type de crochets le tire-fort doit-il obligatoirement avoir ?", "d": "difficile",
+        "o": ["Des crochets ouverts", "Des crochets munis de linguet", "Des crochets soudés", "Peu importe"], "a": 1,
+        "e": "« N'utiliser qu'un tire-fort dont les crochets sont munis de linguet. »" },
+      { "q": "Où placer le gearbox pour avoir l'espace d'installer la clé à saver sub ?", "d": "difficile",
+        "o": ["Le plus près possible des tables", "Le plus loin possible des tables", "Au centre du mât", "Peu importe"], "a": 1,
+        "e": "« Placer le gearbox le plus loin possible des tables pour disposer de l'espace nécessaire à l'installation de la clé. »" }
+    ],
+    "pro-op-ith-002a": [
+      { "q": "Quelle exigence pour les crochets du palan à levier (come along) ?", "d": "difficile",
+        "o": ["Aucune", "Être munis de linguets de sécurité", "Être peints en rouge", "Être doublés"], "a": 1,
+        "e": "« S'assurer que les crochets du palan à levier (come along) sont munis de linguets de sécurité. »" }
+    ],
+    "pro-op-ith-003": [
+      { "q": "Avant de débrancher le câble électrique de la foreuse, que faut-il fermer ?", "d": "difficile",
+        "o": ["Rien", "L'interrupteur d'alimentation de la mine (GFP), puis rouler et attacher le câble", "Seulement l'eau", "La valve d'air"], "a": 1,
+        "e": "« Avant de débrancher le câble électrique de la foreuse, fermer l'interrupteur d'alimentation de la mine (GFP), puis rouler et bien attacher le câble sur le crochet prévu. »" },
+      { "q": "Pour relier le traîneau/remorque au véhicule, quel matériel minimum ?", "d": "difficile",
+        "o": ["Une corde", "Deux élingues d'au moins 1'' X 8 pieds, manilles de 1''1/4 minimum", "Une seule manille 3/4", "Une chaîne quelconque"], "a": 1,
+        "e": "« Relier le traîneau ou la remorque au véhicule avec deux élingues d'au moins 1'' X 8 pieds, fixées avec des manilles de 1''1/4 minimum. »" },
+      { "q": "Lors de l'embarquement de la foreuse, où doit se tenir l'opérateur ?", "d": "difficile",
+        "o": ["À côté de la remorque", "À l'intérieur du panier, avec la chaîne garde-corps en place", "Au sol pour guider", "Dans le véhicule"], "a": 1,
+        "e": "« Lors de l'embarquement de la foreuse, l'opérateur doit toujours se placer à l'intérieur du panier et mettre la chaîne garde-corps. »" }
+    ],
+    "pro-op-ith-004": [
+      { "q": "Comment protéger les boyaux du câble électrique et des écrasements ?", "d": "difficile",
+        "o": ["Les laisser au sol", "Les suspendre sous le câble électrique ; sinon les surélever (bidons/trépieds) et les rendre visibles", "Les enterrer", "Les couper court"], "a": 1,
+        "e": "« Suspendre tous les boyaux sous le câble électrique ; à défaut, les étendre, les surélever avec bidons ou trépieds en bois et les rendre visibles pour éviter contact et écrasement. »" },
+      { "q": "À quel endroit installe-t-on un dispositif de retenue (whip check) ?", "d": "difficile",
+        "o": ["À une extrémité seulement", "À chaque joint des boyaux d'air", "Au compresseur uniquement", "Nulle part"], "a": 1,
+        "e": "« Souffler les boyaux à air avant connexion et installer les dispositifs de retenue (whip check) à chaque joint... »" },
+      { "q": "Quelle distance minimale garder entre la foreuse et le surcompresseur ?", "d": "difficile",
+        "o": ["1,5 m", "3 m", "7 mètres", "15 m"], "a": 2,
+        "e": "« Respecter une distance de 7 mètres entre la foreuse et le surcompresseur. »" }
+    ],
+    "pro-op-ith-005": [
+      { "q": "À quel moment doit-on installer le couvert sur la monterie (V-30 en descendant) ?", "d": "difficile",
+        "o": ["Seulement à la fin", "En tout temps lors du forage", "Jamais", "Une fois par quart"], "a": 1,
+        "e": "« Installer obligatoirement le couvert (M.R.I. ou client) sur la monterie en tout temps lors du forage de V-30 en descendant. »" },
+      { "q": "Durant la récupération d'une tige brisée, d'où opère-t-on la foreuse ?", "d": "difficile",
+        "o": ["Directement à la console", "Avec les contrôles à distance, placés dans un endroit sécuritaire éloigné de la foreuse", "Du niveau inférieur", "On ne touche à rien"], "a": 1,
+        "e": "« Utiliser les contrôles à distance placés dans un endroit sécuritaire éloigné de la foreuse pour toute opération durant la récupération d'une tige brisée. »" },
+      { "q": "Quel est le diamètre du trou final (la monterie) ?", "d": "difficile",
+        "o": ["6½ pouces", "10 pouces", "30 pouces", "40 pouces"], "a": 2,
+        "e": "« Diamètre du trou final (monterie) : 30 pouces. »" }
+    ],
+    "pro-op-ith-006": [
+      { "q": "Lors du raccordement de la tête, quel moyen de communication est exigé ?", "d": "difficile",
+        "o": ["Aucun", "Une radio ou un système femco fonctionnel aux niveaux supérieur et inférieur", "Des signaux à la main seulement", "Un sifflet"], "a": 1,
+        "e": "« Disposer d'un moyen de communication (radio ou système femco) fonctionnel aux niveaux supérieur et inférieur lors du raccordement de la tête. »" },
+      { "q": "Pourquoi ne jamais interchanger les boyaux basse et haute pression ?", "d": "difficile",
+        "o": ["Question de couleur", "Les « stem nuts » des boyaux de 2½ po empêchent justement cet échange (sécurité)", "Pour aller plus vite", "Aucune raison"], "a": 1,
+        "e": "« Ne jamais interchanger les boyaux basse et haute pression; les « stem nuts » des boyaux de 2½ po. dia. empêchent cet échange. »" }
+    ],
+    "pro-op-ith-007": [
+      { "q": "À quelle distance du point de forage positionner la commande de forage ?", "d": "difficile",
+        "o": ["1,5 m", "3 m", "5 mètres", "7 m"], "a": 2,
+        "e": "« Positionner la commande de forage à 5 mètres du point de forage pour être à l'abri des projections de roche. »" },
+      { "q": "À quoi sert la cage de protection à grillage, et quelle précaution avant de s'exposer dessous ?", "d": "difficile",
+        "o": ["Décorative", "Canaliser les débris loin de l'opérateur ; nettoyer déflecteurs et grillages avant de s'exposer", "Retenir l'eau", "Aucune"], "a": 1,
+        "e": "« Installer la cage de protection à grillage à mailles soudées pour canaliser les débris loin de l'opérateur; nettoyer déflecteurs et grillages avant de s'exposer en dessous. »" },
+      { "q": "Après un bris de tige, que fait-on de la tige brisée ?", "d": "difficile",
+        "o": ["On la jette", "On l'étiquette et on la retourne au fournisseur, et on remplit un rapport d'incident", "On la répare", "On la réutilise"], "a": 1,
+        "e": "« Après un bris de tige, retirer et vérifier toutes les autres tiges; étiqueter et retourner la tige brisée au fournisseur; remplir un rapport d'incident. »" }
+    ],
+    "pro-op-ith-008": [
+      { "q": "Quelle est la toute première étape avant de récupérer le taillant brisé ?", "d": "difficile",
+        "o": ["Descendre voir", "Sortir la V-30 de la monterie en enlevant les tiges de forage", "Appeler le fournisseur", "Remettre de l'eau"], "a": 1,
+        "e": "« Sortir la V-30 de la monterie en enlevant les tiges de forage avant d'entreprendre la récupération du taillant brisé. »" },
+      { "q": "Le taillant brisé reste au fond et le niveau inférieur est inaccessible. Que faites-vous ?", "d": "difficile",
+        "o": ["On force la récupération", "On avertit le superviseur de la mine", "On bouche le trou", "On continue le forage ailleurs sans rien dire"], "a": 1,
+        "e": "« Avertir le superviseur de la mine lorsqu'un taillant brisé demeure présent et que l'accès au niveau inférieur n'est pas possible pour le récupérer. »" }
+    ],
+    "pro-op-ith-012": [
+      { "q": "Quel article du Règlement encadre le forage à distance ?", "d": "difficile",
+        "o": ["L'article 12", "L'article 440 du Règlement sur la Santé et la Sécurité du travail dans les Mines", "L'article 100", "Aucun"], "a": 1,
+        "e": "« Article 440 du Règlement sur la Santé et la Sécurité du travail dans les Mines. »" },
+      { "q": "Où le foreur et l'aide-foreur doivent-ils se positionner pendant le forage à distance ?", "d": "difficile",
+        "o": ["Près du trou", "Vers la sortie, accès dégagé, jamais dans la ligne de sautage", "Au-dessus du trou", "Peu importe"], "a": 1,
+        "e": "« Le foreur et l'aide-foreur doivent se positionner vers la sortie en s'assurant que rien ne bloque l'accès. » et « Ne jamais se tenir dans la ligne de sautage. »" }
+    ],
+    "pro-op-ith-014": [
+      { "q": "À quoi sert le tubage (casing) installé au collet des trous ?", "d": "difficile",
+        "o": ["À décorer", "À protéger le collet contre la chute de roches qui bloquerait le trou ou nuirait au chargement d'explosifs", "À mesurer la profondeur", "À retenir l'eau"], "a": 1,
+        "e": "« Installer le tubage au collet des trous pour protéger le collet contre la chute de roches qui pourrait bloquer le trou et nuire au forage ou au chargement d'explosifs. »" },
+      { "q": "Comment visse-t-on le marteau au saver sub à cette étape ?", "d": "difficile",
+        "o": ["Au complet, sans le serrer avec force", "Le plus fort possible", "À moitié", "Avec une clé à choc"], "a": 0,
+        "e": "« Visser le marteau au saver sub au complet sans le serrer avec force. »" }
+    ],
+    "pro-op-ith-016": [
+      { "q": "Pourquoi faut-il respecter rigoureusement la séquence de travail établie ?", "d": "difficile",
+        "o": ["Pour aller plus vite", "Pour éviter l'exposition à la chute d'un marteau et le développement de TMS", "Pour le client", "Aucune raison"], "a": 1,
+        "e": "« Respecter la séquence de travail établie pour éviter l'exposition des travailleurs à la chute d'un marteau et au développement de TMS. »" },
+      { "q": "Avant de sortir le chariot, que doit-on faire du marteau ?", "d": "difficile",
+        "o": ["Rien", "L'attacher à l'aide de la chaîne de retenue", "Le coucher au sol", "Le dévisser"], "a": 1,
+        "e": "« Attacher le marteau à l'aide de la chaîne de retenu avant de sortir le chariot. »" }
+    ]
+  };
+  var Q = window.QUIZ_PROC || (window.QUIZ_PROC = {});
+  Object.keys(HARD2).forEach(function (id) {
+    Q[id] = (Q[id] || []).concat(HARD2[id]);
+  });
+})();
