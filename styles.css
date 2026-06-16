@@ -529,3 +529,43 @@ footer b{color:var(--muted)}
 .pq-score{font-weight:800;font-family:var(--font-display);letter-spacing:.02em}
 .pq-score.perfect,.pq-score.pass{color:#4ade80}
 .pq-score.fail{color:var(--accent-l)}
+
+/* ===== Assistant procédures (chatbot hors-ligne) ===== */
+.cbbtn{position:fixed;right:18px;bottom:18px;z-index:1100;width:56px;height:56px;border-radius:50%;
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;
+  background:linear-gradient(160deg,var(--brand),#9e1b1d);box-shadow:0 8px 22px rgba(210,35,37,.45);transition:.18s}
+.cbbtn:hover{transform:translateY(-2px) scale(1.04)}
+.cbbtn.hide{display:none}
+.cbpanel{position:fixed;right:18px;bottom:18px;z-index:1101;width:min(380px,calc(100vw - 24px));
+  height:min(560px,calc(100vh - 90px));display:none;flex-direction:column;overflow:hidden;
+  background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.cbpanel.on{display:flex}
+.cbhead{display:flex;align-items:center;gap:.5rem;padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:linear-gradient(160deg,rgba(210,35,37,.16),rgba(17,24,39,.4))}
+.cbhead b{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:.95rem}
+.cboff{font-size:.64rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--success);
+  background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.35);padding:.08rem .45rem;border-radius:50px}
+.cbx{margin-left:auto;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
+  border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px}
+.cbx:hover{color:#fff;background:rgba(255,255,255,.08)}
+.cbbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:.9rem;display:flex;flex-direction:column;gap:.7rem}
+.cbmsg{max-width:92%;font-size:.9rem;line-height:1.5}
+.cbmsg p{margin:0 0 .4rem}
+.cbmsg.user{align-self:flex-end;background:var(--brand);color:#fff;padding:.5rem .8rem;border-radius:14px 14px 4px 14px}
+.cbmsg.bot{align-self:flex-start;background:var(--bg-2);border:1px solid var(--border);padding:.6rem .8rem;border-radius:14px 14px 14px 4px}
+.cbans{display:flex;gap:.5rem;margin:.45rem 0;padding:.5rem .6rem;background:var(--card-2);border:1px solid var(--border);border-radius:10px}
+.cbk{flex:none;font-size:.6rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-l);
+  background:rgba(210,35,37,.12);border:1px solid rgba(210,35,37,.3);border-radius:6px;padding:.1rem .4rem;height:fit-content}
+.cbtxt{flex:1;font-size:.86rem;line-height:1.45}
+.cbsrc{display:block;margin-top:.3rem;font-size:.76rem;font-weight:700;color:var(--accent-l)}
+.cbnote{margin-top:.5rem!important;font-size:.74rem;color:var(--dim)}
+.cbsugg{display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem}
+.cbchip{text-align:left;font-size:.82rem;color:var(--text);background:var(--card-2);border:1px solid var(--border);
+  border-radius:9px;padding:.4rem .6rem;cursor:pointer;transition:.15s}
+.cbchip:hover{border-color:var(--brand);color:#fff}
+.cbform{display:flex;gap:.5rem;padding:.7rem;border-top:1px solid var(--border);background:var(--card)}
+.cbform input{flex:1;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;color:var(--text);
+  padding:.55rem .7rem;font-size:.9rem;font-family:inherit}
+.cbform input:focus{outline:none;border-color:var(--brand)}
+.cbform button{flex:none;width:42px;border:none;border-radius:10px;background:var(--brand);color:#fff;font-size:1rem;cursor:pointer}
+@media print{.cbbtn,.cbpanel{display:none!important}}
