@@ -329,10 +329,10 @@
         '<button class="ckreset" type="button">Réinitialiser</button></div>';
       var ckitems = ckData.map(function (c, i) {
         var ico = TYPE_ICON[c.type] || ICON.check;
-        var val = c.valeur ? '<b class="ckval">' + esc(c.valeur) + '</b> ' : '';
+        var val = c.valeur ? ' <b class="ckval">' + esc(c.valeur) + '</b>' : '';
         return '<label class="ck' + (c.type ? ' ck-' + c.type : '') + '"><input type="checkbox" data-i="' + i + '">' +
           '<span class="cktype">' + ico + '</span>' +
-          '<span class="rt">' + val + esc(c.regle) +
+          '<span class="rt">' + esc(c.regle) + val +
           (c.source ? '<span class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</span>' : '') + '</span>' +
           '<span class="ckbox">' + ICON.check + '</span></label>';
       }).join('');

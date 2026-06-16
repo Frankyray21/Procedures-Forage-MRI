@@ -264,7 +264,9 @@ footer b{color:var(--muted)}
 .ck-epi .cktype{background:rgba(59,130,246,.16);color:#3b82f6}
 .ck-valeur .cktype{background:rgba(139,92,246,.16);color:#8b5cf6}
 .ck .rt{flex:1;font-size:1.02rem;font-weight:700;line-height:1.3;transition:color .15s}
-.ck .ckval{color:var(--accent-l);font-size:1.05rem;margin-right:.15rem}
+.ck .ckval{display:inline-block;color:var(--accent-l);font-size:.85rem;font-weight:800;
+  font-family:var(--font-display);letter-spacing:.01em;background:rgba(210,35,37,.1);
+  border:1px solid rgba(210,35,37,.22);border-radius:6px;padding:.04rem .42rem;margin-left:.2rem;white-space:nowrap}
 .ck input:checked ~ .rt{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(154,167,189,.45)}
 .ck .rsrc{display:block;font-size:.74rem;color:var(--dim);font-weight:700;margin-top:.2rem;text-decoration:none}
 .ckbox{flex:none;margin-left:auto;width:26px;height:26px;border-radius:7px;border:2px solid var(--dim);display:flex;
