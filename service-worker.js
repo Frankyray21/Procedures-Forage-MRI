@@ -10,7 +10,7 @@
      de cliquer sur « Tout télécharger »). Les listes sont construites à
      partir de data.js (PDF) et figures.js (images) pour rester synchronisées
      avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
-const VERSION = 'mri-proc-v36';
+const VERSION = 'mri-proc-v37';
 const CORE = [
   './',
   './index.html',
@@ -21,6 +21,7 @@ const CORE = [
   './formation.js',
   './essentiel.js',
   './figures.js',
+  './pages.js',
   './quiz_proc.js',
   './app.js',
   './manifest.webmanifest',
@@ -39,7 +40,7 @@ const CORE = [
 function mediaAssets() {
   try {
     self.window = self;
-    importScripts('./data.js', './figures.js');
+    importScripts('./data.js', './figures.js', './pages.js');
     const list = (self.PROCEDURES || []).map(
       (p) => './pdf/' + encodeURIComponent(p.id) + '.pdf'
     );
@@ -47,6 +48,10 @@ function mediaAssets() {
     const figs = self.FIGURES || {};
     Object.keys(figs).forEach((id) => {
       (figs[id] || []).forEach((f) => { if (f && f.src) list.push('./' + f.src); });
+    });
+    const pages = self.PAGES || {};
+    Object.keys(pages).forEach((key) => {
+      (pages[key] || []).forEach((src) => { if (src) list.push('./' + src); });
     });
     return list;
   } catch (err) {

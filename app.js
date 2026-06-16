@@ -176,6 +176,11 @@
         (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) u.push(f.src); });
       });
     }
+    if (window.PAGES) {
+      Object.keys(window.PAGES).forEach(function (key) {
+        (window.PAGES[key] || []).forEach(function (src) { if (src) u.push(src); });
+      });
+    }
     return u;
   }
   function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
@@ -189,6 +194,11 @@
     if (window.FIGURES) {
       Object.keys(window.FIGURES).forEach(function (id) {
         (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) pdfs.push(f.src); });
+      });
+    }
+    if (window.PAGES) {
+      Object.keys(window.PAGES).forEach(function (key) {
+        (window.PAGES[key] || []).forEach(function (src) { if (src) pdfs.push(src); });
       });
     }
     Promise.all(pdfs.map(function (u) { return caches.match(u).then(function (r) { return !!r; }); }))
@@ -305,16 +315,26 @@
         '<div class="pdfcue"><span class="offic">' + ICON.doc + '</span><div class="cuetxt"><b>PDF non inclus dans cette démonstration publique</b>' +
         '<span>Les documents officiels (PDF) sont réservés à la version interne de Machines Roger International.</span></div></div></div>';
     } else {
-      var pdf = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
-      var pdfInner = '<div class="pdfbox">' +
-        '<div class="bar">' + ICON.doc + '<b>' + esc(p.code || p.titre) + '</b><span class="sp"></span>' +
-          '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
-          '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
-        '<iframe src="' + pdf + '#view=FitH" title="PDF de la procédure" loading="lazy"></iframe></div>';
+      // Visionneuse in-page : pages du PDF rendues en images (fiable sur
+      // mobile et hors-ligne, contrairement aux <iframe> de PDF). Repli sur
+      // une <iframe> si les images de pages ne sont pas disponibles.
+      var pdfBox = function (key, label) {
+        var pdf = 'pdf/' + encodeURIComponent(key) + '.pdf';
+        var pages = (window.PAGES && window.PAGES[key]) || [];
+        var body = pages.length
+          ? '<div class="pdfpages">' + pages.map(function (src, i) {
+              return '<img src="' + esc(src) + '" alt="' + esc(label) + ' — page ' + (i + 1) + '" loading="lazy">';
+            }).join('') + '</div>'
+          : '<iframe src="' + pdf + '#view=FitH" title="' + esc(label) + '" loading="lazy"></iframe>';
+        return '<div class="pdfbox">' +
+          '<div class="bar">' + ICON.doc + '<b>' + esc(label) + '</b><span class="sp"></span>' +
+            '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
+            '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
+          body + '</div>';
+      };
+      var pdfInner = pdfBox(p.id, p.code || p.titre);
       if (p.id === 'centralisateur') {
-        pdfInner += '<div class="pdfbox" style="margin-top:1rem"><div class="bar">' + ICON.doc + '<b>Dessin technique du centralisateur</b><span class="sp"></span>' +
-          '<a class="dl" href="pdf/centralisateur-dessin.pdf" target="_blank" rel="noopener">Ouvrir</a></div>' +
-          '<iframe src="pdf/centralisateur-dessin.pdf#view=FitH" title="Dessin technique" loading="lazy"></iframe></div>';
+        pdfInner += '<div style="margin-top:1rem">' + pdfBox('centralisateur-dessin', 'Dessin technique du centralisateur') + '</div>';
       }
       h += '<div class="sec"><h2>Document officiel (PDF)</h2>' + pdfInner + '</div>';
     }
