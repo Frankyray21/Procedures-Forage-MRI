@@ -1,12 +1,16 @@
-/* Service worker — cache hors-ligne (app shell + données + PDF consultés).
+/* Service worker — cache hors-ligne (app shell + données + PDF).
    Stratégie :
    - data.js / config.js / pages : RÉSEAU D'ABORD (toujours frais en ligne,
      cache en secours hors-ligne) → les modifications de contenu s'affichent
      immédiatement après rechargement.
    - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
-     à jour en arrière-plan. Les PDF sont mis en cache à la première
-     consultation, donc consultables ensuite hors-ligne. */
-const VERSION = 'mri-proc-v34';
+     à jour en arrière-plan.
+   - PDF, FIGURES et documents : désormais PRÉ-TÉLÉCHARGÉS automatiquement
+     dès l'installation (plus besoin d'attendre une première consultation ni
+     de cliquer sur « Tout télécharger »). Les listes sont construites à
+     partir de data.js (PDF) et figures.js (images) pour rester synchronisées
+     avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
+const VERSION = 'mri-proc-v36';
 const CORE = [
   './',
   './index.html',
@@ -22,13 +26,41 @@ const CORE = [
   './manifest.webmanifest',
   './images/logo_roger.png',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './icons/icon-maskable-512.png'
 ];
+
+/* Ressources média à pré-télécharger (PDF + figures), dérivées du contenu.
+   data.js fait `window.PROCEDURES = [...]` et figures.js `window.FIGURES = {}`
+   : on fournit un shim `window` (inexistant dans un service worker) puis on
+   importe les fichiers. En cas d'échec (hors-ligne au moment de
+   l'installation), on retombe sur une liste vide — les ressources restent
+   alors mises en cache à la première consultation. */
+function mediaAssets() {
+  try {
+    self.window = self;
+    importScripts('./data.js', './figures.js');
+    const list = (self.PROCEDURES || []).map(
+      (p) => './pdf/' + encodeURIComponent(p.id) + '.pdf'
+    );
+    list.push('./pdf/centralisateur-dessin.pdf');
+    const figs = self.FIGURES || {};
+    Object.keys(figs).forEach((id) => {
+      (figs[id] || []).forEach((f) => { if (f && f.src) list.push('./' + f.src); });
+    });
+    return list;
+  } catch (err) {
+    return [];
+  }
+}
+const MEDIA = mediaAssets();
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
-    caches.open(VERSION).then((c) => Promise.all(CORE.map((u) => c.add(u).catch(() => null))))
+    caches.open(VERSION).then((c) =>
+      Promise.all(CORE.concat(MEDIA).map((u) => c.add(u).catch(() => null)))
+    )
   );
 });
 
