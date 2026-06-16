@@ -495,3 +495,162 @@ window.QUIZ_PROC = {
       "e": "« Maintenir une bonne communication entre le foreur et l'aide-foreur durant toute la manipulation. »" }
   ]
 };
+
+/* ===========================================================================
+   QUESTIONS DIFFICILES — exigent d'avoir lu et compris la procédure
+   (scénarios, conditions, exceptions, « que faire si... »). Chaque réponse
+   reste une CITATION fidèle de la procédure officielle. Champ "d":"difficile"
+   → affiche un badge « Difficile ». Ce bloc s'ajoute aux questions existantes
+   sans les modifier.
+   =========================================================================== */
+(function () {
+  var HARD = {
+    "centralisateur": [
+      { "q": "Sur le chantier, un collègue veut poser les centralisateurs « pile à tous les 40 pieds » sans rien regarder d'autre. A-t-il raison ?", "d": "difficile",
+        "o": ["Oui, c'est une règle fixe de 40 pieds", "Non : tous les 40 pieds OU selon les conditions de terrain, la longueur et l'angle de la monterie", "Toujours tous les 20 pieds", "Seulement à la base"], "a": 1,
+        "e": "« Les centralisateurs de tiges sont normalement installés tous les 40 pieds ou selon les besoins en fonction des conditions de terrain dans la monterie ainsi que de la longueur et l'angle de la monterie forée. »" },
+      { "q": "Il n'y a aucune séquence imposée pour serrer les boulons. Pendant le serrage, que devez-vous tout de même maintenir, et avec quel outil ?", "d": "difficile",
+        "o": ["Rien de particulier", "Une tension sur les lockwashers, avec une clé ou un box", "Une tension sur les boyaux, avec un wescot", "Le mât à l'horizontale"], "a": 1,
+        "e": "« Serrer tous les boulons en maintenant une tension sur les lockwashers à l'aide de l'outil adéquat (clé ou box). »" },
+      { "q": "Avant de soulever une pièce du centralisateur, quelles DEUX exigences la procédure impose-t-elle ensemble ?", "d": "difficile",
+        "o": ["Travailler seul mais rapidement", "Être deux travailleurs ET se positionner correctement avant de manipuler (46 livres/pièce)", "Porter un harnais antichute", "Utiliser un pipe wrench"], "a": 1,
+        "e": "« Toujours installer le centralisateur à deux travailleurs. » et « Se positionner [...] avant de manipuler les pièces du centralisateur, qui pèsent 46 livres chacune. »" }
+    ],
+    "pro-mec-011": [
+      { "q": "Pourquoi la procédure exige-t-elle de remettre le couvercle de plastique à la toute fin ?", "d": "difficile",
+        "o": ["Pour l'esthétique", "Parce qu'un début d'incendie a été causé par la surchauffe du bell housing et du couvercle", "Pour garder la poussière dehors", "Ce n'est pas obligatoire"], "a": 1,
+        "e": "« Remettre le couvercle de plastique à la fin pour rétablir la protection (mesure issue d'un début d'incendie causé par surchauffe du bell housing et du couvercle). »" },
+      { "q": "Le bell housing est en aluminium. Comment le décoller sans l'endommager ?", "d": "difficile",
+        "o": ["Avec une masse d'acier", "Uniquement avec une masse de caoutchouc", "Avec un chalumeau", "Avec un pipe wrench"], "a": 1,
+        "e": "« Le bell housing étant en aluminium, utiliser uniquement une masse de caoutchouc pour le décoller, afin de ne pas l'endommager. »" },
+      { "q": "La coupling est collée et refuse de sortir. Quelle est la marche à suivre de la procédure ?", "d": "difficile",
+        "o": ["Forcer avec la pompe", "Retirer le bell housing, puis frapper sur la pry bar sans endommager le shaft du moteur électrique", "Chauffer le shaft au chalumeau", "Laisser tomber la réparation"], "a": 1,
+        "e": "« Si la coupling est collée, retirer le bell housing puis frapper sur la pry bar avec une masse ou un marteau, en prenant garde de ne pas endommager le shaft du moteur électrique. »" }
+    ],
+    "pro-op-ith-002": [
+      { "q": "L'opération de dévissage est terminée. Quand seulement peut-on retirer les clés et décadenasser l'équipement ?", "d": "difficile",
+        "o": ["Avant de commencer", "Uniquement une fois l'opération terminée, avant de poursuivre les travaux", "À mi-chemin", "Jamais"], "a": 1,
+        "e": "« Retirer les clés et décadenasser l'équipement uniquement une fois l'opération terminée, avant de poursuivre les travaux. »" },
+      { "q": "En mettant le tire-fort en tension sur l'ancrage du mât, quelle limite ne devez-vous jamais dépasser ?", "d": "difficile",
+        "o": ["1000 kg", "La charge certifiée de l'ancrage du mât : 2500 kg", "5000 kg", "Aucune limite"], "a": 1,
+        "e": "« Ne pas dépasser la charge certifiée de l'ancrage du mât (2500 kg) lors de la mise en tension avec le tire-fort. »" },
+      { "q": "Pour installer la clé à saver sub sans qu'elle tombe, dans quelle position mettez-vous le mât ?", "d": "difficile",
+        "o": ["Vertical", "À l'horizontale", "À 60 degrés", "Peu importe"], "a": 1,
+        "e": "« Positionner le mât à l'horizontale avant d'installer la clé à saver sub afin d'éviter qu'elle tombe. »" }
+    ],
+    "pro-op-ith-002a": [
+      { "q": "Avec le palan à levier (come along), quel ancrage devez-vous utiliser ?", "d": "difficile",
+        "o": ["Un ancrage de 1500 kg", "Uniquement un ancrage certifié pour 2500 kg", "N'importe quel boulon à œil", "Aucun ancrage"], "a": 1,
+        "e": "« Utiliser uniquement un ancrage certifié pour une charge de 2500 kg. »" },
+      { "q": "Avant de travailler sur une tige ou un marteau coincé dans le saver sub, que faites-vous de la flèche (boom) ?", "d": "difficile",
+        "o": ["On la lève à la verticale", "On la met à l'horizontale pour éviter que la clé à saver sub ne tombe", "On la retire complètement", "Rien de spécial"], "a": 1,
+        "e": "« Mettre la flèche (boom) en position horizontale pour éviter que la clé à saver sub ne tombe avant de travailler sur une tige ou un marteau coincé dans le saver sub. »" },
+      { "q": "L'opération est finie. Que faut-il faire avant de reprendre le travail normal ?", "d": "difficile",
+        "o": ["Laisser les clés en place", "Retirer les deux clés et décadenasser l'équipement", "Huiler les clés", "Ranger le gearbox"], "a": 1,
+        "e": "« Retirer les deux clés et décadenasser l'équipement avant de reprendre le travail. »" }
+    ],
+    "pro-op-ith-003": [
+      { "q": "On veut déplacer la foreuse SANS remorque (barre de tir). Dans quelles conditions est-ce permis ?", "d": "difficile",
+        "o": ["Partout, y compris dans la rampe", "À plat, sur de courtes distances, à basse vitesse — interdit dans la rampe", "Seulement en descendant la rampe", "Jamais, en aucun cas"], "a": 1,
+        "e": "« Ne déplacer la foreuse sans remorque qu'à plat, sur de courtes distances et à basse vitesse; il est interdit de la déplacer sans remorque dans la rampe. »" },
+      { "q": "Avant de découpler les boyaux pour la démobilisation, quelle opération est obligatoire (risque de fouettement/projection) ?", "d": "difficile",
+        "o": ["Les couper au couteau", "Fermer les valves et purger les boyaux à air, le filtre à air, le receiver et le boyau à eau", "Les découpler sous pression", "Rien"], "a": 1,
+        "e": "« Fermer les valves à air et eau et purger les boyaux à air, le filtre à air, le receiver et le boyau à eau avant de les découpler. »" },
+      { "q": "Le déplacement est terminé. Que fait-on du traîneau ?", "d": "difficile",
+        "o": ["On l'attache solidement au mur", "On ne l'attache jamais au mur : on le laisse par terre et on le signale avec un ruban jaune", "On le suspend au mât", "On le remonte sur la remorque"], "a": 1,
+        "e": "« Ne jamais attacher le traîneau au mur après le déplacement; le laisser par terre et le signaler avec un ruban jaune. »" }
+    ],
+    "pro-op-ith-004": [
+      { "q": "Une pièce de la foreuse est en mouvement. Quelle est la zone d'exclusion à respecter ?", "d": "difficile",
+        "o": ["0,5 m du mât", "1,5 m du mât de tous les côtés, et personne entre la console et le mât", "3 m du mât", "7 m du mât"], "a": 1,
+        "e": "« Quand une pièce est en mouvement, aucun travailleur ne doit se placer entre la console et le mât, ni à moins de 1,5 mètre du mât de tous les côtés. »" },
+      { "q": "Lors du défoncement d'un trou, comment doit-on pousser ?", "d": "difficile",
+        "o": ["Avec rotation maximale", "Sans rotation, 1 tige de plus que la longueur du défoncement", "En ajoutant de l'eau", "En reculant la tête"], "a": 1,
+        "e": "« Lors du défoncement de trous, pousser SANS ROTATION 1 tige de plus que la longueur du défoncement. »" },
+      { "q": "Trou de plus de 6½ po : comment déposer le marteau et quand prévoir un 2e travailleur ?", "d": "difficile",
+        "o": ["À la main, jamais de 2e travailleur", "Chariot (ou cloche et chaîne) stable ; 2e travailleur privilégié dès 200 pieds et plus", "Le laisser tomber au sol", "Toujours seul, peu importe la profondeur"], "a": 1,
+        "e": "« ...utiliser le chariot de transport ou la cloche et la chaîne ; s'assurer que le chariot est stable... » et « ...un 2e travailleur pour ... les trous de 200 pieds et plus... »" }
+    ],
+    "pro-op-ith-005": [
+      { "q": "Du matériel est tombé dans la monterie de 30 pouces. Pouvez-vous y entrer pour le récupérer ?", "d": "difficile",
+        "o": ["Oui, avec un harnais", "Non, jamais : utiliser les équipements adaptés de M.R.I.", "Oui si c'est rapide", "Seulement le foreur"], "a": 1,
+        "e": "« Interdire strictement à tout employé d'entrer dans la monterie de 30 pouces pour récupérer quoi que ce soit; utiliser les équipements adaptés de M.R.I. »" },
+      { "q": "Le couvert de la monterie doit être enlevé. Comment protège-t-on les employés près du trou ?", "d": "difficile",
+        "o": ["Aucune mesure particulière", "Longe restrictive ajustable, ou harnais avec bloc rétractable approuvé, attaché à des ancrages approuvés", "Un simple garde au sol", "Une barricade seulement"], "a": 1,
+        "e": "« Attacher les employés près de la monterie au moyen d'une longe restrictive ajustable empêchant l'accès au trou, ou d'un harnais avec bloc rétractable approuvé par le client, lorsque le couvert est enlevé ou remis. »" },
+      { "q": "Une tige se brise pendant le forage. Quelles sont les deux premières actions ?", "d": "difficile",
+        "o": ["Continuer doucement le forage", "Arrêter immédiatement le forage et fermer l'interrupteur électrique et l'alimentation en air comprimé", "Reculer la tête puis appeler le fournisseur", "Remplir le rapport d'abord"], "a": 1,
+        "e": "« En cas de bris de tige, arrêter immédiatement le forage et fermer l'interrupteur électrique et l'alimentation en air comprimé. »" }
+    ],
+    "pro-op-ith-006": [
+      { "q": "Pour suspendre et positionner la tête V-30, quelle chaîne doit-on utiliser ?", "d": "difficile",
+        "o": ["Une chaîne de grade 30", "Une chaîne de grade 80 (7100 lbs)", "Une corde certifiée", "Un câble de 2500 kg"], "a": 1,
+        "e": "« Utiliser une chaîne de grade 80 (7100 lbs) pour suspendre et positionner la tête V-30. »" },
+      { "q": "Pourquoi utilise-t-on obligatoirement le raccord situé entre la V-30 et la tige ?", "d": "difficile",
+        "o": ["Pour serrer le plus fort possible", "Pour empêcher le serrage et permettre un désaccouplement facile", "C'est purement décoratif", "Pour ajouter de l'eau"], "a": 1,
+        "e": "« Utiliser obligatoirement le raccord situé entre la V-30 et la tige pour empêcher le serrage et permettre le désaccouplement facile. »" },
+      { "q": "Lors d'un alésage qui débouche, comment protège-t-on les travailleurs contre le trou ?", "d": "difficile",
+        "o": ["Rien de spécial", "Laisser un pilier de couronne en place ou installer une plaque d'acier identifiée sur le trou", "Tendre une corde", "Remplir d'eau"], "a": 1,
+        "e": "« Protéger les travailleurs contre le trou en laissant un pilier de couronne en place ou en installant une plaque d'acier identifiée sur le trou. »" }
+    ],
+    "pro-op-ith-007": [
+      { "q": "Pendant le forage (alésage ascendant), quelle distance d'exclusion faut-il respecter autour du mât ?", "d": "difficile",
+        "o": ["1,5 m", "5 mètres", "7 m", "3 m"], "a": 1,
+        "e": "« Interdire à toute personne de circuler à moins de 5 mètres du mât de la foreuse pendant le forage. »" },
+      { "q": "Quelle hauteur plancher-toit faut-il respecter, et que faire si elle dépasse 14 pieds ?", "d": "difficile",
+        "o": ["Aucune exigence", "12 à 14 pieds (max 4,3 m) ; au-delà, relever le plancher avec de la roche abattue", "Exactement 6 pieds", "30 pieds minimum"], "a": 1,
+        "e": "« Maintenir une hauteur plancher-toit entre 12 et 14 pieds (max 4,3 m); au-delà de 4,3 m (14 pi), relever le plancher avec de la roche abattue. »" },
+      { "q": "Lors du soufflage des déblais de forage, quelles précautions devez-vous prendre ?", "d": "difficile",
+        "o": ["Aucune", "Porter un masque et ne pas s'exposer directement sous le trou de la V-30", "Porter seulement des lunettes", "Se placer juste sous le trou pour mieux voir"], "a": 1,
+        "e": "« Porter un masque lors du soufflage des déblais de forage et ne pas s'exposer directement sous le trou de la V-30. »" }
+    ],
+    "pro-op-ith-008": [
+      { "q": "Un taillant s'est brisé au fond de la monterie. Peut-on descendre le récupérer ?", "d": "difficile",
+        "o": ["Oui, avec un harnais", "Non, jamais : interdiction stricte à quiconque et en tout temps", "Oui si la monterie est courte", "Seulement le foreur expérimenté"], "a": 1,
+        "e": "« Ne jamais descendre au fond de la monterie pour dégager ou récupérer des pièces métalliques, des outils, des taillants ou tout autre équipement : cette interdiction s'applique à quiconque et en tout temps. »" },
+      { "q": "Avec quel outil récupère-t-on le taillant ou les pièces brisées au fond ?", "d": "difficile",
+        "o": ["À la main au bout d'une corde", "Uniquement le racloir de monterie (raise scraper) conçu à cet effet", "Un aimant", "La tête V-30 elle-même"], "a": 1,
+        "e": "« Récupérer le taillant ou les pièces brisées au fond de la monterie uniquement à l'aide du racloir de monterie (raise scraper) conçu à cet effet. »" },
+      { "q": "Pendant le retrait du couvercle de la monterie, quelle est l'exigence sur la durée ?", "d": "difficile",
+        "o": ["Travailler le plus vite possible sans protection", "Rester attaché à un ancrage ou une ligne de vie tant que le couvercle est retiré", "Être deux suffit", "Aucune exigence"], "a": 1,
+        "e": "« Demeurer attaché à un ancrage ou à une ligne de vie durant tous les travaux de manipulation du couvercle et tant que le couvercle est retiré de la monterie. »" }
+    ],
+    "pro-op-ith-012": [
+      { "q": "En forage à distance, quelle distance minimale entre le foreur et le trou à forer ?", "d": "difficile",
+        "o": ["10 m", "50 pieds (15 mètres)", "5 m", "7 m"], "a": 1,
+        "e": "« Installer le système de commande à distance à un minimum de 50' (15 mètres) entre le foreur et le trou à forer. »" },
+      { "q": "Vous débloquez un trou qui a été dynamité à l'amex (ANFO). Que mettez-vous dans les tiges ?", "d": "difficile",
+        "o": ["De l'huile", "De l'eau, pour diminuer le risque d'explosion", "De l'air comprimé", "Rien"], "a": 1,
+        "e": "« Lors du déblocage d'un trou dynamité avec amex (ANFO), mettre de l'eau dans les tiges de forage pour diminuer le risque d'explosion. »" },
+      { "q": "Pendant le déblocage, de l'explosif sort du trou avec le matériel. Que faites-vous ?", "d": "difficile",
+        "o": ["Continuer prudemment", "Arrêter l'opération avec la foreuse et aviser le superviseur", "Accélérer pour finir", "Ajouter de l'huile"], "a": 1,
+        "e": "« ...en cas de présence d'explosif, arrêter l'opération avec la foreuse et aviser le superviseur. »" }
+    ],
+    "pro-op-ith-014": [
+      { "q": "Quand pouvez-vous placer une partie de votre corps sous les tables ?", "d": "difficile",
+        "o": ["N'importe quand", "Jamais tant que le marteau n'est pas monté au-dessus des tables et que la slip-plate n'est pas fermée", "Si on est rapide", "Avec des gants épais"], "a": 1,
+        "e": "« Ne jamais positionner une partie de son corps sous les tables si le marteau n'est pas monté au-delà des tables et que la slip-plate n'est pas fermée. »" },
+      { "q": "Le 2e forage destiné au casing doit pénétrer de combien dans le roc solide ?", "d": "difficile",
+        "o": ["1 pouce", "1 pied dans le roc solide", "1 mètre", "Aucune profondeur précise"], "a": 1,
+        "e": "« ...2e forage : ... 1 pied dans le roc solide. » (ex. casing 4 pouces : « 4 pouces, 1 pied dans le roc solide »)" },
+      { "q": "Avant d'installer le tubage, quelle procédure et quelle vérification sont exigées d'abord ?", "d": "difficile",
+        "o": ["Aucune", "Respecter PRO-OP-ITH-004 et s'assurer que la foreuse est bien alignée selon les plans de forage", "Seulement laver le collet", "Demander l'avis du client"], "a": 1,
+        "e": "« Respecter au préalable la procédure de forage PRO-OP-ITH-004 et s'assurer que la foreuse est bien alignée selon les plans de forage avant l'installation du tubage. »" }
+    ],
+    "pro-op-ith-016": [
+      { "q": "Avant d'exposer les mains sous le marteau, que devez-vous valider à chaque fois ?", "d": "difficile",
+        "o": ["Rien de particulier", "Que le marteau est bien vissé au « GEAR BOX »", "Son poids exact", "La couleur du marteau"], "a": 1,
+        "e": "« Valider que le marteau est bien vissé au « GEAR BOX » chaque fois qu'on doit exposer les mains sous le marteau. »" },
+      { "q": "Comment manipule-t-on un marteau de 6 pouces (211 lbs) ?", "d": "difficile",
+        "o": ["À la main, à deux", "Toujours avec le chariot prévu, en gardant le Driver Sub installé pendant la manipulation", "Avec une corde et un crochet", "Sur l'épaule, rapidement"], "a": 1,
+        "e": "« Marteaux de 6'' : toujours transporter avec le chariot prévu et garder le Driver Sub installé pendant la manipulation. »" },
+      { "q": "Quand peut-on retirer la chaîne de sûreté du chariot ?", "d": "difficile",
+        "o": ["Dès le début de l'installation", "Seulement après avoir vissé et accoté le marteau dans le « SAVER SUB »", "À n'importe quel moment", "Jamais"], "a": 1,
+        "e": "« Retirer la chaîne de sûreté du chariot seulement après avoir vissé et accoté le marteau dans le « SAVER SUB ». »" }
+    ]
+  };
+  var Q = window.QUIZ_PROC || (window.QUIZ_PROC = {});
+  Object.keys(HARD).forEach(function (id) {
+    Q[id] = (Q[id] || []).concat(HARD[id]);
+  });
+})();
