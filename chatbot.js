@@ -78,6 +78,21 @@
       if (p.resume) add(p.resume, 'Résumé', titre);
       if (p.objectif) add(p.objectif, 'Objectif', titre);
     });
+    // Texte INTÉGRAL des PDF (pdftext.js) — recherche dans le document complet.
+    var PT = window.PDFTEXT || {};
+    var titreById = {};
+    DATA.forEach(function (p) { titreById[p.id] = p.titre || p.id; });
+    titreById['centralisateur-dessin'] = 'Dessin technique du centralisateur';
+    Object.keys(PT).forEach(function (key) {
+      var titre = titreById[key] || key;
+      var meta = norm(titre);
+      (PT[key] || []).forEach(function (pas) {
+        if (!pas || !pas.t) return;
+        INDEX.push({ text: pas.t, kind: 'PDF', source: 'PDF · p.' + pas.p,
+          pid: (key === 'centralisateur-dessin' ? 'centralisateur' : key), ptitre: titre,
+          txt: norm(pas.t), meta: meta });
+      });
+    });
   }
 
   function search(query) {
@@ -105,6 +120,7 @@
         if (a >= 0 && b >= 0 && Math.abs(a - b) <= 28) score += 2;
       }
       if (item.kind === 'Valeur') score += 0.6;
+      if (item.kind === 'PDF') score -= 3;      // les consignes structurées priment ; le PDF complète
       scored.push({ item: item, score: score, hits: hits, core: coreInTxt });
     });
     scored.sort(function (a, b) { return b.score - a.score; });
