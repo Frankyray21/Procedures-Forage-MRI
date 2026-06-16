@@ -5,11 +5,12 @@
      immédiatement après rechargement.
    - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
      à jour en arrière-plan.
-   - PDF : désormais PRÉ-TÉLÉCHARGÉS automatiquement dès l'installation
-     (plus besoin d'attendre une première consultation ni de cliquer sur
-     « Tout télécharger »). La liste est construite à partir des `id` de
-     data.js pour rester synchronisée avec le contenu. */
-const VERSION = 'mri-proc-v35';
+   - PDF, FIGURES et documents : désormais PRÉ-TÉLÉCHARGÉS automatiquement
+     dès l'installation (plus besoin d'attendre une première consultation ni
+     de cliquer sur « Tout télécharger »). Les listes sont construites à
+     partir de data.js (PDF) et figures.js (images) pour rester synchronisées
+     avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
+const VERSION = 'mri-proc-v36';
 const CORE = [
   './',
   './index.html',
@@ -25,34 +26,40 @@ const CORE = [
   './manifest.webmanifest',
   './images/logo_roger.png',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './icons/icon-maskable-512.png'
 ];
 
-/* Liste des PDF à pré-télécharger, dérivée des procédures de data.js.
-   data.js fait `window.PROCEDURES = [...]` : on fournit un shim `window`
-   (inexistant dans un service worker) puis on importe le fichier. En cas
-   d'échec (hors-ligne au moment de l'installation), on retombe sur une liste
-   vide — les PDF restent alors mis en cache à la première consultation. */
-function pdfAssets() {
+/* Ressources média à pré-télécharger (PDF + figures), dérivées du contenu.
+   data.js fait `window.PROCEDURES = [...]` et figures.js `window.FIGURES = {}`
+   : on fournit un shim `window` (inexistant dans un service worker) puis on
+   importe les fichiers. En cas d'échec (hors-ligne au moment de
+   l'installation), on retombe sur une liste vide — les ressources restent
+   alors mises en cache à la première consultation. */
+function mediaAssets() {
   try {
     self.window = self;
-    importScripts('./data.js');
+    importScripts('./data.js', './figures.js');
     const list = (self.PROCEDURES || []).map(
       (p) => './pdf/' + encodeURIComponent(p.id) + '.pdf'
     );
     list.push('./pdf/centralisateur-dessin.pdf');
+    const figs = self.FIGURES || {};
+    Object.keys(figs).forEach((id) => {
+      (figs[id] || []).forEach((f) => { if (f && f.src) list.push('./' + f.src); });
+    });
     return list;
   } catch (err) {
     return [];
   }
 }
-const PDFS = pdfAssets();
+const MEDIA = mediaAssets();
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(VERSION).then((c) =>
-      Promise.all(CORE.concat(PDFS).map((u) => c.add(u).catch(() => null)))
+      Promise.all(CORE.concat(MEDIA).map((u) => c.add(u).catch(() => null)))
     )
   );
 });

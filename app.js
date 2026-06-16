@@ -186,6 +186,11 @@
     if (DEMO || !('caches' in window)) return;
     var pdfs = DATA.map(function (p) { return 'pdf/' + encodeURIComponent(p.id) + '.pdf'; });
     pdfs.push('pdf/centralisateur-dessin.pdf');
+    if (window.FIGURES) {
+      Object.keys(window.FIGURES).forEach(function (id) {
+        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) pdfs.push(f.src); });
+      });
+    }
     Promise.all(pdfs.map(function (u) { return caches.match(u).then(function (r) { return !!r; }); }))
       .then(function (found) {
         if (found.length && found.every(Boolean)) {
@@ -200,11 +205,11 @@
     var nPdf = DATA.length + 1;
     if (offlineReady()) {
       box.innerHTML = '<div class="offcard ok"><span class="offic">' + ICON.check + '</span>' +
-        '<div class="offtxt"><b>Disponible hors-ligne</b><span>Toutes les fiches et les ' + nPdf + ' PDF sont enregistrés sur cet appareil.</span></div>' +
+        '<div class="offtxt"><b>Disponible hors-ligne</b><span>Toutes les fiches, les ' + nPdf + ' PDF et les figures sont enregistrés sur cet appareil.</span></div>' +
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
     } else {
       box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
-        '<div class="offtxt"><b>Préparer la consultation hors-ligne</b><span>Télécharge toutes les fiches et les ' + nPdf + ' PDF pour les consulter sans réseau (sous terre).</span></div>' +
+        '<div class="offtxt"><b>Préparer la consultation hors-ligne</b><span>Télécharge toutes les fiches, les ' + nPdf + ' PDF et les figures pour les consulter sans réseau (sous terre).</span></div>' +
         '<button class="btn" id="offBtn">Tout télécharger</button></div>';
     }
     $('#offBtn').onclick = startPrecache;
