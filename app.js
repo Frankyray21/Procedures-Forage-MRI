@@ -356,38 +356,6 @@
 
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
 
-    // Mises en garde = encadrés d'avertissement + avertissements intégrés aux étapes (sans le texte des étapes)
-    var warns = (p.avertissements || []).slice();
-    (p.etapes || []).forEach(function (s) { if (s.danger) warns.push(s.danger); });
-    if (warns.length) h += sec('Mises en garde et avertissements', warns.map(function (w) {
-      return '<div class="warn"><span class="wic">' + ICON.warn + '</span><p>' + esc(w) + '</p></div>'; }).join(''));
-
-    var essList = (window.ESSENTIEL && window.ESSENTIEL[p.id]);
-    var ckData;
-    if (essList && essList.length) {
-      ckData = essList.map(function (it) {
-        return (typeof it === 'string') ? { regle: it, type: '', valeur: '' }
-          : { regle: it.texte, type: it.type || '', valeur: it.valeur || '' };
-      });
-    } else {
-      ckData = (p.consignes_securite || []).map(function (c) { return { regle: c.regle, type: '', valeur: '', source: c.source, theme: c.theme }; });
-    }
-    if (ckData.length) {
-      var ckhead = '<div class="ckhead"><div class="ckbar"><i></i></div><span class="ckcount"></span>' +
-        '<button class="ckreset" type="button">Réinitialiser</button></div>';
-      var ckitems = ckData.map(function (c, i) {
-        var ico = TYPE_ICON[c.type] || ICON.check;
-        var val = c.valeur ? ' <b class="ckval">' + esc(c.valeur) + '</b>' : '';
-        return '<label class="ck' + (c.type ? ' ck-' + c.type : '') + '"><input type="checkbox" data-i="' + i + '">' +
-          '<span class="cktype">' + ico + '</span>' +
-          '<span class="rt">' + esc(c.regle) + val +
-          (c.source ? '<span class="rsrc">' + esc(c.source) + (c.theme ? ' · ' + esc(c.theme) : '') + '</span>' : '') + '</span>' +
-          '<span class="ckbox">' + ICON.check + '</span></label>';
-      }).join('');
-      h += sec('Liste de vérification — points essentiels',
-        '<div class="checklist" data-proc="' + esc(p.id) + '">' + ckhead + ckitems + '</div>');
-    }
-
     // Quiz de la procédure (couvre l'information importante)
     var pqList = (window.QUIZ_PROC && window.QUIZ_PROC[p.id]) || [];
     if (pqList.length) {
