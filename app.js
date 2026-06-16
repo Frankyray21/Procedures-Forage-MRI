@@ -361,7 +361,8 @@
     if (pqList.length) {
       var best = pqGetBest(p.id);
       var pqitems = pqList.map(function (it, i) {
-        return '<div class="pq" data-i="' + i + '"><p class="pq-q"><b>' + (i + 1) + '.</b> ' + esc(it.q) + '</p>' +
+        return '<div class="pq" data-i="' + i + '"><p class="pq-q"><b>' + (i + 1) + '.</b> ' + esc(it.q) +
+          (it.d === 'difficile' ? ' <span class="pqdiff">Difficile</span>' : '') + '</p>' +
           '<div class="pq-opts">' + it.o.map(function (opt, j) {
             return '<label class="pq-opt"><input type="radio" name="pq_' + i + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(opt) + '</span></label>';
           }).join('') + '</div>' +

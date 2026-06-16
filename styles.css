@@ -496,6 +496,9 @@ footer b{color:var(--muted)}
 .pq:first-child{padding-top:.2rem}
 .pq-q{font-weight:600;margin-bottom:.6rem;line-height:1.5}
 .pq-q b{color:var(--accent-l);margin-right:.2rem}
+.pqdiff{display:inline-block;vertical-align:middle;margin-left:.4rem;padding:.08rem .5rem;border-radius:50px;
+  font-family:var(--font-display);font-size:.66rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  color:#fbbf24;background:rgba(251,191,36,.14);border:1px solid rgba(251,191,36,.4)}
 .pq-opts{display:flex;flex-direction:column;gap:.45rem}
 .pq-opt{display:flex;align-items:center;gap:.6rem;background:var(--bg-2);border:1px solid var(--border);
   border-radius:10px;padding:.6rem .8rem;cursor:pointer;transition:.12s}
