@@ -22,12 +22,11 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "L'INSTALLATION DU CENTRALISATEUR DOIT TOUJOURS SE FAIRE À DEUX TRAVAILLEURS",
-      "Il n'y a pas de séquence d'installation ou de serrages des boulons et des écrous",
-      "L'UTILISATION D'UN WESCOT OU D'UN PIPE WRENCH N'EST PAS ADÉQUATE",
-      "Risque de manutention : chaque pièce pèse 46 livres. Se positionner correctement avant de soulever/manipuler les pièces.",
-      "Attention de ne pas endommager les filets des boulons quand vous les entrez dans les trous prévus à cet effet.",
-      "L'utilisation d'un wescot ou d'un pipe wrench n'est pas adéquate."
+      "Toujours installer le centralisateur à deux travailleurs.",
+      "Risque de manutention : chaque pièce pèse 46 livres. Se positionner correctement avant de soulever ou manipuler.",
+      "Ne jamais utiliser de wescot ou de pipe wrench pour cette installation : outil inadéquat.",
+      "Entrer les boulons avec soin dans leurs trous pour ne pas endommager les filets.",
+      "Aucune séquence imposée pour l'installation ni le serrage des boulons et écrous."
     ],
     "consignes_securite": [
       {
@@ -116,15 +115,12 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "À ce moment, la pompe est retenue par les boyaux hydrauliques et la sangle. Il faut la retenir avec les mains sur les boyaux. ÉVITER DE SE METTRE LES MAINS SOUS LA POMPE ET PROTÉGER SES DOIGTS DES COINCEMENTS",
-      "LE BELL HOUSING EST EN ALUMINIUM",
-      "SI LA COUPLING EST COLLÉE ET DIFFICILE À RETIRER : 1- ENLEVER LE BELL HOUSING 2- UTILISER UNE MASSE OU UN MARTEAU POUR FRAPPER SUR LA PRY BAR 3- ATTENTION DE NE PAS ENDOMMAGER LE SHAFT DU MOTEUR ÉLECTRIQUE",
-      "BIEN NETTOYER : LE SHAFT ET L'ÉPAULEMENT DE LA POMPE HYDRAULIQUE, LE SHAFT DU MOTEUR ÉLECTRIQUE",
-      "APPLIQUE DE L'ANTISEIZE SUR LE SHAFT DE LA POMPE, SUR LE SHAFT DU MOTEUR ÉLECTRIQUE ; NETTOYER LES DEUX BOUTS DU BELL HOUSING",
-      "À ce moment, la pompe est retenue par les boyaux hydrauliques et la sangle. Il faut la retenir avec les mains sur les boyaux. ÉVITER DE SE METTRE LES MAINS SOUS LA POMPE ET PROTÉGER SES DOIGTS DES COINCEMENTS.",
-      "S'assurer que la pompe ne se déplacera pas de manière à frapper le travailleur qui exécute les travaux.",
-      "LE BELL HOUSING EST EN ALUMINIUM (utiliser une masse de caoutchouc pour frapper dessus, ne pas l'endommager).",
-      "SI LA COUPLING EST COLLÉE ET DIFFICILE À RETIRER : 1- ENLEVER LE BELL HOUSING 2- UTILISER UNE MASSE OU UN MARTEAU POUR FRAPPER SUR LA PRY BAR 3- ATTENTION DE NE PAS ENDOMMAGER LE SHAFT DU MOTEUR ÉLECTRIQUE."
+      "Risque de coincement des doigts : retenir la pompe par les boyaux avec les mains, jamais en-dessous.",
+      "Risque d'être frappé : s'assurer que la pompe ne peut pas se déplacer vers le travailleur.",
+      "Le bell housing est en aluminium : frapper dessus avec une masse en caoutchouc pour ne pas l'endommager.",
+      "Si la coupling est collée : enlever le bell housing, puis frapper la masse sur la pry bar sans endommager le shaft du moteur électrique.",
+      "Toujours bien nettoyer le shaft et l'épaulement de la pompe ainsi que le shaft du moteur électrique.",
+      "Appliquer de l'antiseize sur les deux shafts et nettoyer les deux bouts du bell housing."
     ],
     "consignes_securite": [
       {
@@ -297,11 +293,10 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "N.B. Les crochets doivent être munis de linguet.",
-      "N.B : Il sera peut-être nécessaire de donner un coup de masse sur le manche de la clé pour que les tiges se séparent. Dans ce cas, assurez-vous que vos pieds soient sur une surface solide et que personne ne soit dans la ligne advenant que la masse soit échappée.",
-      "Ancrage du mât certifié 2500 kg",
-      "N.B : Il sera peut-être nécessaire de donner un coup de masse sur le manche de la clé pour que les tiges se séparent;",
-      "N.B : Il sera peut-être nécessaire de donner un coup de masse sur le manche de la clé pour que les tiges se séparent. Dans ce cas, assurez-vous que vos pieds soient sur une surface solide et que personne ne soit dans la ligne advenant que la masse soit échappée. Ancrage du mât certifié 2500 kg."
+      "Risque de chute de charge : toujours utiliser des crochets munis de linguet.",
+      "Coup de masse sur le manche de la clé : gardez les pieds sur une surface solide.",
+      "Risque d'être frappé : personne dans la ligne de la masse au cas où elle serait échappée.",
+      "Utiliser un ancrage de mât certifié 2500 kg."
     ],
     "consignes_securite": [
       {
@@ -421,10 +416,9 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "Dans ce cas, s'assurer que vos pieds reposent sur une surface solide et que personne ne se trouve dans l'axe si la masse tombe. (In this case, make sure your feet are on a solid surface and that no one is in line if the hammer is dropped.)",
-      "Ancrage certifié 2500 kg (Certified anchor 2500 kg)",
-      "Mettre la flèche en position horizontale pour éviter que la clé à saver sub ne tombe (Put the boom in horizontal position to prevent the saver sub wrench from falling)",
-      "Dans ce cas, s'assurer que vos pieds reposent sur une surface solide et que personne ne se trouve dans l'axe si la masse tombe."
+      "Risque d'être frappé ou écrasé : si la masse tombe, garder les pieds sur une surface solide et personne dans l'axe.",
+      "Utiliser un ancrage certifié 2500 kg pour le palan à levier (come along).",
+      "Risque de chute d'objet : mettre la flèche à l'horizontale pour éviter que la clé à saver sub ne tombe."
     ],
     "consignes_securite": [
       {
@@ -550,16 +544,14 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "Mise en garde : Les accessoires de levage nécessaires doivent être inspectés avant leur utilisation. Si une anomalie est détectée, le remplacement de l'accessoire est obligatoire avant d'entreprendre le déplacement de la foreuse ou de l'équipement.",
-      "L'utilisation de composantes approuvées est obligatoire. Aucune modification n'est autorisée.",
-      "On favorisera l'utilisation de la main dans un godet de chargeuse au lieu d'attacher directement la remorque à l'arrière d'un véhicule.",
-      "Lorsque la barre de tir est rabaissée pour effectuer un déplacement, il faut la verrouiller avec le boulon.",
-      "Il est permis de déplacer la foreuse sans la remorque, à l'aide d'une barre de tir, sur de courtes distances, à plat. Il est interdit de déplacer la foreuse sans la remorque dans la rampe.",
-      "N.B Appliquer la politique du site concernant les escortes pour le déplacement des équipements.",
-      "Il est très important de purger les boyaux à air, sur le filtre à air et le receiver, et le boyau à eau avant de les découpler.",
-      "L'opérateur doit toujours se placer à l'intérieur du panier de la foreuse et mettre la chaine garde-corps.",
-      "Il est très important de purger les boyaux à air et eau avant de les découpler.",
-      "Assurer une bonne communication avec l'opérateur de la chargeuse."
+      "Inspecter chaque accessoire de levage avant usage; remplacer obligatoirement tout accessoire défectueux avant le déplacement.",
+      "Utiliser uniquement des composantes approuvées; aucune modification permise.",
+      "Risque d'écrasement : privilégier le transport dans le godet de la chargeuse plutôt que d'attacher la remorque derrière un véhicule.",
+      "Toujours verrouiller la barre de tir avec son boulon quand elle est rabaissée pour un déplacement.",
+      "Risque de renversement : déplacer la foreuse sans remorque (barre de tir) seulement sur courte distance, à plat; interdit dans la rampe.",
+      "Risque de fouettement et de projection : purger les boyaux à air (filtre à air, receiver) et le boyau à eau avant de les découpler.",
+      "L'opérateur doit toujours rester dans le panier de la foreuse, chaîne garde-corps en place.",
+      "Maintenir une bonne communication avec l'opérateur de la chargeuse."
     ],
     "consignes_securite": [
       {
@@ -756,23 +748,20 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "INSPECTIONS — Il est primordial de faire une inspection rigoureuse de nos équipements dès qu'on doit les opérer. Dans le cas des CUBEX et des surcompresseurs, une attention particulière doit être portée sur les boyaux tressés haute-température (800 degrés F) des compresseurs. Pour des raisons de sécurité, seul le type de boyau tel que présenté ci-dessous doit être utilisé.",
-      "Attention particulière requise — Les raccords et boyaux doivent être inspectés minutieusement afin de s'assurer que les collets soient bien serrés, que les filets des raccords d'accouplement sont en bonne état et que les boyaux ne présentent aucune anomalie.",
-      "LORS DU DÉPLACEMENT DE LA FOREUSE AU-DESSUS D'UN COUVERCLE DE MÉTAL QUI EST SUR LA MONTERIE, IL EST IMPORTANT DÊTRE ATTENTIF POUR ÉVITER QUE LE COUVERCLE SE COINCE ENTRE LES TRACTIONS DE LA FOREUSE.",
-      "AVERTISSEMENT — LA MANIPULATION DES TRÉPANS DOIT ÊTRE FAITE AVEC ATTENTION. ON DOIT ÉVALUER LES DISTANCES POUR LES DÉPOSER ET ÉVITER LES COINCEMENTS.",
-      "Encadré INSPECTIONS : Il est primordial de faire une inspection rigoureuse de nos équipements dès qu'on doit les opérer. Dans le cas des CUBEX et des surcompresseurs, une attention particulière doit être portée sur les boyaux tressés haute-température (800 degrés F) des compresseurs. Pour des raisons de sécurité, seul le type de boyau tel que présenté ci-dessous doit être utilisé.",
-      "Présence possible d'explosifs restants ou non détonnés dans le chantier ; risque d'écaillage.",
-      "Risque d'endommager le câble électrique sous tension ; manipuler l'extension sous tension uniquement avec le crochet de plastique.",
-      "Contact possible du câble avec des roches branlantes ou des véhicules motorisés ; déceler tout bris du câble.",
-      "Installer les dispositifs de retenue (whip check) à chaque joint et vérifier l'état du câble métallique et le bon fonctionnement des mécanismes de serrage.",
-      "Encadré « Attention particulière requise » : Les raccords et boyaux doivent être inspectés minutieusement afin de s'assurer que les collets soient bien serrés, que les filets des raccords d'accouplement sont en bonne état et que les boyaux ne présentent aucune anomalie.",
+      "Risque de brûlure : sur CUBEX et surcompresseurs, inspecter les boyaux haute-température (800 °F) et n'utiliser que le type de boyau prescrit.",
+      "Inspecter minutieusement raccords et boyaux : collets bien serrés, filets en bon état, aucune anomalie.",
+      "Risque de fouettement (whip) : installer un whip check à chaque joint et vérifier le câble métallique et les mécanismes de serrage.",
+      "Risque de coincement : en déplaçant la foreuse au-dessus du couvercle de métal de la monterie, éviter qu'il se coince entre les tractions.",
+      "Risque de coincement : manipuler les trépans avec attention et évaluer les distances pour les déposer.",
+      "Risque d'écaillage : présence possible d'explosifs restants ou non détonnés dans le chantier; rester vigilant.",
+      "Risque d'électrisation : manipuler l'extension sous tension uniquement avec le crochet de plastique.",
+      "Risque de bris du câble électrique : déceler tout dommage causé par les roches branlantes ou les véhicules motorisés.",
       "Pressuriser les lignes d'eau et d'air avec soin et les inspecter pour déceler des fuites.",
-      "Quand une pièce est en mouvement, aucun travailleur ne peut se placer entre la console et le mât, ni à moins de 1,5 mètre du mât de tous les côtés. Distance minimum de 1,5 mètre entre le mât et la console obligatoire.",
-      "Encadré : Lors du déplacement de la foreuse au-dessus d'un couvercle de métal qui est sur la monterie, il est important d'être attentif pour éviter que le couvercle se coince entre les tractions de la foreuse.",
-      "Les boyaux hydrauliques peuvent se coincer lors du déplacement du mât en rotation ; s'assurer d'être en position stable si un effort est nécessaire pour les décoincer.",
-      "Pousser SANS ROTATION lors du défoncement de trous.",
-      "Pour manipuler les tiges de forage : la boîte de vitesse doit être relevée et arrêtée et la foreuse doit être à la position neutre (point mort).",
-      "S'assurer que le chariot est stable lorsqu'on dépose le marteau dessus. Privilégier un 2e travailleur pour le forage et l'arrachement des tiges pour les trous de 200 pieds et plus."
+      "Risque d'être happé : quand une pièce bouge, personne entre la console et le mât ni à moins de 1,5 m du mât, de tous les côtés.",
+      "Risque de coincement : les boyaux hydrauliques peuvent se coincer au déplacement du mât en rotation; rester en position stable si un effort est requis.",
+      "Pousser SANS rotation lors du défoncement de trous.",
+      "Avant de manipuler les tiges : gearbox relevée et arrêtée, foreuse au point mort (neutre).",
+      "S'assurer que le chariot est stable pour déposer le marteau; prévoir un 2e travailleur pour les trous de 200 pi et plus."
     ],
     "consignes_securite": [
       {
@@ -1026,37 +1015,20 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "INSPECTIONS — Il est primordial de faire une inspection rigoureuse de nos équipements dès qu'on doit les opérer. Dans le cas des CUBEX et des surcompresseurs, une attention particulière doit être portée sur les boyaux tressés haute-température (800 degrés F) des compresseurs. Pour des raisons de sécurité, seul le type de boyau tel que présenté ci-dessous doit être utilisé.",
-      "Si l'extension doit être manipulée alors qu'elle est sous tension, il faut utiliser le crochet de plastique. Des barricades ou des affiches sont installées pour aviser tous les travailleurs des opérations en cours ;",
-      "Attention particulière requise — Les raccords et boyaux doivent être inspectés minutieusement afin de s'assurer que les collets soient bien serrés, que les filets des raccords d'accouplement sont en bonne état et que les boyaux ne présentent aucune anomalie ;",
-      "Nous privilégions la présence d'un 2e travailleur pour le forage et l'arrachement des tiges pour les trous de 200 pieds et plus. S'il n'est pas possible d'avoir ce 2e travailleur, le foreur doit prévoir des pauses",
-      "NB : Ne jamais se tenir dans l'axe de déplacement possible de la tête si elle se décroche. S'assurer que les contrôles soient en position neutre",
-      "L'installation du couvert fourni par M.R.I. ou le client sur la monterie est obligatoire en tout temps lors du forage de V-30 en descendant ;",
-      "Si le couvert doit être enlevé ou remis, les employés travaillant près de la monterie doivent être attachés en tout temps au moyen d'une longe restrictive ajustable qui empêche l'accès au trou ou avec un harnais et un bloc rétractable. Tout équipement de protection contre les chutes doit être approuvé par le client.",
-      "Si, pour des raisons d'opération, le couvert protecteur doit être enlevé et que les travailleurs s'exposent à une chute, il doit porter le harnais de sécurité antichute et être attaché à des points d'ancrage approuvés par le client et selon son programme de protection contre les chutes",
-      "IL EST STRICTEMENT INTERDIT A UN EMPLOYÉ D'ENTRER DANS LA MONTERIE DE 30 POUCES POUR RECUPERER QUOI QUE CE SOIT — M.R.I. A DES EQUIPEMENTS ADAPTÉS POUR EXTRAIRE LES MATERIAUX QUI SONT BRISÉS DANS LES TROUS (EX. TIGES DE FORAGE OU FORETS) POUR QUE LE FORAGE CONTINUE",
-      "Les leviers de commande doivent être au neutre avant la mise sous tension de l'unité.",
-      "Vérifier la présence d'explosifs non-détonnés dans le chantier avant de déplacer la foreuse.",
-      "Si l'extension doit être manipulée alors qu'elle est sous tension, il faut utiliser le crochet de plastique. Des barricades ou des affiches sont installées pour aviser tous les travailleurs des opérations en cours.",
-      "Mettre la foreuse hors tension (E-STOP) avant cette manipulation. Inspecter le câble pour déceler tout bris.",
-      "Installer les whip check à chaque joint et vérifier l'état du câble métallique et des mécanismes de serrage.",
-      "Installer les dispositifs de retenue à chaque connexion. Les stem nuts empêchent l'interchange entre basse et haute pression.",
-      "Pressuriser les lignes avec soin et vérifier l'absence de fuites.",
-      "La console doit être à 1,5 m du mât et protéger les travailleurs des projections de roches pouvant survenir en tout temps.",
-      "Attention aux boyaux hydrauliques qui pourraient se coincer lors de la rotation du mât. S'assurer d'être en position stable si un effort est nécessaire.",
-      "Nous privilégions la présence d'un 2e travailleur pour le forage et l'arrachement des tiges pour les trous de 200 pieds et plus. S'il n'est pas possible d'avoir ce 2e travailleur, le foreur doit prévoir des pauses.",
-      "Aucune circulation permise en avant de la foreuse pendant le forage.",
-      "La foreuse doit être à la position neutre (homme mort) avant de manipuler les tiges.",
-      "Pousser SANS ROTATION 1 tige de plus que la longueur du défoncement.",
-      "Ne jamais se tenir dans l'axe de déplacement possible de la tête si elle se décroche. S'assurer que les contrôles soient en position neutre.",
-      "L'installation du couvert fourni par M.R.I. ou le client sur la monterie est obligatoire en tout temps lors du forage de V-30 en descendant.",
-      "Si le couvert doit être enlevé ou remis, les employés travaillant près de la monterie doivent être attachés en tout temps au moyen d'une longe restrictive ajustable qui empêche l'accès au trou ou avec un harnais et un bloc rétractable. Tout équipement de protection contre les chutes doit être approuvé par le client. L'aide foreur doit éviter de s'exposer dans la zone des pièces en mouvement.",
-      "Installer le couvert sur le trou avant tout entretien ou changement de forets.",
-      "Si, pour des raisons d'opération, le couvert protecteur doit être enlevé et que les travailleurs s'exposent à une chute, ils doivent porter le harnais de sécurité antichute et être attachés à des points d'ancrage approuvés par le client et selon son programme de protection contre les chutes.",
-      "IL EST STRICTEMENT INTERDIT À UN EMPLOYÉ D'ENTRER DANS LA MONTERIE DE 30 POUCES POUR RÉCUPÉRER QUOI QUE CE SOIT. M.R.I. a des équipements adaptés pour extraire les matériaux brisés dans les trous.",
-      "Installer une barricade et/ou des affiches pour signaler la condition de trou ouvert dans le secteur.",
-      "Arrêter immédiatement le forage et couper l'alimentation électrique et l'air comprimé.",
-      "Utiliser les contrôles à distance, placés dans un endroit sécuritaire éloigné de la foreuse, pour toute opération durant la récupération de la tige."
+      "Risque de brûlure : inspecter rigoureusement les équipements et n'utiliser que le boyau tressé haute-température (800 °F) prescrit sur les compresseurs.",
+      "Inspecter minutieusement raccords et boyaux : collets serrés, filets en bon état, aucune anomalie avant la pression.",
+      "Risque de fouettement (whip) : installer un whip check à chaque joint, des stem nuts et dispositifs de retenue à chaque connexion; pressuriser avec soin sans fuites.",
+      "Risque d'électrisation : manipuler l'extension sous tension avec le crochet de plastique; baliser avec barricades ou affiches.",
+      "Risque de chute : garder le couvert sur la monterie en tout temps; si retiré, s'attacher (longe restrictive ou harnais antichute et bloc rétractable approuvés) à des ancrages approuvés.",
+      "Ne jamais entrer dans la monterie de 30 pouces pour récupérer du matériel; utiliser les équipements M.R.I. adaptés.",
+      "Risque d'être frappé : ne jamais se tenir dans l'axe de déplacement de la tête si elle se décroche; leviers au neutre avant la mise sous tension.",
+      "Vérifier la présence d'explosifs non détonnés dans le chantier avant de déplacer la foreuse.",
+      "Risque de projection de roches : garder la console à 1,5 m du mât; aucune circulation en avant de la foreuse pendant le forage.",
+      "Risque de coincement : foreuse au neutre (homme mort) avant de manipuler les tiges; attention aux boyaux hydrauliques à la rotation du mât, rester en position stable.",
+      "L'aide foreur reste hors de la zone des pièces en mouvement; pousser sans rotation 1 tige de plus que la longueur du défoncement.",
+      "Installer le couvert et baliser le trou ouvert (barricade ou affiches) avant tout entretien ou changement de forets.",
+      "En cas de bris de tige : arrêter le forage et couper l'alimentation électrique et l'air comprimé (E-STOP); inspecter le câble avant toute manipulation.",
+      "Prévoir un 2e travailleur pour les trous de 200 pieds et plus, sinon prévoir des pauses; récupérer la tige avec les contrôles à distance, à l'écart de la foreuse."
     ],
     "consignes_securite": [
       {
@@ -1367,28 +1339,23 @@ window.PROCEDURES = [
   {
     "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
     "avertissements": [
-      "INSPECTIONS — Il est primordial de faire une inspection rigoureuse de nos équipements dès qu'on doit les opérer. Dans le cas des CUBEX et des surcompresseurs, une attention particulière doit être portée sur les boyaux tressés haute-température (800 degrés F) des compresseurs. Pour des raisons de sécurité, seul le type de boyau tel que présenté ci-dessous doit être utilisé.",
-      "Attention particulière requise — Les raccords et boyaux doivent être inspectés minutieusement afin de s'assurer que les collets soient bien serrés, que les filets des raccords d'accouplement sont en bonne état et que les boyaux ne présentent aucune anomalie.",
-      "Note (point 11) : Les « stem nuts » sur les boyaux de 2½ po. dia. sont faits pour qu'ils ne puissent pas être inter changés entre la basse et haute pression pour éliminer autant que possible, tout accident potentiel.",
-      "STANDARD DE POSITIONNEMENT DES ÉQUIPEMENTS — (Noter que la distance entre la foreuse et le surcompresseur doit être de 7 mètres) (Une distance d'au moins 3 mètres (10 pieds) doit être laissée entre la barricade à l'entrée du chantier et les premières pièces de matériel (toolbox, huile etc…)",
-      "Inspection requise pour des explosifs restant dans le chantier ou non détonnés.",
-      "Si l'extension est manipulée sous tension, utiliser le crochet de plastique. Laisser au moins 3 mètres (10 pieds) entre la barricade et les premières pièces de matériel.",
-      "Mettre la foreuse hors tension (E-STOP) avant l'intervention. Suspendre le câble à 4-5 pieds du banc pour éviter tout contact avec roches branlantes ou véhicules.",
-      "Mettre la foreuse hors tension. Suspendre le câble à 4-5 pieds du banc pour éviter tout contact avec roches branlantes ou véhicules.",
-      "Installer les whip check à chaque joint. Inspecter l'état du câble métallique et des mécanismes de serrage.",
-      "Attention particulière requise : Les raccords et boyaux doivent être inspectés minutieusement afin de s'assurer que les collets soient bien serrés, que les filets des raccords d'accouplement sont en bonne état et que les boyaux ne présentent aucune anomalie.",
-      "Risque de coincement des boyaux hydrauliques lors du mouvement du mât. Si un effort est nécessaire, s'assurer d'être en position stable.",
-      "Tout l'équipement de protection individuel (EPI) est requis pour l'affûtage et le façonnement des forets.",
-      "Zone d'exclusion : personne n'est autorisé à circuler en avant de la foreuse pendant le forage.",
-      "Boîte de vitesse relevée et arrêtée, foreuse au point mort avant toute manipulation des tiges.",
-      "S'assurer que le chariot est stable avant d'y déposer le marteau. Privilégier la présence d'un 2e travailleur pour les trous de 200 pieds et plus; sinon, prévoir des pauses.",
-      "Lors du défoncement : pousser SANS ROTATION, 1 tige de plus que la longueur du défoncement.",
-      "Communication (radio/femco) obligatoire entre niveaux supérieur et inférieur. Raccord entre V-30 et tige obligatoire. Méthode (b) : grande vigilance requise selon l'équipement et la proximité des employés de la tête; les palans doivent être ancrés à des boulons à œil/anneau conformes scellés à la résine (installation non faite par M.R.I.).",
-      "Situation de trou ouvert au-dessus. Seules les personnes autorisées sont permises dans la zone de travail.",
-      "Port des équipements de protection individuels (EPI) requis pour l'affûtage et le façonnement des forets.",
-      "Protection contre le trou : pilier de couronne laissé en place OU plaque d'acier installée et identifiée.",
-      "Condition de trou ouvert : installer barricade/affiches et aviser la compagnie.",
-      "En cas de bris de tige : arrêt immédiat, coupure de l'interrupteur électrique et de l'air comprimé, barricadage. Aucun forage avant l'arrivée du contremaître; sa présence requise jusqu'à la fin de la récupération."
+      "Inspecter rigoureusement boyaux et raccords avant le travail : collets serrés, filets en bon état, aucune anomalie.",
+      "Risque de brûlure : les boyaux tressés des compresseurs atteignent 800 degrés F, n'utiliser que le type de boyau prescrit.",
+      "Conserver les stem nuts des boyaux de 2½ po pour empêcher l'interchange basse/haute pression.",
+      "Respecter les distances : 7 m entre la foreuse et le surcompresseur, au moins 3 m (10 pi) entre la barricade et le premier matériel.",
+      "Inspecter le chantier pour tout explosif restant ou non détonné avant d'intervenir.",
+      "Risque d'électrisation : couper la foreuse (E-STOP) avant d'intervenir et suspendre le câble à 4-5 pi du banc, à l'écart des roches branlantes et des véhicules.",
+      "Manipuler l'extension sous tension uniquement avec le crochet de plastique.",
+      "Risque de fouettement (whip) : installer un whip check à chaque joint et vérifier le câble métallique et les mécanismes de serrage.",
+      "Risque de coincement par les boyaux hydrauliques au mouvement du mât : rester en position stable lors d'un effort.",
+      "Porter tout l'EPI requis pour l'affûtage et le façonnement des forets.",
+      "Zone d'exclusion : personne en avant de la foreuse pendant le forage, seules les personnes autorisées dans la zone.",
+      "Avant toute manipulation des tiges : boîte de vitesse relevée et arrêtée, foreuse au point mort.",
+      "Risque d'être frappé ou coincé : stabiliser le chariot avant d'y déposer le marteau et prévoir un 2e travailleur pour les trous de 200 pi et plus.",
+      "Au défoncement : pousser sans rotation, 1 tige de plus que la longueur du défoncement.",
+      "Communication radio/femco obligatoire entre niveaux supérieur et inférieur, raccord V-30/tige obligatoire.",
+      "Risque de chute (trou ouvert au-dessus) : laisser un pilier de couronne en place ou installer et identifier une plaque d'acier.",
+      "En cas de bris de tige : arrêt immédiat, couper l'interrupteur électrique et l'air comprimé, barricader; aucun forage avant l'arrivée du contremaître."
     ],
     "categorie": "Alésage",
     "code": "PRO-OP-ITH-006",
@@ -1677,48 +1644,35 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "INSPECTIONS — Il est primordial de faire une inspection rigoureuse de nos équipements dès qu'on doit les opérer. Dans le cas des CUBEX et des surcompresseurs, une attention particulière doit être portée sur les boyaux tressés haute-température (800 degrés F) des compresseurs. Pour des raisons de sécurité, seul le type de boyau tel que présenté ci-dessous doit être utilisé.",
-      "Attention particulière requise (point 13) : Les raccords et boyaux doivent être inspectés minutieusement afin de s'assurer que les collets soient bien serrés, que les filets des raccords d'accouplement sont en bonne état et que les boyaux ne présentent aucune anomalie.",
-      "INSTALLATION DE LA V-30 SUR LE MÂT DE LA FOREUSE — Ne jamais se tenir dans l'axe de déplacement possible de la tête si elle se décroche. S'assurer que les contrôles sont en position neutre.",
-      "UNE ANALYSE DE RISQUE DOIT ÊTRE EFFECTUÉE À CE POINT (procédure lors d'un bris de la tige de forage, point 6).",
-      "Énergie électrique : ne brancher qu'après déchargement et inspection; faire appel à un électricien de la mine si la rotation du moteur est inversée.",
-      "Tous les leviers de commande doivent être au neutre avant la mise sous tension de l'unité.",
-      "Présence possible d'explosifs restants ou non détonnés : inspecter le chantier avant de déplacer l'unité.",
-      "Si l'extension (câble) doit être manipulée sous tension, utiliser obligatoirement le crochet de plastique.",
-      "Laisser au moins 3 mètres (10 pieds) entre la barricade d'entrée et les premières pièces de matériel.",
-      "Mettre la foreuse hors tension avec le E-STOP avant d'accrocher le câble; le suspendre à 4 à 5 pieds du plancher pour éviter tout contact avec roches branlantes et véhicules.",
-      "Air comprimé : installer un whip check à chaque joint; vérifier l'état du câble métallique et le serrage avant pressurisation.",
-      "Air haute pression : installer un dispositif de retenue à chaque connexion. Les stem nuts ne sont pas interchangeables entre basse et haute pression.",
-      "Attention particulière requise : collets bien serrés, filets en bon état, aucune anomalie sur les boyaux.",
+      "Risque de brûlure : inspecter rigoureusement les équipements et n'utiliser que les boyaux tressés haute-température prescrits (800 °F) sur les compresseurs.",
+      "Inspecter minutieusement raccords et boyaux : collets serrés, filets en bon état, aucune anomalie avant la pressurisation.",
+      "Risque d'être frappé : ne jamais se tenir dans l'axe de déplacement de la tête; garder les contrôles au neutre.",
+      "Faire une analyse de risque avant toute opération à distance pour récupérer une tige brisée.",
+      "Risque d'électrisation : ne brancher qu'après déchargement et inspection; appeler un électricien si la rotation du moteur est inversée.",
+      "Mettre tous les leviers de commande au neutre avant la mise sous tension.",
+      "Risque d'explosion : inspecter le chantier pour explosifs restants ou non détonnés avant de déplacer l'unité.",
+      "Manipuler l'extension sous tension uniquement avec le crochet de plastique obligatoire.",
+      "Mettre la foreuse à l'E-STOP avant d'accrocher le câble; le suspendre à 4-5 pi du plancher, loin des roches branlantes et véhicules.",
+      "Risque de fouettement (whip) : installer un whip check à chaque joint d'air comprimé; vérifier câble métallique et serrage avant pressurisation.",
+      "Ne pas interchanger les stem nuts entre basse et haute pression.",
       "Suspendre les boyaux sous le câble électrique pour éviter tout contact avec roches branlantes et équipement minier.",
-      "Pressuriser avec soin et inspecter pour fuites avant la mise en service.",
-      "Mât en rotation : les boyaux hydrauliques peuvent se coincer; pour les décoincer, adopter une position stable.",
-      "Manutention : s'assurer de la stabilité du chariot; demander de l'aide (2e travailleur / aide-foreur) au-delà de 200 pieds pour limiter l'effort physique.",
-      "Cage de protection requise pour canaliser les débris loin de l'opérateur.",
-      "Zone d'exclusion : aucune circulation à moins de 5 mètres du mât pendant le forage.",
+      "Risque de coincement : adopter une position stable pour décoincer les boyaux hydrauliques d'un mât en rotation.",
+      "Risque de blessure (effort physique) : stabiliser le chariot et demander de l'aide au-delà de 200 pi de manutention.",
+      "Risque de projection de débris : garder la cage de protection en place pour les canaliser loin de l'opérateur.",
+      "Zone d'exclusion : aucune circulation à moins de 5 m du mât pendant le forage.",
       "Gear box abaissé et arrêté, foreuse au point mort avant toute manipulation des tiges.",
-      "Garder les accès libres en tout temps (pas de boyaux, casing ni roche).",
-      "Arrêter la foreuse avant d'installer la cage de protection.",
-      "Hauteur plancher-toit : 12 pi minimum, 14 pi maximum selon les degrés de forage.",
-      "Au-delà de 4,3 m (14 pi), relever le plancher avec de la roche abattue.",
-      "Mauvaise répartition des charges : risque de bris d'actuateur. Respecter la distance de 2 à 4 pieds entre tables et collet de trou.",
-      "Maintenir une distance de 7 mètres entre la foreuse et le compresseur.",
-      "Positionner la commande à 5 mètres du point de forage pour se protéger des projections de roche.",
-      "Ne jamais se tenir dans l'axe de déplacement possible de la tête si elle se décroche; s'assurer que les contrôles sont en position neutre.",
-      "Levage : utiliser une chaîne de grade 80 de 12 pieds entre le gear box et le drive shaft.",
-      "Fermer (arrêter) la foreuse avant d'enlever les adaptateurs.",
-      "Installer des centralisateurs aux 40 pieds au-delà de 40 pieds de monterie pour stabiliser les tiges.",
-      "Ne pas s'exposer directement sous le trou de la V-30 lors du soufflage; porter un masque.",
-      "Pour retirer une roche manuellement, retirer d'abord la V-30 et éloigner la foreuse afin de ne pas s'exposer.",
-      "Nettoyer les déflecteurs et grillages avant de s'exposer en dessous.",
-      "Condition de trou ouvert au toit : baliser et aviser la compagnie pour sécuriser le secteur.",
-      "Refermer le trou avec les grillages de la cage avant l'entretien.",
-      "Pendant l'entretien, le travailleur doit être à 5 mètres de la ligne de forage et hors de la ligne de tir de chutes de la monterie.",
-      "Appuyer le nez de la V-30 au sol en tout temps durant l'entretien.",
-      "Arrêt immédiat; couper l'alimentation électrique ET l'air comprimé.",
-      "Empêcher tout accès au site par barricade ou panneaux.",
-      "Aucun travail de forage avant l'arrivée du superviseur.",
-      "Opérer à distance; placer la manette à 5 mètres de la ligne de forage et hors de la ligne de tir. Une analyse de risque doit être effectuée à ce point."
+      "Garder les accès libres en tout temps (ni boyaux, casing ni roche).",
+      "Respecter la hauteur plancher-toit de 12 à 14 pi; au-delà de 4,3 m (14 pi), relever le plancher avec de la roche abattue.",
+      "Risque de bris d'actuateur : respecter la distance de 2 à 4 pi entre tables et collet de trou pour bien répartir les charges.",
+      "Maintenir 7 m entre la foreuse et le compresseur.",
+      "Risque de projection de roche : positionner la commande à 5 m du point de forage.",
+      "Levage : utiliser une chaîne de grade 80 de 12 pi entre le gear box et le drive shaft.",
+      "Installer des centralisateurs aux 40 pi au-delà de 40 pi de monterie pour stabiliser les tiges.",
+      "Ne pas s'exposer sous le trou de la V-30 lors du soufflage; porter un masque.",
+      "Avant de retirer une roche à la main, retirer la V-30 et éloigner la foreuse pour ne pas s'exposer.",
+      "Risque de chute : baliser et aviser la compagnie pour sécuriser un trou ouvert au toit.",
+      "Risque de chute de roches : durant l'entretien, rester à 5 m de la ligne de forage et hors de la ligne de tir de la monterie.",
+      "Bris de tige : arrêt immédiat, couper l'alimentation électrique ET l'air comprimé, barricader l'accès; aucun forage avant l'arrivée du superviseur."
     ],
     "consignes_securite": [
       {
@@ -2097,10 +2051,9 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "En cours de forage de V-30, lorsque l'un des taillants de la V-30 se brise ou que des outils sont échappés, il est strictement défendu à quiconque, et ce en tout temps, de descendre au fond de la monterie pour dégager ou récupérer les pièces métalliques, les outils, les taillants ou tout autre équipement ;",
-      "IMPORTANT : Le port du harnais est obligatoire et le travailleur doit être attaché à un ancrage ou une ligne de vie durant les travaux de manipulation du couvercle et quand le couvercle est retiré de la monterie.",
-      "Le port du harnais et l'attache à un ancrage ou à une ligne de vie sont obligatoires avant d'enlever le couvercle (risque de chute dans la monterie).",
-      "Le travailleur doit demeurer attaché à un ancrage ou à une ligne de vie pendant que le couvercle est retiré."
+      "Risque de chute : interdiction stricte de descendre au fond de la monterie pour récupérer pièces, outils ou taillants échappés.",
+      "Risque de chute dans la monterie : porter le harnais et s'attacher à un ancrage ou une ligne de vie avant d'enlever le couvercle.",
+      "Rester attaché à l'ancrage ou à la ligne de vie pendant toute la durée du retrait du couvercle."
     ],
     "consignes_securite": [
       {
@@ -2175,11 +2128,11 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "440. Malgré l'article 439, des trous peuvent être forés à des distances moindres que celles prévues à cet article pourvu que le forage soit exécuté au moyen d'un dispositif de commande à distance sous surveillance et que la zone de forage soit évacuée.",
-      "Le foreur et l'aide-foreur ne doivent jamais se trouver dans la ligne de sautage et doivent rester du côté de la sortie sans rien qui bloque l'accès.",
-      "Le foreur et l'aide-foreur doivent demeurer dans la zone sécuritaire en tout temps pendant le forage.",
-      "En cas de présence d'explosif dans le matériel qui sort du trou : arrêter immédiatement l'opération avec la foreuse et aviser le superviseur.",
-      "Pour un trou dynamité avec amex (ANFO), mettre de l'eau dans les tiges de forage afin de diminuer le risque d'explosion."
+      "Risque d'explosion : forer seulement avec commande à distance sous surveillance et zone de forage évacuée (article 440).",
+      "Risque d'être frappé par le sautage : ne jamais se tenir dans la ligne de sautage; rester du côté de la sortie, accès dégagé.",
+      "Demeurer dans la zone sécuritaire en tout temps pendant le forage.",
+      "Risque d'explosion : si de l'explosif sort du trou, arrêter immédiatement la foreuse et aviser le superviseur.",
+      "Trou dynamité à l'ANFO (amex) : mettre de l'eau dans les tiges pour réduire le risque d'explosion."
     ],
     "consignes_securite": [
       {
@@ -2284,9 +2237,11 @@ window.PROCEDURES = [
   {
     "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
     "avertissements": [
-      "IL EST INTERDIT À QUI QUE CE SOIT DE POSITIONNER TOUTE PARTIES DE SON CORPS SOUS LES TABLES SI LE MARTEAU N'EST PAS MONTÉ AU-DELÀ DES TABLES ET QUE LA SLIP PLATE N'EST PAS FERMÉE. Une distance minimum de 1.5 mètre entre le mât et la console doit obligatoirement être respectée. Quand une pièce est en mouvement, aucun travailleur ne peut se placer entre la console et le mât, ni à moins de 1,5 mètre du mât de tous les côtés.",
-      "IL EST INTERDIT À QUI QUE CE SOIT DE POSITIONNER TOUTE PARTIES DE SON CORPS SOUS LES TABLES SI LE MARTEAU N'EST PAS MONTÉ AU-DELÀ DES TABLES ET QUE LA SLIP PLATE N'EST PAS FERMÉE. Une distance minimum de 1.5 mètre entre le mât et la console doit obligatoirement être respectée. Quand une pièce est en mouvement, aucun travailleur ne peut se placer entre la console et le mât, ni à moins de 1,5 mètre du mât de tous les côtés.",
-      "Les tubages peuvent devenir des embûches pour les travailleurs s'ils sont laissés trop longs hors du plancher du chantier. La longueur de dépassement peut changer pendant le forage à cause de l'accumulation de boue de forage. Il faut que le trajet effectué par les travailleurs soit exempt de ces tubages qui dépassent."
+      "Risque de coincement : ne jamais placer une partie du corps sous les tables tant que le marteau n'est pas monté au-dessus des tables et que la slip plate n'est pas fermée.",
+      "Respecter en tout temps une distance minimale de 1,5 m entre le mât et la console.",
+      "Risque d'être coincé ou frappé : quand une pièce bouge, ne jamais se placer entre la console et le mât, ni à moins de 1,5 m du mât, de tous les côtés.",
+      "Risque de trébuchement : garder les trajets de circulation dégagés des tubages qui dépassent du plancher.",
+      "Vérifier régulièrement le dépassement des tubages : il peut augmenter avec l'accumulation de boue de forage."
     ],
     "categorie": "Installation",
     "code": "PRO-OP-ITH-014",
@@ -2436,11 +2391,10 @@ window.PROCEDURES = [
     "prerequis": [],
     "etapes": [],
     "avertissements": [
-      "LES MARTEAUX DE 3'' ET 4'' DOIVENT ÊTRE INSTALLÉS SUR LE GEAR BOX MANUELLEMENT DE LA MÊME MANIÈRE QUE LES TIGES DE FORAGE. LE TRAVAILLEUR APPLIQUERA ENSUITE CETTE PROCÉDURE À PARTIR DU POINT #8.",
-      "LES MARTEAUX DE 6'' DOIVENT TOUJOURS ÊTRE TRANSPORTÉS À L'AIDE DU CHARIOT CONÇU À CET EFFET. LE «DRIVER SUB» DOIT ÊTRE INSTALLÉ SUR LES MARTEAUX EN TOUT TEMPS LORS DE LA MANIPULATION",
-      "À CHAQUE FOIS QU'ON DOIT S'EXPOSER LES MAINS SOUS LE MARTEAU, IL FAUT VALIDER QUE LE MARTEAU EST BIEN VISSER AU GEAR BOX",
-      "À chaque fois qu'on doit s'exposer les mains sous le marteau, il faut valider que le marteau est bien vissé au GEAR BOX.",
-      "Ne pas s'exposer les mains lors du dévissage manuel du marteau."
+      "Risque d'écrasement des mains : avant d'exposer les mains sous le marteau, valider qu'il est bien vissé au Gear Box.",
+      "Ne jamais exposer les mains lors du dévissage manuel du marteau.",
+      "Marteaux de 6'' : toujours transporter avec le chariot prévu et garder le Driver Sub installé pendant la manipulation.",
+      "Marteaux de 3'' et 4'' : installer manuellement sur le Gear Box comme les tiges, puis suivre la procédure à partir du point #8."
     ],
     "consignes_securite": [
       {
