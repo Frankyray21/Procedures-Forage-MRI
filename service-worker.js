@@ -6,7 +6,7 @@
    - autres ressources (css, js, icônes, logo, PDF) : cache d'abord, puis mise
      à jour en arrière-plan. Les PDF sont mis en cache à la première
      consultation, donc consultables ensuite hors-ligne. */
-const VERSION = 'mri-proc-v33';
+const VERSION = 'mri-proc-v34';
 const CORE = [
   './',
   './index.html',
@@ -46,28 +46,29 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  const isPDF = /\.pdf$/i.test(url.pathname);
   const netFirst = req.mode === 'navigate' ||
     url.pathname === '/' ||
     /\/(index\.html|app\.js|styles\.css|data\.js|config\.js|quiz\.js|formation\.js|essentiel\.js|figures\.js|quiz_proc\.js)$/.test(url.pathname);
 
-  // Réseau d'abord (avec revalidation) pour l'app shell, les données ET les PDF :
-  // un PDF déposé en nouvelle version s'affiche dès le rechargement quand on est
-  // en ligne ; le cache sert de secours hors-ligne.
-  if (netFirst || isPDF) {
+  // Réseau d'abord pour l'app shell et les données (déjà versionnés par ?v=NNN,
+  // donc toujours frais après un déploiement). Cache en secours hors-ligne.
+  if (netFirst) {
     e.respondWith(
-      fetch(req, { cache: isPDF ? 'no-cache' : 'reload' }).then((res) => {
+      fetch(req, { cache: 'reload' }).then((res) => {
         if (res && res.status === 200) {
           const copy = res.clone();
           caches.open(VERSION).then((c) => c.put(req, copy));
         }
         return res;
-      }).catch(() => caches.match(req).then((r) => r || (isPDF ? undefined : caches.match('./index.html'))))
+      }).catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
     );
     return;
   }
 
-  // stale-while-revalidate
+  // Cache d'abord (réponse INSTANTANÉE), mise à jour en arrière-plan.
+  // Les PDF et les images suivent cette stratégie : une fois en cache, ils
+  // s'affichent immédiatement hors-ligne ou en réseau faible (sous terre),
+  // sans attendre le réseau. Le bouton « Mettre à jour » force le rafraîchissement.
   e.respondWith(
     caches.open(VERSION).then((cache) =>
       cache.match(req).then((cached) => {

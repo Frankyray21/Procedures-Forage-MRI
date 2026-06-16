@@ -170,6 +170,11 @@
       'manifest.webmanifest', 'images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png'];
     DATA.forEach(function (p) { u.push('pdf/' + encodeURIComponent(p.id) + '.pdf'); });
     u.push('pdf/centralisateur-dessin.pdf');
+    if (window.FIGURES) {
+      Object.keys(window.FIGURES).forEach(function (id) {
+        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) u.push(f.src); });
+      });
+    }
     return u;
   }
   function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
