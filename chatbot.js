@@ -64,21 +64,8 @@
   var INDEX = [];
   function buildIndex() {
     var DATA = window.PROCEDURES || [];
-    DATA.forEach(function (p) {
-      var titre = p.titre || '';
-      var meta = norm(titre + ' ' + (p.machines || []).join(' '));
-      function add(text, kind, source) {
-        if (!text) return;
-        INDEX.push({ text: text, kind: kind, source: source || '', pid: p.id, ptitre: titre,
-          txt: norm(text), meta: meta });
-      }
-      (p.consignes_securite || []).forEach(function (c) { add(c.regle, 'Consigne', c.source || c.theme); });
-      (p.valeurs_cles || []).forEach(function (v) { add(v.libelle + ' : ' + v.valeur, 'Valeur', titre); });
-      (p.avertissements || []).forEach(function (a) { add(a, 'Avertissement', titre); });
-      if (p.resume) add(p.resume, 'Résumé', titre);
-      // (Objectif retiré de l'index à la demande.)
-    });
-    // Texte INTÉGRAL des PDF (pdftext.js) — recherche dans le document complet.
+    // L'assistant cherche UNIQUEMENT dans le texte intégral des PDF des
+    // procédures (pdftext.js). Les titres viennent de data.js pour l'affichage.
     var PT = window.PDFTEXT || {};
     var titreById = {};
     DATA.forEach(function (p) { titreById[p.id] = p.titre || p.id; });
@@ -119,8 +106,6 @@
         var a = item.txt.indexOf(core[j]), b = item.txt.indexOf(core[j + 1]);
         if (a >= 0 && b >= 0 && Math.abs(a - b) <= 28) score += 2;
       }
-      if (item.kind === 'Valeur') score += 0.6;
-      if (item.kind === 'PDF') score -= 3;      // les consignes structurées priment ; le PDF complète
       scored.push({ item: item, score: score, hits: hits, core: coreInTxt });
     });
     scored.sort(function (a, b) { return b.score - a.score; });
@@ -226,7 +211,7 @@
   }
 
   function init() {
-    if (!window.PROCEDURES || !window.PROCEDURES.length) { setTimeout(init, 300); return; }
+    if (!window.PDFTEXT || !Object.keys(window.PDFTEXT).length) { setTimeout(init, 300); return; }
     buildIndex();
     buildUI();
   }
