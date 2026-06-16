@@ -144,6 +144,7 @@
     updateMachChips();
     drawList();
     renderOffline();
+    verifyOfflineCache();
   }
   // Filtre machine conditionnel à la tâche : visible seulement si une catégorie
   // est choisie ET qu'elle compte plusieurs machines pertinentes.
@@ -178,6 +179,21 @@
     return u;
   }
   function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
+  /* Les PDF sont désormais pré-téléchargés automatiquement par le service
+     worker dès l'installation. On vérifie leur présence réelle dans le Cache
+     Storage pour afficher « Disponible hors-ligne » sans attendre un clic. */
+  function verifyOfflineCache() {
+    if (DEMO || !('caches' in window)) return;
+    var pdfs = DATA.map(function (p) { return 'pdf/' + encodeURIComponent(p.id) + '.pdf'; });
+    pdfs.push('pdf/centralisateur-dessin.pdf');
+    Promise.all(pdfs.map(function (u) { return caches.match(u).then(function (r) { return !!r; }); }))
+      .then(function (found) {
+        if (found.length && found.every(Boolean)) {
+          try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
+          renderOffline();
+        }
+      }).catch(function () {});
+  }
   function renderOffline() {
     var box = $('#offline'); if (!box) return;
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
