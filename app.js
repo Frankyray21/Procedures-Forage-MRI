@@ -352,7 +352,7 @@
         }).join('') + '</div></div>';
     }
 
-    if (p.objectif) h += sec('Objectif', '<p>' + esc(p.objectif) + '</p>');
+    // (Section « Objectif » retirée à la demande.)
 
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
 
