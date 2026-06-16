@@ -116,7 +116,7 @@
           '<div class="stat"><b><a href="#/code" style="color:var(--accent-l)">Code&nbsp;»</a></b><span>de sécurité</span></div>' +
         '</div>' +
       '</div></section>' +
-      '<div class="wrap"><div class="offline" id="offline"></div></div>' +
+      '<div class="wrap"><div class="install" id="install"></div><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="search">' + ICON.search +
           '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" autocomplete="off">' +
@@ -143,6 +143,7 @@
     bindChips('#machChips', 'mach');
     updateMachChips();
     drawList();
+    renderInstall();
     renderOffline();
     verifyOfflineCache();
   }
@@ -166,6 +167,7 @@
 
   /* ---------- disponibilité hors-ligne (pré-téléchargement des PDF) ---------- */
   var DL_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>';
+  var INSTALL_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M12 7v7m0 0l-3-3m3 3l3-3"/><line x1="11" y1="18.5" x2="13" y2="18.5"/></svg>';
   function offlineAssets() {
     var u = ['./', 'index.html', 'styles.css', 'config.js', 'data.js', 'quiz.js', 'app.js',
       'manifest.webmanifest', 'images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png'];
@@ -810,19 +812,54 @@
 
   /* ---------- installation PWA ---------- */
   var deferredPrompt = null;
+  function isStandalone() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      window.navigator.standalone === true;
+  }
+  function isIOS() {
+    var ua = navigator.userAgent || '';
+    return /iphone|ipad|ipod/i.test(ua) ||
+      (/(macintosh)/i.test(ua) && 'ontouchend' in document); // iPadOS se fait passer pour Mac
+  }
+  function doInstall() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.finally(function () { deferredPrompt = null; renderInstall(); updateInstallBtn(); });
+    } else if (isIOS()) {
+      toast('Sur iPhone/iPad : touchez Partager ⬆️ puis « Sur l\'écran d\'accueil ».');
+    } else {
+      toast('Menu du navigateur (⋮) → « Installer l\'application » ou « Ajouter à l\'écran d\'accueil ».');
+    }
+  }
+  function updateInstallBtn() {
+    var b = $('#installBtn'); if (!b) return;
+    b.style.display = (deferredPrompt && !isStandalone()) ? 'inline-flex' : 'none';
+  }
+  // Carte « Installer l'application » sur l'accueil — visible tant que l'app
+  // n'est pas déjà installée (mode autonome).
+  function renderInstall() {
+    var box = $('#install'); if (!box) return;
+    if (isStandalone()) { box.innerHTML = ''; return; }
+    var hint = isIOS()
+      ? 'Sur iPhone/iPad : touchez <b>Partager ⬆️</b> puis <b>« Sur l\'écran d\'accueil »</b>.'
+      : 'Installez l\'application sur votre appareil pour un accès rapide et hors-ligne.';
+    box.innerHTML = '<div class="offcard install"><span class="offic">' + INSTALL_ICON + '</span>' +
+      '<div class="offtxt"><b>Installer l\'application</b><span>' + hint + '</span></div>' +
+      '<button class="btn" id="installCardBtn">Installer</button></div>';
+    var btn = $('#installCardBtn'); if (btn) btn.onclick = doInstall;
+  }
+  function initInstall() {
+    updateInstallBtn();
+    var b = $('#installBtn'); if (b) b.addEventListener('click', doInstall);
+  }
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault(); deferredPrompt = e;
-    var b = $('#installBtn'); if (b) b.style.display = 'inline-flex';
+    updateInstallBtn(); renderInstall();
   });
-  function initInstall() {
-    var b = $('#installBtn'); if (!b) return;
-    b.addEventListener('click', function () {
-      if (!deferredPrompt) { toast('Pour installer : menu du navigateur → « Ajouter à l\'écran d\'accueil ».'); return; }
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.finally(function () { deferredPrompt = null; b.style.display = 'none'; });
-    });
-  }
-  window.addEventListener('appinstalled', function () { var b = $('#installBtn'); if (b) b.style.display = 'none'; });
+  window.addEventListener('appinstalled', function () {
+    deferredPrompt = null; updateInstallBtn(); renderInstall();
+    toast('Application installée. Retrouvez-la sur votre écran d\'accueil.');
+  });
 
   var toastT;
   function toast(msg) {
