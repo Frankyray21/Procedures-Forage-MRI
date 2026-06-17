@@ -10,7 +10,7 @@
      de cliquer sur « Tout télécharger »). Les listes sont construites à
      partir de data.js (PDF) et figures.js (images) pour rester synchronisées
      avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
-const VERSION = 'mri-proc-v43';
+const VERSION = 'mri-proc-v44';
 const CORE = [
   './',
   './index.html',
@@ -30,6 +30,16 @@ const CORE = [
   './app.js',
   './manifest.webmanifest',
   './images/logo_roger.png',
+  './images/epi/lunettes_protection.png',
+  './images/epi/casque_securite.png',
+  './images/epi/protection_auditive.png',
+  './images/epi/protection_respiratoire.png',
+  './images/epi/bottes_protection.png',
+  './images/epi/gants.png',
+  './images/epi/combinaison.png',
+  './images/epi/protection_faciale.png',
+  './images/epi/harnais_securite.png',
+  './images/epi/vetements_haute_visibilite.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png'

@@ -433,15 +433,21 @@
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
 
   /* ---------- outils (analyses SST / JSA) : détail en modale ---------- */
-  // Pictogrammes ÉPI (comme sur les fiches JSA d'origine)
+  // Pictogrammes ÉPI officiels (images, comme sur les fiches JSA d'origine)
+  function epiImg(file, alt) {
+    return '<img src="images/epi/' + file + '" alt="' + alt + '" loading="lazy">';
+  }
   var EPI_PICTO = {
-    'Lunettes de protection': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="14" r="3.3"/><circle cx="17.5" cy="14" r="3.3"/><path d="M9.8 14c.6-.8 3.8-.8 4.4 0"/><path d="M3.2 12.5 5 8.5h3"/><path d="M20.8 12.5 19 8.5h-3"/></svg>',
-    'Casque de sécurité': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16a9 9 0 0 1 18 0"/><path d="M2 16h20"/><path d="M9 7.6V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1.6"/><path d="M12 3.2v1.8"/></svg>',
-    'Protection auditive': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13.5v-1a8 8 0 0 1 16 0v1"/><rect x="2.4" y="13" width="4.2" height="7.2" rx="2.1"/><rect x="17.4" y="13" width="4.2" height="7.2" rx="2.1"/></svg>',
-    'Bottes de protection': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h3v8.5l4.2 5.8c.9 1.3 2 1.7 4.8 1.7v2H6.5A1.5 1.5 0 0 1 5 21.5V16l3-3.2z"/></svg>',
-    'Gants': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12V6.5a1.5 1.5 0 0 1 3 0V10m0 0V4.5a1.5 1.5 0 0 1 3 0V10m0 0V5.5a1.5 1.5 0 0 1 3 0V11m0-2a1.5 1.5 0 0 1 3 0v4a6 6 0 0 1-6 6h-1.5a6 6 0 0 1-4.5-2L4.5 14.5A1.6 1.6 0 0 1 6.8 12.3L9 14"/></svg>',
-    'Protection faciale': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h14V10a7 7 0 0 1-14 0z"/><path d="M5 8.5h14"/><path d="M9 21h6"/><path d="M12 17v4"/></svg>',
-    'Vêtements haute visibilité': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.2 12 6l3.5-2.8L20 6l-2 3v10.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9L4 6z"/><path d="M12 6v13.5"/></svg>'
+    'Lunettes de protection': epiImg('lunettes_protection.png', 'Lunettes de protection'),
+    'Casque de sécurité': epiImg('casque_securite.png', 'Casque de sécurité'),
+    'Protection auditive': epiImg('protection_auditive.png', 'Protection auditive'),
+    'Protection respiratoire': epiImg('protection_respiratoire.png', 'Protection respiratoire'),
+    'Bottes de protection': epiImg('bottes_protection.png', 'Bottes de protection'),
+    'Gants': epiImg('gants.png', 'Gants'),
+    'Combinaison': epiImg('combinaison.png', 'Combinaison'),
+    'Protection faciale': epiImg('protection_faciale.png', 'Protection faciale'),
+    'Harnais de sécurité': epiImg('harnais_securite.png', 'Harnais de sécurité'),
+    'Vêtements haute visibilité': epiImg('vetements_haute_visibilite.png', 'Vêtements haute visibilité')
   };
   var epiGeneric = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17a9 9 0 0 1 18 0"/><path d="M2 17h20"/></svg>';
   // Petites icônes de catégorie de risque
