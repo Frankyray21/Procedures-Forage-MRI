@@ -10,7 +10,7 @@
      de cliquer sur « Tout télécharger »). Les listes sont construites à
      partir de data.js (PDF) et figures.js (images) pour rester synchronisées
      avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
-const VERSION = 'mri-proc-v48';
+const VERSION = 'mri-proc-v49';
 const CORE = [
   './',
   './index.html',
@@ -34,6 +34,7 @@ const CORE = [
   './quiz-hard3.js',
   './quiz-dd-equip.js',
   './quiz-securite.js',
+  './quiz-ith-new.js',
   './app.js',
   './manifest.webmanifest',
   './images/logo_roger.png',
