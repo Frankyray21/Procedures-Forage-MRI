@@ -10,7 +10,7 @@
      de cliquer sur « Tout télécharger »). Les listes sont construites à
      partir de data.js (PDF) et figures.js (images) pour rester synchronisées
      avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
-const VERSION = 'mri-proc-v38';
+const VERSION = 'mri-proc-v39';
 const CORE = [
   './',
   './index.html',
@@ -18,6 +18,7 @@ const CORE = [
   './config.js',
   './data.js',
   './data-diamant.js',
+  './data-outils.js',
   './pdftext.js',
   './chatbot.js',
   './quiz.js',
@@ -43,11 +44,14 @@ const CORE = [
 function mediaAssets() {
   try {
     self.window = self;
-    importScripts('./data.js', './data-diamant.js', './figures.js', './pages.js');
+    importScripts('./data.js', './data-diamant.js', './data-outils.js', './figures.js', './pages.js');
     const list = (self.PROCEDURES || []).map(
       (p) => './pdf/' + encodeURIComponent(p.id) + '.pdf'
     );
     list.push('./pdf/centralisateur-dessin.pdf');
+    // Fiches d'analyse SST des outils (JSA-SYN-01 … 11)
+    const outils = self.OUTILS || {};
+    Object.keys(outils).forEach((id) => { list.push('./pdf/' + encodeURIComponent(id) + '.pdf'); });
     const figs = self.FIGURES || {};
     Object.keys(figs).forEach((id) => {
       (figs[id] || []).forEach((f) => { if (f && f.src) list.push('./' + f.src); });
