@@ -506,9 +506,14 @@
       ov.className = 'outil-ov';
       ov.innerHTML = '<div class="outil-modal" role="dialog" aria-modal="true"><div class="om-body"></div></div>';
       document.body.appendChild(ov);
+      // Listeners attachés une seule fois (l'overlay est un singleton).
+      var closeOv = function () { ov.classList.remove('on'); document.body.style.overflow = ''; };
+      ov.addEventListener('click', function (e) {
+        if (e.target === ov || (e.target.closest && e.target.closest('.om-x'))) closeOv();
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeOv(); });
     }
     var body = ov.querySelector('.om-body');
-    function close() { ov.classList.remove('on'); document.body.style.overflow = ''; }
     function open(tid) {
       var o = window.OUTILS[tid]; if (!o) return;
       var pdf = 'pdf/' + encodeURIComponent(tid) + '.pdf';
@@ -538,10 +543,6 @@
     [].forEach.call(cards, function (c) {
       c.addEventListener('click', function () { open(c.getAttribute('data-tool')); });
     });
-    ov.addEventListener('click', function (e) {
-      if (e.target === ov || (e.target.closest && e.target.closest('.om-x'))) close();
-    });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
@@ -690,7 +691,8 @@
       'outils-cles': '🔧', 'inspection-verification': '🔍', 'communication-signalisation': '🚩',
       'epi-eau-ventilation': '🦺',
       'dd-tube-carottier': '🪨', 'dd-cable-treuil': '🪢', 'dd-planchers-hauteur': '🪜',
-      'dd-support-tiges': '⛓️', 'dd-forage-distance': '🎯', 'dd-cimentation-entretien': '🧱'
+      'dd-support-tiges': '⛓️', 'dd-forage-distance': '🎯', 'dd-cimentation-entretien': '🧱',
+      'dd-gaz': '💨', 'dd-vehicules': '🚜', 'ith-defoncage-accueil': '🧨'
     };
     // Le Code affiché suit la section courante : Forage au diamant (DD) si on
     // vient de la section Diamant, sinon Forage de production (ITH). On ne
