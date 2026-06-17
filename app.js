@@ -466,7 +466,9 @@
       arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
   }
   // ÉPI de base déjà obligatoires sous terre — non répétés par outil.
-  var EPI_BASE = ['Lunettes de protection', 'Casque de sécurité', 'Bottes de protection', 'Gants', 'Vêtements haute visibilité'];
+  // La protection auditive n'est pas un pictogramme permanent : on la rappelle
+  // par un avis « outil bruyant » quand l'outil présente le risque de bruit.
+  var EPI_BASE = ['Lunettes de protection', 'Casque de sécurité', 'Bottes de protection', 'Gants', 'Vêtements haute visibilité', 'Protection auditive'];
   function epiChip(x) {
     return '<span class="epi-chip"><span class="epi-ic">' + (EPI_PICTO[x] || epiGeneric) + '</span><span class="epi-lb">' + esc(x) + '</span></span>';
   }
@@ -502,6 +504,9 @@
           '<button type="button" class="om-x" aria-label="Fermer">' + ICON.close + '</button></div>' +
         '<div class="om-risk ' + riskClass(o.niveau) + '"><span class="om-rk">Niveau de risque (après contrôles)</span>' +
           '<span class="om-rv">' + o.niveau + ' · ' + riskLabel(o.niveau) + '</span></div>' +
+        ((o.sante || []).indexOf('Bruit') >= 0
+          ? '<div class="om-noise">🔊 <b>Outil bruyant</b> — port de la protection auditive requis.</div>'
+          : '') +
         '<div class="om-cols">' +
           outilList('Risques — Sécurité', o.securite, RISK_ICO.secu) +
           outilList('Risques — Santé', o.sante, RISK_ICO.sante) +

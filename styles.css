@@ -659,6 +659,10 @@ footer b{color:var(--muted)}
 .om-risk.r-high{background:rgba(248,113,113,.13);border-color:rgba(248,113,113,.45)}
 .om-rk{font-size:.85rem;color:var(--muted)}
 .om-rv{font-weight:800;font-size:1.05rem}
+.om-noise{display:flex;align-items:center;gap:.45rem;margin:0 1.2rem .6rem;padding:.55rem .85rem;
+  border-radius:10px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.45);
+  color:#fbbf24;font-size:.92rem}
+.om-noise b{color:#fcd34d}
 .om-cols{display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1.4rem;padding:0 1.2rem 1rem}
 .ot-block{padding:.55rem 0}
 .ot-block h4,.om-epi h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-l);
