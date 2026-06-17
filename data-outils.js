@@ -108,23 +108,15 @@ window.OUTILS = {
   }
 };
 
-/* Procédures → outils susceptibles d'être utilisés (« lorsque ça s'applique »).
-   Associations établies selon la nature des tâches (fabrication de planchers,
-   installation, entretien mécanique, manutention de tiges). */
+/* Procédures → outils.
+   Règle : un outil n'est rattaché à une procédure que s'il est RÉELLEMENT
+   NOMMÉ dans le texte de la procédure (et non par jugement sur la nature de la
+   tâche). Vérifié sur l'extraction texte des PDF (window.PDFTEXT).
+   - PRO-DD-ST-003 « Fabrication d'un plancher » : ses OUTILS NÉCESSAIRES
+     listent « Scie va-et-vient avec lame à bois » → scie alternative.
+   Les autres procédures ne nomment aucune des fiches JSA ci-dessus : les
+   « clé », « marteau » ou « graisse » qui y apparaissent désignent des outils
+   manuels, le marteau fond-de-trou ou un produit, pas ces outils électriques. */
 window.OUTILS_MAP = {
-  // Fabrication / installation (bois, ancrage, structure)
-  "pro-dd-st-003":     ["jsa-syn-06", "jsa-syn-03", "jsa-syn-07", "jsa-syn-02", "jsa-syn-04", "jsa-syn-01"],
-  "std-dd-installation":["jsa-syn-06", "jsa-syn-02", "jsa-syn-04", "jsa-syn-01"],
-  "ss-dd-st-001":      ["jsa-syn-06", "jsa-syn-02", "jsa-syn-04"],
-  "pro-dd-st-008":     ["jsa-syn-02", "jsa-syn-04", "jsa-syn-05", "jsa-syn-01"],
-  // Entretien mécanique
-  "pro-mec-011":       ["jsa-syn-05", "jsa-syn-09", "jsa-syn-10", "jsa-syn-01"],
-  "pro-op-dd-005":     ["jsa-syn-05", "jsa-syn-09", "jsa-syn-10"],
-  "dr600-op-002":      ["jsa-syn-10", "jsa-syn-05"],
-  "pro-op-dd-013":     ["jsa-syn-10"],
-  "pro-op-ith-003":    ["jsa-syn-05", "jsa-syn-10"],
-  // Manutention de tiges / tubage (clés)
-  "pro-op-ith-002":    ["jsa-syn-05"],
-  "pro-op-ith-002a":   ["jsa-syn-05"],
-  "pro-op-ith-014":    ["jsa-syn-05", "jsa-syn-01"]
+  "pro-dd-st-003": ["jsa-syn-03"]
 };
