@@ -9,8 +9,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour commencer un trou de forage avec un core barrel de 1,5 m",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour commencer un trou de forage avec un core barrel de 1,5 m",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -22,7 +22,7 @@
   "historique": [],
   "date_creation": "Avril 2019",
   "date_revision": "",
-  "source_pdf": "a5fe0ad8-PRODDST001_Proc_dure_pour_commencer_dun_trou_de_forage_avec_une_core_barrel_de_15_m.pdf",
+  "source_pdf": "PRO-DD-ST-001",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -35,8 +35,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour vider le tube carottier.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour vider le tube carottier.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -48,7 +48,7 @@
   "historique": [],
   "date_creation": "Avril 2019",
   "date_revision": "",
-  "source_pdf": "1a343f78-PRODDST002_Proc_dure_pour_vider_le_tube_carottier_r_v._6_mai_2021.pdf",
+  "source_pdf": "PRO-DD-ST-002",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -61,8 +61,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour la fabrication d’un plancher pour foreuse aux diamants sous terre",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour la fabrication d’un plancher pour foreuse aux diamants sous terre",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -74,7 +74,7 @@
   "historique": [],
   "date_creation": "Avril 2019",
   "date_revision": "",
-  "source_pdf": "6779632d-PRODDST003_Proc_dure_de_fabrication_dun_plancher_pour_foreuse_aux_diamants_sous_terre_janvier_2025.pdf",
+  "source_pdf": "PRO-DD-ST-003",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -87,8 +87,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour extraire un tube carottier avec le loading chamber",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour extraire un tube carottier avec le loading chamber",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -100,7 +100,7 @@
   "historique": [],
   "date_creation": "octobre 2020",
   "date_revision": "",
-  "source_pdf": "2c9f8c71-PRODDST004_Proc_dure_de_r_cup_ration_de_tube_avec_le_loading_chamber_Janvier_2026.pdf",
+  "source_pdf": "PRO-DD-ST-004",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -113,8 +113,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour la récupération du tube carottier avec un over shot de surface",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour la récupération du tube carottier avec un over shot de surface",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -126,7 +126,7 @@
   "historique": [],
   "date_creation": "",
   "date_revision": "",
-  "source_pdf": "187501cb-PRODDST006_R_cup_ration_du_tube_carottier_avec_un_over_shot_de_surface_Janvier_2026.pdf",
+  "source_pdf": "PRO-DD-ST-006",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -140,8 +140,8 @@
    "Pompe 435"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour l’utilisation de la pompe 435 lors des travaux de cimentation",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour l’utilisation de la pompe 435 lors des travaux de cimentation",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -153,7 +153,7 @@
   "historique": [],
   "date_creation": "Avril 2019",
   "date_revision": "Mars 2025",
-  "source_pdf": "94008aea-PRODDST007_Proc_dure_de_cimentation_des_trous_de_forage_au_diamant_avec_pompe_435_r_vision_mars_2025.pdf",
+  "source_pdf": "PRO-DD-ST-007",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -166,8 +166,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour l’installation du support de tige et en établir l’emplacement adéquat selon la configuration de la foreuse.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour l’installation du support de tige et en établir l’emplacement adéquat selon la configuration de la foreuse.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -179,7 +179,7 @@
   "historique": [],
   "date_creation": "Avril 2021",
   "date_revision": "Août 2024",
-  "source_pdf": "a4bead99-PRODDST008_Proc_dure_dinstallation_du_support___tiges_de_forage_Janvier_2025.pdf",
+  "source_pdf": "PRO-DD-ST-008",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -193,8 +193,8 @@
    "DR-600"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour le forage de trous ascendants de plus de 20 degrés. Elle donne des pistes de réflexion pour toutes les tâches ainsi que les risques entourant le forage ascendant.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour le forage de trous ascendants de plus de 20 degrés. Elle donne des pistes de réflexion pour toutes les tâches ainsi que les risques entourant le forage ascendant.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -206,7 +206,7 @@
   "historique": [],
   "date_creation": "Juin 2021",
   "date_revision": "Avril 2023",
-  "source_pdf": "be29a384-PRODDST0091_Proc_dure_pour_les_trous_ascendants_STM1500_DR600_2907_Avril_2023_.pdf",
+  "source_pdf": "PRO-DD-ST-009-1",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -219,8 +219,8 @@
    "DR-600"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour le forage de trous ascendants de plus de 20 degrés avec la DR-600 #2923. Elle donne des pistes de réflexion pour toutes les tâches ainsi que les risques entourant le forage ascendant.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour le forage de trous ascendants de plus de 20 degrés avec la DR-600 #2923. Elle donne des pistes de réflexion pour toutes les tâches ainsi que les risques entourant le forage ascendant.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -232,7 +232,7 @@
   "historique": [],
   "date_creation": "",
   "date_revision": "",
-  "source_pdf": "6a0c8d03-PRODDST0092_Proc_dure_pour_les_trous_ascendants_DR600_2923_Avril_2023__1.pdf",
+  "source_pdf": "PRO-DD-ST-009-2",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -245,8 +245,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour La récupération du tube carottier lors de l’interception de veines d’eau avec pression significative.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour La récupération du tube carottier lors de l’interception de veines d’eau avec pression significative.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -258,7 +258,7 @@
   "historique": [],
   "date_creation": "Octobre 2017",
   "date_revision": "Juillet 2021",
-  "source_pdf": "3c25fb1e-PRODDST011Proc_dure_de_travail_lors_dinterception_de_veines_deau.pdf",
+  "source_pdf": "PRO-DD-ST-011",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -271,8 +271,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir les méthodes sécuritaires pour effectuer le démontage et le remontage d’un clam ou d’un chuck (mandrin) sur la foreuse",
+  "objectif": "L’objectif de cette procédure est de définir les méthodes sécuritaires pour effectuer le démontage et le remontage d’un clam ou d’un chuck (mandrin) sur la foreuse",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -284,7 +284,7 @@
   "historique": [],
   "date_creation": "juin 2018",
   "date_revision": "Mai 2021",
-  "source_pdf": "b97a3cd0-PROOPDD005_Proc_dure_pour_d_monter_et_remonter_un_clam_ou_un_chuck_sur_une_foreuse_mai_2021.pdf",
+  "source_pdf": "PRO-OP-DD-005",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -297,8 +297,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour le forage à distance avec une foreuse au diamant.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour le forage à distance avec une foreuse au diamant.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -310,7 +310,7 @@
   "historique": [],
   "date_creation": "Novembre 2022",
   "date_revision": "",
-  "source_pdf": "83576b64-99d496d0c1d19f21ce6a9d66630ac68466516af968fcf4a37f529459fee1.pdf",
+  "source_pdf": "PRO-OP-DD-012",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -323,8 +323,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour déplacer une foreuse au diamant sur un plancher de forage. Que ce soit avec le FEED EXTENSION, la BARRE DE SWING ou la BARRE DE FORCE.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour déplacer une foreuse au diamant sur un plancher de forage. Que ce soit avec le FEED EXTENSION, la BARRE DE SWING ou la BARRE DE FORCE.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -336,7 +336,7 @@
   "historique": [],
   "date_creation": "octobre 2021",
   "date_revision": "Mars 2025",
-  "source_pdf": "1108769b-PROOPDD013_Proc_dure_de_travail_lors_du_d_placement_dune_foreuse_au_diamant_sur_un_plancher.pdf",
+  "source_pdf": "PRO-OP-DD-013",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -349,8 +349,8 @@
    "DR-600"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour déplacer la DR-600-MU par ses propres moyens et la remorquer.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour déplacer la DR-600-MU par ses propres moyens et la remorquer.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -362,7 +362,7 @@
   "historique": [],
   "date_creation": "Juillet 2023",
   "date_revision": "Janvier 2026",
-  "source_pdf": "1a1fcf92-DR600OP002_Proc_dure_de_d_placement_et_de_remorquage_de_la_DR600_2923_Janvier_2026.pdf",
+  "source_pdf": "DR-600-OP-002",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -375,8 +375,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "L’objectif de cette",
-  "objectif": "L’objectif de cette",
+  "resume": "L’objectif de cette procédure est de définir des méthodes sécuritaires, efficaces et de standardiser l’installation des systèmes de sécurité pour les foreuses aux diamants.",
+  "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires, efficaces et de standardiser l’installation des systèmes de sécurité pour les foreuses aux diamants.",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -388,7 +388,7 @@
   "historique": [],
   "date_creation": "Avril 2019",
   "date_revision": "Août 2023",
-  "source_pdf": "c8397da1-SSDDST001_Installation_des_syst_mes_de_s_curit_.pdf",
+  "source_pdf": "SS-DD-ST-001",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
@@ -401,8 +401,8 @@
    "Foreuse au diamant"
   ],
   "famille": "diamant",
-  "resume": "STANDARD D’INSTALLATION SITES DE FORAGE MACHINES ROGER INTERNATIONAL Port",
-  "objectif": "STANDARD D’INSTALLATION SITES DE FORAGE MACHINES ROGER INTERNATIONAL Port",
+  "resume": "Standard d'installation des sites de forage",
+  "objectif": "Standard d'installation des sites de forage",
   "epi": [],
   "equipements": [],
   "prerequis": [],
@@ -414,7 +414,7 @@
   "historique": [],
   "date_creation": "",
   "date_revision": "",
-  "source_pdf": "f95f2751-Standard_dinstallation_sites_de_forage.pdf",
+  "source_pdf": "STD-DD",
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  }
