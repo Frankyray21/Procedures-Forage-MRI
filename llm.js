@@ -107,11 +107,13 @@
     };
   })();
 
-  /* ---------- Provider 2 : MediaPipe LLM Inference Web — Gemma 4 E2B ----------
-     Voie officielle Google pour exécuter Gemma on-device (web + Android/iOS).
-     Nécessite un bundle modèle LiteRT (.task/.litertlm) accessible par URL —
-     à fournir via window.MRI_LLM_GEMMA_URL ou MRI_LLM.configureGemma(url).
-     NB : Gemma 4 étant récent, valider l'URL du bundle MediaPipe et l'API. */
+  /* ---------- Provider 2 : MediaPipe LLM Inference Web — Gemma 3n E2B ----------
+     EXPÉRIMENTAL. Aujourd'hui, le bundle web prêt à l'emploi officiel est
+     Gemma 3n E2B/E4B en LiteRT-LM (fichier ex. « gemma-3n-E2B-it-int4-Web.litertlm »),
+     PAS Gemma 4 (en attente d'un bundle LiteRT-LM officiel). NB : l'API
+     MediaPipe LLM Inference est en maintenance ; l'avenir est LiteRT-LM.
+     Fournir l'URL d'un bundle hébergé sur TON CDN (CORS+cache OK), pas un repo
+     Hugging Face gated, via window.MRI_LLM_GEMMA_URL ou configureGemma(url). */
   var GemmaProvider = (function () {
     var TASKS_CDN = 'https://esm.run/@mediapipe/tasks-genai';
     var WASM_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai/wasm';
@@ -119,11 +121,11 @@
     var MODEL_URL = (typeof window !== 'undefined' && window.MRI_LLM_GEMMA_URL) || null;
     function setUrl(u) { MODEL_URL = u || MODEL_URL; }
     return {
-      id: 'gemma', label: 'Gemma 4 E2B (MediaPipe)',
+      id: 'gemma', label: 'Gemma 3n E2B (expérimental)',
       setUrl: setUrl,
       available: function () { return hasGPU() && !!MODEL_URL; },
       isReady: function () { return ready; },
-      model: function () { return MODEL_URL ? ('Gemma 4 E2B · ' + MODEL_URL.split('/').pop()) : 'Gemma (non configuré)'; },
+      model: function () { return MODEL_URL ? ('Gemma 3n E2B · ' + MODEL_URL.split('/').pop()) : 'Gemma 3n (non configuré)'; },
       init: function (onProgress) {
         if (ready) return Promise.resolve('gemma');
         if (!hasGPU()) return Promise.reject(new Error('WebGPU non disponible'));
@@ -161,9 +163,10 @@
 
   /* ---------------- Dispatcher (API publique) ---------------- */
   var PROVIDERS = { webllm: WebLLMProvider, gemma: GemmaProvider };
-  // Défaut = WebLLM. Si une URL de modèle Gemma est fournie (ex. dans config.js
-  // via window.MRI_LLM_GEMMA_URL), on bascule automatiquement sur Gemma.
-  var activeId = (typeof window !== 'undefined' && window.MRI_LLM_GEMMA_URL && GemmaProvider.available()) ? 'gemma' : 'webllm';
+  // Défaut = WebLLM / Qwen3 (recommandé en prod). Gemma 3n reste une OPTION
+  // expérimentale proposée dans le sélecteur quand window.MRI_LLM_GEMMA_URL
+  // est configuré ; on ne bascule pas automatiquement dessus.
+  var activeId = 'webllm';
   function P() { return PROVIDERS[activeId]; }
 
   // Choix de modèle proposés à l'utilisateur (selon disponibilité réelle).
@@ -175,7 +178,7 @@
       o.push({ key: 'quality', label: 'Qualité', note: '≈ 2,5 Go · appareils puissants', provider: 'webllm', tier: 'quality' });
     }
     if (GemmaProvider.available()) {
-      o.push({ key: 'gemma', label: 'Gemma 4 E2B', note: '≈ 2 Go · MediaPipe', provider: 'gemma', tier: null });
+      o.push({ key: 'gemma', label: 'Gemma 3n E2B', note: '≈ 1,5–2 Go · expérimental (LiteRT)', provider: 'gemma', tier: null });
     }
     return o;
   }
