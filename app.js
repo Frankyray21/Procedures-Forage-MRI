@@ -14,7 +14,8 @@
     'Maintenance': '#f59e0b', 'Manutention': '#8b5cf6', 'Démobilisation': '#ec4899',
     'Intervention': '#ef4444',
     'Carottage & tube': '#06b6d4', 'Installation & plancher': '#10b981',
-    'Déplacement': '#ec4899', 'Cimentation': '#a16207', 'Sécurité': '#ef4444'
+    'Déplacement': '#ec4899', 'Cimentation': '#a16207', 'Sécurité': '#ef4444',
+    'Équipements & véhicules': '#0d9488'
   };
   function catColor(c) { return CAT_COLORS[c] || '#d22325'; }
 
@@ -83,7 +84,7 @@
   }
   // Classement des filtres : catégories par flux de travail, machines regroupées
   var CAT_ORDER = ['Forage', 'Alésage', 'Carottage & tube', 'Cimentation', 'Installation', 'Installation & plancher',
-    'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Démobilisation', 'Sécurité'];
+    'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Équipements & véhicules', 'Démobilisation', 'Sécurité'];
   var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur'];
   function mainMachine(m) {
     var s = norm(m);

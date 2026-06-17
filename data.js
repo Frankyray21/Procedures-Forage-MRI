@@ -3606,9 +3606,10 @@ window.CODE_SECURITE = {
         {
           "num": "6.1",
           "titre": "Cimentation et protection respiratoire",
-          "texte": "Lors de la cimentation, le travailleur doit porter les ÉPI obligatoires, dont le masque powerflow (protection respiratoire), et les mettre avant de commencer. Une trousse d'urgence est obligatoire et l'intérieur des gants doit être inspecté avant chaque utilisation.",
+          "texte": "Lors de la cimentation, le travailleur doit porter les ÉPI obligatoires, dont le masque powerflow / power flow (protection respiratoire), et les mettre avant de commencer. Le port des ÉPI est obligatoire dès la manipulation des sacs de ciment jusqu'à la fin du nettoyage complet de la machine. Une trousse d'urgence est obligatoire sur le site et l'intérieur des gants doit être inspecté avant chaque utilisation; il est interdit de circuler hors de la zone de travail.",
           "sources": [
-            "PRO-DD-ST-007"
+            "PRO-DD-ST-007",
+            "PRO-OP-CIM-001"
           ]
         },
         {
@@ -3616,11 +3617,20 @@ window.CODE_SECURITE = {
           "titre": "Cimentation : raccords et obturation des boyaux",
           "texte": "Les raccords d'alimentation d'eau au header et de la pompe à ciment doivent être verrouillés par des barrures Chicago. Après le pompage, le boyau d'injection est plié en deux et maintenu par deux ty-raps pendant les 24 heures de cure, pour empêcher le ciment de ressortir du boyau.",
           "sources": [
-            "PRO-DD-ST-007"
+            "PRO-DD-ST-007",
+            "PRO-OP-CIM-001"
           ]
         },
         {
           "num": "6.3",
+          "titre": "Cimentation Chemgrout : maîtrise de la pression",
+          "texte": "En trou descendant, si la pression dépasse 30 psi pendant le pompage, remonter le tube vers le collet d'une dizaine de pieds : un déblocage soudain causerait des blessures graves. La pression d'injection est vérifiée en continu pour respecter le devis, et l'injection est arrêtée en cas d'anomalie.",
+          "sources": [
+            "PRO-OP-CIM-001"
+          ]
+        },
+        {
+          "num": "6.4",
           "titre": "Démontage d'un clam ou d'un chuck (ressorts comprimés)",
           "texte": "Avant de démonter un clam ou un chuck (mandrin), la foreuse doit être cadenassée. Les boulons se dévissent et se revissent un seul tour à la fois, en suivant l'ordre prescrit, car les ressorts sont comprimés (environ ¼ de pouce) et ne doivent pas être écrasés d'un seul côté.",
           "sources": [
@@ -3628,7 +3638,7 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "6.4",
+          "num": "6.5",
           "titre": "Déplacement de la foreuse sur un plancher",
           "texte": "Pour rouler une foreuse au diamant sur un plancher, conserver au moins deux tiges sous la foreuse. La zone d'exclusion est la zone, du côté de la barrière (clôture et porte), où se tiennent l'opérateur et les contrôles. Orienter toujours le côté le plus long (côté plat) de la barre de manœuvre vers le bas pour assurer l'adhérence; la glisser sous le treuil du côté opposé au déplacement souhaité et la coincer solidement.",
           "sources": [
@@ -3636,12 +3646,69 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "6.5",
+          "num": "6.6",
           "titre": "DR-600 : commande à distance et pliage du mât",
           "texte": "Avant tout déplacement de la DR-600, s'assurer que la foreuse est détachée du véhicule et libre de tout mouvement, et que tous les arrêts d'urgence sont tirés (désactivés). Le moteur diesel doit toujours être ramené au plus bas régime possible. Lors du pliage et du dépliage du mât, l'opérateur doit se tenir hors du rayon d'action du mât; s'il doit s'en approcher, il appuie sur STOP et range la télécommande en lieu sûr. Lors des déplacements, l'opérateur reste immobile; attention aux boyaux hydrauliques et aux câbles électriques.",
           "sources": [
             "PRO-OP-DD-013",
             "DR-600-OP-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dd-vehicules",
+      "famille": "dd",
+      "titre": "Chapitre 7 — Véhicules et équipements (tracteur, camion-flèche)",
+      "intro": "L'utilisation du tracteur Caterpillar 416 et du camion-flèche BT-3 MacLean sous terre comporte des risques de circulation, de chute depuis le panier, de chute de charge et de renversement. Formation, signalisation, arrimage et stationnement sécuritaire sont obligatoires.",
+      "articles": [
+        {
+          "num": "7.1",
+          "titre": "Circulation et signalisation sous terre",
+          "texte": "L'opérateur doit klaxonner le nombre de coups exigé par la mine (avant de se déplacer vers l'avant, à reculons et aux intersections) et garder une distance de 30 mètres entre les véhicules dans la rampe. La montée et la descente de l'équipement se font toujours face à l'équipement, selon la règle des 3 points d'appui.",
+          "sources": [
+            "PRO-OP-CAT-416-001"
+          ]
+        },
+        {
+          "num": "7.2",
+          "titre": "Travail dans le panier élévateur",
+          "texte": "Les travailleurs doivent obligatoirement porter le harnais et s'attacher en tout temps dans le panier avant, qui doit être ancré avec ses tiges hydrauliques avant qu'ils n'y entrent. Un opérateur doit rester sur le siège en tout temps, la vitesse ne dépasse pas le pas d'homme lorsqu'il y a du personnel dans le panier, et un seul travailleur fait les signaux à l'opérateur.",
+          "sources": [
+            "PRO-OP-CAT-416-001"
+          ]
+        },
+        {
+          "num": "7.3",
+          "titre": "Charges, fourches et remorquage (tracteur)",
+          "texte": "La capacité de charge avec les fourches est de 2 964 kg (6 535 lb); le matériel dans les paniers ne doit jamais obstruer la vue de l'opérateur. Il est interdit de transporter du matériel sur le tracteur : tout doit être dans les paniers ou sur les fourches. Avec un compresseur en remorque, le poids maximal sur les fourches équivaut à celui d'une V-30 (3 300 lb).",
+          "sources": [
+            "PRO-OP-CAT-416-001"
+          ]
+        },
+        {
+          "num": "7.4",
+          "titre": "Camion-flèche BT-3 : formation, levage et arrimage",
+          "texte": "La formation sur le camion-flèche est donnée par un instructeur accrédité par MRI et comprend 40 heures d'opération supervisées. La capacité maximale sur la plate-forme (incluant le remorquage) est de 32 000 lb. Ne jamais s'exposer sous une charge, toujours voir sa charge et respecter la capacité de la grue. Tout le matériel est arrimé solidement avec les sangles avant que les stabilisateurs ne soient rentrés. Au démarrage, si les voyants/klaxons ne s'éteignent pas après 5 secondes, ne pas partir le moteur et contacter le superviseur.",
+          "sources": [
+            "PRO-OP-BT3-01"
+          ]
+        },
+        {
+          "num": "7.5",
+          "titre": "Stationnement sécuritaire des véhicules",
+          "texte": "Les vérins ne sont appliqués que sur un terrain plat et stable, jamais en pente. En pente, se rapprocher du mur en diagonale, roues dirigées vers le mur, sans appliquer les vérins. Sous terre, stationner bien en vue des autres véhicules, jamais près d'une intersection; gyrophare allumé et panier/fourches déposés au sol. Il est interdit de stationner devant les portes de ventilation, les sorties d'urgence, les recettes de puits, les dépôts d'huile, de carburant ou d'explosifs, ou un refuge.",
+          "sources": [
+            "PRO-OP-CAT-416-001",
+            "PRO-OP-BT3-01"
+          ]
+        },
+        {
+          "num": "7.6",
+          "titre": "Tests de freins",
+          "texte": "Les tests de freins (stationnement, frein à main, freins de service) sont effectués selon la procédure. Si le véhicule avance pendant un test de frein, il faut cadenasser le véhicule et aviser le superviseur.",
+          "sources": [
+            "PRO-OP-CAT-416-001"
           ]
         }
       ]

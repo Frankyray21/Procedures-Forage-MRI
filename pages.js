@@ -238,5 +238,41 @@ window.PAGES = {
  ],
  "std-dd-installation": [
   "images/pages/std-dd-installation-1.jpg"
+ ],
+ "pro-op-cat-416-001": [
+  "images/pages/pro-op-cat-416-001-1.jpg",
+  "images/pages/pro-op-cat-416-001-2.jpg",
+  "images/pages/pro-op-cat-416-001-3.jpg",
+  "images/pages/pro-op-cat-416-001-4.jpg",
+  "images/pages/pro-op-cat-416-001-5.jpg",
+  "images/pages/pro-op-cat-416-001-6.jpg",
+  "images/pages/pro-op-cat-416-001-7.jpg",
+  "images/pages/pro-op-cat-416-001-8.jpg",
+  "images/pages/pro-op-cat-416-001-9.jpg",
+  "images/pages/pro-op-cat-416-001-10.jpg",
+  "images/pages/pro-op-cat-416-001-11.jpg"
+ ],
+ "pro-op-bt3-001": [
+  "images/pages/pro-op-bt3-001-1.jpg",
+  "images/pages/pro-op-bt3-001-2.jpg",
+  "images/pages/pro-op-bt3-001-3.jpg",
+  "images/pages/pro-op-bt3-001-4.jpg",
+  "images/pages/pro-op-bt3-001-5.jpg",
+  "images/pages/pro-op-bt3-001-6.jpg",
+  "images/pages/pro-op-bt3-001-7.jpg",
+  "images/pages/pro-op-bt3-001-8.jpg"
+ ],
+ "pro-op-cim-001": [
+  "images/pages/pro-op-cim-001-1.jpg",
+  "images/pages/pro-op-cim-001-2.jpg",
+  "images/pages/pro-op-cim-001-3.jpg",
+  "images/pages/pro-op-cim-001-4.jpg",
+  "images/pages/pro-op-cim-001-5.jpg",
+  "images/pages/pro-op-cim-001-6.jpg",
+  "images/pages/pro-op-cim-001-7.jpg",
+  "images/pages/pro-op-cim-001-8.jpg",
+  "images/pages/pro-op-cim-001-9.jpg",
+  "images/pages/pro-op-cim-001-10.jpg",
+  "images/pages/pro-op-cim-001-11.jpg"
  ]
 };
