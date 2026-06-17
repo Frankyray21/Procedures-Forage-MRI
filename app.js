@@ -665,7 +665,10 @@
       'dd-tube-carottier': '🪨', 'dd-cable-treuil': '🪢', 'dd-planchers-hauteur': '🪜',
       'dd-support-tiges': '⛓️', 'dd-forage-distance': '🎯', 'dd-cimentation-entretien': '🧱'
     };
-    // Deux codes : Forage ITH (production) et Forage au diamant (DD)
+    // Le Code affiché suit la section courante : Forage au diamant (DD) si on
+    // vient de la section Diamant, sinon Forage de production (ITH). On ne
+    // montre que le code concerné (pas les deux).
+    codeFam = (state.fam === 'diamant') ? 'dd' : 'ith';
     var chapitres = CODE.chapitres.filter(function (c) { return (c.famille || 'ith') === codeFam; });
     var isDD = codeFam === 'dd';
     var nbArt = chapitres.reduce(function (n, c) { return n + ((c.articles || []).length); }, 0);
@@ -720,15 +723,13 @@
     var preamb = isDD
       ? "Ce volet du Code de sécurité regroupe les consignes propres au forage au diamant (carottage) — foreuses STM-1500 et DR-600. Les règles sont extraites des procédures de forage au diamant (PRO-DD-ST, PRO-OP-DD, DR-600, SS-DD-ST, STD-DD) et ont un caractère obligatoire. Pour les opérations communes (cadenassage, manutention, ÉPI…), se référer aussi au Code de sécurité du forage de production."
       : (CODE.preambule || '');
+    var volet = isDD ? 'Forage au diamant (DD)' : 'Forage de production (ITH)';
     var metaKV = nbKV ? ' · ' + nbKV + ' valeurs-clés' : '';
     view.innerHTML =
       '<section class="code-hero"><div class="wrap">' +
         '<span class="eyebrow">Règlement interne</span>' +
         '<h1>Code de sécurité du forage</h1>' +
-        '<div class="code-fam" role="tablist" aria-label="Choisir le code">' +
-          '<button type="button" class="cf' + (!isDD ? ' on' : '') + '" data-fam="ith" role="tab" aria-selected="' + (!isDD) + '">Forage de production (ITH)</button>' +
-          '<button type="button" class="cf' + (isDD ? ' on' : '') + '" data-fam="dd" role="tab" aria-selected="' + isDD + '">Forage au diamant (DD)</button>' +
-        '</div>' +
+        '<div class="code-volet ' + (isDD ? 'dd' : 'ith') + '">' + (isDD ? '💎' : '🛠️') + ' Volet : ' + esc(volet) + '</div>' +
         '<div class="code-meta">' + chapitres.length + ' chapitres · ' + nbArt + ' articles' + metaKV + '</div>' +
         '<div class="preamble">' + esc(preamb) + '</div>' +
         '<div class="code-tools">' +
@@ -744,15 +745,6 @@
     initCodeTools();
   }
   function initCodeTools() {
-    [].forEach.call(document.querySelectorAll('.code-fam .cf'), function (b) {
-      b.addEventListener('click', function () {
-        var fam = b.getAttribute('data-fam');
-        if (fam === codeFam) return;
-        codeFam = fam;
-        var v = document.getElementById('view');
-        if (v) { renderCode(v); window.scrollTo(0, 0); }
-      });
-    });
     var inp = document.getElementById('codeSearch');
     var noRes = document.getElementById('codeNoRes');
     if (inp) inp.addEventListener('input', function () {

@@ -212,14 +212,12 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 /* outils & enrichissements du Code de sécurité */
 .code-meta{font-family:var(--font-display);font-weight:700;letter-spacing:.03em;color:var(--muted);
   font-size:.85rem;text-transform:uppercase;margin:.2rem 0 .9rem}
-/* Sélecteur de code : production (ITH) / diamant (DD) */
-.code-fam{display:inline-flex;gap:.3rem;background:var(--card);border:1px solid var(--border);
-  border-radius:12px;padding:.28rem;margin:.9rem 0 .2rem;flex-wrap:wrap}
-.code-fam .cf{appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;
-  font-family:var(--font-display);font-weight:700;font-size:1rem;letter-spacing:.02em;
-  padding:.5rem 1rem;border-radius:9px;transition:background .15s,color .15s}
-.code-fam .cf:hover{color:var(--text)}
-.code-fam .cf.on{background:var(--g-red);color:#fff;box-shadow:0 2px 8px rgba(210,35,37,.35)}
+/* Volet de code affiché : production (ITH) / diamant (DD) */
+.code-volet{display:inline-flex;align-items:center;gap:.45rem;margin:.9rem 0 .2rem;
+  font-family:var(--font-display);font-weight:700;font-size:1.02rem;letter-spacing:.02em;
+  padding:.45rem .95rem;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+.code-volet.dd{border-color:rgba(34,211,238,.5);color:#67e8f9;background:rgba(34,211,238,.08)}
+.code-volet.ith{border-color:rgba(239,90,92,.5);color:var(--accent-l);background:rgba(239,90,92,.08)}
 .code-tools{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
 .csearch{flex:1;min-width:220px;display:flex;align-items:center;gap:.5rem;background:var(--card);
   border:1px solid var(--border);border-radius:11px;padding:.1rem .8rem}
