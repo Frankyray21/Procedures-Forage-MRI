@@ -77,10 +77,13 @@
   var state = { q: '', cat: '', mach: '', fam: '' };
   var codeFam = 'ith';   // Code de sécurité affiché : 'ith' (production) ou 'dd' (diamant)
   // fam '' = foreuses ITH/CUBEX/V-30 (par défaut) ; 'diamant' = forage au diamant
+  // Appartenance d'une procédure à une section. famille 'commun' = les deux.
+  function inSection(p, fam) {
+    if (p.famille === 'commun') return true;
+    return fam === 'diamant' ? p.famille === 'diamant' : p.famille !== 'diamant';
+  }
   function famData() {
-    return DATA.filter(function (p) {
-      return state.fam === 'diamant' ? p.famille === 'diamant' : p.famille !== 'diamant';
-    });
+    return DATA.filter(function (p) { return inSection(p, state.fam); });
   }
   // Classement des filtres : catégories par flux de travail, machines regroupées
   var CAT_ORDER = ['Forage', 'Alésage', 'Carottage & tube', 'Cimentation', 'Installation', 'Installation & plancher',
@@ -288,7 +291,7 @@
     });
   }
   function matches(p) {
-    if (state.fam === 'diamant' ? p.famille !== 'diamant' : p.famille === 'diamant') return false;
+    if (!inSection(p, state.fam)) return false;
     if (state.cat && p.categorie !== state.cat) return false;
     if (state.mach && machinesOf(p).indexOf(state.mach) < 0) return false;
     if (state.q) {
@@ -323,8 +326,10 @@
     var p = DATA.filter(function (x) { return x.id === id; })[0];
     if (!p) { view.innerHTML = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Procédures</a><div class="empty">Procédure introuvable.</div></div>'; return; }
     var col = catColor(p.categorie);
-    var backHref = p.famille === 'diamant' ? '#/diamant' : '#/procedures';
-    var backLbl = p.famille === 'diamant' ? ' Forage au diamant' : ' Toutes les procédures';
+    // Pour une procédure 'commun', le retour suit la section d'où l'on vient.
+    var viaDiamant = (p.famille === 'commun') ? (state.fam === 'diamant') : (p.famille === 'diamant');
+    var backHref = viaDiamant ? '#/diamant' : '#/procedures';
+    var backLbl = viaDiamant ? ' Forage au diamant' : ' Toutes les procédures';
     var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
     var h = '<div class="wrap"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
       '<div class="phead">' +
@@ -689,7 +694,8 @@
     // vient de la section Diamant, sinon Forage de production (ITH). On ne
     // montre que le code concerné (pas les deux).
     codeFam = (state.fam === 'diamant') ? 'dd' : 'ith';
-    var chapitres = CODE.chapitres.filter(function (c) { return (c.famille || 'ith') === codeFam; });
+    // 'commun' = chapitre affiché dans les deux codes.
+    var chapitres = CODE.chapitres.filter(function (c) { var f = c.famille || 'ith'; return f === codeFam || f === 'commun'; });
     var isDD = codeFam === 'dd';
     var nbArt = chapitres.reduce(function (n, c) { return n + ((c.articles || []).length); }, 0);
 

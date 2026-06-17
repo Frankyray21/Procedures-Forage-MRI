@@ -3431,7 +3431,8 @@ window.CODE_SECURITE = {
     },
     {
       "id": "ith-defoncage-accueil",
-      "titre": "Chapitre 11 — Défonçage de trous et accueil sécurité",
+      "famille": "commun",
+      "titre": "Défonçage de trous et accueil sécurité (commun ITH + diamant)",
       "intro": "Le défonçage de trous forés sous terre (par forage au diamant, ITH ou autre) crée des ouvertures dangereuses et expose à la chute d'objets et aux interactions forage/déblayage. L'accueil sécurité des travailleurs et des visiteurs encadre l'accès aux sites.",
       "articles": [
         {

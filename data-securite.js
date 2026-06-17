@@ -1,4 +1,4 @@
-/* PROCEDURES DE SECURITE (SAN-SEC / PRO-SEC) : accueil, gaz, defoncage. */
+/* PROCEDURES DE SECURITE (SAN-SEC / PRO-SEC) : accueil, gaz, defoncage. famille 'commun' = ITH + diamant. */
 (window.PROCEDURES = window.PROCEDURES || []).push.apply(window.PROCEDURES, [
  {
   "id": "san-sec-006",
@@ -6,6 +6,7 @@
   "titre": "Accueil des nouveaux travailleurs sur un site",
   "categorie": "Sécurité",
   "machines": [],
+  "famille": "commun",
   "resume": "Manière d'accueillir les nouveaux travailleurs de MRI sur les sites des clients : accueil en ligne MRI, accueil du client, prise en charge par le contremaître-général et formulaire d'accueil signé (incluant contrôle des risques et détection de gaz).",
   "objectif": "L’objectif de cette procédure est de définir la manière d’accueillir nos nouveaux travailleurs sur les sites ou MACHINES ROGER INTERNATIONAL a des contrats.",
   "epi": [],
@@ -29,6 +30,7 @@
   "titre": "Accueil des visiteurs aux sites de forage",
   "categorie": "Sécurité",
   "machines": [],
+  "famille": "commun",
   "resume": "Manière d'accueillir et d'encadrer les visiteurs aux sites de forage (set-up). Le site débute au ruban jaune; le foreur ou l'aide-foreur présente le site et s'assure que le visiteur porte les ÉPI avant de traverser le ruban.",
   "objectif": "L’objectif de cette procédure est de définir la manière que nous devons accueillir les visiteurs à nos sites de forage. Elle a pour but de bien encadrer les visiteurs et de nous assurer qu’ils connaissent bien les mesures de sécurité entourant le travail de foreur, et qu’ils ont les équipements pour être sur un site de forage. Au même titre que l’accueil de n’importe quels visiteurs dans nos maisons, les consignes d’usage doivent être prodiguées. Cette démonstration amènera les travailleurs vers un processus d’engagement envers la SST.",
   "epi": [],
@@ -78,6 +80,7 @@
   "titre": "Défonçage de trous forés sous terre",
   "categorie": "Sécurité",
   "machines": [],
+  "famille": "commun",
   "resume": "Méthodes sécuritaires pour le défonçage de trous forés sous terre (diamant, ITH ou autres) : identification au plan d'ingénierie, formulaire signé par quart, mesures 5 m avant de défoncer (barricade/surveillance), périmètre d'ouverture dangereuse et règles de forage/déblayage simultanés.",
   "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour effectuer le défonçage de trous sous terre.",
   "epi": [],
