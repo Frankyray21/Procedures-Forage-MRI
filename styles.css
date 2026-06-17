@@ -517,11 +517,11 @@ footer b{color:var(--muted)}
 .pq-fb.no{color:var(--accent-l)}
 .pq-fb .pq-fi{display:inline-flex}
 /* explication = citation de la procédure (toujours affichée après réponse) */
-.pq-exp{display:none;margin-top:.5rem;font-size:.92rem;line-height:1.55;color:#dbe4f0;
-  background:var(--bg-2);border-left:3px solid var(--accent);border-radius:8px;padding:.6rem .75rem}
+.pq-exp{display:none;margin-top:.5rem;font-size:1.08rem;line-height:1.6;color:#dbe4f0;
+  background:var(--bg-2);border-left:3px solid var(--accent);border-radius:8px;padding:.7rem .85rem}
 .pq-exp.on{display:block}
-.pq-ref{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;
-  color:var(--accent-l);font-weight:800;margin-bottom:.3rem}
+.pq-ref{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--accent-l);font-weight:800;margin-bottom:.4rem}
 /* bonne réponse : la citation « Référence à la procédure » passe en vert (+ animation verte) */
 .pq.correct .pq-exp{color:#bbf7d0;border-left-color:#16a34a;background:rgba(34,197,94,.10);
   animation:pqGreen .5s ease}
