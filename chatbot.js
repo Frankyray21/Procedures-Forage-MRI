@@ -52,6 +52,44 @@
   }
   function uniq(arr) { var s = {}; return arr.filter(function (w) { return s[w] ? false : (s[w] = 1); }); }
   function rxesc(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  // Repli d'accents 1:1 (préserve la longueur, contrairement à NFD) pour pouvoir
+  // surligner le mot d'origine à la bonne position.
+  function fold(s) {
+    return String(s || '').toLowerCase()
+      .replace(/[àâäáã]/g, 'a').replace(/[éèêë]/g, 'e').replace(/[îïíì]/g, 'i')
+      .replace(/[ôöóòõ]/g, 'o').replace(/[ûüúù]/g, 'u').replace(/ç/g, 'c').replace(/œ/g, 'o');
+  }
+  // Surligne (en jaune, via <mark class="cbhl">) les mots recherchés dans un
+  // passage, sans toucher aux accents/casse d'origine.
+  function highlight(text, terms) {
+    if (!terms || !terms.length) return esc(text);
+    var folded = fold(text), ranges = [];
+    terms.forEach(function (t) {
+      if (!t) return;
+      var isNum = /[0-9]/.test(t);
+      var re = new RegExp('(^|[^a-z0-9])(' + rxesc(t) + ')' + (isNum ? '(?=[^a-z0-9]|$)' : ''), 'g');
+      var m;
+      while ((m = re.exec(folded))) {
+        var start = m.index + m[1].length;
+        ranges.push([start, start + m[2].length]);
+        re.lastIndex = start + m[2].length;
+      }
+    });
+    if (!ranges.length) return esc(text);
+    ranges.sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+    var merged = [ranges[0].slice()];
+    for (var i = 1; i < ranges.length; i++) {
+      var last = merged[merged.length - 1];
+      if (ranges[i][0] <= last[1]) last[1] = Math.max(last[1], ranges[i][1]);
+      else merged.push(ranges[i].slice());
+    }
+    var out = '', pos = 0;
+    merged.forEach(function (r) {
+      out += esc(text.slice(pos, r[0])) + '<mark class="cbhl">' + esc(text.slice(r[0], r[1])) + '</mark>';
+      pos = r[1];
+    });
+    return out + esc(text.slice(pos));
+  }
   // poids de correspondance d'un mot dans un texte normalisé.
   // nombre → mot ENTIER obligatoire (« 6 » ne matche pas « 60 ») ; mot → entier=3, sous-chaîne=1.
   function wmatch(w, hay) {
@@ -133,12 +171,13 @@
         'Reformule ta question (ex. « distance foreuse surcompresseur », « bris de tige », ' +
         '« cadenassage »), ou consulte <a href="#/procedures">toutes les procédures</a>.</p>';
     }
+    var terms = uniq(tokens(query, true));   // mots recherchés (+ synonymes) à surligner
     var html = '<p>Voici ce que disent les procédures&nbsp;:</p>';
     res.forEach(function (r) {
       var it = r.item;
       html += '<div class="cbans">' +
         '<span class="cbk">' + esc(it.kind) + '</span>' +
-        '<div class="cbtxt">« ' + esc(it.text) + ' »' +
+        '<div class="cbtxt">« ' + highlight(it.text, terms) + ' »' +
           '<a class="cbsrc" href="#/p/' + esc(it.pid) + '">' + esc(it.ptitre) +
           (it.source ? ' · ' + esc(it.source) : '') + ' →</a>' +
         '</div></div>';
