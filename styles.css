@@ -655,8 +655,18 @@ footer b{color:var(--muted)}
 .om-rv{font-weight:800;font-size:1.05rem}
 .om-cols{display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1.4rem;padding:0 1.2rem 1rem}
 .ot-block{padding:.55rem 0}
-.ot-block h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-l);
-  margin:0 0 .35rem;font-weight:700}
+.ot-block h4,.om-epi h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-l);
+  margin:0 0 .35rem;font-weight:700;display:flex;align-items:center;gap:.35rem}
+.ot-ico{display:inline-flex;line-height:0;color:var(--accent-l)}
+/* ÉPI : pictogrammes (comme sur les fiches JSA d'origine) */
+.om-epi{padding:.3rem 1.2rem 1.1rem;border-top:1px solid var(--border)}
+.epi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(94px,1fr));gap:.55rem}
+.epi-chip{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.4rem;
+  background:var(--card-2);border:1px solid var(--border);border-radius:11px;padding:.65rem .35rem}
+.epi-ic{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;
+  background:#1d4ed8;color:#fff;flex:0 0 44px}
+.epi-ic svg{width:27px;height:27px}
+.epi-lb{font-size:.72rem;line-height:1.2;color:var(--text)}
 .ot-ul{margin:0;padding-left:1.1rem;list-style:disc}
 .ot-ul li{font-size:.95rem;line-height:1.45;margin:.12rem 0;color:var(--text)}
 .om-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;padding:.9rem 1.2rem 1.1rem;
