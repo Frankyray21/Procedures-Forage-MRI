@@ -465,12 +465,20 @@
     return '<div class="ot-block"><h4>' + (ico ? '<span class="ot-ico">' + ico + '</span>' : '') + esc(title) + '</h4><ul class="ot-ul">' +
       arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
   }
+  // ÉPI de base déjà obligatoires sous terre — non répétés par outil.
+  var EPI_BASE = ['Lunettes de protection', 'Casque de sécurité', 'Bottes de protection', 'Gants', 'Vêtements haute visibilité'];
+  function epiChip(x) {
+    return '<span class="epi-chip"><span class="epi-ic">' + (EPI_PICTO[x] || epiGeneric) + '</span><span class="epi-lb">' + esc(x) + '</span></span>';
+  }
   function epiPicto(arr) {
     if (!arr || !arr.length) return '';
-    return '<div class="om-epi"><h4><span class="ot-ico">' + RISK_ICO.epi + '</span>Équipements de protection (ÉPI)</h4>' +
-      '<div class="epi-grid">' + arr.map(function (x) {
-        return '<span class="epi-chip"><span class="epi-ic">' + (EPI_PICTO[x] || epiGeneric) + '</span><span class="epi-lb">' + esc(x) + '</span></span>';
-      }).join('') + '</div></div>';
+    var extra = arr.filter(function (x) { return EPI_BASE.indexOf(x) < 0; });
+    var inner = extra.length
+      ? '<div class="epi-grid">' + extra.map(epiChip).join('') + '</div>'
+      : '<p class="epi-base-note">Aucun ÉPI additionnel : seuls les ÉPI de base souterrains sont requis.</p>';
+    return '<div class="om-epi"><h4><span class="ot-ico">' + RISK_ICO.epi + '</span>ÉPI additionnels (propres à l\'outil)</h4>' +
+      '<p class="epi-base-note">En plus des ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard).</p>' +
+      inner + '</div>';
   }
   function initOutils() {
     var cards = document.querySelectorAll('.outil-card');
