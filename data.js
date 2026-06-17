@@ -1,7 +1,5 @@
 /* ===========================================================================
-   DONNÉES DES PROCÉDURES — généré à partir de l'extraction vérifiée des PDF.
-   Pour ajouter/modifier une procédure : éditez les objets ci-dessous
-   (voir README.md, section 3). Un objet = une procédure.
+   DONNEES DES PROCEDURES + CODE DE SECURITE. Genere/maintenu via le pipeline.
    =========================================================================== */
 window.PROCEDURES = [
   {
@@ -394,7 +392,7 @@ window.PROCEDURES = [
       }
     ],
     "date_creation": "04 Janvier 2012",
-    "date_revision": "Octobre 2024",
+    "date_revision": "Mars 2025",
     "source_pdf": "PRO-OP-ITH-002 Procédure d’utilisation de clés pour dévisser des tiges de forages octobre 2024.pdf",
     "langue_source": "fr",
     "notes": "Le document contient deux procédures distinctes : (1) dévissage d'une tige coincée avec l'ancrage du mât (étapes numérotées 1 à 6) et (2) dévissage d'une tige de forage ou d'un marteau coincé dans le saver sub (étapes 1 à 8 dans le PDF). Po […]"
@@ -722,7 +720,7 @@ window.PROCEDURES = [
       }
     ],
     "date_creation": "11 avril 2015",
-    "date_revision": "Décembre 2023",
+    "date_revision": "Décembre 2024",
     "source_pdf": "PRO-OP-ITH-003 Procédure de démobilisation de la foreuse ITH et du compresseur avril 2024.pdf",
     "langue_source": "fr",
     "notes": "Procédure de 5 pages signée par Christian St-Amour, directeur des opérations. La numérotation d'origine repart à 1 pour trois blocs distincts (démobilisation foreuse [1-10], démobilisation compresseur [1-7], déplacement sans remorque [1-5]) […]"
@@ -730,7 +728,7 @@ window.PROCEDURES = [
   {
     "id": "pro-op-ith-004",
     "code": "PRO-OP-ITH-004",
-    "titre": "Procédure de forage de production, 3 7/8\" à 6 ½\"",
+    "titre": "Forage en longtrou (ITH / CUBEX)",
     "categorie": "Forage",
     "machines": [
       "Foreuse ITH",
@@ -981,7 +979,7 @@ window.PROCEDURES = [
       }
     ],
     "date_creation": "Mars 2002",
-    "date_revision": "Décembre 2023",
+    "date_revision": "Mars 2025",
     "source_pdf": "PRO-OP-ITH-004 Procédure de forage production 3.375'' - 6.5'' Juin 2024.pdf",
     "langue_source": "fr",
     "notes": "Document de 7 pages extrait via pdftotext (mode -layout, encodage UTF-8). Pied de page : « Mars 2002 — Révision : Décembre 2023 » (la date de révision apparaît parfois orthographiée « Décembre2023 » sans espace dans le PDF, pages 3 à 6). Le […]"
@@ -1331,7 +1329,7 @@ window.PROCEDURES = [
       }
     ],
     "date_creation": "Mars 2002",
-    "date_revision": "Juin 2024",
+    "date_revision": "Avril 2024",
     "source_pdf": "PRO-OP-ITH-005 Procédure d’alésage en descendant sans accès avec la V-30 juin 2024.pdf",
     "langue_source": "fr",
     "notes": "Document de 11 pages extrait via pdftotext -layout (l'outil Read PDF natif a échoué faute de pdftoppm). Vérifié intégralement contre le PDF source (extraction UTF-8). La procédure comporte trois blocs de numérotation distincts : la « PROCÉD […]"
@@ -2293,7 +2291,7 @@ window.PROCEDURES = [
       }
     ],
     "date_creation": "",
-    "date_revision": "20 août 2020",
+    "date_revision": "Août 2020",
     "epi": [],
     "equipements": [],
     "etapes": [],
@@ -2481,7 +2479,7 @@ window.PROCEDURES = [
     ],
     "historique": [],
     "date_creation": "Novembre 2021",
-    "date_revision": "",
+    "date_revision": "Novembre 2021",
     "source_pdf": "PRO-OP-ITH-016 Procédure pour la manipulation des marteaux de forage et de leurs composantes.pdf",
     "langue_source": "fr",
     "notes": "Vérification effectuée par comparaison intégrale avec le PDF source (7 pages, extraction pdftotext -layout en UTF-8). L'extraction est fidèle et complète : les 34 étapes, les 3 avertissements et toutes les valeurs chiffrées (poids 60/89/211 […]"

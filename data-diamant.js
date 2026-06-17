@@ -420,6 +420,7 @@
  },
  {
   "id": "pro-op-cat-416-001",
+  "famille": "commun",
   "code": "PRO-OP-CAT-416-001",
   "titre": "Utilisation du tracteur Caterpillar 416",
   "categorie": "Équipements & véhicules",
@@ -427,7 +428,6 @@
    "Caterpillar 416",
    "Compresseur"
   ],
-  "famille": "diamant",
   "resume": "Méthodes sécuritaires pour l'utilisation du tracteur Caterpillar 416 : tests de freins, déplacements et klaxon dans la rampe, travail dans le panier avant (harnais), transport de matériel et de casings, remorquage de compresseurs et stationnement sous terre.",
   "objectif": "L’objectif de cette procédure est de définir des méthodes sécuritaires pour l’utilisation du tracteur CATERPILLAR 416",
   "epi": [],

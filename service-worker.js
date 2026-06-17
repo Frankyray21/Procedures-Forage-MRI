@@ -10,7 +10,7 @@
      de cliquer sur « Tout télécharger »). Les listes sont construites à
      partir de data.js (PDF) et figures.js (images) pour rester synchronisées
      avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
-const VERSION = 'mri-proc-v46';
+const VERSION = 'mri-proc-v47';
 const CORE = [
   './',
   './index.html',
@@ -20,6 +20,7 @@ const CORE = [
   './data-diamant.js',
   './data-outils.js',
   './data-securite.js',
+  './data-ith-new.js',
   './pdftext.js',
   './chatbot.js',
   './quiz.js',
@@ -58,7 +59,7 @@ const CORE = [
 function mediaAssets() {
   try {
     self.window = self;
-    importScripts('./data.js', './data-diamant.js', './data-securite.js', './data-outils.js', './figures.js', './pages.js');
+    importScripts('./data.js', './data-diamant.js', './data-securite.js', './data-ith-new.js', './data-outils.js', './figures.js', './pages.js');
     const list = (self.PROCEDURES || []).map(
       (p) => './pdf/' + encodeURIComponent(p.id) + '.pdf'
     );

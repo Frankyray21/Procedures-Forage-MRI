@@ -91,7 +91,7 @@
   // 'Foreuse au diamant' est volontairement absent : il équivaut à toute la
   // section Diamant (redondant comme filtre). On le regroupe quand même (pour
   // ne pas le confondre avec ITH), mais il ne s'affiche pas comme chip.
-  var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur', 'DR-600', 'STM-1500'];
+  var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur', 'DR-600', 'STM-1500', 'STOPEMASTER', 'VKING'];
   function mainMachine(m) {
     var s = norm(m);
     if (s.indexOf('cubex') >= 0) return 'ITH';   // CUBEX = foreuse ITH (même chose)
@@ -102,6 +102,8 @@
     if (s.indexOf('centralisateur') >= 0) return 'Centralisateur';
     if (s.indexOf('marteau') >= 0) return 'Marteau';
     if (s.indexOf('compresseur') >= 0 || s.indexOf('booster') >= 0) return 'Compresseur';
+    if (s.indexOf('stopemaster') >= 0) return 'STOPEMASTER';
+    if (s.indexOf('vking') >= 0 || s.indexOf('v-king') >= 0) return 'VKING';
     if (s.indexOf('ith') >= 0 || s.indexOf('foreuse') >= 0) return 'ITH';
     return null;
   }
