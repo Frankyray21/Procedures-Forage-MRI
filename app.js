@@ -85,10 +85,13 @@
   // Classement des filtres : catégories par flux de travail, machines regroupées
   var CAT_ORDER = ['Forage', 'Alésage', 'Carottage & tube', 'Cimentation', 'Installation', 'Installation & plancher',
     'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Équipements & véhicules', 'Démobilisation', 'Sécurité'];
-  var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur'];
+  var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur', 'Foreuse au diamant', 'DR-600', 'STM-1500'];
   function mainMachine(m) {
     var s = norm(m);
     if (s.indexOf('cubex') >= 0) return 'ITH';   // CUBEX = foreuse ITH (même chose)
+    if (s.indexOf('diamant') >= 0) return 'Foreuse au diamant';   // foreuse au diamant ≠ ITH
+    if (s.indexOf('dr-600') >= 0 || s.indexOf('dr600') >= 0) return 'DR-600';
+    if (s.indexOf('stm') >= 0) return 'STM-1500';
     if (s.indexOf('v-30') >= 0 || s.indexOf('v30') >= 0 || s.indexOf('aleseuse') >= 0) return 'V-30';
     if (s.indexOf('centralisateur') >= 0) return 'Centralisateur';
     if (s.indexOf('marteau') >= 0) return 'Marteau';
