@@ -28,6 +28,7 @@
   }
   function $(sel, root) { return (root || document).querySelector(sel); }
   function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   var ICON = {
     arrow: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
     back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6 6l-6-6 6-6"/></svg>',
@@ -356,13 +357,13 @@
 
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
 
-    // Quiz de la procédure (couvre l'information importante)
+    // Quiz de la procédure (couvre l'information importante) — questions mélangées
     var pqList = (window.QUIZ_PROC && window.QUIZ_PROC[p.id]) || [];
     if (pqList.length) {
+      shuffle(pqList);                                         // mélange faciles + difficiles
       var best = pqGetBest(p.id);
       var pqitems = pqList.map(function (it, i) {
-        return '<div class="pq" data-i="' + i + '"><p class="pq-q"><b>' + (i + 1) + '.</b> ' + esc(it.q) +
-          (it.d === 'difficile' ? ' <span class="pqdiff">Difficile</span>' : '') + '</p>' +
+        return '<div class="pq" data-i="' + i + '"><p class="pq-q"><b>' + (i + 1) + '.</b> ' + esc(it.q) + '</p>' +
           '<div class="pq-opts">' + it.o.map(function (opt, j) {
             return '<label class="pq-opt"><input type="radio" name="pq_' + i + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(opt) + '</span></label>';
           }).join('') + '</div>' +
