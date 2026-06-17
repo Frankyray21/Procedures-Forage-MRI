@@ -331,9 +331,14 @@
     if (!window.MRI_LLM || !window.MRI_LLM.available()) return;
     if (window.MRI_LLM.isReady()) { aiOn = !aiOn; setAiBadge();
       pushMsg('bot', aiOn ? '<p>Mode IA activé.</p>' : '<p>Retour à la recherche classique.</p>'); return; }
-    pushMsg('bot', '<p>L\'assistant IA (bêta) télécharge un modèle (≈ 1 Go) <b>une seule fois</b> ' +
-      '(Wi-Fi conseillé), puis fonctionne hors-ligne et <b>ne cite que les procédures</b>. ' +
-      '<button class="cbchip" id="cbAiGo" type="button">Télécharger et activer</button></p>');
+    var opts = window.MRI_LLM.options ? window.MRI_LLM.options() : [];
+    if (!opts.length) { enableAI(); return; }
+    pushMsg('bot', '<p>Choisis un modèle d\'IA local — téléchargé <b>une seule fois</b> ' +
+      '(Wi-Fi conseillé), puis hors-ligne. L\'assistant <b>ne cite que les procédures</b>.</p>' +
+      '<div class="cbopts">' + opts.map(function (o) {
+        return '<button class="cbopt" type="button" data-prov="' + esc(o.provider) + '" data-tier="' + esc(o.tier || '') + '">' +
+          '<b>' + esc(o.label) + '</b><span>' + esc(o.note) + '</span></button>';
+      }).join('') + '</div>');
   }
 
   function buildUI() {
@@ -378,6 +383,8 @@
     });
     // clic sur une suggestion / le bouton « activer IA » / un lien de fiche
     body.addEventListener('click', function (e) {
+      var opt = e.target.closest && e.target.closest('.cbopt');
+      if (opt) { window.MRI_LLM.choose(opt.getAttribute('data-prov'), opt.getAttribute('data-tier') || null); enableAI(); return; }
       if (e.target && e.target.id === 'cbAiGo') { enableAI(); return; }
       var chip = e.target.closest && e.target.closest('.cbchip');
       if (chip) { handleSend(chip.textContent); return; }

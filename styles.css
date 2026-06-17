@@ -621,6 +621,12 @@ footer b{color:var(--muted)}
 .cbsources{margin-top:.45rem;display:flex;flex-direction:column;gap:.18rem;font-size:.76rem}
 .cbsources span{color:var(--dim);font-weight:700}
 .cbsources a{color:var(--accent-l);font-weight:600;text-decoration:none}
+.cbopts{display:flex;flex-direction:column;gap:.35rem;margin-top:.4rem}
+.cbopt{display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;text-align:left;cursor:pointer;
+  background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:.5rem .7rem;color:var(--text)}
+.cbopt:hover{border-color:#1d4ed8}
+.cbopt b{font-size:.9rem}
+.cbopt span{font-size:.74rem;color:var(--muted)}
 .cbsrc{display:block;margin-top:.3rem;font-size:.76rem;font-weight:700;color:var(--accent-l)}
 .cbnote{margin-top:.5rem!important;font-size:.74rem;color:var(--dim)}
 .cbsugg{display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem}

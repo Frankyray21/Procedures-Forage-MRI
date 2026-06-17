@@ -56,16 +56,24 @@
   /* ---------------- Provider 1 : WebLLM / MLC (WebGPU) ---------------- */
   var WebLLMProvider = (function () {
     var CDN = 'https://esm.run/@mlc-ai/web-llm';
-    var PREF = [/qwen3.*1\.7b.*q4/i, /qwen2\.5-1\.5b.*instruct.*q4/i, /llama-3\.2-1b.*instruct.*q4/i,
-      /smollm2-1\.7b.*q4/i, /qwen3.*0\.6b.*q4/i, /gemma-?2-2b.*q4/i, /q4f16_1-MLC$/i];
-    var engine = null, ready = false, MODEL = null;
+    // Niveaux sélectionnables : on choisit dans la liste pré-bâtie de WebLLM.
+    var TIERS = {
+      light:    [/qwen3.*0\.6b.*q4/i, /qwen2\.5-0\.5b.*instruct.*q4/i, /smollm2-360m.*q4/i, /-0\.5b-.*q4/i],
+      balanced: [/qwen3.*1\.7b.*q4/i, /qwen2\.5-1\.5b.*instruct.*q4/i, /llama-3\.2-1b.*instruct.*q4/i, /smollm2-1\.7b.*q4/i],
+      quality:  [/qwen3.*4b.*q4/i, /qwen2\.5-3b.*instruct.*q4/i, /phi-3\.5-mini.*instruct.*q4/i, /llama-3\.2-3b.*instruct.*q4/i]
+    };
+    var FALLBACK = [/qwen3.*1\.7b.*q4/i, /qwen2\.5-1\.5b.*instruct.*q4/i, /llama-3\.2-1b.*instruct.*q4/i, /q4f16_1-MLC$/i];
+    var tier = 'balanced', engine = null, ready = false, MODEL = null;
     function pick(list) {
-      for (var i = 0; i < PREF.length; i++) for (var j = 0; j < list.length; j++)
-        if (PREF[i].test(list[j].model_id)) return list[j].model_id;
+      var prefs = (TIERS[tier] || []).concat(FALLBACK);
+      for (var i = 0; i < prefs.length; i++) for (var j = 0; j < list.length; j++)
+        if (prefs[i].test(list[j].model_id)) return list[j].model_id;
       return list.length ? list[0].model_id : null;
     }
     return {
-      id: 'webllm', label: 'WebLLM (Qwen3 1.7B)',
+      id: 'webllm', label: 'WebLLM (Qwen3)',
+      setTier: function (t) { if (TIERS[t] && !ready) tier = t; return tier; },
+      tier: function () { return tier; },
       available: function () { return hasGPU(); },
       isReady: function () { return ready; },
       model: function () { return MODEL; },
@@ -158,11 +166,31 @@
   var activeId = (typeof window !== 'undefined' && window.MRI_LLM_GEMMA_URL && GemmaProvider.available()) ? 'gemma' : 'webllm';
   function P() { return PROVIDERS[activeId]; }
 
+  // Choix de modèle proposés à l'utilisateur (selon disponibilité réelle).
+  function options() {
+    var o = [];
+    if (WebLLMProvider.available()) {
+      o.push({ key: 'light', label: 'Léger', note: '≈ 0,6 Go · appareils modestes', provider: 'webllm', tier: 'light' });
+      o.push({ key: 'balanced', label: 'Équilibré (recommandé)', note: '≈ 1 Go', provider: 'webllm', tier: 'balanced' });
+      o.push({ key: 'quality', label: 'Qualité', note: '≈ 2,5 Go · appareils puissants', provider: 'webllm', tier: 'quality' });
+    }
+    if (GemmaProvider.available()) {
+      o.push({ key: 'gemma', label: 'Gemma 4 E2B', note: '≈ 2 Go · MediaPipe', provider: 'gemma', tier: null });
+    }
+    return o;
+  }
+
   window.MRI_LLM = {
     providers: function () {
       return Object.keys(PROVIDERS).map(function (id) {
         return { id: id, label: PROVIDERS[id].label, available: PROVIDERS[id].available() };
       });
+    },
+    options: options,
+    choose: function (provider, tier) {
+      if (PROVIDERS[provider]) activeId = provider;
+      if (provider === 'webllm' && tier && WebLLMProvider.setTier) WebLLMProvider.setTier(tier);
+      return activeId;
     },
     active: function () { return activeId; },
     setProvider: function (id) { if (PROVIDERS[id]) activeId = id; return activeId; },
