@@ -534,7 +534,48 @@
   /* ---------- vue : Code de sécurité ---------- */
   function renderCode(view) {
     if (!CODE || !CODE.chapitres) { view.innerHTML = '<div class="wrap"><div class="empty">Le Code de sécurité n\'est pas encore disponible.</div></div>'; return; }
-    var toc = CODE.chapitres.map(function (c) { return '<a href="#chap-' + esc(c.id) + '">' + esc(c.titre) + '</a>'; }).join('');
+    var CHAP_ICON = {
+      'energie-cadenassage': '🔒', 'air-comprime-boyaux': '💨', 'zones-exclusion-positionnement': '🚧',
+      'pieces-mouvement-mat': '⚙️', 'protection-chutes-explosifs': '💥', 'manutention-levage': '⛓️',
+      'outils-cles': '🔧', 'inspection-verification': '🔍', 'communication-signalisation': '🚩',
+      'epi-eau-ventilation': '🦺'
+    };
+    var nbArt = CODE.chapitres.reduce(function (n, c) { return n + ((c.articles || []).length); }, 0);
+
+    // ---- Valeurs-clés de référence : agrégées FIDÈLEMENT des procédures (aucune invention) ----
+    var cats = [
+      { t: 'Distances, zones et hauteurs', re: /(distance|zone|exclusion|hauteur|espacement|plancher|collet)/, rows: [] },
+      { t: 'Air, pression et température', re: /(pression|temperature|degres|°f|boyau|air|psi)/, rows: [] },
+      { t: 'Diamètres et dimensions', re: /(diametre|pouce|\bpo\b|casing|trou|monterie|alesage)/, rows: [] },
+      { t: 'Poids, charges et gréage', re: /(poids|lbs|livres|charge|capacite|\bkg\b|manille|elingue|chaine|grade|ancrage)/, rows: [] },
+      { t: 'Autres repères', re: null, rows: [] }
+    ];
+    var seenKV = {};
+    (DATA || []).forEach(function (p) {
+      (p.valeurs_cles || []).forEach(function (v) {
+        if (!v || !v.libelle || v.valeur == null) return;
+        var k = norm(v.libelle + '|' + v.valeur); if (seenKV[k]) return; seenKV[k] = 1;
+        var nl = norm(v.libelle + ' ' + v.valeur);
+        var cat = cats.find(function (c) { return c.re && c.re.test(nl); }) || cats[cats.length - 1];
+        cat.rows.push({ l: v.libelle, v: v.valeur, src: p.code || p.titre, id: p.id });
+      });
+    });
+    var nbKV = Object.keys(seenKV).length;
+    var kvHTML = cats.filter(function (c) { return c.rows.length; }).map(function (c) {
+      return '<div class="kvgrp"><h4>' + esc(c.t) + '</h4><table class="kvt"><tbody>' +
+        c.rows.map(function (r) {
+          return '<tr><td class="kvl">' + esc(r.l) + '</td><td class="kvv">' + esc(r.v) + '</td>' +
+            '<td class="kvs"><a href="#/p/' + esc(r.id) + '">' + esc(r.src) + '</a></td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }).join('');
+    var valuesSection = '<section class="chap" id="chap-valeurs-cles"><h2><span class="cic">📊</span> Valeurs-clés de référence</h2>' +
+      '<p class="ci">Repère rapide des valeurs chiffrées (distances, pressions, dimensions, charges) extraites des procédures. Le détail figure sur chaque fiche.</p>' +
+      '<details class="kvbox"><summary>Afficher les ' + nbKV + ' valeurs-clés</summary>' + kvHTML + '</details></section>';
+
+    var toc = '<a href="#chap-valeurs-cles">📊 Valeurs-clés de référence</a>' +
+      CODE.chapitres.map(function (c) {
+        return '<a href="#chap-' + esc(c.id) + '">' + (CHAP_ICON[c.id] || '•') + ' ' + esc(c.titre) + '</a>';
+      }).join('');
     var body = CODE.chapitres.map(function (c) {
       var arts = (c.articles || []).map(function (a) {
         var srcs = (a.sources || []).map(function (s) {
@@ -544,7 +585,7 @@
         return '<div class="art"><h3><span class="an">' + esc(a.num) + '</span> ' + esc(a.titre) + '</h3>' +
           '<p>' + esc(a.texte) + '</p>' + (srcs ? '<div class="srcs">' + srcs + '</div>' : '') + '</div>';
       }).join('');
-      return '<section class="chap" id="chap-' + esc(c.id) + '"><h2>' + esc(c.titre) + '</h2>' +
+      return '<section class="chap" id="chap-' + esc(c.id) + '"><h2><span class="cic">' + (CHAP_ICON[c.id] || '•') + '</span> ' + esc(c.titre) + '</h2>' +
         (c.intro ? '<p class="ci">' + esc(c.intro) + '</p>' : '') + arts + '</section>';
     }).join('');
 
@@ -552,13 +593,50 @@
       '<section class="code-hero"><div class="wrap">' +
         '<span class="eyebrow">Règlement interne</span>' +
         '<h1>Code de sécurité du forage</h1>' +
+        '<div class="code-meta">' + CODE.chapitres.length + ' chapitres · ' + nbArt + ' articles · ' + nbKV + ' valeurs-clés</div>' +
         '<div class="preamble">' + esc(CODE.preambule || '') + '</div>' +
+        '<div class="code-tools">' +
+          '<div class="csearch">' + ICON.search + '<input id="codeSearch" type="search" placeholder="Rechercher dans le code…" autocomplete="off"></div>' +
+          '<button class="btn ghost" id="codePrint" type="button">Imprimer</button>' +
+        '</div>' +
       '</div></section>' +
       '<div class="wrap"><div class="code-layout">' +
         '<nav class="code-toc" id="codeToc">' + toc + '</nav>' +
-        '<div>' + body + '</div>' +
+        '<div id="codeBody">' + valuesSection + body + '<div class="empty" id="codeNoRes" style="display:none">Aucun article ne correspond à votre recherche.</div></div>' +
       '</div></div>';
     initScrollspy();
+    initCodeTools();
+  }
+  function initCodeTools() {
+    var inp = document.getElementById('codeSearch');
+    var noRes = document.getElementById('codeNoRes');
+    if (inp) inp.addEventListener('input', function () {
+      var q = norm(inp.value), shown = 0;
+      [].forEach.call(document.querySelectorAll('#codeBody .chap'), function (sec) {
+        var arts = sec.querySelectorAll('.art'), any = false;
+        if (arts.length) {
+          [].forEach.call(arts, function (a) {
+            var m = !q || norm(a.textContent).indexOf(q) >= 0;
+            a.style.display = m ? '' : 'none'; if (m) any = true;
+          });
+          sec.style.display = any ? '' : 'none';
+        } else { // section valeurs-clés (pas d'.art)
+          any = !q || norm(sec.textContent).indexOf(q) >= 0;
+          sec.style.display = any ? '' : 'none';
+        }
+        if (any) shown++;
+      });
+      if (noRes) noRes.style.display = shown ? 'none' : 'block';
+    });
+    var pr = document.getElementById('codePrint');
+    if (pr) pr.addEventListener('click', function () {
+      var kv = document.querySelector('#codeBody .kvbox'); if (kv) kv.open = true;  // imprimer les valeurs-clés
+      document.body.classList.add('print-code');
+      var done = function () { document.body.classList.remove('print-code'); window.removeEventListener('afterprint', done); };
+      window.addEventListener('afterprint', done);
+      window.print();
+      setTimeout(done, 1500);
+    });
   }
   function initScrollspy() {
     var links = Array.prototype.slice.call(document.querySelectorAll('#codeToc a'));
