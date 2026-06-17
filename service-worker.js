@@ -27,6 +27,7 @@ const CORE = [
   './figures.js',
   './pages.js',
   './quiz_proc.js',
+  './quiz-hard3.js',
   './app.js',
   './manifest.webmanifest',
   './images/logo_roger.png',
