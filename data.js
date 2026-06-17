@@ -3442,6 +3442,22 @@ window.CODE_SECURITE = {
           "sources": [
             "PRO-DD-ST-002"
           ]
+        },
+        {
+          "num": "1.2",
+          "titre": "Vérification du contenu du tube et core knocker",
+          "texte": "Ne jamais regarder dans le tube pour vérifier s'il est vide : insérer plutôt une tige de métal d'un pied dans l'extrémité et la faire glisser. Ne jamais effectuer de mouvement de va-et-vient avec le core knocker, afin de ne pas se coincer les doigts entre le core knocker et le tube.",
+          "sources": [
+            "PRO-DD-ST-002"
+          ]
+        },
+        {
+          "num": "1.3",
+          "titre": "Entreposage des tubes carottiers",
+          "texte": "Entreposer le tube dans un endroit sécuritaire en attendant sa prochaine utilisation. Ne jamais déposer les tubes par terre ni à la hauteur du visage.",
+          "sources": [
+            "PRO-DD-ST-002"
+          ]
         }
       ]
     },
@@ -3449,7 +3465,7 @@ window.CODE_SECURITE = {
       "id": "dd-cable-treuil",
       "famille": "dd",
       "titre": "Chapitre 2 — Câble Wireline, treuil et récupération du tube",
-      "intro": "La récupération du tube carottier au câble (Wireline) met en jeu un treuil et un câble sous tension. L'inspection du câble, le dégagement de la zone et la maîtrise de la pression d'eau sont déterminants.",
+      "intro": "La récupération du tube carottier au câble (Wireline) met en jeu un treuil et un câble sous tension, ainsi que la pression d'eau dans les tiges. L'inspection du câble, la purge de la pression, le dégagement de la zone et la maîtrise de la tension sont déterminants.",
       "articles": [
         {
           "num": "2.1",
@@ -3464,15 +3480,43 @@ window.CODE_SECURITE = {
         {
           "num": "2.2",
           "titre": "Zone de travail du treuil",
-          "texte": "Aucun travailleur ne doit se trouver dans la zone de travail lorsqu'il y a mouvement du treuil, et la porte d'accès à cette zone doit être fermée. Le travailleur qui tient le tube à l'intérieur des tiges doit garder un contact visuel avec son partenaire qui s'éloigne avec l'autre tube.",
+          "texte": "Aucun travailleur ne doit se trouver dans la zone de travail lorsqu'il y a mouvement du treuil, et la porte d'accès à cette zone doit être fermée (sauf lors d'un changement de câble sur le treuil). Le travailleur qui tient le tube à l'intérieur des tiges doit garder un contact visuel avec son partenaire qui s'éloigne avec l'autre tube.",
           "sources": [
-            "PRO-DD-ST-004"
+            "PRO-DD-ST-004",
+            "PRO-DD-ST-006"
           ]
         },
         {
           "num": "2.3",
+          "titre": "Purge de la pression d'eau avant manipulation",
+          "texte": "Avant d'ouvrir ou de manipuler le montage, arrêter la pompe à l'eau et purger la pression d'eau dans les tiges de forage à l'aide de la valve de purge.",
+          "sources": [
+            "PRO-DD-ST-004",
+            "PRO-DD-ST-006",
+            "PRO-DD-ST-011"
+          ]
+        },
+        {
+          "num": "2.4",
+          "titre": "Dévissage de la water swivel (interdiction du pipe wrench)",
+          "texte": "Il est interdit d'utiliser un pipe wrench pour dévisser la water swivel. Celle-ci doit être munie d'un adaptateur long; à défaut (adaptateur court), la tige de forage est retirée au complet avec la tête de la foreuse.",
+          "sources": [
+            "PRO-DD-ST-004",
+            "PRO-DD-ST-006"
+          ]
+        },
+        {
+          "num": "2.5",
+          "titre": "Maîtrise de la tension du câble (overshot de surface)",
+          "texte": "Faire descendre l'overshot sans aller trop vite, afin de garder une tension constante sur le câble. Lors du travail à deux, assurer une bonne communication.",
+          "sources": [
+            "PRO-DD-ST-006"
+          ]
+        },
+        {
+          "num": "2.6",
           "titre": "Récupération en présence de veines d'eau sous pression",
-          "texte": "La pression d'eau doit être vérifiée à chaque récupération du tube carottier. Le câble doit rester tendu durant toute la récupération : un câble qui se détend signale une pression d'eau qui pousse sur le tube; il faut alors contrôler la remontée avec la valve de purge. Le frein est installé lorsque le débit d'eau est suffisant pour risquer l'éjection du tube carottier.",
+          "texte": "La pression d'eau doit être vérifiée à chaque récupération du tube carottier; au-delà de 300 psi, installer le frein manuel (brake tube) et serrer son écrou à la clé dynamométrique selon le couple correspondant à la pression. Le câble doit rester tendu durant toute la récupération : un câble qui se détend signale une pression d'eau qui pousse sur le tube; contrôler alors la remontée avec la valve de purge. Toujours se tenir hors de la ligne de tir du tube carottier. Si l'espace rend la procédure inapplicable, contacter le superviseur et réaliser une AST.",
           "sources": [
             "PRO-DD-ST-011"
           ]
@@ -3509,12 +3553,20 @@ window.CODE_SECURITE = {
       "id": "dd-support-tiges",
       "famille": "dd",
       "titre": "Chapitre 4 — Support et chute de tiges",
-      "intro": "Le support de tiges retient des tiges qui peuvent chuter vers un travailleur. La chaîne de retenue et son réglage sont essentiels.",
+      "intro": "Le support de tiges retient des tiges qui peuvent chuter vers un travailleur. Sa manutention, la chaîne de retenue et son réglage sont essentiels.",
       "articles": [
         {
           "num": "4.1",
           "titre": "Support de tiges et chaîne de retenue",
           "texte": "La chaîne de retenue du support de tiges doit être utilisée en tout temps, sauf pendant les actions d'ajout et de retrait des tiges en continu. Elle doit être ajustée de façon que les tiges ne puissent dépasser 80° si elles chutent vers un travailleur. Les crochets doivent se situer entre 66 et 72 pouces du sol, afin que la chaîne détendue ne soit jamais à moins de 5 pieds du sol en son centre.",
+          "sources": [
+            "PRO-DD-ST-008"
+          ]
+        },
+        {
+          "num": "4.2",
+          "titre": "Manutention du support à deux travailleurs",
+          "texte": "Le support de tiges se soulève et se positionne à deux travailleurs, en appuyant bien les pattes du haut au mur.",
           "sources": [
             "PRO-DD-ST-008"
           ]
@@ -3525,12 +3577,20 @@ window.CODE_SECURITE = {
       "id": "dd-forage-distance",
       "famille": "dd",
       "titre": "Chapitre 5 — Forage à distance et explosifs",
-      "intro": "Le forage à distance est utilisé lorsque des dangers le justifient. Les distances minimales par rapport aux trous d'explosifs sont réglementées.",
+      "intro": "Le forage à distance est utilisé lorsque des dangers le justifient. Les distances minimales par rapport aux trous d'explosifs et l'évacuation de la zone sont réglementées.",
       "articles": [
         {
           "num": "5.1",
-          "titre": "Forage à distance et distances d'exclusion",
-          "texte": "Le forage à distance est décidé par le département de géologie du client en fonction des dangers présents; le foreur ou la supervision de MRI peuvent le proposer s'ils l'estiment plus sécuritaire. Les articles 439 et 440 du Règlement sur la santé et la sécurité du travail dans les mines s'appliquent, notamment l'interdiction de forer à moins de 1,5 m d'un trou contenant des explosifs à la suite d'un raté.",
+          "titre": "Forage à distance et distances d'exclusion (explosifs)",
+          "texte": "Le forage à distance est décidé par l'ingénierie du client en fonction des dangers présents; le foreur ou la supervision de MRI peuvent le proposer s'ils l'estiment plus sécuritaire. Les articles 439 et 440 du Règlement sur la santé et la sécurité du travail dans les mines s'appliquent, notamment l'interdiction de forer à moins de 1,5 m d'un trou contenant des explosifs à la suite d'un raté; un forage plus rapproché n'est permis qu'au moyen d'un dispositif de commande à distance sous surveillance, la zone de forage étant évacuée.",
+          "sources": [
+            "PRO-OP-DD-012"
+          ]
+        },
+        {
+          "num": "5.2",
+          "titre": "Installation et signalisation du forage à distance",
+          "texte": "Le système de forage à distance est installé à au moins 15 m (50 pi) entre le foreur et le trou à forer. La zone de forage est évacuée et une signalisation (ACCÈS INTERDIT, FORAGE À DISTANCE) est posée sur la clôture. Les commandes à distance sont placées dans un endroit sécuritaire, éloigné de la foreuse.",
           "sources": [
             "PRO-OP-DD-012"
           ]
@@ -3541,18 +3601,26 @@ window.CODE_SECURITE = {
       "id": "dd-cimentation-entretien",
       "famille": "dd",
       "titre": "Chapitre 6 — Cimentation, entretien et déplacement",
-      "intro": "La cimentation, l'entretien du mandrin et le déplacement de la foreuse comportent des risques respiratoires, mécaniques (ressorts comprimés) et d'écrasement par le mât.",
+      "intro": "La cimentation, l'entretien du mandrin et le déplacement de la foreuse comportent des risques respiratoires, chimiques, mécaniques (ressorts comprimés) et d'écrasement par le mât.",
       "articles": [
         {
           "num": "6.1",
           "titre": "Cimentation et protection respiratoire",
-          "texte": "Lors de la cimentation, le travailleur doit porter les ÉPI obligatoires, dont le masque powerflow (protection respiratoire), et les mettre avant de commencer. Les barrures doivent être posées sur l'alimentation d'eau au header.",
+          "texte": "Lors de la cimentation, le travailleur doit porter les ÉPI obligatoires, dont le masque powerflow (protection respiratoire), et les mettre avant de commencer. Une trousse d'urgence est obligatoire et l'intérieur des gants doit être inspecté avant chaque utilisation.",
           "sources": [
             "PRO-DD-ST-007"
           ]
         },
         {
           "num": "6.2",
+          "titre": "Cimentation : raccords et obturation des boyaux",
+          "texte": "Les raccords d'alimentation d'eau au header et de la pompe à ciment doivent être verrouillés par des barrures Chicago. Après le pompage, le boyau d'injection est plié en deux et maintenu par deux ty-raps pendant les 24 heures de cure, pour empêcher le ciment de ressortir du boyau.",
+          "sources": [
+            "PRO-DD-ST-007"
+          ]
+        },
+        {
+          "num": "6.3",
           "titre": "Démontage d'un clam ou d'un chuck (ressorts comprimés)",
           "texte": "Avant de démonter un clam ou un chuck (mandrin), la foreuse doit être cadenassée. Les boulons se dévissent et se revissent un seul tour à la fois, en suivant l'ordre prescrit, car les ressorts sont comprimés (environ ¼ de pouce) et ne doivent pas être écrasés d'un seul côté.",
           "sources": [
@@ -3560,9 +3628,17 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "6.3",
-          "titre": "Déplacement de la foreuse et pliage du mât",
-          "texte": "Pour rouler une foreuse au diamant sur un plancher, conserver au moins deux tiges sous la foreuse; la barre de manœuvre se place du côté inverse au mouvement désiré et doit être coincée solidement. Lors du pliage et du dépliage du mât de la DR-600, l'opérateur doit se tenir hors du rayon d'action du mât; s'il doit s'en approcher, il appuie sur STOP et range la télécommande en lieu sûr.",
+          "num": "6.4",
+          "titre": "Déplacement de la foreuse sur un plancher",
+          "texte": "Pour rouler une foreuse au diamant sur un plancher, conserver au moins deux tiges sous la foreuse. La zone d'exclusion est la zone, du côté de la barrière (clôture et porte), où se tiennent l'opérateur et les contrôles. Orienter toujours le côté le plus long (côté plat) de la barre de manœuvre vers le bas pour assurer l'adhérence; la glisser sous le treuil du côté opposé au déplacement souhaité et la coincer solidement.",
+          "sources": [
+            "PRO-OP-DD-013"
+          ]
+        },
+        {
+          "num": "6.5",
+          "titre": "DR-600 : commande à distance et pliage du mât",
+          "texte": "Avant tout déplacement de la DR-600, s'assurer que la foreuse est détachée du véhicule et libre de tout mouvement, et que tous les arrêts d'urgence sont tirés (désactivés). Le moteur diesel doit toujours être ramené au plus bas régime possible. Lors du pliage et du dépliage du mât, l'opérateur doit se tenir hors du rayon d'action du mât; s'il doit s'en approcher, il appuie sur STOP et range la télécommande en lieu sûr. Lors des déplacements, l'opérateur reste immobile; attention aux boyaux hydrauliques et aux câbles électriques.",
           "sources": [
             "PRO-OP-DD-013",
             "DR-600-OP-002"
