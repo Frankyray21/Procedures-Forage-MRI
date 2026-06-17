@@ -39,7 +39,8 @@
     check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
     doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
     fwd: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
-    close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+    close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+    tool: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>'
   };
   // pictogrammes par type de point de la checklist
   var TYPE_ICON = {
@@ -374,6 +375,22 @@
 
     // (Section « Objectif » retirée à la demande.)
 
+    // Outils utilisés (analyses de sécurité de tâche — JSA) : information
+    // ressortie sur la fiche, détail consultable sans quitter la page.
+    var toolIds = (window.OUTILS_MAP && window.OUTILS_MAP[p.id]) || [];
+    if (toolIds.length && window.OUTILS) {
+      h += '<div class="sec"><h2>Outils utilisés — analyse SST</h2>' +
+        '<p class="outils-lead">Outils susceptibles d\'être utilisés pour cette procédure. Touchez un outil pour voir son analyse de sécurité (risques, contrôles, ÉPI) sans quitter la page.</p>' +
+        '<div class="outils-grid">' + toolIds.map(function (tid) {
+          var o = window.OUTILS[tid]; if (!o) return '';
+          return '<button type="button" class="outil-card" data-tool="' + esc(tid) + '">' +
+            '<span class="outil-ic">' + ICON.tool + '</span>' +
+            '<span class="outil-tx"><b>' + esc(o.nom) + '</b><span class="outil-code">' + esc(o.code) + '</span></span>' +
+            '<span class="risk-badge ' + riskClass(o.niveau) + '" title="Niveau de risque après contrôles">' + o.niveau + '</span>' +
+          '</button>';
+        }).join('') + '</div></div>';
+    }
+
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
 
     // Quiz de la procédure (couvre l'information importante) — questions mélangées
@@ -410,8 +427,62 @@
     initChecklistState();
     initGallery(figs);
     initProcQuiz(p.id);
+    initOutils();
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
+
+  /* ---------- outils (analyses SST / JSA) : détail en modale ---------- */
+  function riskClass(n) { return n >= 8 ? 'r-high' : n >= 4 ? 'r-med' : 'r-low'; }
+  function riskLabel(n) { return n >= 8 ? 'Élevé' : n >= 4 ? 'Modéré' : 'Faible'; }
+  function outilList(title, arr) {
+    if (!arr || !arr.length) return '';
+    return '<div class="ot-block"><h4>' + esc(title) + '</h4><ul class="ot-ul">' +
+      arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+  }
+  function initOutils() {
+    var cards = document.querySelectorAll('.outil-card');
+    if (!cards.length || !window.OUTILS) return;
+    var ov = document.getElementById('outil-modal');
+    if (!ov) {
+      ov = document.createElement('div');
+      ov.id = 'outil-modal';
+      ov.className = 'outil-ov';
+      ov.innerHTML = '<div class="outil-modal" role="dialog" aria-modal="true"><div class="om-body"></div></div>';
+      document.body.appendChild(ov);
+    }
+    var body = ov.querySelector('.om-body');
+    function close() { ov.classList.remove('on'); document.body.style.overflow = ''; }
+    function open(tid) {
+      var o = window.OUTILS[tid]; if (!o) return;
+      var pdf = 'pdf/' + encodeURIComponent(tid) + '.pdf';
+      body.innerHTML =
+        '<div class="om-head"><div><div class="om-code">' + esc(o.code) + '</div><h3>' + esc(o.nom) + '</h3>' +
+          '<div class="om-tache">' + esc(o.tache) + '</div></div>' +
+          '<button type="button" class="om-x" aria-label="Fermer">' + ICON.close + '</button></div>' +
+        '<div class="om-risk ' + riskClass(o.niveau) + '"><span class="om-rk">Niveau de risque (après contrôles)</span>' +
+          '<span class="om-rv">' + o.niveau + ' · ' + riskLabel(o.niveau) + '</span></div>' +
+        '<div class="om-cols">' +
+          outilList('Risques — Sécurité', o.securite) +
+          outilList('Risques — Santé', o.sante) +
+          outilList('Risques — Environnement', o.environnement) +
+          outilList('Mesures de contrôle', o.controles) +
+          outilList('Équipements de protection (ÉPI)', o.epi) +
+        '</div>' +
+        '<div class="om-foot"><a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir la fiche PDF</a>' +
+          '<a class="dl" href="' + pdf + '" download>Télécharger</a>' +
+          '<span class="om-src">Source : analyse SST ' + esc(o.code) + ' · ' + esc(o.date) + '</span></div>';
+      ov.classList.add('on');
+      document.body.style.overflow = 'hidden';
+      var x = body.querySelector('.om-x'); if (x) x.focus();
+    }
+    [].forEach.call(cards, function (c) {
+      c.addEventListener('click', function () { open(c.getAttribute('data-tool')); });
+    });
+    ov.addEventListener('click', function (e) {
+      if (e.target === ov || (e.target.closest && e.target.closest('.om-x'))) close();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
   function pqGetBest(id) { try { var v = JSON.parse(localStorage.getItem('pq_' + id)); return (v && typeof v.s === 'number') ? v : null; } catch (e) { return null; } }
