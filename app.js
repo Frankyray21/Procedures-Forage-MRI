@@ -74,6 +74,7 @@
 
   /* ---------- vue : accueil ---------- */
   var state = { q: '', cat: '', mach: '', fam: '' };
+  var codeFam = 'ith';   // Code de sécurité affiché : 'ith' (production) ou 'dd' (diamant)
   // fam '' = foreuses ITH/CUBEX/V-30 (par défaut) ; 'diamant' = forage au diamant
   function famData() {
     return DATA.filter(function (p) {
@@ -654,9 +655,14 @@
       'energie-cadenassage': '🔒', 'air-comprime-boyaux': '💨', 'zones-exclusion-positionnement': '🚧',
       'pieces-mouvement-mat': '⚙️', 'protection-chutes-explosifs': '💥', 'manutention-levage': '⛓️',
       'outils-cles': '🔧', 'inspection-verification': '🔍', 'communication-signalisation': '🚩',
-      'epi-eau-ventilation': '🦺', 'forage-diamant': '💎'
+      'epi-eau-ventilation': '🦺',
+      'dd-tube-carottier': '🪨', 'dd-cable-treuil': '🪢', 'dd-planchers-hauteur': '🪜',
+      'dd-support-tiges': '⛓️', 'dd-forage-distance': '🎯', 'dd-cimentation-entretien': '🧱'
     };
-    var nbArt = CODE.chapitres.reduce(function (n, c) { return n + ((c.articles || []).length); }, 0);
+    // Deux codes : Forage ITH (production) et Forage au diamant (DD)
+    var chapitres = CODE.chapitres.filter(function (c) { return (c.famille || 'ith') === codeFam; });
+    var isDD = codeFam === 'dd';
+    var nbArt = chapitres.reduce(function (n, c) { return n + ((c.articles || []).length); }, 0);
 
     // ---- Valeurs-clés de référence : agrégées FIDÈLEMENT des procédures (aucune invention) ----
     var cats = [
@@ -667,7 +673,7 @@
       { t: 'Autres repères', re: null, rows: [] }
     ];
     var seenKV = {};
-    (DATA || []).forEach(function (p) {
+    (DATA || []).filter(function (p) { return (p.famille === 'diamant') === isDD; }).forEach(function (p) {
       (p.valeurs_cles || []).forEach(function (v) {
         if (!v || !v.libelle || v.valeur == null) return;
         var k = norm(v.libelle + '|' + v.valeur); if (seenKV[k]) return; seenKV[k] = 1;
@@ -684,15 +690,15 @@
             '<td class="kvs"><a href="#/p/' + esc(r.id) + '">' + esc(r.src) + '</a></td></tr>';
         }).join('') + '</tbody></table></div>';
     }).join('');
-    var valuesSection = '<section class="chap" id="chap-valeurs-cles"><h2><span class="cic">📊</span> Valeurs-clés de référence</h2>' +
+    var valuesSection = nbKV ? '<section class="chap" id="chap-valeurs-cles"><h2><span class="cic">📊</span> Valeurs-clés de référence</h2>' +
       '<p class="ci">Repère rapide des valeurs chiffrées (distances, pressions, dimensions, charges) extraites des procédures. Le détail figure sur chaque fiche.</p>' +
-      '<details class="kvbox"><summary>Afficher les ' + nbKV + ' valeurs-clés</summary>' + kvHTML + '</details></section>';
+      '<details class="kvbox"><summary>Afficher les ' + nbKV + ' valeurs-clés</summary>' + kvHTML + '</details></section>' : '';
 
-    var toc = '<a href="#chap-valeurs-cles">📊 Valeurs-clés de référence</a>' +
-      CODE.chapitres.map(function (c) {
+    var toc = (nbKV ? '<a href="#chap-valeurs-cles">📊 Valeurs-clés de référence</a>' : '') +
+      chapitres.map(function (c) {
         return '<a href="#chap-' + esc(c.id) + '">' + (CHAP_ICON[c.id] || '•') + ' ' + esc(c.titre) + '</a>';
       }).join('');
-    var body = CODE.chapitres.map(function (c) {
+    var body = chapitres.map(function (c) {
       var arts = (c.articles || []).map(function (a) {
         var srcs = (a.sources || []).map(function (s) {
           var sid = CODE_TO_ID[String(s).toUpperCase()];
@@ -705,12 +711,20 @@
         (c.intro ? '<p class="ci">' + esc(c.intro) + '</p>' : '') + arts + '</section>';
     }).join('');
 
+    var preamb = isDD
+      ? "Ce volet du Code de sécurité regroupe les consignes propres au forage au diamant (carottage) — foreuses STM-1500 et DR-600. Les règles sont extraites des procédures de forage au diamant (PRO-DD-ST, PRO-OP-DD, DR-600, SS-DD-ST, STD-DD) et ont un caractère obligatoire. Pour les opérations communes (cadenassage, manutention, ÉPI…), se référer aussi au Code de sécurité du forage de production."
+      : (CODE.preambule || '');
+    var metaKV = nbKV ? ' · ' + nbKV + ' valeurs-clés' : '';
     view.innerHTML =
       '<section class="code-hero"><div class="wrap">' +
         '<span class="eyebrow">Règlement interne</span>' +
         '<h1>Code de sécurité du forage</h1>' +
-        '<div class="code-meta">' + CODE.chapitres.length + ' chapitres · ' + nbArt + ' articles · ' + nbKV + ' valeurs-clés</div>' +
-        '<div class="preamble">' + esc(CODE.preambule || '') + '</div>' +
+        '<div class="code-fam" role="tablist" aria-label="Choisir le code">' +
+          '<button type="button" class="cf' + (!isDD ? ' on' : '') + '" data-fam="ith" role="tab" aria-selected="' + (!isDD) + '">Forage de production (ITH)</button>' +
+          '<button type="button" class="cf' + (isDD ? ' on' : '') + '" data-fam="dd" role="tab" aria-selected="' + isDD + '">Forage au diamant (DD)</button>' +
+        '</div>' +
+        '<div class="code-meta">' + chapitres.length + ' chapitres · ' + nbArt + ' articles' + metaKV + '</div>' +
+        '<div class="preamble">' + esc(preamb) + '</div>' +
         '<div class="code-tools">' +
           '<div class="csearch">' + ICON.search + '<input id="codeSearch" type="search" placeholder="Rechercher dans le code…" autocomplete="off"></div>' +
           '<button class="btn ghost" id="codePrint" type="button">Imprimer</button>' +
@@ -724,6 +738,15 @@
     initCodeTools();
   }
   function initCodeTools() {
+    [].forEach.call(document.querySelectorAll('.code-fam .cf'), function (b) {
+      b.addEventListener('click', function () {
+        var fam = b.getAttribute('data-fam');
+        if (fam === codeFam) return;
+        codeFam = fam;
+        var v = document.getElementById('view');
+        if (v) { renderCode(v); window.scrollTo(0, 0); }
+      });
+    });
     var inp = document.getElementById('codeSearch');
     var noRes = document.getElementById('codeNoRes');
     if (inp) inp.addEventListener('input', function () {

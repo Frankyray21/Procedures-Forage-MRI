@@ -3430,20 +3430,29 @@ window.CODE_SECURITE = {
       ]
     },
     {
-      "id": "forage-diamant",
-      "titre": "Chapitre 11 — Forage au diamant : risques spécifiques",
-      "intro": "Le forage au diamant (carottage) comporte des risques propres : manipulation du tube carottier et de la carotte, treuil et câble Wireline, veines d'eau sous pression, planchers en hauteur et garde-corps, support et chute de tiges, forage ascendant, cimentation et déplacement de la foreuse. Les règles ci-dessous consolident les exigences des procédures de forage au diamant (PRO-DD-ST, PRO-OP-DD, DR-600, SS-DD-ST, STD-DD).",
+      "id": "dd-tube-carottier",
+      "famille": "dd",
+      "titre": "Chapitre 1 — Tube carottier et manipulation de la carotte",
+      "intro": "La manipulation du tube carottier et le cassage de la carotte exposent les mains et le corps à des blessures graves. Les règles suivantes s'appliquent au carottage.",
       "articles": [
         {
-          "num": "11.1",
+          "num": "1.1",
           "titre": "Manipulation du tube carottier et de la carotte",
           "texte": "Le travailleur ne doit jamais exposer ses mains devant le tube carottier lorsqu'il le vide : la sortie de la roche pourrait causer des blessures graves. Il ne doit jamais tenir la roche dans ses mains pour la casser au marteau, ni frapper directement sur le tube. La carotte se casse en la déposant dans la rangée (core case).",
           "sources": [
             "PRO-DD-ST-002"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "dd-cable-treuil",
+      "famille": "dd",
+      "titre": "Chapitre 2 — Câble Wireline, treuil et récupération du tube",
+      "intro": "La récupération du tube carottier au câble (Wireline) met en jeu un treuil et un câble sous tension. L'inspection du câble, le dégagement de la zone et la maîtrise de la pression d'eau sont déterminants.",
+      "articles": [
         {
-          "num": "11.2",
+          "num": "2.1",
           "titre": "Inspection du câble Wireline",
           "texte": "Une inspection visuelle du câble Wireline doit être faite avant chaque manipulation. Porter attention aux brins saillants et aux câbles endommagés. Si le câble est endommagé, son retrait est obligatoire.",
           "sources": [
@@ -3453,7 +3462,7 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "11.3",
+          "num": "2.2",
           "titre": "Zone de travail du treuil",
           "texte": "Aucun travailleur ne doit se trouver dans la zone de travail lorsqu'il y a mouvement du treuil, et la porte d'accès à cette zone doit être fermée. Le travailleur qui tient le tube à l'intérieur des tiges doit garder un contact visuel avec son partenaire qui s'éloigne avec l'autre tube.",
           "sources": [
@@ -3461,15 +3470,23 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "11.4",
-          "titre": "Récupération du tube en présence de veines d'eau sous pression",
+          "num": "2.3",
+          "titre": "Récupération en présence de veines d'eau sous pression",
           "texte": "La pression d'eau doit être vérifiée à chaque récupération du tube carottier. Le câble doit rester tendu durant toute la récupération : un câble qui se détend signale une pression d'eau qui pousse sur le tube; il faut alors contrôler la remontée avec la valve de purge. Le frein est installé lorsque le débit d'eau est suffisant pour risquer l'éjection du tube carottier.",
           "sources": [
             "PRO-DD-ST-011"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "dd-planchers-hauteur",
+      "famille": "dd",
+      "titre": "Chapitre 3 — Planchers, garde-corps et travail en hauteur",
+      "intro": "Les planchers de forage au diamant et le forage ascendant exposent au risque de chute. Les garde-corps et l'analyse du travail en hauteur sont obligatoires au-delà des seuils indiqués.",
+      "articles": [
         {
-          "num": "11.5",
+          "num": "3.1",
           "titre": "Planchers de forage et garde-corps",
           "texte": "Lorsqu'un plancher de forage est plus haut que 12 pouces, des garde-corps conformes à l'article 12 du RSST doivent être installés (lisse supérieure située entre 900 mm et 1 100 mm du plancher, et au moins une lisse intermédiaire à mi-hauteur). À l'entrée du plancher, les pièces de 3 po x 8 po doivent être coupées carrées et égales avec le bord pour éviter de trébucher.",
           "sources": [
@@ -3478,32 +3495,56 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "11.6",
-          "titre": "Support de tiges et chaîne de retenue",
-          "texte": "La chaîne de retenue du support de tiges doit être utilisée en tout temps, sauf pendant les actions d'ajout et de retrait des tiges en continu. Elle doit être ajustée de façon que les tiges ne puissent dépasser 80° si elles chutent vers un travailleur. Les crochets doivent se situer entre 66 et 72 pouces du sol, afin que la chaîne détendue ne soit jamais à moins de 5 pieds du sol en son centre.",
-          "sources": [
-            "PRO-DD-ST-008"
-          ]
-        },
-        {
-          "num": "11.7",
+          "num": "3.2",
           "titre": "Forage ascendant et travail en hauteur",
           "texte": "Tout trou ascendant dont le pendage dépasse 21° nécessite une analyse de risque avant l'installation de la foreuse, à laquelle le contremaître-général doit participer, à l'aide du formulaire prévu en annexe. Des ÉPI antichute limitant la chute à 4 pieds doivent être prévus.",
           "sources": [
             "PRO-DD-ST-009-1",
             "PRO-DD-ST-009-2"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "dd-support-tiges",
+      "famille": "dd",
+      "titre": "Chapitre 4 — Support et chute de tiges",
+      "intro": "Le support de tiges retient des tiges qui peuvent chuter vers un travailleur. La chaîne de retenue et son réglage sont essentiels.",
+      "articles": [
         {
-          "num": "11.8",
-          "titre": "Forage à distance et distances d'exclusion (explosifs)",
+          "num": "4.1",
+          "titre": "Support de tiges et chaîne de retenue",
+          "texte": "La chaîne de retenue du support de tiges doit être utilisée en tout temps, sauf pendant les actions d'ajout et de retrait des tiges en continu. Elle doit être ajustée de façon que les tiges ne puissent dépasser 80° si elles chutent vers un travailleur. Les crochets doivent se situer entre 66 et 72 pouces du sol, afin que la chaîne détendue ne soit jamais à moins de 5 pieds du sol en son centre.",
+          "sources": [
+            "PRO-DD-ST-008"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dd-forage-distance",
+      "famille": "dd",
+      "titre": "Chapitre 5 — Forage à distance et explosifs",
+      "intro": "Le forage à distance est utilisé lorsque des dangers le justifient. Les distances minimales par rapport aux trous d'explosifs sont réglementées.",
+      "articles": [
+        {
+          "num": "5.1",
+          "titre": "Forage à distance et distances d'exclusion",
           "texte": "Le forage à distance est décidé par le département de géologie du client en fonction des dangers présents; le foreur ou la supervision de MRI peuvent le proposer s'ils l'estiment plus sécuritaire. Les articles 439 et 440 du Règlement sur la santé et la sécurité du travail dans les mines s'appliquent, notamment l'interdiction de forer à moins de 1,5 m d'un trou contenant des explosifs à la suite d'un raté.",
           "sources": [
             "PRO-OP-DD-012"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "dd-cimentation-entretien",
+      "famille": "dd",
+      "titre": "Chapitre 6 — Cimentation, entretien et déplacement",
+      "intro": "La cimentation, l'entretien du mandrin et le déplacement de la foreuse comportent des risques respiratoires, mécaniques (ressorts comprimés) et d'écrasement par le mât.",
+      "articles": [
         {
-          "num": "11.9",
+          "num": "6.1",
           "titre": "Cimentation et protection respiratoire",
           "texte": "Lors de la cimentation, le travailleur doit porter les ÉPI obligatoires, dont le masque powerflow (protection respiratoire), et les mettre avant de commencer. Les barrures doivent être posées sur l'alimentation d'eau au header.",
           "sources": [
@@ -3511,7 +3552,7 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "11.10",
+          "num": "6.2",
           "titre": "Démontage d'un clam ou d'un chuck (ressorts comprimés)",
           "texte": "Avant de démonter un clam ou un chuck (mandrin), la foreuse doit être cadenassée. Les boulons se dévissent et se revissent un seul tour à la fois, en suivant l'ordre prescrit, car les ressorts sont comprimés (environ ¼ de pouce) et ne doivent pas être écrasés d'un seul côté.",
           "sources": [
@@ -3519,7 +3560,7 @@ window.CODE_SECURITE = {
           ]
         },
         {
-          "num": "11.11",
+          "num": "6.3",
           "titre": "Déplacement de la foreuse et pliage du mât",
           "texte": "Pour rouler une foreuse au diamant sur un plancher, conserver au moins deux tiges sous la foreuse; la barre de manœuvre se place du côté inverse au mouvement désiré et doit être coincée solidement. Lors du pliage et du dépliage du mât de la DR-600, l'opérateur doit se tenir hors du rayon d'action du mât; s'il doit s'en approcher, il appuie sur STOP et range la télécommande en lieu sûr.",
           "sources": [
