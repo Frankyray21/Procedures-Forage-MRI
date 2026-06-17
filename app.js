@@ -654,7 +654,7 @@
       'energie-cadenassage': '🔒', 'air-comprime-boyaux': '💨', 'zones-exclusion-positionnement': '🚧',
       'pieces-mouvement-mat': '⚙️', 'protection-chutes-explosifs': '💥', 'manutention-levage': '⛓️',
       'outils-cles': '🔧', 'inspection-verification': '🔍', 'communication-signalisation': '🚩',
-      'epi-eau-ventilation': '🦺'
+      'epi-eau-ventilation': '🦺', 'forage-diamant': '💎'
     };
     var nbArt = CODE.chapitres.reduce(function (n, c) { return n + ((c.articles || []).length); }, 0);
 
