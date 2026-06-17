@@ -209,6 +209,41 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .art .srcs{display:flex;gap:.4rem;flex-wrap:wrap}
 .art .srcs a{font-size:.72rem;font-weight:700;color:var(--accent-l);background:rgba(210,35,37,.1);
   border:1px solid rgba(210,35,37,.25);padding:.13rem .5rem;border-radius:6px}
+/* outils & enrichissements du Code de sécurité */
+.code-meta{font-family:var(--font-display);font-weight:700;letter-spacing:.03em;color:var(--muted);
+  font-size:.85rem;text-transform:uppercase;margin:.2rem 0 .9rem}
+.code-tools{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
+.csearch{flex:1;min-width:220px;display:flex;align-items:center;gap:.5rem;background:var(--card);
+  border:1px solid var(--border);border-radius:11px;padding:.1rem .8rem}
+.csearch svg{color:var(--dim);flex:none}
+.csearch input{flex:1;background:transparent;border:none;color:var(--text);padding:.6rem 0;font-size:.98rem;font-family:inherit}
+.csearch input:focus{outline:none}
+.chap > h2 .cic{margin-right:.35rem;font-size:1.15rem;-webkit-text-fill-color:initial}
+.code-toc a .cic,.chap>h2 .cic{filter:none}
+.kvbox{margin-top:.4rem}
+.kvbox > summary{cursor:pointer;font-family:var(--font-display);font-weight:800;text-transform:uppercase;
+  letter-spacing:.03em;font-size:.85rem;color:var(--accent-l);padding:.5rem .2rem;list-style:none}
+.kvbox > summary::-webkit-details-marker{display:none}
+.kvbox > summary::before{content:"▸ ";color:var(--dim)}
+.kvbox[open] > summary::before{content:"▾ "}
+.kvgrp{margin:.6rem 0 1rem}
+.kvgrp h4{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:.78rem;
+  color:var(--muted);margin:.2rem 0 .4rem}
+.kvt{width:100%;border-collapse:collapse;font-size:.9rem}
+.kvt td{border-top:1px solid var(--border);padding:.4rem .5rem;vertical-align:top}
+.kvt .kvl{color:#dbe3ee}
+.kvt .kvv{color:#fff;font-weight:700;white-space:nowrap}
+.kvt .kvs a{font-size:.72rem;font-weight:700;color:var(--accent-l);white-space:nowrap}
+/* impression propre du Code (déclenchée par le bouton Imprimer) */
+@media print{
+  body.print-code *{visibility:hidden}
+  body.print-code #view,body.print-code #view *{visibility:visible}
+  body.print-code #view{position:absolute;left:0;top:0;width:100%}
+  body.print-code .code-tools,body.print-code .code-toc,body.print-code .eyebrow{display:none!important}
+  body.print-code .code-layout{display:block}
+  body.print-code .kvbox[open] > summary{display:none}
+  body.print-code .art,body.print-code .chap{break-inside:avoid}
+}
 
 /* ===== gate ===== */
 .gate{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;
