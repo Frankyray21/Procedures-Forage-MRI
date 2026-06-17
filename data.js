@@ -3430,6 +3430,54 @@ window.CODE_SECURITE = {
       ]
     },
     {
+      "id": "ith-defoncage-accueil",
+      "titre": "Chapitre 11 — Défonçage de trous et accueil sécurité",
+      "intro": "Le défonçage de trous forés sous terre (par forage au diamant, ITH ou autre) crée des ouvertures dangereuses et expose à la chute d'objets et aux interactions forage/déblayage. L'accueil sécurité des travailleurs et des visiteurs encadre l'accès aux sites.",
+      "articles": [
+        {
+          "num": "11.1",
+          "titre": "Identification et planification du défonçage",
+          "texte": "Tout trou à forer, de tout diamètre ou longueur, doit être identifié sur un plan d'ingénierie, de même que toute excavation pouvant être traversée par ce trou. Un formulaire est signé au début de chaque quart par le foreur, l'aide-foreur ou une personne désignée qui inspecte l'endroit du défonçage; la procédure signée est mise dans un sac et accrochée à la barricade à l'endroit du défonçage.",
+          "sources": [
+            "PRO-SEC-001"
+          ]
+        },
+        {
+          "num": "11.2",
+          "titre": "Mesures à prendre avant de défoncer",
+          "texte": "Au moins 5 mètres (15 pieds) avant de défoncer, l'opérateur applique l'alternative A (barricade et affiche « Forage en cours ») ou B (une personne surveille la zone et avertit les travailleurs, sans jamais se trouver dans la zone de défonçage). Dans les deux cas, tous les accès menant à la zone sont barricadés ou surveillés.",
+          "sources": [
+            "PRO-SEC-001"
+          ]
+        },
+        {
+          "num": "11.3",
+          "titre": "Ouverture créée par le défonçage",
+          "texte": "Si le trou débouche dans une galerie non fréquentée, délimiter un périmètre de 5 mètres (15 pieds) autour du trou avec une barrière orange et une affiche « Ouverture dangereuse ». Un cône rouge est placé sur le départ du trou foré pour éviter les chutes d'objets à l'intérieur.",
+          "sources": [
+            "PRO-SEC-001"
+          ]
+        },
+        {
+          "num": "11.4",
+          "titre": "Forage et déblayage simultanés",
+          "texte": "Il est strictement défendu de travailler au niveau inférieur d'un chantier lorsque le forage est effectué au niveau supérieur, à l'exception d'une chargeuse téléguidée. Si un trou défonce alors que ce n'était pas prévu, le forage doit être arrêté : le foreur appelle immédiatement son superviseur et l'accès de l'endroit où le trou a défoncé est fermé.",
+          "sources": [
+            "PRO-SEC-001"
+          ]
+        },
+        {
+          "num": "11.5",
+          "titre": "Accueil des travailleurs et des visiteurs",
+          "texte": "Le nouveau travailleur doit avoir fait l'accueil en ligne de MRI puis l'accueil du client avant d'être pris en charge par le contremaître-général, qui conserve en filière le formulaire d'accueil signé. Tout visiteur (le site de forage débute au ruban jaune) est accueilli par le foreur ou l'aide-foreur, qui s'assure qu'il porte convenablement les ÉPI avant de traverser le ruban; le superviseur n'est pas considéré comme un visiteur.",
+          "sources": [
+            "SAN-SEC-005",
+            "SAN-SEC-006"
+          ]
+        }
+      ]
+    },
+    {
       "id": "dd-tube-carottier",
       "famille": "dd",
       "titre": "Chapitre 1 — Tube carottier et manipulation de la carotte",
@@ -3709,6 +3757,30 @@ window.CODE_SECURITE = {
           "texte": "Les tests de freins (stationnement, frein à main, freins de service) sont effectués selon la procédure. Si le véhicule avance pendant un test de frein, il faut cadenasser le véhicule et aviser le superviseur.",
           "sources": [
             "PRO-OP-CAT-416-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dd-gaz",
+      "famille": "dd",
+      "titre": "Chapitre 8 — Interception de gaz lors du forage au diamant",
+      "intro": "Le forage au diamant peut intercepter des gaz sous terre. La détection (fixe et portative), l'arrêt immédiat et l'évacuation encadrée de la baie de forage sont obligatoires.",
+      "articles": [
+        {
+          "num": "8.1",
+          "titre": "Détecteurs de gaz et calibration",
+          "texte": "Les détecteurs de gaz (fixe sur la foreuse et portatif LEL pour chaque travailleur) doivent être calibrés et testés chaque jour selon les spécifications du fabricant et du client. La sonde est placée à moins de 2 mètres au-dessus des tiges, au point de contact avec le roc, et protégée des boues et de l'eau de forage. Les détecteurs portatifs sont ouverts et démarrés à la surface, dans un endroit aéré et exempt de gaz. Il est strictement interdit de mettre le système de détection hors fonction, sous peine de mesures disciplinaires.",
+          "sources": [
+            "PRO-SEC-015"
+          ]
+        },
+        {
+          "num": "8.2",
+          "titre": "Conduite à tenir en cas de détection de gaz",
+          "texte": "Dès que le détecteur dépasse la norme à respecter, la foreuse est arrêtée et l'alimentation électrique coupée au power pack, et une bonne ventilation de la baie de forage est assurée. Les travailleurs quittent la baie avec leur détecteur portatif, leur radio et/ou téléphone, posent un ruban rouge et une étiquette indiquant la présence de gaz, barricadent les autres accès, puis s'éloignent jusqu'à ce que le détecteur cesse de sonner et avisent le superviseur. On retourne vérifier les gaz toutes les 15 minutes; une fois la situation rétablie, retirer tous les rubans et aviser le superviseur.",
+          "sources": [
+            "PRO-SEC-015"
           ]
         }
       ]

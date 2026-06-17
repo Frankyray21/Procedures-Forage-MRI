@@ -274,5 +274,28 @@ window.PAGES = {
   "images/pages/pro-op-cim-001-9.jpg",
   "images/pages/pro-op-cim-001-10.jpg",
   "images/pages/pro-op-cim-001-11.jpg"
+ ],
+ "san-sec-006": [
+  "images/pages/san-sec-006-1.jpg",
+  "images/pages/san-sec-006-2.jpg",
+  "images/pages/san-sec-006-3.jpg"
+ ],
+ "san-sec-005": [
+  "images/pages/san-sec-005-1.jpg",
+  "images/pages/san-sec-005-2.jpg",
+  "images/pages/san-sec-005-3.jpg"
+ ],
+ "pro-sec-015": [
+  "images/pages/pro-sec-015-1.jpg",
+  "images/pages/pro-sec-015-2.jpg",
+  "images/pages/pro-sec-015-3.jpg"
+ ],
+ "pro-sec-001": [
+  "images/pages/pro-sec-001-1.jpg",
+  "images/pages/pro-sec-001-2.jpg",
+  "images/pages/pro-sec-001-3.jpg",
+  "images/pages/pro-sec-001-4.jpg",
+  "images/pages/pro-sec-001-5.jpg",
+  "images/pages/pro-sec-001-6.jpg"
  ]
 };
