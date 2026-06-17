@@ -15,8 +15,13 @@ window.SITE_CONFIG = {
      (source : huggingface.co/google/gemma-3n-E2B-it-litert-lm)
    IMPORTANT : ne pointe pas directement un repo Hugging Face « gated » en prod.
    Télécharge le fichier après acceptation des conditions, puis héberge-le sur
-   TON CDN / hébergement statique avec CORS + cache corrects, et mets l'URL ici :
-     window.MRI_LLM_GEMMA_URL = "https://TON-CDN/gemma-3n-E2B-it-int4-Web.litertlm";
+   TON CDN / hébergement statique. En-têtes attendus sur l'URL :
+     • Access-Control-Allow-Origin (CORS) — OBLIGATOIRE (fetch cross-origin),
+     • Content-Length — pour la barre de progression,
+     • Accept-Ranges: bytes — utile (reprise/range),
+     • Cache-Control: long (ex. immutable, max-age 1 an) — nom de fichier VERSIONNÉ.
+   Mets l'URL ici (nom versionné recommandé) :
+     window.MRI_LLM_GEMMA_URL = "https://cdn.example.com/models/gemma-3n-E2B-it-int4-Web.v1.litertlm";
    Laisser commenté = l'assistant IA utilise WebLLM (Qwen3-1.7B).
 --------------------------------------------------------------------------- */
-// window.MRI_LLM_GEMMA_URL = "https://TON-CDN/gemma-3n-E2B-it-int4-Web.litertlm";
+// window.MRI_LLM_GEMMA_URL = "https://cdn.example.com/models/gemma-3n-E2B-it-int4-Web.v1.litertlm";
