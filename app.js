@@ -12,7 +12,9 @@
   var CAT_COLORS = {
     'Forage': '#d22325', 'Alésage': '#3b82f6', 'Installation': '#10b981',
     'Maintenance': '#f59e0b', 'Manutention': '#8b5cf6', 'Démobilisation': '#ec4899',
-    'Intervention': '#ef4444'
+    'Intervention': '#ef4444',
+    'Carottage & tube': '#06b6d4', 'Installation & plancher': '#10b981',
+    'Déplacement': '#ec4899', 'Cimentation': '#a16207', 'Sécurité': '#ef4444'
   };
   function catColor(c) { return CAT_COLORS[c] || '#d22325'; }
 
@@ -53,13 +55,14 @@
     var h = location.hash || '#/';
     var view = $('#view');
     window.scrollTo(0, 0);
-    if (h.indexOf('#/p/') === 0) { renderProcedure(view, h.slice(4)); setNav('procedures'); }
+    if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : 'procedures'); }
     else if (h.indexOf('#/formation/') === 0) { renderModule(view, h.slice(12)); setNav('formation'); }
     else if (h.indexOf('#/formation') === 0) { renderFormation(view); setNav('formation'); }
     else if (h.indexOf('#/attestation') === 0) { renderAttestation(view); setNav('formation'); }
     else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
     else if (h.indexOf('#/code') === 0) { renderCode(view); setNav('code'); }
-    else if (h.indexOf('#/procedures') === 0) { renderHome(view); setNav('procedures'); }
+    else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); }
+    else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); }
     else { renderPortail(view); setNav(''); }
   }
   function setNav(which) {
@@ -69,9 +72,16 @@
   }
 
   /* ---------- vue : accueil ---------- */
-  var state = { q: '', cat: '', mach: '' };
+  var state = { q: '', cat: '', mach: '', fam: '' };
+  // fam '' = foreuses ITH/CUBEX/V-30 (par défaut) ; 'diamant' = forage au diamant
+  function famData() {
+    return DATA.filter(function (p) {
+      return state.fam === 'diamant' ? p.famille === 'diamant' : p.famille !== 'diamant';
+    });
+  }
   // Classement des filtres : catégories par flux de travail, machines regroupées
-  var CAT_ORDER = ['Forage', 'Alésage', 'Installation', 'Manutention', 'Maintenance', 'Intervention', 'Démobilisation'];
+  var CAT_ORDER = ['Forage', 'Alésage', 'Carottage & tube', 'Cimentation', 'Installation', 'Installation & plancher',
+    'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Démobilisation', 'Sécurité'];
   var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur'];
   function mainMachine(m) {
     var s = norm(m);
@@ -90,12 +100,14 @@
   }
 
   function renderHome(view) {
+    var D = famData();
+    var diamant = state.fam === 'diamant';
     var cats = {}, machs = {};
-    DATA.forEach(function (p) {
+    D.forEach(function (p) {
       cats[p.categorie] = (cats[p.categorie] || 0) + 1;
       machinesOf(p).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
     });
-    var nbConsignes = DATA.reduce(function (a, p) { return a + ((p.consignes_securite || []).length); }, 0);
+    var nbConsignes = D.reduce(function (a, p) { return a + ((p.consignes_securite || []).length); }, 0);
 
     var catChips = CAT_ORDER.filter(function (c) { return cats[c]; }).map(function (c) {
       return '<button class="chip" data-cat="' + esc(c) + '" style="--c:' + catColor(c) + '">' +
@@ -107,13 +119,17 @@
 
     view.innerHTML =
       '<section class="hero"><div class="wrap">' +
-        '<span class="eyebrow">Santé-Sécurité · Forage</span>' +
-        '<h1>Procédures de <span class="hl">forage</span></h1>' +
-        '<p class="lead">Toutes les procédures de travail de Machines Roger International, accessibles, recherchables et consultables hors-ligne. Chaque procédure conserve son PDF officiel.</p>' +
+        '<span class="eyebrow">' + (diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
+        '<h1>' + (diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de <span class="hl">forage</span>') + '</h1>' +
+        '<p class="lead">' + (diamant
+          ? 'Procédures de forage au diamant de Machines Roger International (carottage, planchers, déplacements, sécurité). Chaque fiche conserve son PDF officiel, visionnable et recherchable hors-ligne.'
+          : 'Toutes les procédures de travail de Machines Roger International, accessibles, recherchables et consultables hors-ligne. Chaque procédure conserve son PDF officiel.') + '</p>' +
         '<div class="stats">' +
-          '<div class="stat"><b>' + DATA.length + '</b><span>Procédures</span></div>' +
-          '<div class="stat"><b>' + Object.keys(machs).length + '</b><span>Équipements</span></div>' +
-          '<div class="stat"><b>' + nbConsignes + '</b><span>Consignes</span></div>' +
+          '<div class="stat"><b>' + D.length + '</b><span>Procédures</span></div>' +
+          '<div class="stat"><b>' + Object.keys(cats).length + '</b><span>Catégories</span></div>' +
+          (diamant
+            ? '<div class="stat"><b><a href="#/procedures" style="color:var(--accent-l)">ITH&nbsp;»</a></b><span>Foreuses ITH/CUBEX</span></div>'
+            : '<div class="stat"><b>' + nbConsignes + '</b><span>Consignes</span></div>') +
           '<div class="stat"><b><a href="#/code" style="color:var(--accent-l)">Code&nbsp;»</a></b><span>de sécurité</span></div>' +
         '</div>' +
       '</div></section>' +
@@ -153,7 +169,7 @@
   function updateMachChips() {
     var box = $('#machChips'); if (!box) return;
     var machs = {};
-    DATA.forEach(function (p) {
+    famData().forEach(function (p) {
       if (!state.cat || p.categorie === state.cat) machinesOf(p).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
     });
     var keys = MACH_ORDER.filter(function (m) { return machs[m]; });
@@ -263,6 +279,7 @@
     });
   }
   function matches(p) {
+    if (state.fam === 'diamant' ? p.famille !== 'diamant' : p.famille === 'diamant') return false;
     if (state.cat && p.categorie !== state.cat) return false;
     if (state.mach && machinesOf(p).indexOf(state.mach) < 0) return false;
     if (state.q) {
@@ -297,8 +314,10 @@
     var p = DATA.filter(function (x) { return x.id === id; })[0];
     if (!p) { view.innerHTML = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Procédures</a><div class="empty">Procédure introuvable.</div></div>'; return; }
     var col = catColor(p.categorie);
+    var backHref = p.famille === 'diamant' ? '#/diamant' : '#/procedures';
+    var backLbl = p.famille === 'diamant' ? ' Forage au diamant' : ' Toutes les procédures';
     var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
-    var h = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Toutes les procédures</a>' +
+    var h = '<div class="wrap"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
       '<div class="phead">' +
         '<h1>' + esc(p.titre) + '</h1>' +
         '<div class="tags" style="margin-top:.55rem">' +
@@ -752,13 +771,19 @@
 
   function renderPortail(view) {
     var nMod = modules().length;
+    var nProd = DATA.filter(function (p) { return p.famille !== 'diamant'; }).length;
+    var nDiam = DATA.filter(function (p) { return p.famille === 'diamant'; }).length;
     view.innerHTML = '<section class="portal"><div class="wrap">' +
       '<div class="phead2"><img src="images/logo_roger.png" alt="Machines Roger International"><div><h1>Sécurité du forage</h1><p>Machines Roger International</p></div></div>' +
       '<p class="plead">Choisis ton espace.</p>' +
       '<div class="portal-cards">' +
         '<a class="portal-card kb" href="#/procedures"><div class="pc-ic">' + ICON.doc + '</div>' +
-          '<h2>Base de connaissances</h2><p>Consulte vite une procédure : mises en garde, consignes, liste de vérification et PDF officiel. Quiz éclair et Code de sécurité.</p>' +
-          '<div class="pc-meta">' + DATA.length + ' procédures · disponible hors-ligne</div>' +
+          '<h2>Foreuses ITH / CUBEX</h2><p>Procédures de forage et d\'alésage (ITH, CUBEX, V-30) : consignes, valeurs-clés, PDF officiel, quiz et Code de sécurité.</p>' +
+          '<div class="pc-meta">' + nProd + ' procédures · disponible hors-ligne</div>' +
+          '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
+        '<a class="portal-card diam" href="#/diamant"><div class="pc-ic">' + ICON.doc + '</div>' +
+          '<h2>Forage au diamant</h2><p>Procédures de forage au diamant : carottage, planchers, déplacements (DR-600, STM-1500), sécurité. PDF officiel visionnable et recherchable.</p>' +
+          '<div class="pc-meta">' + nDiam + ' procédures · disponible hors-ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
         '<a class="portal-card form" href="#/formation"><div class="pc-ic">' + CAP_ICON + '</div>' +
           '<h2>Formation</h2><p>Apprends et qualifie-toi, tâche par tâche : objectifs, notions de sécurité, vidéos, évaluation et attestation.</p>' +
