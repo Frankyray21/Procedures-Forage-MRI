@@ -337,8 +337,13 @@
         '<p><button class="cbchip" data-act="export" type="button">📊 Exporter les mesures</button></p>';
     }).catch(function (e) {
       aiOn = false; setAiBadge();
-      msg.innerHTML = '<p>⚠️ Impossible d\'activer l\'IA (' + esc((e && e.message) || 'erreur') +
-        '). Je continue en recherche classique.</p>';
+      var m = (e && e.message) || 'erreur';
+      var net = /fetch|réseau|reseau|network|import|CDN|load/i.test(m);
+      msg.innerHTML = '<p>⚠️ Impossible d\'activer l\'IA (' + esc(m) + ').</p>' +
+        (net ? '<p class="cbnote">Le moteur se télécharge depuis Internet au 1er lancement. ' +
+          'Vérifie la <b>connexion</b>, et que le réseau n\'a pas bloqué les CDN ' +
+          '(esm.run / esm.sh / jsdelivr). En attendant, la recherche classique fonctionne hors-ligne.</p>'
+          : '<p class="cbnote">Je continue en recherche classique.</p>');
     });
   }
   function askAI(text) {

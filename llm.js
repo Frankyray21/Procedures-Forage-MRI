@@ -14,6 +14,15 @@
   if (window.MRI_LLM) return;
 
   function hasGPU() { return typeof navigator !== 'undefined' && !!navigator.gpu; }
+  // Importe un module ESM en essayant plusieurs CDN (résilience réseau / CDN bloqué).
+  function importFirst(urls) {
+    var i = 0, lastErr = null;
+    function next() {
+      if (i >= urls.length) return Promise.reject(lastErr || new Error('import impossible (réseau ou CDN bloqué)'));
+      return import(/* @vite-ignore */ urls[i++]).catch(function (e) { lastErr = e; return next(); });
+    }
+    return next();
+  }
   function stripThink(s) {
     return s.replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/<think>[\s\S]*$/i, '').replace(/^\s+/, '');
   }
@@ -55,7 +64,7 @@
 
   /* ---------------- Provider 1 : WebLLM / MLC (WebGPU) ---------------- */
   var WebLLMProvider = (function () {
-    var CDN = 'https://esm.run/@mlc-ai/web-llm';
+    var CDNS = ['https://esm.run/@mlc-ai/web-llm', 'https://esm.sh/@mlc-ai/web-llm', 'https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm/+esm'];
     // Niveaux sélectionnables : on choisit dans la liste pré-bâtie de WebLLM.
     var TIERS = {
       light:    [/qwen3.*0\.6b.*q4/i, /qwen2\.5-0\.5b.*instruct.*q4/i, /smollm2-360m.*q4/i, /-0\.5b-.*q4/i],
@@ -80,7 +89,7 @@
       init: function (onProgress) {
         if (ready) return Promise.resolve(MODEL);
         if (!hasGPU()) return Promise.reject(new Error('WebGPU non disponible'));
-        return import(/* @vite-ignore */ CDN).then(function (webllm) {
+        return importFirst(CDNS).then(function (webllm) {
           MODEL = pick((webllm.prebuiltAppConfig && webllm.prebuiltAppConfig.model_list) || []);
           if (!MODEL) throw new Error('aucun modèle WebLLM compatible');
           return webllm.CreateMLCEngine(MODEL, { initProgressCallback: function (r) { try { onProgress && onProgress(r); } catch (e) {} } });
@@ -119,7 +128,7 @@
      Fournir l'URL d'un bundle hébergé sur TON CDN (CORS+cache OK), pas un repo
      Hugging Face gated, via window.MRI_LLM_GEMMA_URL ou configureGemma(url). */
   var GemmaProvider = (function () {
-    var TASKS_CDN = 'https://esm.run/@mediapipe/tasks-genai';
+    var TASKS_CDNS = ['https://esm.run/@mediapipe/tasks-genai', 'https://esm.sh/@mediapipe/tasks-genai', 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai/+esm'];
     var WASM_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai/wasm';
     var llm = null, ready = false;
     var MODEL_URL = (typeof window !== 'undefined' && window.MRI_LLM_GEMMA_URL) || null;
@@ -135,7 +144,7 @@
         if (!hasGPU()) return Promise.reject(new Error('WebGPU non disponible'));
         if (!MODEL_URL) return Promise.reject(new Error('URL du modèle Gemma non configurée (MRI_LLM.configureGemma)'));
         var genai;
-        return import(/* @vite-ignore */ TASKS_CDN).then(function (mod) {
+        return importFirst(TASKS_CDNS).then(function (mod) {
           genai = mod;
           return mod.FilesetResolver.forGenAiTasks(WASM_CDN);
         }).then(function (fileset) {
