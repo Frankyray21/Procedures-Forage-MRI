@@ -317,7 +317,7 @@
   function enableAI() {
     if (!window.MRI_LLM) return;
     var msg = pushMsg('bot', '<p>⏳ Téléchargement / chargement du modèle (<b>une seule fois</b>, ' +
-      'Wi-Fi conseillé). Ensuite il fonctionne hors-ligne.</p><div class="cbprog"><i></i></div>' +
+      'Wi-Fi conseillé). Ensuite chargé depuis le cache (Internet non requis pour cette étape).</p><div class="cbprog"><i></i></div>' +
       '<div class="cbprogt">Initialisation…</div>');
     var bar = msg.querySelector('.cbprog i'), txt = msg.querySelector('.cbprogt');
     var t0 = performance.now(), sawDownload = false;
@@ -386,7 +386,7 @@
     var opts = window.MRI_LLM.options ? window.MRI_LLM.options() : [];
     if (!opts.length) { enableAI(); return; }
     pushMsg('bot', '<p>Choisis un modèle d\'IA local — téléchargé <b>une seule fois</b> ' +
-      '(Wi-Fi conseillé), puis hors-ligne. L\'assistant <b>ne cite que les procédures</b>.</p>' +
+      '(Wi-Fi conseillé), réutilisé depuis le cache ensuite. L\'assistant <b>ne cite que les procédures</b>.</p>' +
       '<div class="cbopts">' + opts.map(function (o) {
         return '<button class="cbopt" type="button" data-prov="' + esc(o.provider) + '" data-tier="' + esc(o.tier || '') + '">' +
           '<b>' + esc(o.label) + '</b><span>' + esc(o.note) + '</span></button>';

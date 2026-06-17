@@ -20,9 +20,11 @@ par appareil.
 2. Laisser télécharger (1ʳᵉ fois) → noter que `fromCache:false`, `initMs` = temps de 1er chargement.
 3. Poser **5 à 10 questions réelles** tirées des procédures (voir liste ci-dessous).
 4. Cliquer **📊 Exporter les mesures** → copier / télécharger le JSON.
-5. **Fermer complètement** la PWA, couper le Wi-Fi/données, **rouvrir** → cliquer IA / même profil :
-   doit charger **depuis le cache** (`fromCache:true`, `initMs` court) et répondre **hors-ligne**.
-6. Exporter de nouveau (2ᵉ JSON) — c'est la mesure « chargement après cache » + stabilité hors-ligne.
+5. **Fermer puis rouvrir** la PWA → cliquer IA / même profil : doit charger **depuis le cache**
+   (`fromCache:true`, `initMs` court). *(Internet OK ici — l'IA n'a PAS l'obligation de marcher
+   hors-ligne ; seule la recherche lexicale reste offline.)*
+6. Exporter de nouveau (2ᵉ JSON) — mesure « chargement après cache ».
+   *(Optionnel : couper le réseau et vérifier que ça répond quand même = bonus, pas un critère.)*
 
 ### Questions FR suggérées (procédures réelles)
 - « Distance minimale entre le mât et la console ? »
@@ -47,9 +49,13 @@ par appareil.
 - Si **1.7B trop lourd** sur mobile → **0.6B par défaut mobile**, **1.7B/4B réservés desktop/tablette**.
 - **Modèle par défaut desktop** : 1.7B ou 4B selon mesures.
 - **Seuil « appareil non compatible »** : pas de WebGPU, ou `memGB` trop faible, ou tok/s < seuil
-  jugé inutilisable, ou instabilité hors-ligne → l'app reste en mode lexical (déjà le cas).
-- **Go / no-go natif (LiteRT-LM)** : **no-go** si la PWA suffit ; **go** si WebGPU/PWA instable terrain
-  ou perfs insuffisantes malgré 0.6B.
+  jugé inutilisable → l'app reste en mode lexical (déjà le cas). *(L'offline n'est PAS un critère.)*
+- **Go / no-go natif (LiteRT-LM)** : **no-go** si la PWA suffit ; **go** seulement si WebGPU/PWA
+  instable terrain ou perfs insuffisantes malgré 0.6B. *(Le besoin hors-ligne n'est plus une raison
+  de partir en natif.)*
+
+> Rappel : l'IA peut **exiger Internet** (au moins pour le 1er chargement). Reste local/privé :
+> le modèle tourne sur l'appareil, les questions ne sont **pas** envoyées à un serveur.
 
 ## 5) Repère d'ordres de grandeur (à confirmer terrain)
 - Mobiles récents milieu/haut de gamme : 1.7B q4 souvent **5–15 tok/s**, 0.6B **15–30+**.
