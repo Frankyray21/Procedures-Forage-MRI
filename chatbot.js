@@ -98,6 +98,68 @@
     return new RegExp('(^|[^a-z0-9])' + rxesc(w)).test(hay) ? 3 : 1;
   }
 
+  // ----- "Plus malin" : lemmatisation légère (FR) + correction de fautes -----
+  // Radicalisation approximative : forer/forage/foreuse/foré → « for ».
+  function lightStem(w) {
+    if (/[0-9]/.test(w) || w.length < 4) return w;
+    var sufs = ['issements', 'issement', 'ations', 'ation', 'ements', 'ement', 'ables', 'able',
+      'ances', 'ance', 'ites', 'euses', 'euse', 'trices', 'trice', 'eurs', 'eur', 'ages', 'age',
+      'ions', 'ion', 'ees', 'ers', 'er', 'irs', 'ir'];
+    for (var i = 0; i < sufs.length; i++) {
+      var s = sufs[i];
+      if (w.length - s.length >= 3 && w.slice(-s.length) === s) return w.slice(0, -s.length);
+    }
+    w = w.replace(/aux$/, 'al');
+    if (w.length >= 5) w = w.replace(/(s|x|e)$/, '');
+    return w;
+  }
+  // Distance d'édition ≤ 1 (tolère une faute de frappe).
+  function edit1(a, b) {
+    if (a === b) return true;
+    var la = a.length, lb = b.length;
+    if (Math.abs(la - lb) > 1) return false;
+    if (la === lb) { var d = 0; for (var i = 0; i < la; i++) if (a[i] !== b[i] && ++d > 1) return false; return d === 1; }
+    var s = la < lb ? a : b, l = la < lb ? b : a, j = 0, k = 0, diff = 0;
+    while (j < s.length && k < l.length) { if (s[j] === l[k]) { j++; k++; } else { if (++diff > 1) return false; k++; } }
+    return true;
+  }
+  // Vocabulaire réel des procédures (rempli au build de l'index).
+  var VOCAB = [], VOCABSET = {}, EXP_CACHE = {};
+  function addVocab(txt) {
+    txt.split(/[^a-z0-9]+/).forEach(function (w) {
+      if (w && (w.length >= 3 || /[0-9]/.test(w)) && !VOCABSET[w]) { VOCABSET[w] = 1; VOCAB.push(w); }
+    });
+  }
+  // Étend un mot tapé vers les vrais mots du corpus : exact, même radical,
+  // préfixe, ou faute de frappe (≤ 1). Les nombres restent exacts.
+  function expandToVocab(w) {
+    if (EXP_CACHE[w]) return EXP_CACHE[w];
+    var res = {};
+    if (VOCABSET[w]) res[w] = 1;
+    if (/[0-9]/.test(w)) { var rn = Object.keys(res); if (!rn.length) rn = [w]; return (EXP_CACHE[w] = rn); }
+    var sw = lightStem(w);
+    var fuzzy = !VOCABSET[w] && w.length >= 4;   // correction de faute : seulement si le mot n'existe pas tel quel
+    for (var i = 0; i < VOCAB.length; i++) {
+      var v = VOCAB[i];
+      if (res[v] || /[0-9]/.test(v)) continue;
+      if (v === w) { res[v] = 1; continue; }
+      if (sw.length >= 3 && lightStem(v) === sw) { res[v] = 1; continue; }
+      if (w.length >= 4 && (v.indexOf(w) === 0 || w.indexOf(v) === 0) && Math.abs(v.length - w.length) <= 3) { res[v] = 1; continue; }
+      if (fuzzy && v.length >= 5 && Math.abs(v.length - w.length) <= 1 && edit1(w, v)) { res[v] = 1; }
+    }
+    var keys = Object.keys(res);
+    if (!keys.length) keys = [w];
+    return (EXP_CACHE[w] = keys);
+  }
+  // Prépare une requête : termes étendus (pour matcher + surligner) + couverture des mots « cœur ».
+  function expandQuery(query) {
+    var core = uniq(tokens(query, false));
+    var exp = uniq(tokens(query, true));
+    var set = {};
+    exp.forEach(function (w) { expandToVocab(w).forEach(function (v) { set[v] = 1; }); });
+    return { terms: Object.keys(set), core: core, coreSets: core.map(expandToVocab) };
+  }
+
   // ----- Construction de l'index à partir des procédures -----
   var INDEX = [];
   function buildIndex() {
@@ -113,16 +175,19 @@
       var meta = norm(titre);
       (PT[key] || []).forEach(function (pas) {
         if (!pas || !pas.t) return;
+        var tnorm = norm(pas.t);
+        addVocab(tnorm);
         INDEX.push({ text: pas.t, kind: 'PDF', source: 'PDF · p.' + pas.p,
           pid: (key === 'centralisateur-dessin' ? 'centralisateur' : key), ptitre: titre,
-          txt: norm(pas.t), meta: meta });
+          txt: tnorm, meta: meta });
       });
+      addVocab(meta);
     });
   }
 
-  function search(query) {
-    var qt = uniq(tokens(query, true));
-    var core = uniq(tokens(query, false));
+  function search(query, eq) {
+    eq = eq || expandQuery(query);
+    var qt = eq.terms, core = eq.core, coreSets = eq.coreSets;
     if (!qt.length) return [];
     var scored = [];
     INDEX.forEach(function (item) {
@@ -135,15 +200,15 @@
       });
       if (!hits) return;
       score += hits / qt.length * 4;                          // couverture globale
-      // bonus : tous les mots-clés « cœur » présents dans la réponse elle-même
-      var coreInTxt = core.filter(function (w) { return wmatch(w, item.txt) > 0; }).length;
+      // bonus : tous les mots-clés « cœur » couverts (via leurs variantes) dans la réponse
+      var coreInTxt = coreSets.filter(function (set) {
+        return set.some(function (w) { return wmatch(w, item.txt) > 0; });
+      }).length;
       if (core.length >= 2 && coreInTxt === core.length) score += 7;
       else if (core.length >= 2) score += coreInTxt / core.length * 3;
-      // bonus de phrase : deux mots-clés voisins proches dans la réponse
-      for (var j = 0; j + 1 < core.length; j++) {
-        var a = item.txt.indexOf(core[j]), b = item.txt.indexOf(core[j + 1]);
-        if (a >= 0 && b >= 0 && Math.abs(a - b) <= 28) score += 2;
-      }
+      // bonus de phrase : deux termes voisins proches dans la réponse
+      var pos = qt.map(function (w) { return item.txt.indexOf(w); }).filter(function (p) { return p >= 0; }).sort(function (a, b) { return a - b; });
+      for (var j = 0; j + 1 < pos.length; j++) { if (pos[j + 1] - pos[j] <= 28) { score += 2; break; } }
       scored.push({ item: item, score: score, hits: hits, core: coreInTxt });
     });
     scored.sort(function (a, b) { return b.score - a.score; });
@@ -165,13 +230,14 @@
   function el(html) { var d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; }
 
   function answerHTML(query) {
-    var res = search(query);
+    var eq = expandQuery(query);
+    var res = search(query, eq);
     if (!res.length) {
       return '<p>Je n\'ai pas trouvé de réponse précise dans les procédures. ' +
         'Reformule ta question (ex. « distance foreuse surcompresseur », « bris de tige », ' +
         '« cadenassage »), ou consulte <a href="#/procedures">toutes les procédures</a>.</p>';
     }
-    var terms = uniq(tokens(query, true));   // mots recherchés (+ synonymes) à surligner
+    var terms = eq.terms;   // mots recherchés (étendus : variantes, fautes…) à surligner
     var html = '<p>Voici ce que disent les procédures&nbsp;:</p>';
     res.forEach(function (r) {
       var it = r.item;
