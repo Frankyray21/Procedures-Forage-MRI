@@ -123,7 +123,5 @@ window.OUTILS_MAP = {
   // Entretien mécanique
   "pro-mec-011":        ["jsa-syn-05", "jsa-syn-09", "jsa-syn-10"], // (P) boulons lourds, coupling, graissage
   "pro-op-dd-005":      ["jsa-syn-05", "jsa-syn-09", "jsa-syn-10"], // (P) boulons ¾, jaws, graissage
-  "dr600-op-002":       ["jsa-syn-10"],                             // (P) graissage avant remorquage
-  // Manutention / tubage
-  "pro-op-ith-014":     ["jsa-syn-01"]                              // (P) couper le tubage (casing) à longueur
+  "dr600-op-002":       ["jsa-syn-10"]                              // (P) graissage avant remorquage
 };
