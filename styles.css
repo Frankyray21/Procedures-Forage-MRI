@@ -627,6 +627,12 @@ footer b{color:var(--muted)}
 .cbopt:hover{border-color:#1d4ed8}
 .cbopt b{font-size:.9rem}
 .cbopt span{font-size:.74rem;color:var(--muted)}
+.cbmetrics{margin-top:.35rem;font-size:.72rem;color:var(--muted);line-height:1.4}
+.cbx2{background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--accent-l);
+  cursor:pointer;font-size:.7rem;font-weight:700;padding:0 .35rem}
+.cbexp{width:100%;box-sizing:border-box;font-family:ui-monospace,monospace;font-size:.7rem;
+  background:#0a0e17;color:#cbd5e1;border:1px solid var(--border);border-radius:8px;padding:.5rem;resize:vertical}
+.cbdl{color:var(--accent-l);font-weight:700;font-size:.8rem}
 .cbsrc{display:block;margin-top:.3rem;font-size:.76rem;font-weight:700;color:var(--accent-l)}
 .cbnote{margin-top:.5rem!important;font-size:.74rem;color:var(--dim)}
 .cbsugg{display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem}

@@ -273,7 +273,41 @@
     pushMsg('bot', answerHTML(text));
   }
 
-  // ---- Assistant IA (bêta) : WebLLM + RAG sur les procédures ----
+  // ---- Assistant IA (bêta) : WebLLM + RAG + INSTRUMENTATION (test terrain) ----
+  var MX = { device: null, model: null, provider: null, initMs: null, fromCache: null,
+             batteryStart: null, batteryEnd: null, runs: [] };
+  function deviceInfo() {
+    var d = { ua: navigator.userAgent, platform: navigator.platform || '',
+      cores: navigator.hardwareConcurrency || null, memGB: navigator.deviceMemory || null,
+      webgpu: !!navigator.gpu, screen: (screen.width + 'x' + screen.height), dpr: window.devicePixelRatio || 1 };
+    var ps = [];
+    if (navigator.gpu && navigator.gpu.requestAdapter) {
+      ps.push(navigator.gpu.requestAdapter().then(function (a) {
+        if (a) { try { var i = a.info || {}; d.gpu = { vendor: i.vendor || '', architecture: i.architecture || '', description: i.description || '' }; } catch (e) {} }
+      }).catch(function () {}));
+    }
+    if (navigator.getBattery) ps.push(navigator.getBattery().then(function (b) { d.battery = { level: b.level, charging: b.charging }; }).catch(function () {}));
+    return Promise.all(ps).then(function () { return d; });
+  }
+  function batteryLevel() {
+    if (!navigator.getBattery) return Promise.resolve(null);
+    return navigator.getBattery().then(function (b) { return b.level; }).catch(function () { return null; });
+  }
+  function exportMetrics() {
+    batteryLevel().then(function (lvl) {
+      MX.batteryEnd = lvl;
+      var data = { app: 'MRI', generatedAt: new Date().toISOString(), provider: MX.provider, model: MX.model,
+        initMs: MX.initMs, fromCache: MX.fromCache, batteryStart: MX.batteryStart, batteryEnd: MX.batteryEnd,
+        nbQuestions: MX.runs.length, device: MX.device, runs: MX.runs };
+      var json = JSON.stringify(data, null, 2);
+      var url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+      var m = pushMsg('bot', '<p>📊 Mesures de la session (copie automatique tentée) :</p>' +
+        '<textarea class="cbexp" readonly rows="7" onclick="this.select()">' + esc(json) + '</textarea>' +
+        '<p><a class="cbdl" href="' + url + '" download="mesures-ia-mri.json">⬇️ Télécharger le JSON</a></p>');
+      try { navigator.clipboard && navigator.clipboard.writeText(json); } catch (e) {}
+      body.scrollTop = body.scrollHeight;
+    });
+  }
   function setAiBadge() {
     var b = panel && panel.querySelector('#cbAi'); if (!b) return;
     b.classList.toggle('on', aiOn);
@@ -282,18 +316,25 @@
   }
   function enableAI() {
     if (!window.MRI_LLM) return;
-    var msg = pushMsg('bot', '<p>⏳ Téléchargement du modèle d\'IA (≈ 1 Go, <b>une seule fois</b>, ' +
+    var msg = pushMsg('bot', '<p>⏳ Téléchargement / chargement du modèle (<b>une seule fois</b>, ' +
       'Wi-Fi conseillé). Ensuite il fonctionne hors-ligne.</p><div class="cbprog"><i></i></div>' +
       '<div class="cbprogt">Initialisation…</div>');
     var bar = msg.querySelector('.cbprog i'), txt = msg.querySelector('.cbprogt');
+    var t0 = performance.now(), sawDownload = false;
+    deviceInfo().then(function (d) { MX.device = d; MX.batteryStart = d.battery ? d.battery.level : null; });
     window.MRI_LLM.init(function (r) {
       var pct = (r && typeof r.progress === 'number') ? Math.round(r.progress * 100) : null;
+      if (r && r.text && /(fetch|download|téléchar)/i.test(r.text)) sawDownload = true;
       if (bar && pct != null) bar.style.width = pct + '%';
       if (txt) txt.textContent = (r && r.text) ? r.text : (pct != null ? pct + ' %' : '…');
     }).then(function (id) {
       aiOn = true; setAiBadge();
-      msg.innerHTML = '<p>✅ Assistant IA prêt (<span class="cbmono">' + esc(id || 'modèle local') + '</span>). ' +
-        'Je réponds en langage naturel, <b>en citant</b> les procédures. Pose ta question.</p>';
+      MX.provider = window.MRI_LLM.active(); MX.model = window.MRI_LLM.model();
+      MX.initMs = Math.round(performance.now() - t0); MX.fromCache = !sawDownload;
+      msg.innerHTML = '<p>✅ Assistant IA prêt (<span class="cbmono">' + esc(MX.model || 'modèle local') + '</span>) ' +
+        'en <b>' + (MX.initMs / 1000).toFixed(1) + ' s</b>' + (MX.fromCache ? ' (depuis le cache)' : ' (1er téléchargement)') + '. ' +
+        'Je réponds <b>en citant</b> les procédures. Pose ta question.</p>' +
+        '<p><button class="cbchip" data-act="export" type="button">📊 Exporter les mesures</button></p>';
     }).catch(function (e) {
       aiOn = false; setAiBadge();
       msg.innerHTML = '<p>⚠️ Impossible d\'activer l\'IA (' + esc((e && e.message) || 'erreur') +
@@ -308,16 +349,27 @@
       return { text: r.item.text, ptitre: r.item.ptitre, source: r.item.source, pid: r.item.pid };
     });
     var msg = pushMsg('bot', '<p class="cbtyping">…</p>');
-    var p = msg.querySelector('p');
+    var p = msg.querySelector('p'), t0 = performance.now();
     window.MRI_LLM.answer(text, passages, function (partial) {
       p.innerHTML = highlight(partial, eq.terms); body.scrollTop = body.scrollHeight;
     }).then(function (full) {
+      var ms = Math.round(performance.now() - t0);
+      full = full || 'Ce n\'est pas précisé dans les procédures consultées.';
       p.classList.remove('cbtyping');
-      p.innerHTML = highlight(full || 'Ce n\'est pas précisé dans les procédures consultées.', eq.terms);
+      p.innerHTML = highlight(full, eq.terms);
+      var words = full.split(/\s+/).filter(Boolean).length;
+      var estTok = Math.max(1, Math.round(full.length / 4));
+      var tps = ms > 0 ? (estTok / (ms / 1000)) : 0;
+      var stats = (window.MRI_LLM.stats && window.MRI_LLM.stats()) || '';
+      MX.runs.push({ q: text, ms: ms, chars: full.length, words: words, estTokens: estTok,
+        estTokPerSec: Math.round(tps * 10) / 10, engineStats: stats });
       var src = '<div class="cbsources"><span>Sources citées&nbsp;:</span>' + passages.map(function (pp, i) {
         return '<a href="#/p/' + esc(pp.pid) + '">[' + (i + 1) + '] ' + esc(pp.ptitre) +
           (pp.source ? ' · ' + esc(pp.source) : '') + ' →</a>';
       }).join('') + '</div>' +
+      '<div class="cbmetrics">⏱ ' + (ms / 1000).toFixed(1) + ' s · ~' + (Math.round(tps * 10) / 10) + ' tok/s · ' +
+        words + ' mots' + (stats ? ' · ' + esc(stats) : '') +
+        ' · <button class="cbx2" data-act="export" type="button">exporter</button></div>' +
       '<p class="cbnote">Réponse générée localement à partir des procédures citées. Toujours valider sur la fiche.</p>';
       msg.insertAdjacentHTML('beforeend', src);
       body.scrollTop = body.scrollHeight;
@@ -383,6 +435,8 @@
     });
     // clic sur une suggestion / le bouton « activer IA » / un lien de fiche
     body.addEventListener('click', function (e) {
+      var act = e.target.closest && e.target.closest('[data-act]');
+      if (act && act.getAttribute('data-act') === 'export') { exportMetrics(); return; }
       var opt = e.target.closest && e.target.closest('.cbopt');
       if (opt) { window.MRI_LLM.choose(opt.getAttribute('data-prov'), opt.getAttribute('data-tier') || null); enableAI(); return; }
       if (e.target && e.target.id === 'cbAiGo') { enableAI(); return; }

@@ -63,7 +63,7 @@
       quality:  [/qwen3.*4b.*q4/i, /qwen2\.5-3b.*instruct.*q4/i, /phi-3\.5-mini.*instruct.*q4/i, /llama-3\.2-3b.*instruct.*q4/i]
     };
     var FALLBACK = [/qwen3.*1\.7b.*q4/i, /qwen2\.5-1\.5b.*instruct.*q4/i, /llama-3\.2-1b.*instruct.*q4/i, /q4f16_1-MLC$/i];
-    var tier = 'balanced', engine = null, ready = false, MODEL = null;
+    var tier = 'balanced', engine = null, ready = false, MODEL = null, lastStats = '';
     function pick(list) {
       var prefs = (TIERS[tier] || []).concat(FALLBACK);
       for (var i = 0; i < prefs.length; i++) for (var j = 0; j < list.length; j++)
@@ -96,14 +96,18 @@
           var raw = '', it = stream[Symbol.asyncIterator]();
           return (function pump() {
             return it.next().then(function (s) {
-              if (s.done) return stripThink(raw);
+              if (s.done) {
+                if (engine.runtimeStatsText) return engine.runtimeStatsText().then(function (t) { lastStats = t || ''; return stripThink(raw); }, function () { return stripThink(raw); });
+                return stripThink(raw);
+              }
               var d = s.value && s.value.choices && s.value.choices[0] && s.value.choices[0].delta && s.value.choices[0].delta.content;
               if (d) { raw += d; try { onToken && onToken(stripThink(raw)); } catch (e) {} }
               return pump();
             });
           })();
         });
-      }
+      },
+      stats: function () { return lastStats; }
     };
   })();
 
@@ -198,6 +202,7 @@
     active: function () { return activeId; },
     setProvider: function (id) { if (PROVIDERS[id]) activeId = id; return activeId; },
     configureGemma: function (url) { GemmaProvider.setUrl(url); return GemmaProvider.available(); },
+    stats: function () { return P().stats ? P().stats() : ''; },
     available: function () { return P().available(); },
     isReady: function () { return P().isReady(); },
     model: function () { return P().model(); },
