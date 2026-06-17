@@ -85,7 +85,10 @@
   // Classement des filtres : catégories par flux de travail, machines regroupées
   var CAT_ORDER = ['Forage', 'Alésage', 'Carottage & tube', 'Cimentation', 'Installation', 'Installation & plancher',
     'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Équipements & véhicules', 'Démobilisation', 'Sécurité'];
-  var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur', 'Foreuse au diamant', 'DR-600', 'STM-1500'];
+  // 'Foreuse au diamant' est volontairement absent : il équivaut à toute la
+  // section Diamant (redondant comme filtre). On le regroupe quand même (pour
+  // ne pas le confondre avec ITH), mais il ne s'affiche pas comme chip.
+  var MACH_ORDER = ['ITH', 'V-30', 'Centralisateur', 'Marteau', 'Compresseur', 'DR-600', 'STM-1500'];
   function mainMachine(m) {
     var s = norm(m);
     if (s.indexOf('cubex') >= 0) return 'ITH';   // CUBEX = foreuse ITH (même chose)
