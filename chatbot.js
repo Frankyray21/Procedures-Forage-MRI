@@ -252,7 +252,7 @@
     return html;
   }
 
-  var panel, body, opened = false;
+  var panel, body, opened = false, aiOn = false;
   function pushMsg(role, html) {
     var m = el('<div class="cbmsg ' + role + '">' + html + '</div>');
     body.appendChild(m); body.scrollTop = body.scrollHeight;
@@ -267,13 +267,81 @@
         '(consignes, distances, valeurs, marche à suivre). Je réponds en citant le document officiel.</p>');
       return;
     }
+    // Mode IA (bêta) actif + prêt → réponse en langage naturel, ancrée (RAG) ;
+    // sinon, recherche lexicale classique (toujours dispo, hors-ligne).
+    if (aiOn && window.MRI_LLM && window.MRI_LLM.isReady()) { askAI(text); return; }
     pushMsg('bot', answerHTML(text));
+  }
+
+  // ---- Assistant IA (bêta) : WebLLM + RAG sur les procédures ----
+  function setAiBadge() {
+    var b = panel && panel.querySelector('#cbAi'); if (!b) return;
+    b.classList.toggle('on', aiOn);
+    b.title = aiOn ? 'Assistant IA actif — cliquer pour revenir à la recherche'
+                   : 'Activer l\'assistant IA (bêta)';
+  }
+  function enableAI() {
+    if (!window.MRI_LLM) return;
+    var msg = pushMsg('bot', '<p>⏳ Téléchargement du modèle d\'IA (≈ 1 Go, <b>une seule fois</b>, ' +
+      'Wi-Fi conseillé). Ensuite il fonctionne hors-ligne.</p><div class="cbprog"><i></i></div>' +
+      '<div class="cbprogt">Initialisation…</div>');
+    var bar = msg.querySelector('.cbprog i'), txt = msg.querySelector('.cbprogt');
+    window.MRI_LLM.init(function (r) {
+      var pct = (r && typeof r.progress === 'number') ? Math.round(r.progress * 100) : null;
+      if (bar && pct != null) bar.style.width = pct + '%';
+      if (txt) txt.textContent = (r && r.text) ? r.text : (pct != null ? pct + ' %' : '…');
+    }).then(function (id) {
+      aiOn = true; setAiBadge();
+      msg.innerHTML = '<p>✅ Assistant IA prêt (<span class="cbmono">' + esc(id || 'modèle local') + '</span>). ' +
+        'Je réponds en langage naturel, <b>en citant</b> les procédures. Pose ta question.</p>';
+    }).catch(function (e) {
+      aiOn = false; setAiBadge();
+      msg.innerHTML = '<p>⚠️ Impossible d\'activer l\'IA (' + esc((e && e.message) || 'erreur') +
+        '). Je continue en recherche classique.</p>';
+    });
+  }
+  function askAI(text) {
+    var eq = expandQuery(text);
+    var res = search(text, eq);
+    if (!res.length) { pushMsg('bot', answerHTML(text)); return; }   // rien à citer → repli
+    var passages = res.slice(0, 5).map(function (r) {
+      return { text: r.item.text, ptitre: r.item.ptitre, source: r.item.source, pid: r.item.pid };
+    });
+    var msg = pushMsg('bot', '<p class="cbtyping">…</p>');
+    var p = msg.querySelector('p');
+    window.MRI_LLM.answer(text, passages, function (partial) {
+      p.innerHTML = highlight(partial, eq.terms); body.scrollTop = body.scrollHeight;
+    }).then(function (full) {
+      p.classList.remove('cbtyping');
+      p.innerHTML = highlight(full || 'Ce n\'est pas précisé dans les procédures consultées.', eq.terms);
+      var src = '<div class="cbsources"><span>Sources citées&nbsp;:</span>' + passages.map(function (pp, i) {
+        return '<a href="#/p/' + esc(pp.pid) + '">[' + (i + 1) + '] ' + esc(pp.ptitre) +
+          (pp.source ? ' · ' + esc(pp.source) : '') + ' →</a>';
+      }).join('') + '</div>' +
+      '<p class="cbnote">Réponse générée localement à partir des procédures citées. Toujours valider sur la fiche.</p>';
+      msg.insertAdjacentHTML('beforeend', src);
+      body.scrollTop = body.scrollHeight;
+    }).catch(function (e) {
+      p.classList.remove('cbtyping');
+      p.innerHTML = '⚠️ Erreur de génération. Voici les passages trouvés&nbsp;:';
+      msg.insertAdjacentHTML('beforeend', answerHTML(text));
+    });
+  }
+  function aiBtnClick() {
+    if (!window.MRI_LLM || !window.MRI_LLM.available()) return;
+    if (window.MRI_LLM.isReady()) { aiOn = !aiOn; setAiBadge();
+      pushMsg('bot', aiOn ? '<p>Mode IA activé.</p>' : '<p>Retour à la recherche classique.</p>'); return; }
+    pushMsg('bot', '<p>L\'assistant IA (bêta) télécharge un modèle (≈ 1 Go) <b>une seule fois</b> ' +
+      '(Wi-Fi conseillé), puis fonctionne hors-ligne et <b>ne cite que les procédures</b>. ' +
+      '<button class="cbchip" id="cbAiGo" type="button">Télécharger et activer</button></p>');
   }
 
   function buildUI() {
     var btn = el('<button class="cbbtn" id="cbBtn" aria-label="Assistant procédures" title="Assistant procédures">' + ICON_CHAT + '</button>');
+    var aiCanRun = !!(window.MRI_LLM && window.MRI_LLM.available());
     panel = el('<div class="cbpanel" role="dialog" aria-label="Assistant procédures">' +
       '<div class="cbhead"><b>Assistant procédures</b><span class="cboff">hors-ligne</span>' +
+        (aiCanRun ? '<button class="cbai" id="cbAi" type="button" aria-label="Assistant IA (bêta)" title="Activer l\'assistant IA (bêta)">IA</button>' : '') +
         '<button class="cbx" id="cbClose" aria-label="Fermer">' + ICON_CLOSE + '</button></div>' +
       '<div class="cbbody" id="cbBody"></div>' +
       '<form class="cbform" id="cbForm">' +
@@ -302,13 +370,15 @@
     }
     btn.onclick = function () { toggle(true); };
     panel.querySelector('#cbClose').onclick = function () { toggle(false); };
+    var aiBtn = panel.querySelector('#cbAi'); if (aiBtn) aiBtn.onclick = aiBtnClick;
     panel.querySelector('#cbForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var inp = panel.querySelector('#cbInput');
       handleSend(inp.value); inp.value = '';
     });
-    // clic sur une suggestion ou un lien de fiche → envoyer / fermer
+    // clic sur une suggestion / le bouton « activer IA » / un lien de fiche
     body.addEventListener('click', function (e) {
+      if (e.target && e.target.id === 'cbAiGo') { enableAI(); return; }
       var chip = e.target.closest && e.target.closest('.cbchip');
       if (chip) { handleSend(chip.textContent); return; }
       if (e.target.closest && e.target.closest('a')) { toggle(false); }
