@@ -451,41 +451,23 @@
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
 
   /* ---------- Avant la tâche : auto-vérification outils + ÉPI ---------- */
-  var EPI_BASE_TASK = ['Casque de sécurité', 'Lunettes de protection', 'Bottes de protection', 'Gants', 'Vêtements haute visibilité'];
-  var EPI_ALL_TASK = EPI_BASE_TASK.concat(['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison']);
-  // ÉPI spécifiques exigés par la procédure elle-même (au-delà des outils) — fidèle au texte.
-  var PRETASK_EPI = {
-    'pro-dd-st-007': ['Protection respiratoire'],      // cimentation : masque powerflow
-    'pro-op-cim-001': ['Protection respiratoire'],     // cimentation Chemgrout
-    'pro-dd-st-009-1': ['Harnais de sécurité'],        // forage ascendant >20° : antichute
-    'pro-dd-st-009-2': ['Harnais de sécurité']
-  };
-  // Référence EXACTE à la procédure (citation), affichée dans la rétroaction.
-  var PRETASK_REF = {
-    'pro-dd-st-003': "« OUTILS NÉCESSAIRES : … Sciotte ; Scie va-et-vient avec lame à bois ; Scie à chaîne (approbation du superviseur)… » (matériel et outils nécessaires)",
-    'pro-dd-st-007': "« Mettre les ÉPI avant de commencer la cimentation. Enfiler le masque power flow, activer le ventilateur et ajuster le masque… » (ÉPI obligatoires)",
-    'pro-op-cim-001': "« Enfiler le masque power flow, activer le ventilateur et ajuster le masque. Le port des ÉPI est obligatoire à partir du moment où l'on commence à manipuler les sacs de ciment jusqu'à ce que le nettoyage complet de la machine à ciment soit terminé. »",
-    'pro-dd-st-009-1': "« En raison des risques associés au travail en hauteur lors du forage de certains trous ascendants… Prévoir des ÉPI pour s'attacher et limiter la chute à 4 pieds. »",
-    'pro-dd-st-009-2': "« En raison des risques associés au travail en hauteur lors du forage de certains trous ascendants… Prévoir des ÉPI pour s'attacher et limiter la chute à 4 pieds. »"
-  };
+  var EPI_EXTRA_TASK = ['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison'];
+  // Réponses : UNIQUEMENT les outils/ÉPI additionnels EXPLICITEMENT exigés par la
+  // procédure (window.PRETASK, extrait des PDF). Les ÉPI de base ne sont pas dans
+  // la question (obligatoires en tout temps).
   function preTaskRefHTML(p) {
-    var body = PRETASK_REF[p.id] ||
-      "D'après les analyses de sécurité de tâche (JSA) des outils associés et les ÉPI de base obligatoires sous terre.";
+    var d = (window.PRETASK && window.PRETASK[p.id]) || null;
+    var body = d && d.ref
+      ? '« ' + esc(d.ref) + ' »' + (d.src ? ' <span class="pt-ref-src">— ' + esc(d.src) + '</span>' : '')
+      : 'La procédure n\'exige explicitement aucun ÉPI additionnel ; seuls les ÉPI de base obligatoires sous terre s\'appliquent (casque, lunettes, bottes, gants, dossard).';
     return '<div class="pt-ref"><span class="pt-ref-t">Référence à la procédure</span>' +
-      '<span class="pt-ref-q">' + esc(body) + '</span>' +
+      '<span class="pt-ref-q">' + body + '</span>' +
       '<a class="pt-ref-link" href="#/p/' + esc(p.id) + '">Ouvrir la fiche' + (p.code ? ' ' + esc(p.code) : '') + ' →</a></div>';
   }
-  var EPI_EXTRA_TASK = ['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison'];
-  // Réponses : outils + ÉPI ADDITIONNELS (les ÉPI de base souterrains ne sont
-  // pas dans la question, ils sont obligatoires en tout temps).
   function preTaskOptions(p) {
-    var toolIds = (window.OUTILS_MAP && window.OUTILS_MAP[p.id]) || [];
+    var d = (window.PRETASK && window.PRETASK[p.id]) || { tools: [], epi: [] };
+    var tools = d.tools || [], addEpi = d.epi || [];
     var O = window.OUTILS || {};
-    var tools = toolIds.map(function (id) { return O[id] ? O[id].nom : id; });
-    var add = {};
-    toolIds.forEach(function (id) { (O[id] && O[id].epi || []).forEach(function (e) { if (EPI_BASE_TASK.indexOf(e) < 0) add[e] = 1; }); });
-    (PRETASK_EPI[p.id] || []).forEach(function (e) { if (EPI_BASE_TASK.indexOf(e) < 0) add[e] = 1; });
-    var addEpi = Object.keys(add);
     var opts = [];
     tools.forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: true }); });
     addEpi.forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: true }); });
@@ -494,7 +476,6 @@
       .forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: false }); });
     shuffle(EPI_EXTRA_TASK.filter(function (e) { return addEpi.indexOf(e) < 0; })).slice(0, 2)
       .forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: false }); });
-    // Option « Aucun » : correcte seulement si aucun outil ni ÉPI additionnel requis.
     opts.push({ l: 'Aucun (les ÉPI de base suffisent)', cat: '', ok: (tools.length + addEpi.length) === 0 });
     return shuffle(opts);
   }

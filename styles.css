@@ -749,3 +749,4 @@ footer b{color:var(--muted)}
 .pt-ref-t{display:block;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#34d399;margin-bottom:.25rem}
 .pt-ref-q{display:block;color:var(--text)}
 .pt-ref-link{display:inline-block;margin-top:.4rem;color:var(--accent-l);font-weight:700;font-size:.85rem;text-decoration:none}
+.pt-ref-src{color:var(--dim);font-weight:600;font-size:.82em}
