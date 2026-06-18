@@ -347,6 +347,9 @@
 
     if (p.resume) h += '<div class="sec"><div class="lead2">' + esc(p.resume) + '</div></div>';
 
+    // Avant de commencer : auto-vérification (outils + ÉPI), à choix multiple.
+    h += renderPreTask(p);
+
     // Document officiel (PDF) — AU DÉBUT de la fiche
     if (DEMO) {
       h += '<div class="sec"><h2>Document officiel (PDF)</h2>' +
@@ -443,8 +446,84 @@
     initGallery(figs);
     initProcQuiz(p.id);
     initOutils();
+    initPreTask();
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
+
+  /* ---------- Avant la tâche : auto-vérification outils + ÉPI ---------- */
+  var EPI_BASE_TASK = ['Casque de sécurité', 'Lunettes de protection', 'Bottes de protection', 'Gants', 'Vêtements haute visibilité'];
+  var EPI_ALL_TASK = EPI_BASE_TASK.concat(['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison']);
+  // ÉPI spécifiques exigés par la procédure elle-même (au-delà des outils) — fidèle au texte.
+  var PRETASK_EPI = {
+    'pro-dd-st-007': ['Protection respiratoire'],      // cimentation : masque powerflow
+    'pro-op-cim-001': ['Protection respiratoire'],     // cimentation Chemgrout
+    'pro-dd-st-009-1': ['Harnais de sécurité'],        // forage ascendant >20° : antichute
+    'pro-dd-st-009-2': ['Harnais de sécurité']
+  };
+  function preTaskOptions(p) {
+    var toolIds = (window.OUTILS_MAP && window.OUTILS_MAP[p.id]) || [];
+    var O = window.OUTILS || {};
+    var tools = toolIds.map(function (id) { return O[id] ? O[id].nom : id; });
+    var add = {};
+    toolIds.forEach(function (id) { (O[id] && O[id].epi || []).forEach(function (e) { if (EPI_BASE_TASK.indexOf(e) < 0) add[e] = 1; }); });
+    (PRETASK_EPI[p.id] || []).forEach(function (e) { if (EPI_BASE_TASK.indexOf(e) < 0) add[e] = 1; });
+    var correctEpi = EPI_BASE_TASK.concat(Object.keys(add));
+    var opts = [];
+    correctEpi.forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: true }); });
+    shuffle(EPI_ALL_TASK.filter(function (e) { return correctEpi.indexOf(e) < 0; })).slice(0, 2)
+      .forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: false }); });
+    tools.forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: true }); });
+    var allTools = Object.keys(O).map(function (id) { return O[id].nom; });
+    shuffle(allTools.filter(function (t) { return tools.indexOf(t) < 0; })).slice(0, tools.length ? 3 : 2)
+      .forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: false }); });
+    return shuffle(opts);
+  }
+  function renderPreTask(p) {
+    var opts = preTaskOptions(p);
+    var items = opts.map(function (o) {
+      return '<label class="pt-opt"><input type="checkbox" data-ok="' + (o.ok ? 1 : 0) + '">' +
+        '<span class="pt-mark"></span><span class="pt-cat ' + (o.cat === 'Outil' ? 'tool' : 'epi') + '">' + esc(o.cat) + '</span>' +
+        '<span class="pt-l">' + esc(o.l) + '</span></label>';
+    }).join('');
+    return '<div class="sec pretask"><h2>Avant de commencer — vérifie ta préparation</h2>' +
+      '<p class="pt-lead">Sélectionne <b>tous</b> les outils et ÉPI nécessaires à cette tâche, puis valide. ' +
+      '(Les ÉPI de base souterrains — casque, lunettes, bottes, gants, dossard — sont toujours requis.)</p>' +
+      '<div class="pt-opts">' + items + '</div>' +
+      '<div class="pt-actions"><button type="button" class="btn pt-check">Valider ma préparation</button>' +
+      '<button type="button" class="btn ghost pt-reset" hidden>Recommencer</button></div>' +
+      '<div class="pt-fb"></div></div>';
+  }
+  function initPreTask() {
+    var box = document.querySelector('.pretask'); if (!box) return;
+    var check = box.querySelector('.pt-check'), reset = box.querySelector('.pt-reset'), fb = box.querySelector('.pt-fb');
+    check.onclick = function () {
+      var miss = 0, wrong = 0, good = 0, req = 0;
+      [].forEach.call(box.querySelectorAll('.pt-opt'), function (o) {
+        var inp = o.querySelector('input'), ok = inp.getAttribute('data-ok') === '1', sel = inp.checked;
+        inp.disabled = true;
+        if (ok) req++;
+        if (ok && sel) { o.classList.add('good'); good++; }
+        else if (!ok && sel) { o.classList.add('bad'); wrong++; }
+        else if (ok && !sel) { o.classList.add('missed'); miss++; }
+      });
+      var perfect = (wrong === 0 && miss === 0);
+      fb.className = 'pt-fb on ' + (perfect ? 'ok' : 'no');
+      fb.innerHTML = perfect
+        ? '<b>✓ Parfait.</b> Tu as bien identifié tous les outils et ÉPI nécessaires avant de commencer.'
+        : '<b>' + good + '/' + req + ' bon(s).</b> ' +
+          (miss ? '<span class="pt-miss">' + miss + ' élément(s) requis oublié(s)</span> ' : '') +
+          (wrong ? '<span class="pt-extra">' + wrong + ' sélection(s) non nécessaire(s)</span> ' : '') +
+          '— les éléments requis sont surlignés en vert, les manquants en jaune.';
+      check.hidden = true; reset.hidden = false;
+    };
+    reset.onclick = function () {
+      [].forEach.call(box.querySelectorAll('.pt-opt'), function (o) {
+        o.classList.remove('good', 'bad', 'missed');
+        var i = o.querySelector('input'); i.checked = false; i.disabled = false;
+      });
+      fb.className = 'pt-fb'; fb.innerHTML = ''; check.hidden = false; reset.hidden = true;
+    };
+  }
 
   /* ---------- outils (analyses SST / JSA) : détail en modale ---------- */
   // Pictogrammes ÉPI officiels (images, comme sur les fiches JSA d'origine)

@@ -712,3 +712,30 @@ footer b{color:var(--muted)}
   border-top:1px solid var(--border)}
 .om-src{flex-basis:100%;color:var(--dim);font-size:.78rem;margin-top:.2rem}
 @media (max-width:560px){.om-cols{grid-template-columns:1fr}}
+
+/* ===== Avant la tâche — auto-vérification outils + ÉPI ===== */
+.pretask{border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.05)}
+.pt-lead{color:var(--muted);font-size:.95rem;margin:.1rem 0 .8rem;line-height:1.5}
+.pt-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.5rem}
+.pt-opt{display:flex;align-items:center;gap:.55rem;cursor:pointer;background:var(--card-2);
+  border:1px solid var(--border);border-radius:10px;padding:.55rem .7rem;position:relative;transition:border-color .15s,background .15s}
+.pt-opt:hover{border-color:var(--accent-l)}
+.pt-opt input{position:absolute;opacity:0;width:0;height:0}
+.pt-mark{flex:0 0 19px;width:19px;height:19px;border:2px solid var(--dim);border-radius:5px;display:flex;align-items:center;justify-content:center}
+.pt-opt input:checked + .pt-mark{background:var(--accent);border-color:var(--accent)}
+.pt-opt input:checked + .pt-mark::after{content:'✓';color:#fff;font-size:.8rem;font-weight:900;line-height:1}
+.pt-cat{font-size:.62rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:.1rem .35rem;border-radius:5px;flex:0 0 auto}
+.pt-cat.epi{background:rgba(29,78,216,.18);color:#93c5fd}
+.pt-cat.tool{background:rgba(13,148,136,.18);color:#5eead4}
+.pt-l{font-size:.9rem;line-height:1.2}
+.pt-opt input:disabled{cursor:default}
+.pt-opt.good{border-color:#34d399;background:rgba(52,211,153,.14)}
+.pt-opt.bad{border-color:#f87171;background:rgba(248,113,113,.14)}
+.pt-opt.bad .pt-l{text-decoration:line-through;color:var(--muted)}
+.pt-opt.missed{border-color:#fbbf24;background:rgba(251,191,36,.16)}
+.pt-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem}
+.pt-fb{margin-top:.6rem;font-size:.92rem;line-height:1.5}
+.pt-fb.on.ok{color:#34d399}
+.pt-fb.on.no{color:var(--text)}
+.pt-fb .pt-miss{color:#fbbf24;font-weight:700}
+.pt-fb .pt-extra{color:#f87171;font-weight:700}
