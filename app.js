@@ -455,15 +455,6 @@
   // Réponses : UNIQUEMENT les outils/ÉPI additionnels EXPLICITEMENT exigés par la
   // procédure (window.PRETASK, extrait des PDF). Les ÉPI de base ne sont pas dans
   // la question (obligatoires en tout temps).
-  function preTaskRefHTML(p) {
-    var d = (window.PRETASK && window.PRETASK[p.id]) || null;
-    var body = d && d.ref
-      ? '« ' + esc(d.ref) + ' »' + (d.src ? ' <span class="pt-ref-src">— ' + esc(d.src) + '</span>' : '')
-      : 'La procédure n\'exige explicitement aucun ÉPI additionnel ; seuls les ÉPI de base obligatoires sous terre s\'appliquent (casque, lunettes, bottes, gants, dossard).';
-    return '<div class="pt-ref"><span class="pt-ref-t">Référence à la procédure</span>' +
-      '<span class="pt-ref-q">' + body + '</span>' +
-      '<a class="pt-ref-link" href="#/p/' + esc(p.id) + '">Ouvrir la fiche' + (p.code ? ' ' + esc(p.code) : '') + ' →</a></div>';
-  }
   function preTaskOptions(p) {
     var d = (window.PRETASK && window.PRETASK[p.id]) || { tools: [], epi: [] };
     var tools = d.tools || [], addEpi = d.epi || [];
@@ -479,21 +470,51 @@
     opts.push({ l: 'Aucun (les ÉPI de base suffisent)', cat: '', ok: (tools.length + addEpi.length) === 0 });
     return shuffle(opts);
   }
-  function renderPreTask(p) {
-    var opts = preTaskOptions(p);
+  // Liste de dangers (étiquettes) — sert aux distracteurs de la question « risque ».
+  var RISK_ALL = ['Coincement / écrasement par des pièces', 'Détente brutale de ressorts comprimés',
+    'Chute de hauteur', 'Chute / projection de tiges', 'Chute d\'objets (monterie / trou)', 'Blessures aux mains',
+    'Éjection sous pression (eau / boyau)', 'Happement par une pièce en rotation', 'Exposition à la poussière (santé)',
+    'Atmosphère dangereuse (gaz)', 'Frappé par un objet échappé', 'Renversement / heurt de véhicule'];
+  function riskOptions(p) {
+    var d = (window.PRETASK && window.PRETASK[p.id]) || {};
+    var items = (d.risque && d.risque.items) || [];
+    var opts = items.map(function (r) { return { l: r, cat: 'Danger', ok: true }; });
+    shuffle(RISK_ALL.filter(function (r) { return items.indexOf(r) < 0; })).slice(0, 3)
+      .forEach(function (r) { opts.push({ l: r, cat: 'Danger', ok: false }); });
+    return shuffle(opts);
+  }
+  function ptRefHTML(quote, src) {
+    var body = quote
+      ? '« ' + esc(quote) + ' »' + (src ? ' <span class="pt-ref-src">— ' + esc(src) + '</span>' : '')
+      : 'La procédure n\'exige explicitement aucun ÉPI additionnel ; seuls les ÉPI de base obligatoires sous terre s\'appliquent (casque, lunettes, bottes, gants, dossard).';
+    return '<div class="pt-ref"><span class="pt-ref-t">Référence à la procédure</span>' +
+      '<span class="pt-ref-q">' + body + '</span></div>';
+  }
+  function ptGroup(qHTML, opts, refHTML) {
     var items = opts.map(function (o) {
-      var tag = o.cat ? '<span class="pt-cat ' + (o.cat === 'Outil' ? 'tool' : 'epi') + '">' + esc(o.cat) + '</span>' : '';
+      var cls = o.cat === 'Outil' ? 'tool' : (o.cat === 'Danger' ? 'risk' : 'epi');
+      var tag = o.cat ? '<span class="pt-cat ' + cls + '">' + esc(o.cat) + '</span>' : '';
       return '<label class="pt-opt"><input type="checkbox" data-ok="' + (o.ok ? 1 : 0) + '">' +
         '<span class="pt-mark"></span>' + tag + '<span class="pt-l">' + esc(o.l) + '</span></label>';
     }).join('');
+    return '<div class="pt-grp"><p class="pt-q"><b>Question :</b> ' + qHTML +
+      ' <span class="pt-multi">Plusieurs réponses possibles.</span></p>' +
+      '<div class="pt-opts">' + items + '</div>' + refHTML + '</div>';
+  }
+  function renderPreTask(p) {
+    var d = (window.PRETASK && window.PRETASK[p.id]) || {};
+    var groups = ptGroup('quels <b>outils</b> et <b>ÉPI additionnels</b> cette tâche exige-t-elle&nbsp;?',
+      preTaskOptions(p), ptRefHTML(d.ref, d.src));
+    if (d.risque) {
+      groups += ptGroup('quel est le <b>principal danger</b> de cette tâche&nbsp;?',
+        riskOptions(p), ptRefHTML(d.risque.ref, d.risque.src));
+    }
     return '<div class="sec pretask"><h2>Avant de commencer</h2>' +
-      '<p class="pt-q"><b>Question :</b> quels <b>outils</b> et <b>ÉPI additionnels</b> cette tâche exige-t-elle ? ' +
-      '<span class="pt-multi">Plusieurs réponses possibles.</span></p>' +
-      '<p class="pt-lead">Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard) ne sont pas dans la question — ils sont requis en tout temps.</p>' +
-      '<div class="pt-opts">' + items + '</div>' +
-      '<div class="pt-actions"><button type="button" class="btn pt-check">Valider ma réponse</button>' +
+      '<p class="pt-lead">Réponds, puis valide. Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard) ne sont pas dans la question — ils sont requis en tout temps.</p>' +
+      groups +
+      '<div class="pt-actions"><button type="button" class="btn pt-check">Valider mes réponses</button>' +
       '<button type="button" class="btn ghost pt-reset" hidden>Recommencer</button></div>' +
-      '<div class="pt-fb"></div>' + preTaskRefHTML(p) + '</div>';
+      '<div class="pt-fb"></div></div>';
   }
   function initPreTask() {
     var box = document.querySelector('.pretask'); if (!box) return;

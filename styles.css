@@ -750,3 +750,7 @@ footer b{color:var(--muted)}
 .pt-ref-q{display:block;color:var(--text)}
 .pt-ref-link{display:inline-block;margin-top:.4rem;color:var(--accent-l);font-weight:700;font-size:.85rem;text-decoration:none}
 .pt-ref-src{color:var(--dim);font-weight:600;font-size:.82em}
+/* Groupes de questions pré-tâche + étiquette danger */
+.pt-grp{margin-top:.7rem;padding-top:.4rem}
+.pt-grp + .pt-grp{border-top:1px dashed var(--border);margin-top:1rem}
+.pt-cat.risk{background:rgba(248,113,113,.18);color:#fca5a5}
