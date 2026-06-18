@@ -741,3 +741,11 @@ footer b{color:var(--muted)}
 .pt-fb .pt-extra{color:#f87171;font-weight:700}
 .pt-q{font-size:1rem;line-height:1.5;margin:.1rem 0 .35rem}
 .pt-q .pt-multi{color:var(--accent-l);font-weight:700;font-size:.85rem}
+/* Référence à la procédure (rétroaction pré-tâche) — révélée au clic */
+.pt-ref{display:none;margin-top:.7rem;padding:.6rem .8rem;border:2px solid #fbbf24;border-radius:10px;
+  background:rgba(251,191,36,.08);font-size:1rem;line-height:1.5}
+.pretask.done .pt-ref{display:block;animation:ptRef .25s ease}
+@keyframes ptRef{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.pt-ref-t{display:block;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#34d399;margin-bottom:.25rem}
+.pt-ref-q{display:block;color:var(--text)}
+.pt-ref-link{display:inline-block;margin-top:.4rem;color:var(--accent-l);font-weight:700;font-size:.85rem;text-decoration:none}

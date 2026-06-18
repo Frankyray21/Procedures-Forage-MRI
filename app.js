@@ -460,6 +460,21 @@
     'pro-dd-st-009-1': ['Harnais de sécurité'],        // forage ascendant >20° : antichute
     'pro-dd-st-009-2': ['Harnais de sécurité']
   };
+  // Référence EXACTE à la procédure (citation), affichée dans la rétroaction.
+  var PRETASK_REF = {
+    'pro-dd-st-003': "« OUTILS NÉCESSAIRES : … Sciotte ; Scie va-et-vient avec lame à bois ; Scie à chaîne (approbation du superviseur)… » (matériel et outils nécessaires)",
+    'pro-dd-st-007': "« Mettre les ÉPI avant de commencer la cimentation. Enfiler le masque power flow, activer le ventilateur et ajuster le masque… » (ÉPI obligatoires)",
+    'pro-op-cim-001': "« Enfiler le masque power flow, activer le ventilateur et ajuster le masque. Le port des ÉPI est obligatoire à partir du moment où l'on commence à manipuler les sacs de ciment jusqu'à ce que le nettoyage complet de la machine à ciment soit terminé. »",
+    'pro-dd-st-009-1': "« En raison des risques associés au travail en hauteur lors du forage de certains trous ascendants… Prévoir des ÉPI pour s'attacher et limiter la chute à 4 pieds. »",
+    'pro-dd-st-009-2': "« En raison des risques associés au travail en hauteur lors du forage de certains trous ascendants… Prévoir des ÉPI pour s'attacher et limiter la chute à 4 pieds. »"
+  };
+  function preTaskRefHTML(p) {
+    var body = PRETASK_REF[p.id] ||
+      "D'après les analyses de sécurité de tâche (JSA) des outils associés et les ÉPI de base obligatoires sous terre.";
+    return '<div class="pt-ref"><span class="pt-ref-t">Référence à la procédure</span>' +
+      '<span class="pt-ref-q">' + esc(body) + '</span>' +
+      '<a class="pt-ref-link" href="#/p/' + esc(p.id) + '">Ouvrir la fiche' + (p.code ? ' ' + esc(p.code) : '') + ' →</a></div>';
+  }
   var EPI_EXTRA_TASK = ['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison'];
   // Réponses : outils + ÉPI ADDITIONNELS (les ÉPI de base souterrains ne sont
   // pas dans la question, ils sont obligatoires en tout temps).
@@ -497,7 +512,7 @@
       '<div class="pt-opts">' + items + '</div>' +
       '<div class="pt-actions"><button type="button" class="btn pt-check">Valider ma réponse</button>' +
       '<button type="button" class="btn ghost pt-reset" hidden>Recommencer</button></div>' +
-      '<div class="pt-fb"></div></div>';
+      '<div class="pt-fb"></div>' + preTaskRefHTML(p) + '</div>';
   }
   function initPreTask() {
     var box = document.querySelector('.pretask'); if (!box) return;
@@ -520,6 +535,7 @@
           (miss ? '<span class="pt-miss">' + miss + ' élément(s) requis oublié(s)</span> ' : '') +
           (wrong ? '<span class="pt-extra">' + wrong + ' sélection(s) non nécessaire(s)</span> ' : '') +
           '— les éléments requis sont surlignés en vert, les manquants en jaune.';
+      box.classList.add('done');     // révèle la « Référence à la procédure »
       check.hidden = true; reset.hidden = false;
     };
     reset.onclick = function () {
@@ -527,6 +543,7 @@
         o.classList.remove('good', 'bad', 'missed');
         var i = o.querySelector('input'); i.checked = false; i.disabled = false;
       });
+      box.classList.remove('done');
       fb.className = 'pt-fb'; fb.innerHTML = ''; check.hidden = false; reset.hidden = true;
     };
   }
