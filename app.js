@@ -450,68 +450,76 @@
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
 
-  /* ---------- Avant la tâche : auto-vérification outils + ÉPI ---------- */
+  /* ---------- Avant la tâche : « identifie les affirmations vraies » ---------- */
+  // UNE seule question. Chaque option est une affirmation complète (ÉPI / Outil /
+  // Danger). Les affirmations VRAIES proviennent UNIQUEMENT de ce qui est écrit
+  // explicitement dans la procédure (window.PRETASK, extrait des PDF) ; chacune
+  // porte sa citation exacte, révélée sous l'affirmation une fois validée.
   var EPI_EXTRA_TASK = ['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison'];
-  // Réponses : UNIQUEMENT les outils/ÉPI additionnels EXPLICITEMENT exigés par la
-  // procédure (window.PRETASK, extrait des PDF). Les ÉPI de base ne sont pas dans
-  // la question (obligatoires en tout temps).
-  function preTaskOptions(p) {
-    var d = (window.PRETASK && window.PRETASK[p.id]) || { tools: [], epi: [] };
-    var tools = d.tools || [], addEpi = d.epi || [];
-    var O = window.OUTILS || {};
-    var opts = [];
-    tools.forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: true }); });
-    addEpi.forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: true }); });
-    var allTools = Object.keys(O).map(function (id) { return O[id].nom; });
-    shuffle(allTools.filter(function (t) { return tools.indexOf(t) < 0; })).slice(0, 2)
-      .forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: false }); });
-    shuffle(EPI_EXTRA_TASK.filter(function (e) { return addEpi.indexOf(e) < 0; })).slice(0, 2)
-      .forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: false }); });
-    opts.push({ l: 'Aucun (les ÉPI de base suffisent)', cat: '', ok: (tools.length + addEpi.length) === 0 });
-    return shuffle(opts);
-  }
-  // Liste de dangers (étiquettes) — sert aux distracteurs de la question « risque ».
   var RISK_ALL = ['Coincement / écrasement par des pièces', 'Détente brutale de ressorts comprimés',
     'Chute de hauteur', 'Chute / projection de tiges', 'Chute d\'objets (monterie / trou)', 'Blessures aux mains',
     'Éjection sous pression (eau / boyau)', 'Happement par une pièce en rotation', 'Exposition à la poussière (santé)',
     'Atmosphère dangereuse (gaz)', 'Frappé par un objet échappé', 'Renversement / heurt de véhicule'];
-  function riskOptions(p) {
+  // ÉPI additionnel → phrase complète.
+  function epiPhrase(e) {
+    var M = {
+      'Harnais de sécurité': 'Le port du harnais (antichute) et l\'attache sont obligatoires.',
+      'Protection respiratoire': 'La protection respiratoire (masque powerflow) est requise.',
+      'Protection faciale': 'La protection faciale (visière) est requise.',
+      'Protection auditive': 'La protection auditive est requise.',
+      'Combinaison': 'Le port de la combinaison est requis.'
+    };
+    return M[e] || ('Le port de « ' + e + ' » est requis.');
+  }
+  function riskPhrase(r) { return 'Le principal danger de cette tâche est : ' + r.toLowerCase().replace(/\s*\(.*?\)/, '') + '.'; }
+  // Construit la liste d'affirmations (vraies = explicites dans la procédure).
+  function preTaskStatements(p) {
     var d = (window.PRETASK && window.PRETASK[p.id]) || {};
-    var items = (d.risque && d.risque.items) || [];
-    var opts = items.map(function (r) { return { l: r, cat: 'Danger', ok: true }; });
-    shuffle(RISK_ALL.filter(function (r) { return items.indexOf(r) < 0; })).slice(0, 3)
-      .forEach(function (r) { opts.push({ l: r, cat: 'Danger', ok: false }); });
-    return shuffle(opts);
+    var tools = d.tools || [], addEpi = d.epi || [], O = window.OUTILS || {};
+    var st = [];
+    tools.forEach(function (t) {
+      st.push({ t: 'Une ' + t.toLowerCase() + ' est nécessaire pour cette tâche.', cat: 'Outil', ok: true, ref: d.ref, src: d.src });
+    });
+    addEpi.forEach(function (e) {
+      st.push({ t: epiPhrase(e), cat: 'ÉPI', ok: true, ref: d.ref, src: d.src });
+    });
+    if (d.risque && d.risque.items && d.risque.items.length) {
+      d.risque.items.forEach(function (r) {
+        st.push({ t: riskPhrase(r), cat: 'Danger', ok: true, ref: d.risque.ref, src: d.risque.src });
+      });
+    }
+    // Distracteurs (faux) — affirmations NON écrites dans la procédure.
+    var allTools = Object.keys(O).map(function (id) { return O[id].nom; });
+    shuffle(allTools.filter(function (t) { return tools.indexOf(t) < 0; })).slice(0, 1)
+      .forEach(function (t) { st.push({ t: 'Une ' + t.toLowerCase() + ' est nécessaire pour cette tâche.', cat: 'Outil', ok: false }); });
+    shuffle(EPI_EXTRA_TASK.filter(function (e) { return addEpi.indexOf(e) < 0; })).slice(0, 2)
+      .forEach(function (e) { st.push({ t: epiPhrase(e), cat: 'ÉPI', ok: false }); });
+    var usedRisks = (d.risque && d.risque.items) || [];
+    shuffle(RISK_ALL.filter(function (r) { return usedRisks.indexOf(r) < 0; })).slice(0, d.risque ? 1 : 2)
+      .forEach(function (r) { st.push({ t: riskPhrase(r), cat: 'Danger', ok: false }); });
+    return shuffle(st);
   }
-  function ptRefHTML(quote, src) {
-    var body = quote
-      ? '« ' + esc(quote) + ' »' + (src ? ' <span class="pt-ref-src">— ' + esc(src) + '</span>' : '')
-      : 'La procédure n\'exige explicitement aucun ÉPI additionnel ; seuls les ÉPI de base obligatoires sous terre s\'appliquent (casque, lunettes, bottes, gants, dossard).';
+  function ptRefHTML(s) {
+    if (!s.ok || !s.ref) return '';
     return '<div class="pt-ref"><span class="pt-ref-t">Référence à la procédure</span>' +
-      '<span class="pt-ref-q">' + body + '</span></div>';
-  }
-  function ptGroup(qHTML, opts, refHTML) {
-    var items = opts.map(function (o) {
-      var cls = o.cat === 'Outil' ? 'tool' : (o.cat === 'Danger' ? 'risk' : 'epi');
-      var tag = o.cat ? '<span class="pt-cat ' + cls + '">' + esc(o.cat) + '</span>' : '';
-      return '<label class="pt-opt"><input type="checkbox" data-ok="' + (o.ok ? 1 : 0) + '">' +
-        '<span class="pt-mark"></span>' + tag + '<span class="pt-l">' + esc(o.l) + '</span></label>';
-    }).join('');
-    return '<div class="pt-grp"><p class="pt-q"><b>Question :</b> ' + qHTML +
-      ' <span class="pt-multi">Plusieurs réponses possibles.</span></p>' +
-      '<div class="pt-opts">' + items + '</div>' + refHTML + '</div>';
+      '<span class="pt-ref-q">« ' + esc(s.ref) + ' »' +
+      (s.src ? ' <span class="pt-ref-src">— ' + esc(s.src) + '</span>' : '') + '</span></div>';
   }
   function renderPreTask(p) {
-    var d = (window.PRETASK && window.PRETASK[p.id]) || {};
-    var groups = ptGroup('quels <b>outils</b> et <b>ÉPI additionnels</b> cette tâche exige-t-elle&nbsp;?',
-      preTaskOptions(p), ptRefHTML(d.ref, d.src));
-    if (d.risque) {
-      groups += ptGroup('quel est le <b>principal danger</b> de cette tâche&nbsp;?',
-        riskOptions(p), ptRefHTML(d.risque.ref, d.risque.src));
-    }
+    var stmts = preTaskStatements(p);
+    var items = stmts.map(function (s) {
+      var cls = s.cat === 'Outil' ? 'tool' : (s.cat === 'Danger' ? 'risk' : 'epi');
+      var tag = '<span class="pt-cat ' + cls + '">' + esc(s.cat) + '</span>';
+      return '<div class="pt-item">' +
+        '<label class="pt-opt"><input type="checkbox" data-ok="' + (s.ok ? 1 : 0) + '">' +
+        '<span class="pt-mark"></span>' + tag + '<span class="pt-l">' + esc(s.t) + '</span></label>' +
+        ptRefHTML(s) + '</div>';
+    }).join('');
     return '<div class="sec pretask"><h2>Avant de commencer</h2>' +
-      '<p class="pt-lead">Réponds, puis valide. Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard) ne sont pas dans la question — ils sont requis en tout temps.</p>' +
-      groups +
+      '<p class="pt-lead">Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard) sont requis en tout temps et ne sont pas dans la question.</p>' +
+      '<div class="pt-grp"><p class="pt-q"><b>Question :</b> sélectionne les <b>affirmations vraies</b> pour cette tâche.' +
+      ' <span class="pt-multi">Plusieurs réponses possibles.</span></p>' +
+      '<div class="pt-opts pt-stmts">' + items + '</div></div>' +
       '<div class="pt-actions"><button type="button" class="btn pt-check">Valider mes réponses</button>' +
       '<button type="button" class="btn ghost pt-reset" hidden>Recommencer</button></div>' +
       '<div class="pt-fb"></div></div>';
@@ -532,11 +540,11 @@
       var perfect = (wrong === 0 && miss === 0);
       fb.className = 'pt-fb on ' + (perfect ? 'ok' : 'no');
       fb.innerHTML = perfect
-        ? '<b>✓ Parfait.</b> Tu as bien identifié tous les outils et ÉPI nécessaires avant de commencer.'
-        : '<b>' + good + '/' + req + ' bon(s).</b> ' +
-          (miss ? '<span class="pt-miss">' + miss + ' élément(s) requis oublié(s)</span> ' : '') +
-          (wrong ? '<span class="pt-extra">' + wrong + ' sélection(s) non nécessaire(s)</span> ' : '') +
-          '— les éléments requis sont surlignés en vert, les manquants en jaune.';
+        ? '<b>✓ Parfait.</b> Tu as identifié toutes les affirmations vraies pour cette tâche.'
+        : '<b>' + good + '/' + req + ' bonne(s).</b> ' +
+          (miss ? '<span class="pt-miss">' + miss + ' affirmation(s) vraie(s) oubliée(s)</span> ' : '') +
+          (wrong ? '<span class="pt-extra">' + wrong + ' affirmation(s) fausse(s) cochée(s)</span> ' : '') +
+          '— les affirmations vraies sont surlignées en vert, celles oubliées en jaune. La référence à la procédure apparaît sous chaque affirmation vraie.';
       box.classList.add('done');     // révèle la « Référence à la procédure »
       check.hidden = true; reset.hidden = false;
     };

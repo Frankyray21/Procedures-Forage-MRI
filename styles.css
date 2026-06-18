@@ -754,3 +754,10 @@ footer b{color:var(--muted)}
 .pt-grp{margin-top:.7rem;padding-top:.4rem}
 .pt-grp + .pt-grp{border-top:1px dashed var(--border);margin-top:1rem}
 .pt-cat.risk{background:rgba(248,113,113,.18);color:#fca5a5}
+/* Affirmations vraies/fausses — une colonne, citation sous chaque affirmation vraie */
+.pt-stmts{grid-template-columns:1fr}
+.pt-item{display:flex;flex-direction:column}
+.pt-stmts .pt-opt{align-items:flex-start}
+.pt-stmts .pt-mark{margin-top:.05rem}
+.pt-stmts .pt-cat{margin-top:.1rem}
+.pt-item .pt-ref{margin:.35rem 0 .2rem 1.9rem;padding:.5rem .7rem;font-size:.92rem}
