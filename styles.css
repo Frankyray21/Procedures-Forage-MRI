@@ -739,3 +739,5 @@ footer b{color:var(--muted)}
 .pt-fb.on.no{color:var(--text)}
 .pt-fb .pt-miss{color:#fbbf24;font-weight:700}
 .pt-fb .pt-extra{color:#f87171;font-weight:700}
+.pt-q{font-size:1rem;line-height:1.5;margin:.1rem 0 .35rem}
+.pt-q .pt-multi{color:var(--accent-l);font-weight:700;font-size:.85rem}

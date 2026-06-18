@@ -460,6 +460,9 @@
     'pro-dd-st-009-1': ['Harnais de sécurité'],        // forage ascendant >20° : antichute
     'pro-dd-st-009-2': ['Harnais de sécurité']
   };
+  var EPI_EXTRA_TASK = ['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison'];
+  // Réponses : outils + ÉPI ADDITIONNELS (les ÉPI de base souterrains ne sont
+  // pas dans la question, ils sont obligatoires en tout temps).
   function preTaskOptions(p) {
     var toolIds = (window.OUTILS_MAP && window.OUTILS_MAP[p.id]) || [];
     var O = window.OUTILS || {};
@@ -467,29 +470,32 @@
     var add = {};
     toolIds.forEach(function (id) { (O[id] && O[id].epi || []).forEach(function (e) { if (EPI_BASE_TASK.indexOf(e) < 0) add[e] = 1; }); });
     (PRETASK_EPI[p.id] || []).forEach(function (e) { if (EPI_BASE_TASK.indexOf(e) < 0) add[e] = 1; });
-    var correctEpi = EPI_BASE_TASK.concat(Object.keys(add));
+    var addEpi = Object.keys(add);
     var opts = [];
-    correctEpi.forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: true }); });
-    shuffle(EPI_ALL_TASK.filter(function (e) { return correctEpi.indexOf(e) < 0; })).slice(0, 2)
-      .forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: false }); });
     tools.forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: true }); });
+    addEpi.forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: true }); });
     var allTools = Object.keys(O).map(function (id) { return O[id].nom; });
-    shuffle(allTools.filter(function (t) { return tools.indexOf(t) < 0; })).slice(0, tools.length ? 3 : 2)
+    shuffle(allTools.filter(function (t) { return tools.indexOf(t) < 0; })).slice(0, 2)
       .forEach(function (t) { opts.push({ l: t, cat: 'Outil', ok: false }); });
+    shuffle(EPI_EXTRA_TASK.filter(function (e) { return addEpi.indexOf(e) < 0; })).slice(0, 2)
+      .forEach(function (e) { opts.push({ l: e, cat: 'ÉPI', ok: false }); });
+    // Option « Aucun » : correcte seulement si aucun outil ni ÉPI additionnel requis.
+    opts.push({ l: 'Aucun (les ÉPI de base suffisent)', cat: '', ok: (tools.length + addEpi.length) === 0 });
     return shuffle(opts);
   }
   function renderPreTask(p) {
     var opts = preTaskOptions(p);
     var items = opts.map(function (o) {
+      var tag = o.cat ? '<span class="pt-cat ' + (o.cat === 'Outil' ? 'tool' : 'epi') + '">' + esc(o.cat) + '</span>' : '';
       return '<label class="pt-opt"><input type="checkbox" data-ok="' + (o.ok ? 1 : 0) + '">' +
-        '<span class="pt-mark"></span><span class="pt-cat ' + (o.cat === 'Outil' ? 'tool' : 'epi') + '">' + esc(o.cat) + '</span>' +
-        '<span class="pt-l">' + esc(o.l) + '</span></label>';
+        '<span class="pt-mark"></span>' + tag + '<span class="pt-l">' + esc(o.l) + '</span></label>';
     }).join('');
-    return '<div class="sec pretask"><h2>Avant de commencer — vérifie ta préparation</h2>' +
-      '<p class="pt-lead">Sélectionne <b>tous</b> les outils et ÉPI nécessaires à cette tâche, puis valide. ' +
-      '(Les ÉPI de base souterrains — casque, lunettes, bottes, gants, dossard — sont toujours requis.)</p>' +
+    return '<div class="sec pretask"><h2>Avant de commencer</h2>' +
+      '<p class="pt-q"><b>Question :</b> quels <b>outils</b> et <b>ÉPI additionnels</b> cette tâche exige-t-elle ? ' +
+      '<span class="pt-multi">Plusieurs réponses possibles.</span></p>' +
+      '<p class="pt-lead">Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard) ne sont pas dans la question — ils sont requis en tout temps.</p>' +
       '<div class="pt-opts">' + items + '</div>' +
-      '<div class="pt-actions"><button type="button" class="btn pt-check">Valider ma préparation</button>' +
+      '<div class="pt-actions"><button type="button" class="btn pt-check">Valider ma réponse</button>' +
       '<button type="button" class="btn ghost pt-reset" hidden>Recommencer</button></div>' +
       '<div class="pt-fb"></div></div>';
   }
