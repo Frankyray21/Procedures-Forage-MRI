@@ -212,9 +212,9 @@
       scored.push({ item: item, score: score, hits: hits, core: coreInTxt });
     });
     scored.sort(function (a, b) { return b.score - a.score; });
-    // garde les meilleurs, en évitant les doublons de texte
+    // garde TOUS les passages pertinents (les plus pertinents d'abord), sans doublon de texte
     var seen = {}, out = [];
-    for (var i = 0; i < scored.length && out.length < 4; i++) {
+    for (var i = 0; i < scored.length; i++) {
       var k = scored[i].item.text;
       if (seen[k]) continue; seen[k] = 1;
       if (scored[i].hits < Math.min(2, qt.length) && scored[i].score < 4) continue;
@@ -238,15 +238,38 @@
         '« cadenassage »), ou consulte <a href="#/procedures">toutes les procédures</a>.</p>';
     }
     var terms = eq.terms;   // mots recherchés (étendus : variantes, fautes…) à surligner
-    var html = '<p>Voici ce que disent les procédures&nbsp;:</p>';
+    // Regroupe les passages par procédure ; groupes ordonnés par pertinence (meilleur score).
+    var groups = [], gmap = {};
     res.forEach(function (r) {
-      var it = r.item;
-      html += '<div class="cbans">' +
-        '<span class="cbk">' + esc(it.kind) + '</span>' +
-        '<div class="cbtxt">« ' + highlight(it.text, terms) + ' »' +
-          '<a class="cbsrc" href="#/p/' + esc(it.pid) + '">' + esc(it.ptitre) +
-          (it.source ? ' · ' + esc(it.source) : '') + ' →</a>' +
-        '</div></div>';
+      var pid = r.item.pid, g = gmap[pid];
+      if (!g) { g = gmap[pid] = { pid: pid, titre: r.item.ptitre, best: r.score, items: [] }; groups.push(g); }
+      g.items.push(r);
+      if (r.score > g.best) g.best = r.score;
+    });
+    groups.sort(function (a, b) { return b.best - a.best; });
+    var total = res.length;
+    var html = '<p>Voici ce que disent les procédures — <b>' + total + ' passage' + (total > 1 ? 's' : '') +
+      '</b> dans <b>' + groups.length + ' procédure' + (groups.length > 1 ? 's' : '') +
+      '</b>, les plus pertinents d\'abord&nbsp;:</p>';
+    groups.forEach(function (g, gi) {
+      var open = gi === 0;   // 1re procédure (la plus pertinente) dépliée par défaut
+      var n = g.items.length;
+      var inner = g.items.map(function (r) {
+        var it = r.item;
+        return '<div class="cbans">' +
+          '<span class="cbk">' + esc(it.kind) + '</span>' +
+          '<div class="cbtxt">« ' + highlight(it.text, terms) + ' »' +
+            '<a class="cbsrc" href="#/p/' + esc(it.pid) + '">Ouvrir la fiche' +
+            (it.source ? ' · ' + esc(it.source) : '') + ' →</a>' +
+          '</div></div>';
+      }).join('');
+      html += '<div class="cbgrp' + (open ? ' open' : '') + '">' +
+        '<button type="button" class="cbgrp-h" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+          '<span class="cbgrp-ar" aria-hidden="true">▸</span>' +
+          '<span class="cbgrp-t">' + esc(g.titre) + '</span>' +
+          '<span class="cbgrp-n">' + n + '</span>' +
+        '</button>' +
+        '<div class="cbgrp-b">' + inner + '</div></div>';
     });
     html += '<p class="cbnote">Réponses citées des procédures officielles. Toujours valider sur la fiche complète.</p>';
     return html;
@@ -440,6 +463,12 @@
     });
     // clic sur une suggestion / le bouton « activer IA » / un lien de fiche
     body.addEventListener('click', function (e) {
+      var grpH = e.target.closest && e.target.closest('.cbgrp-h');
+      if (grpH) {
+        var grp = grpH.parentNode, open = grp.classList.toggle('open');
+        grpH.setAttribute('aria-expanded', open ? 'true' : 'false');
+        return;
+      }
       var act = e.target.closest && e.target.closest('[data-act]');
       if (act && act.getAttribute('data-act') === 'export') { exportMetrics(); return; }
       var opt = e.target.closest && e.target.closest('.cbopt');
