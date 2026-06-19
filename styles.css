@@ -650,6 +650,11 @@ footer b{color:var(--muted)}
 .cbgrp-b{display:none;padding:.1rem .55rem .35rem}
 .cbgrp.open .cbgrp-b{display:block}
 .cbgrp-b .cbans{margin:.4rem 0}
+/* Attestation de lecture (par procédure) */
+.attest-sec{border:1px solid rgba(52,211,153,.4);background:rgba(52,211,153,.05)}
+.attest-lead{color:var(--muted);font-size:.95rem;line-height:1.55;margin:.1rem 0 .8rem}
+.attest-btn{display:inline-flex;align-items:center;gap:.5rem;background:#10b981;border-color:#10b981}
+.attest-btn:hover{background:#059669;border-color:#059669}
 .cbmore{display:none}
 .cbmore.open{display:block}
 .cbmore-b{margin:.15rem 0 .25rem;font-size:.78rem;font-weight:700;color:var(--accent-l);

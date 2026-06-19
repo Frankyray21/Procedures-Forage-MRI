@@ -4,7 +4,27 @@
    =========================================================================== */
 window.SITE_CONFIG = {
   org: "Machines Roger International",
-  title: "Procédures de forage"
+  title: "Procédures de forage",
+
+  /* -------------------------------------------------------------------------
+     ATTESTATION DE LECTURE (par procédure) — formulaire Airtable.
+     Quand c'est configuré, un bouton « Attester la lecture » apparaît au bas de
+     CHAQUE fiche de procédure et ouvre un formulaire Airtable pré-rempli avec la
+     procédure (verrouillée). Le travailleur choisit son nom et valide.
+
+     • formUrl  : l'URL du formulaire partagé Airtable (commence par
+                  https://airtable.com/app…/pag… ou /shr…).
+     • procField: le NOM EXACT du champ « Procédure » dans le formulaire
+                  (par défaut « Procédure »). Le pré-remplissage utilise la
+                  valeur du champ primaire de la table Procédures = le Code
+                  (ex. PRO-OP-ITH-002).
+
+     Laisser en commentaire = pas de bouton (tant que la base n'est pas prête).
+  ------------------------------------------------------------------------- */
+  // attestation: {
+  //   formUrl: "https://airtable.com/appXXXXXXXXXXXXXX/pagYYYYYYYYYYYYYY/form",
+  //   procField: "Procédure"
+  // }
 };
 
 /* ---------------------------------------------------------------------------

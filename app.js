@@ -437,6 +437,9 @@
         '</tbody></table>');
     }
 
+    // Attestation de lecture (formulaire Airtable pré-rempli) — si configurée.
+    h += attestationHTML(p);
+
     h += '</div>';
     view.innerHTML = h;
     initChecklistState();
@@ -446,6 +449,30 @@
     initPreTask();
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
+
+  /* ---------- Attestation de lecture par procédure ----------
+     Ouvre un formulaire Airtable pré-rempli (procédure verrouillée). Le bouton
+     n'apparaît que si window.SITE_CONFIG.attestation.formUrl est configuré.
+     Le travailleur choisit son nom dans la liste, coche « lu et compris », envoie. */
+  function attestUrl(p) {
+    var c = (window.SITE_CONFIG && window.SITE_CONFIG.attestation) || null;
+    if (!c || !c.formUrl) return '';
+    var field = c.procField || 'Procédure';
+    var val = p.code || p.titre;
+    return c.formUrl + (c.formUrl.indexOf('?') < 0 ? '?' : '&') +
+      'prefill_' + encodeURIComponent(field) + '=' + encodeURIComponent(val) +
+      '&hide_' + encodeURIComponent(field) + '=true';
+  }
+  function attestationHTML(p) {
+    var url = attestUrl(p);
+    if (!url) return '';
+    return '<div class="sec attest-sec"><h2>Attestation de lecture</h2>' +
+      '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure. ' +
+      'Sélectionne ton nom dans la liste et valide — ton attestation est enregistrée et transmise au superviseur.</p>' +
+      '<a class="btn attest-btn" href="' + esc(url) + '" target="_blank" rel="noopener">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
+      ' Attester la lecture</a></div>';
+  }
 
   /* ---------- Avant la tâche : « identifie les affirmations vraies » ---------- */
   // UNE seule question. Chaque option est une affirmation complète (ÉPI / Outil /
