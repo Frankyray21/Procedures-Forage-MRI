@@ -1,0 +1,45 @@
+Code,Titre,Famille,Version
+Procédure d'installation du centralisateur,Procédure d'installation du centralisateur,Installation,1
+PRO-MEC-011,Procédure pour changer la coupling entre le moteur électrique et la pompe hydraulique des foreuses CUBEX,Maintenance,1
+PRO-OP-ITH-002,Utilisation de clés et d'un tire-fort pour dévisser des tiges de forages,Manutention,1
+PRO-OP-ITH-002A,Utilisation de la clé pour dévisser des tiges de forage avec un palan à levier (come along),Manutention,1
+PRO-OP-ITH-003,Démobilisation et déplacement de la foreuse et du compresseur,Démobilisation,1
+PRO-OP-ITH-004,Forage en longtrou (ITH / CUBEX),Forage,1
+PRO-OP-ITH-005,Alésage en descendant sans accès avec la V-30,Alésage,1
+PRO-OP-ITH-006,Alésage conventionnel avec la tête de forage V-30,Alésage,1
+PRO-OP-ITH-007,Alésage ascendant sans accès avec la tête V-30,Alésage,1
+PRO-OP-ITH-008,Procédures à suivre lorsqu'un taillant de la V-30 se brise dans un trou descendant,Intervention,1
+PRO-OP-ITH-012,Procédure de forage à distance avec foreuse ITH,Forage,1
+PRO-OP-ITH-014,Procédure d'installation de tubage (casing) au collet des trous,Installation,1
+PRO-OP-ITH-016,Procédure pour la manipulation des marteaux de forage et de leurs composantes,Manutention,1
+PRO-DD-ST-001,"Commencement d'un trou de forage avec un core barrel de 1,5 m",Diamant,1
+PRO-DD-ST-002,Vider le tube carottier,Diamant,1
+PRO-DD-ST-003,Fabrication d'un plancher pour foreuse aux diamants sous terre,Diamant,1
+PRO-DD-ST-004,Récupération de tube carottier avec le loading chamber,Diamant,1
+PRO-DD-ST-006,Récupération du tube carottier avec un overshot de surface,Diamant,1
+PRO-DD-ST-007,Cimentation des trous de forage aux diamants (pompe 435),Diamant,1
+PRO-DD-ST-008,Installation du support de tiges de forage,Diamant,1
+PRO-DD-ST-009-1,Forage de trous ascendants de plus de 20° — STM-1500 / DR-600 #2907,Diamant,1
+PRO-DD-ST-009-2,Forage de trous ascendants de plus de 20° — DR-600 #2923,Diamant,1
+PRO-DD-ST-011,Récupération du tube carottier lors d'interception de veines d'eau,Diamant,1
+PRO-OP-DD-005,Démonter et remonter un clam et un chuck (mandrin) sur la foreuse,Diamant,1
+PRO-OP-DD-012,Forage à distance avec foreuse au diamant,Diamant,1
+PRO-OP-DD-013,Déplacement d'une foreuse au diamant sur un plancher,Diamant,1
+DR-600-OP-002,Déplacement et remorquage de la foreuse DR-600-MU #2923,Diamant,1
+SS-DD-ST-001,Installation des systèmes de sécurité,Diamant,1
+STD-DD,Standard d'installation des sites de forage,Diamant,1
+PRO-OP-CAT-416-001,Utilisation du tracteur Caterpillar 416,Commun,1
+PRO-OP-BT3-01,Utilisation et opération du camion-flèche BT-3 MacLean,Diamant,1
+PRO-OP-CIM-001,Cimentation avec la pompe Chemgrout CG550/030/A,Diamant,1
+SAN-SEC-006,Accueil des nouveaux travailleurs sur un site,Commun,1
+SAN-SEC-005,Accueil des visiteurs aux sites de forage,Commun,1
+PRO-SEC-015,En cas d'interception de gaz lors du forage au diamant,Diamant,1
+PRO-SEC-001,Défonçage de trous forés sous terre,Commun,1
+PRO-ITH-017,Installation de conduites métalliques dans un trou (foreuse au niveau inférieur),Installation,1
+PRO-OP-001,Changement des bits de forage sur les CUBEX,Maintenance,1
+PRO-PT-001,Utilisation du PIPETUB,Manutention,1
+PRO-OP-SM-004,Installation de casing avec le STOPEMASTER,Manutention,1
+PRO-OP-SM-003,Déplacement et remorquage du STOPEMASTER,Déplacement,1
+PRO-OP-SM-002,Opération de forage avec le STOPEMASTER,Forage,1
+PRO-OP-SM-001,Pré-opération du STOPEMASTER,Maintenance,1
+PRO-OP-BU-001,Forage avec la foreuse VKING,Forage,1
