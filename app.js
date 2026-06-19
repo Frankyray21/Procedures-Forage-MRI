@@ -516,7 +516,7 @@
         ptRefHTML(s) + '</div>';
     }).join('');
     return '<div class="sec pretask"><h2>Avant de commencer</h2>' +
-      '<p class="pt-lead">Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard) sont requis en tout temps et ne sont pas dans la question.</p>' +
+      '<p class="pt-lead">Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, etc.) sont requis en tout temps et ne sont pas dans la question.</p>' +
       '<div class="pt-grp"><p class="pt-q"><b>Question :</b> sélectionne les <b>affirmations vraies</b> pour cette tâche.' +
       ' <span class="pt-multi">Plusieurs réponses possibles.</span></p>' +
       '<div class="pt-opts pt-stmts">' + items + '</div></div>' +
@@ -605,7 +605,7 @@
       ? '<div class="epi-grid">' + extra.map(epiChip).join('') + '</div>'
       : '<p class="epi-base-note">Aucun ÉPI additionnel : seuls les ÉPI de base souterrains sont requis.</p>';
     return '<div class="om-epi"><h4><span class="ot-ico">' + RISK_ICO.epi + '</span>ÉPI additionnels (propres à l\'outil)</h4>' +
-      '<p class="epi-base-note">En plus des ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, dossard).</p>' +
+      '<p class="epi-base-note">En plus des ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, etc.).</p>' +
       inner + '</div>';
   }
   function initOutils() {
