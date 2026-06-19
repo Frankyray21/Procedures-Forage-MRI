@@ -58,9 +58,6 @@
     var view = $('#view');
     window.scrollTo(0, 0);
     if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : 'procedures'); }
-    else if (h.indexOf('#/formation/') === 0) { renderModule(view, h.slice(12)); setNav('formation'); }
-    else if (h.indexOf('#/formation') === 0) { renderFormation(view); setNav('formation'); }
-    else if (h.indexOf('#/attestation') === 0) { renderAttestation(view); setNav('formation'); }
     else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
     else if (h.indexOf('#/code') === 0) { renderCode(view); setNav('code'); }
     else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); }
@@ -994,7 +991,6 @@
   }
   function renderResult(view) {
     var s = quizSt, pct = Math.round(s.score / s.pool.length * 100);
-    if (s.moduleId) { renderModuleResult(view, s, pct); return; }
     var msg = pct >= 80 ? 'Excellent — des réflexes solides.' : pct >= 60 ? 'Correct, mais quelques consignes à revoir.' : 'À retravailler : consulte les fiches et les PDF officiels.';
     view.innerHTML = '<div class="wrap quizwrap"><div class="qresult">' +
       '<div class="qring" style="--p:' + pct + '"><span>' + pct + '%</span></div>' +
@@ -1003,34 +999,9 @@
         '<a class="btn ghost" href="#/procedures">Retour aux procédures</a></div></div></div>';
     $('#qAgain').onclick = function () { renderQuiz(view); };
   }
-  function renderModuleResult(view, s, pct) {
-    fScoreSet(s.moduleId, pct);
-    var passed = pct >= 80;
-    if (passed) fMark(s.moduleId);
-    var msg = passed ? 'Module réussi — bravo, tu maîtrises les consignes !' : 'Pas encore : il faut 80 %. Revois les notions de sécurité et réessaie.';
-    view.innerHTML = '<div class="wrap quizwrap"><div class="qresult">' +
-      '<div class="qring ' + (passed ? 'pass' : 'fail') + '" style="--p:' + pct + '"><span>' + pct + '%</span></div>' +
-      '<h2>' + s.score + ' / ' + s.pool.length + '</h2><p class="lead">' + esc(msg) + '</p>' +
-      '<div class="qacts">' + (passed ? '' : '<button class="btn" id="qAgain">Réessayer</button>') +
-        '<a class="btn ' + (passed ? '' : 'ghost') + '" href="#/formation/' + esc(s.moduleId) + '">Retour au module</a>' +
-        (passed ? '<a class="btn ghost" href="#/attestation">Mon attestation</a>' : '') + '</div></div></div>';
-    var ag = $('#qAgain'); if (ag) ag.onclick = function () { startModuleQuiz(view, s.moduleId); };
-  }
 
-  /* ---------- portail + formation ---------- */
-  var FORMATION = window.FORMATION || [];
-  var FMAP = {}; FORMATION.forEach(function (m) { FMAP[m.sourceId] = m; });
-  var CAP_ICON = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 2.5 6 2.5S18 18 18 17v-5"/></svg>';
-
-  function fDone() { try { return JSON.parse(localStorage.getItem('fdone') || '[]'); } catch (e) { return []; } }
-  function fIsDone(id) { return fDone().indexOf(id) >= 0; }
-  function fMark(id) { var d = fDone(); if (d.indexOf(id) < 0) { d.push(id); try { localStorage.setItem('fdone', JSON.stringify(d)); } catch (e) {} } }
-  function fScoreGet(id) { try { return parseInt(localStorage.getItem('fscore_' + id) || '0', 10); } catch (e) { return 0; } }
-  function fScoreSet(id, pct) { try { if (pct > fScoreGet(id)) localStorage.setItem('fscore_' + id, String(pct)); } catch (e) {} }
-  function modules() { return DATA.filter(function (p) { return FMAP[p.id]; }); }
-
+  /* ---------- portail ---------- */
   function renderPortail(view) {
-    var nMod = modules().length;
     var nProd = DATA.filter(function (p) { return p.famille !== 'diamant'; }).length;
     var nDiam = DATA.filter(function (p) { return p.famille === 'diamant'; }).length;
     view.innerHTML = '<section class="portal"><div class="wrap">' +
@@ -1045,102 +1016,8 @@
           '<h2>Forage au diamant</h2><p>Procédures de forage au diamant : carottage, planchers, déplacements (DR-600, STM-1500), sécurité. PDF officiel visionnable et recherchable.</p>' +
           '<div class="pc-meta">' + nDiam + ' procédures · disponible hors-ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
-        '<a class="portal-card form" href="#/formation"><div class="pc-ic">' + CAP_ICON + '</div>' +
-          '<h2>Formation</h2><p>Apprends et qualifie-toi, tâche par tâche : objectifs, notions de sécurité, vidéos, évaluation et attestation.</p>' +
-          '<div class="pc-meta">' + nMod + ' modules · progression &amp; attestation</div>' +
-          '<span class="go">Commencer ' + ICON.arrow + '</span></a>' +
       '</div>' +
     '</div></section>';
-  }
-
-  function renderFormation(view) {
-    var mods = modules();
-    if (!mods.length) { view.innerHTML = '<div class="wrap"><div class="empty">La formation n\'est pas encore disponible.</div></div>'; return; }
-    var done = mods.filter(function (p) { return fIsDone(p.id); }).length;
-    var MNORM = { 'Foreuse ITH': 'ITH' };
-    var groups = {}; mods.forEach(function (p) { var m = (p.machines && p.machines[0]) || 'Autres'; m = MNORM[m] || m; (groups[m] = groups[m] || []).push(p); });
-    var groupsHtml = Object.keys(groups).sort().map(function (mach) {
-      return '<h3 class="sub-h">' + esc(mach) + '</h3><div class="grid">' + groups[mach].map(moduleCard).join('') + '</div>';
-    }).join('');
-    view.innerHTML = '<section class="quizhero"><div class="wrap">' +
-      '<span class="eyebrow">Formation · tâche par tâche</span>' +
-      '<h1>Formation <span class="hl">sécurité</span></h1>' +
-      '<p class="lead">Modules d\'apprentissage par tâche et par machine : notions de sécurité, évaluation et attestation.</p>' +
-      '<div class="fprog"><div class="ckbar"><i style="width:' + Math.round(done / mods.length * 100) + '%"></i></div>' +
-        '<span>' + done + ' / ' + mods.length + ' modules complétés</span>' +
-        '<a class="btn ghost" href="#/attestation">Mon attestation</a></div>' +
-    '</div></section><div class="wrap">' + groupsHtml + '</div>';
-  }
-  function moduleCard(p) {
-    var done = fIsDone(p.id), sc = fScoreGet(p.id), col = catColor(p.categorie);
-    var t = (FMAP[p.id] && FMAP[p.id].intro) || p.resume || '';
-    return '<a class="pcard" href="#/formation/' + esc(p.id) + '" style="--cat:' + col + '">' +
-      '<div class="tags"><span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span>' +
-        (done ? '<span class="done-badge">✓ Complété' + (sc ? ' · ' + sc + '%' : '') + '</span>' : '') + '</div>' +
-      '<h3>' + esc(p.titre) + '</h3><p>' + esc(t.slice(0, 150)) + (t.length > 150 ? '…' : '') + '</p>' +
-      '<span class="go">' + (done ? 'Revoir' : 'Commencer') + ' ' + ICON.arrow + '</span></a>';
-  }
-
-  function renderModule(view, id) {
-    var p = DATA.filter(function (x) { return x.id === id; })[0], m = FMAP[id];
-    if (!p || !m) { view.innerHTML = '<div class="wrap"><a class="back" href="#/formation">' + ICON.back + ' Formation</a><div class="empty">Module introuvable.</div></div>'; return; }
-    var col = catColor(p.categorie), done = fIsDone(id), sc = fScoreGet(id);
-    var qn = QUIZ.filter(function (q) { return q.sourceId === id; }).length;
-    var h = '<div class="wrap"><a class="back" href="#/formation">' + ICON.back + ' Tous les modules</a>' +
-      '<div class="phead"><div class="tags"><span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span>' +
-        '<span class="code-tag">Module · ' + esc((p.machines || []).join(', ')) + '</span>' +
-        (done ? '<span class="done-badge">✓ Complété' + (sc ? ' · ' + sc + '%' : '') + '</span>' : '') + '</div>' +
-        '<h1>' + esc(p.titre) + '</h1></div>';
-    if (m.intro) h += '<div class="sec"><div class="lead2">' + esc(m.intro) + '</div></div>';
-    if (m.objectifs && m.objectifs.length) h += sec('Objectifs d\'apprentissage', '<div class="rules">' + m.objectifs.map(function (o) {
-      return '<div class="rule"><span class="chk">' + ICON.check + '</span><div class="rt">' + esc(o) + '</div></div>'; }).join('') + '</div>');
-    if (m.video) h += sec('Vidéo', '<div class="vidwrap"><iframe src="' + esc(m.video) + '" allowfullscreen title="Vidéo du module"></iframe></div>');
-    if (m.notions && m.notions.length) h += sec('Notions de sécurité', '<div class="notions">' + m.notions.map(function (n) {
-      return '<div class="notion"><h4>' + esc(n.titre) + '</h4><p>' + esc(n.texte) + '</p></div>'; }).join('') + '</div>');
-    if (m.vigilance && m.vigilance.length) h += sec('Points de vigilance', m.vigilance.map(function (w) {
-      return '<div class="warn"><span class="wic">' + ICON.warn + '</span><p>' + esc(w) + '</p></div>'; }).join(''));
-    var pdf = 'pdf/' + encodeURIComponent(p.id) + '.pdf';
-    h += '<div class="sec"><div class="pdfcue">' + ICON.doc + '<div class="cuetxt"><b>La marche à suivre est dans le PDF officiel.</b>' +
-      '<span>Consulte la procédure complète et sa fiche de consignes dans la base de connaissances.</span></div>' +
-      '<a class="btn ghost" href="#/p/' + esc(p.id) + '">Voir la fiche</a>' + (DEMO ? '' : '<a class="btn" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir le PDF</a>') + '</div></div>';
-    h += '<div class="sec"><h2>Évaluation</h2>';
-    if (qn) h += '<div class="evalcard"><p>' + qn + ' questions pour valider ce module — réussite à 80 %.' + (sc ? ' Meilleur score : <b>' + sc + ' %</b>.' : '') + '</p>' +
-      '<button class="btn" id="mEval">' + (done ? 'Refaire l\'évaluation' : 'Démarrer l\'évaluation') + '</button></div>';
-    else h += '<p class="muted">Pas de question d\'évaluation pour ce module.</p><button class="btn" id="mDone">Marquer comme complété</button>';
-    h += '</div></div>';
-    view.innerHTML = h;
-    var ev = $('#mEval'); if (ev) ev.onclick = function () { startModuleQuiz(view, id); };
-    var dn = $('#mDone'); if (dn) dn.onclick = function () { fMark(id); toast('Module complété.'); route(); };
-  }
-  function startModuleQuiz(view, id) {
-    var pool = shuffle(QUIZ.filter(function (q) { return q.sourceId === id; }));
-    if (!pool.length) { fMark(id); location.hash = '#/formation/' + id; return; }
-    quizSt = { pool: pool, idx: 0, score: 0, answered: false, moduleId: id };
-    renderQ(view);
-  }
-
-  function renderAttestation(view) {
-    var mods = modules(), done = mods.filter(function (p) { return fIsDone(p.id); });
-    var dateStr = new Date().toLocaleDateString('fr-CA'), name = '';
-    try { name = localStorage.getItem('worker_name') || ''; } catch (e) {}
-    var rows = done.map(function (p) {
-      var s = fScoreGet(p.id);
-      return '<tr><td>' + esc(p.titre) + '</td><td>' + esc((p.machines || []).join(', ')) + '</td><td>' + (s ? s + ' %' : '—') + '</td></tr>';
-    }).join('');
-    view.innerHTML = '<div class="wrap"><a class="back" href="#/formation">' + ICON.back + ' Formation</a>' +
-      '<div class="attest" id="attest">' +
-        '<div class="att-head"><img src="images/logo_roger.png" alt="MRI"><div><b>Machines Roger International</b><span>Attestation de formation — Sécurité du forage</span></div></div>' +
-        '<div class="att-name"><label>Nom du travailleur</label><input id="wName" value="' + esc(name) + '" placeholder="Prénom et nom"></div>' +
-        '<p class="att-line">atteste avoir suivi et réussi les modules de formation sécurité suivants :</p>' +
-        (done.length ? '<table class="att-table"><thead><tr><th>Module (tâche)</th><th>Machine</th><th>Score</th></tr></thead><tbody>' + rows + '</tbody></table>'
-          : '<p class="att-empty">Aucun module complété pour l\'instant — complète au moins un module pour générer ton attestation.</p>') +
-        '<div class="att-foot"><span>Date : ' + esc(dateStr) + '</span><span>' + done.length + ' / ' + mods.length + ' modules</span></div>' +
-      '</div>' +
-      '<div class="qacts" style="justify-content:flex-start">' +
-        '<button class="btn" id="attPrint">Imprimer / Enregistrer en PDF</button>' +
-        '<a class="btn ghost" href="#/formation">Retour</a></div></div>';
-    var wn = $('#wName'); if (wn) wn.addEventListener('input', function () { try { localStorage.setItem('worker_name', wn.value); } catch (e) {} });
-    var pr = $('#attPrint'); if (pr) pr.onclick = function () { window.print(); };
   }
 
   /* ---------- installation PWA ---------- */

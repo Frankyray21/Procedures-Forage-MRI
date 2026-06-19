@@ -10,7 +10,7 @@
      de cliquer sur « Tout télécharger »). Les listes sont construites à
      partir de data.js (PDF) et figures.js (images) pour rester synchronisées
      avec le contenu. L'app est ainsi entièrement consultable hors-ligne. */
-const VERSION = 'mri-proc-v54';
+const VERSION = 'mri-proc-v55';
 const CORE = [
   './',
   './index.html',
@@ -24,7 +24,6 @@ const CORE = [
   './pdftext.js',
   './chatbot.js',
   './quiz.js',
-  './formation.js',
   './essentiel.js',
   './figures.js',
   './pages.js',
@@ -110,7 +109,7 @@ self.addEventListener('fetch', (e) => {
 
   const netFirst = req.mode === 'navigate' ||
     url.pathname === '/' ||
-    /\/(index\.html|app\.js|styles\.css|data\.js|config\.js|quiz\.js|formation\.js|essentiel\.js|figures\.js|quiz_proc\.js)$/.test(url.pathname);
+    /\/(index\.html|app\.js|styles\.css|data\.js|config\.js|quiz\.js|essentiel\.js|figures\.js|quiz_proc\.js)$/.test(url.pathname);
 
   // Réseau d'abord pour l'app shell et les données (déjà versionnés par ?v=NNN,
   // donc toujours frais après un déploiement). Cache en secours hors-ligne.
