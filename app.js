@@ -544,7 +544,7 @@
         : '<b>' + good + '/' + req + ' bonne(s).</b> ' +
           (miss ? '<span class="pt-miss">' + miss + ' affirmation(s) vraie(s) oubliée(s)</span> ' : '') +
           (wrong ? '<span class="pt-extra">' + wrong + ' affirmation(s) fausse(s) cochée(s)</span> ' : '') +
-          '— les affirmations vraies sont surlignées en vert, celles oubliées en jaune. La référence à la procédure apparaît sous chaque affirmation vraie.';
+          '— les affirmations vraies sont surlignées en vert. La référence à la procédure apparaît sous chaque affirmation vraie.';
       box.classList.add('done');     // révèle la « Référence à la procédure »
       check.hidden = true; reset.hidden = false;
     };

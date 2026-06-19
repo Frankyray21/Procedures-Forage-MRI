@@ -747,7 +747,7 @@ footer b{color:var(--muted)}
 .pt-opt.good{border-color:#34d399;background:rgba(52,211,153,.14)}
 .pt-opt.bad{border-color:#f87171;background:rgba(248,113,113,.14)}
 .pt-opt.bad .pt-l{text-decoration:line-through;color:var(--muted)}
-.pt-opt.missed{border-color:#fbbf24;background:rgba(251,191,36,.16)}
+.pt-opt.missed{border-color:#34d399;background:rgba(52,211,153,.12)}
 .pt-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem}
 .pt-fb{margin-top:.6rem;font-size:.92rem;line-height:1.5}
 .pt-fb.on.ok{color:#34d399}
@@ -757,8 +757,8 @@ footer b{color:var(--muted)}
 .pt-q{font-size:1rem;line-height:1.5;margin:.1rem 0 .35rem}
 .pt-q .pt-multi{color:var(--accent-l);font-weight:700;font-size:.85rem}
 /* Référence à la procédure (rétroaction pré-tâche) — révélée au clic */
-.pt-ref{display:none;margin-top:.7rem;padding:.6rem .8rem;border:2px solid #fbbf24;border-radius:10px;
-  background:rgba(251,191,36,.08);font-size:1rem;line-height:1.5}
+.pt-ref{display:none;margin-top:.7rem;padding:.6rem .8rem;border:1px solid rgba(52,211,153,.4);border-radius:10px;
+  background:rgba(52,211,153,.06);font-size:1rem;line-height:1.5}
 .pretask.done .pt-ref{display:block;animation:ptRef .25s ease}
 @keyframes ptRef{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .pt-ref-t{display:block;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#34d399;margin-bottom:.25rem}
