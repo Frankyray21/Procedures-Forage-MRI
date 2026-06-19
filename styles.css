@@ -650,6 +650,11 @@ footer b{color:var(--muted)}
 .cbgrp-b{display:none;padding:.1rem .55rem .35rem}
 .cbgrp.open .cbgrp-b{display:block}
 .cbgrp-b .cbans{margin:.4rem 0}
+.cbmore{display:none}
+.cbmore.open{display:block}
+.cbmore-b{margin:.15rem 0 .25rem;font-size:.78rem;font-weight:700;color:var(--accent-l);
+  background:transparent;border:0;cursor:pointer;padding:.1rem 0;text-decoration:underline}
+.cbmore-b:hover{color:var(--text)}
 .cbsugg{display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem}
 .cbchip{text-align:left;font-size:.82rem;color:var(--text);background:var(--card-2);border:1px solid var(--border);
   border-radius:9px;padding:.4rem .6rem;cursor:pointer;transition:.15s}

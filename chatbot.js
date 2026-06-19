@@ -212,13 +212,19 @@
       scored.push({ item: item, score: score, hits: hits, core: coreInTxt });
     });
     scored.sort(function (a, b) { return b.score - a.score; });
-    // garde TOUS les passages pertinents (les plus pertinents d'abord), sans doublon de texte
+    // garde les passages pertinents (les plus pertinents d'abord), sans doublon de texte
     var seen = {}, out = [];
     for (var i = 0; i < scored.length; i++) {
       var k = scored[i].item.text;
       if (seen[k]) continue; seen[k] = 1;
       if (scored[i].hits < Math.min(2, qt.length) && scored[i].score < 4) continue;
       out.push(scored[i]);
+    }
+    // Coupe la traîne faible : on ne garde que ce qui s'approche du meilleur score
+    // (≥ 45 %), tout en gardant au moins les 3 meilleurs passages.
+    if (out.length) {
+      var top = out[0].score, MINKEEP = 3;
+      out = out.filter(function (r, idx) { return idx < MINKEEP || r.score >= top * 0.45; });
     }
     return out;
   }
@@ -251,18 +257,25 @@
     var html = '<p>Voici ce que disent les procédures — <b>' + total + ' passage' + (total > 1 ? 's' : '') +
       '</b> dans <b>' + groups.length + ' procédure' + (groups.length > 1 ? 's' : '') +
       '</b>, les plus pertinents d\'abord&nbsp;:</p>';
+    function passHTML(r) {
+      var it = r.item;
+      return '<div class="cbans">' +
+        '<span class="cbk">' + esc(it.kind) + '</span>' +
+        '<div class="cbtxt">« ' + highlight(it.text, terms) + ' »' +
+          '<a class="cbsrc" href="#/p/' + esc(it.pid) + '">Ouvrir la fiche' +
+          (it.source ? ' · ' + esc(it.source) : '') + ' →</a>' +
+        '</div></div>';
+    }
+    var PER_GROUP = 3;     // passages visibles par procédure (le reste derrière « voir plus »)
     groups.forEach(function (g, gi) {
       var open = gi === 0;   // 1re procédure (la plus pertinente) dépliée par défaut
       var n = g.items.length;
-      var inner = g.items.map(function (r) {
-        var it = r.item;
-        return '<div class="cbans">' +
-          '<span class="cbk">' + esc(it.kind) + '</span>' +
-          '<div class="cbtxt">« ' + highlight(it.text, terms) + ' »' +
-            '<a class="cbsrc" href="#/p/' + esc(it.pid) + '">Ouvrir la fiche' +
-            (it.source ? ' · ' + esc(it.source) : '') + ' →</a>' +
-          '</div></div>';
-      }).join('');
+      var head = g.items.slice(0, PER_GROUP), rest = g.items.slice(PER_GROUP);
+      var inner = head.map(passHTML).join('');
+      if (rest.length) {
+        inner += '<div class="cbmore">' + rest.map(passHTML).join('') + '</div>' +
+          '<button type="button" class="cbmore-b">+ ' + rest.length + ' autre' + (rest.length > 1 ? 's' : '') + ' passage' + (rest.length > 1 ? 's' : '') + '</button>';
+      }
       html += '<div class="cbgrp' + (open ? ' open' : '') + '">' +
         '<button type="button" class="cbgrp-h" aria-expanded="' + (open ? 'true' : 'false') + '">' +
           '<span class="cbgrp-ar" aria-hidden="true">▸</span>' +
@@ -463,6 +476,16 @@
     });
     // clic sur une suggestion / le bouton « activer IA » / un lien de fiche
     body.addEventListener('click', function (e) {
+      var moreB = e.target.closest && e.target.closest('.cbmore-b');
+      if (moreB) {
+        var more = moreB.previousElementSibling;
+        if (more && more.classList.contains('cbmore')) {
+          var opened = more.classList.toggle('open');
+          moreB.textContent = opened ? 'Voir moins' : ('+ ' + more.childElementCount + ' autre' +
+            (more.childElementCount > 1 ? 's' : '') + ' passage' + (more.childElementCount > 1 ? 's' : ''));
+        }
+        return;
+      }
       var grpH = e.target.closest && e.target.closest('.cbgrp-h');
       if (grpH) {
         var grp = grpH.parentNode, open = grp.classList.toggle('open');
