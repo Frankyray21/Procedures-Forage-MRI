@@ -57,8 +57,17 @@ Si tu dois en créer un : **airtable.com/create/tokens**
 | Score quiz          | `12/13 — 92 %`                   | meilleur score au quiz (min. 80 %)      |
 | Révision procédure  | `Juin 2024`                      | révision affichée sur la fiche          |
 | Employé             | *(lien)*                         | relié automatiquement par le nom        |
+| Temps sur la fiche  | `3 min 42 s`                     | temps actif de consultation (gestion.)  |
+| Temps sur le quiz   | `2 min 10 s`                     | temps actif sur le quiz (gestion.)      |
+| Secondes fiche      | `222`                            | idem en secondes (tri / analyse)        |
+| Secondes quiz       | `130`                            | idem en secondes (tri / analyse)        |
 | Statut              | `Reçu` / `À relier`              | selon que l'employé a été trouvé        |
 | Source              | `site procédures`                | fixe                                    |
+
+> **Temps (suivi gestionnaire, non affiché au travailleur)** : le site mesure le
+> temps *actif* (écran visible — en pause quand le téléphone est verrouillé)
+> passé sur la fiche et sur le quiz. Si ces 4 colonnes venaient à manquer, le
+> Worker **réessaie sans elles** : l'attestation est enregistrée quand même.
 
 > **Statut « À relier »** : le nom saisi n'a correspondu à aucun employé du
 > registre (ou à plusieurs). À relier manuellement, puis passer à « Traité »

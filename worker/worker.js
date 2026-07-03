@@ -24,7 +24,15 @@
    • POST /            → enregistre une attestation. Corps JSON :
        { "name":"...", "employeeId":"rec...(opt)",
          "proc":"PRO-OP-ITH-004", "titre":"Forage en longtrou (ITH / CUBEX)",
-         "score":"12/13 — 92 %", "revision":"Juin 2024", "date":"AAAA-MM-JJ" }
+         "score":"12/13 — 92 %", "revision":"Juin 2024", "date":"AAAA-MM-JJ",
+         "readTime":"3 min 42 s", "quizTime":"2 min 10 s",
+         "readSeconds":222, "quizSeconds":130 }
+
+   SUIVI DU TEMPS (pour les gestionnaires) : le site mesure le temps ACTIF passé
+   sur la fiche et sur le quiz (écran visible), NON affiché au travailleur. Écrit
+   dans « Temps sur la fiche » / « Temps sur le quiz » (lisible) et « Secondes
+   fiche » / « Secondes quiz » (nombres, pour tri/analyse). Si ces colonnes
+   manquent, le Worker réessaie sans elles : l'attestation est enregistrée quand même.
    ───────────────────────────────────────────────────────────────────────── */
 
 const AIRTABLE_BASE  = "appmq82YjvEUglYZU";   // base « Formations »
@@ -84,6 +92,10 @@ export default {
     const score    = clean(body.score, 40);      // ex. « 12/13 — 92 % »
     const revision = clean(body.revision, 60);   // ex. « Juin 2024 »
     const date     = isoDate(body.date);         // « AAAA-MM-JJ »
+    const readTime = clean(body.readTime, 40);   // ex. « 3 min 42 s »
+    const quizTime = clean(body.quizTime, 40);   // ex. « 2 min 10 s »
+    const readSec  = intOrNull(body.readSeconds);
+    const quizSec  = intOrNull(body.quizSeconds);
     let empId = validRecId(body.employeeId);     // lien vers la liste d'employés
 
     if (!env.AIRTABLE_TOKEN) {
@@ -114,7 +126,19 @@ export default {
     if (revision) fields["Révision procédure"] = revision;
     if (empId)    fields["Employé"] = [empId];
 
-    let at = await postRecord(fields, env);
+    // Colonnes de suivi du temps (gestionnaires). Envoyées d'abord ; si Airtable
+    // les refuse (colonnes absentes), on réessaie SANS elles pour ne jamais
+    // bloquer l'enregistrement de l'attestation.
+    const timeFields = {};
+    if (readTime)       timeFields["Temps sur la fiche"] = readTime;
+    if (quizTime)       timeFields["Temps sur le quiz"] = quizTime;
+    if (readSec != null) timeFields["Secondes fiche"] = readSec;
+    if (quizSec != null) timeFields["Secondes quiz"] = quizSec;
+
+    let at = await postRecord({ ...fields, ...timeFields }, env);
+    if (at && !at.ok && Object.keys(timeFields).length) {
+      at = await postRecord(fields, env);   // repli sans les colonnes de temps
+    }
     if (!at) {
       return json({ ok: false, error: "Airtable injoignable." }, 502, cors);
     }
@@ -242,6 +266,12 @@ function isoDate(v) {
 
 function validRecId(v) {
   return (typeof v === "string" && /^rec[A-Za-z0-9]{14}$/.test(v)) ? v : "";
+}
+
+/* Entier ≥ 0 borné (secondes de suivi), sinon null. */
+function intOrNull(v) {
+  const n = Math.round(Number(v));
+  return (isFinite(n) && n >= 0 && n < 100000000) ? n : null;
 }
 
 /* Retire les accents d'une chaîne JS (terme recherché). */

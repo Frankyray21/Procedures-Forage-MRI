@@ -57,6 +57,7 @@
     var h = location.hash || '#/';
     var view = $('#view');
     window.scrollTo(0, 0);
+    if (h.indexOf('#/p/') !== 0) ptLeavePage();      // quitte une fiche → fige le temps de consultation
     if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : 'procedures'); }
     else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
     else if (h.indexOf('#/code') === 0) { renderCode(view); setNav('code'); }
@@ -68,6 +69,61 @@
     document.querySelectorAll('.appbar nav a[data-nav]').forEach(function (a) {
       a.classList.toggle('active', a.getAttribute('data-nav') === which);
     });
+  }
+
+  /* ---------- chronométrage (consultation fiche + quiz) ----------
+     Mesure le temps ACTIF (page visible) passé sur une fiche et sur son quiz.
+     Destiné au suivi des GESTIONNAIRES : envoyé à Airtable avec l'attestation,
+     JAMAIS affiché au travailleur. Persisté par procédure (cumule les visites,
+     tant que l'attestation n'a pas été envoyée). En pause quand l'app est
+     masquée (téléphone verrouillé, autre onglet) pour ne pas gonfler le temps. */
+  var PT = { pid: null, page: null, quiz: null, quizOpen: false };
+  function ptGet(k) { try { var v = parseInt(localStorage.getItem(k), 10); return (isFinite(v) && v > 0) ? v : 0; } catch (e) { return 0; } }
+  function ptSet(k, ms) { try { localStorage.setItem(k, String(Math.round(ms))); } catch (e) {} }
+  function mkClock(base) {
+    return { acc: base || 0, t0: 0, on: false,
+      start: function () { if (!this.on) { this.t0 = Date.now(); this.on = true; } },
+      pause: function () { if (this.on) { this.acc += Date.now() - this.t0; this.on = false; } },
+      ms: function () { return this.acc + (this.on ? Date.now() - this.t0 : 0); } };
+  }
+  function ptFlush() {
+    if (!PT.pid) return;
+    if (PT.page) ptSet('pt_read_' + PT.pid, PT.page.ms());
+    if (PT.quiz) ptSet('pt_quiz_' + PT.pid, PT.quiz.ms());
+  }
+  function ptStartPage(id) {
+    ptFlush();
+    PT.pid = id; PT.quizOpen = false;
+    PT.page = mkClock(ptGet('pt_read_' + id));
+    PT.quiz = mkClock(ptGet('pt_quiz_' + id));
+    if (!document.hidden) PT.page.start();      // le quiz démarre à l'ouverture du quiz
+  }
+  function ptLeavePage() { ptFlush(); if (PT.page) PT.page.pause(); if (PT.quiz) PT.quiz.pause(); PT.pid = null; PT.quizOpen = false; }
+  function ptQuizOpen(open) {
+    PT.quizOpen = !!open;
+    if (!PT.quiz) return;
+    if (open && !document.hidden) PT.quiz.start();
+    else { PT.quiz.pause(); ptFlush(); }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!PT.pid) return;
+    if (document.hidden) { if (PT.page) PT.page.pause(); if (PT.quiz) PT.quiz.pause(); ptFlush(); }
+    else { if (PT.page) PT.page.start(); if (PT.quizOpen && PT.quiz) PT.quiz.start(); }
+  });
+  window.addEventListener('beforeunload', ptFlush);
+  // Instantané (ms) sans arrêter les chronos — utilisé au moment d'attester.
+  function ptSnapshot(id) {
+    if (PT.pid === id) ptFlush();
+    return { read: ptGet('pt_read_' + id), quiz: ptGet('pt_quiz_' + id) };
+  }
+  // « 3 min 42 s », « 45 s », « 1 h 05 min ».
+  function fmtDuration(ms) {
+    var s = Math.round((ms || 0) / 1000);
+    if (s < 60) return s + ' s';
+    var m = Math.floor(s / 60), r = s % 60;
+    if (m < 60) return m + ' min' + (r ? ' ' + r + ' s' : '');
+    var h = Math.floor(m / 60); m = m % 60;
+    return h + ' h' + (m ? ' ' + ('0' + m).slice(-2) + ' min' : '');
   }
 
   /* ---------- vue : accueil ---------- */
@@ -620,6 +676,7 @@
 
     h += '</div>';
     view.innerHTML = h;
+    ptStartPage(p.id);          // démarre le chrono de consultation (suivi gestionnaire)
     initChecklistState();
     initGallery(figs);
     initProcQuiz(p.id);
@@ -747,10 +804,13 @@
       if (done === sig) { attestSuccess(sec, name, true); return; }
       sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
       var best = pqBestPct(p.id);
+      var t = ptSnapshot(p.id);      // temps de consultation + temps de quiz (suivi gestionnaire)
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
         titre: p.titre || '', date: new Date().toISOString().slice(0, 10),
         score: best ? (best.s + '/' + best.n + ' — ' + best.pct + ' %') : '',
-        revision: p.date_revision || p.date_creation || '' };
+        revision: p.date_revision || p.date_creation || '',
+        readTime: fmtDuration(t.read), quizTime: fmtDuration(t.quiz),
+        readSeconds: Math.round(t.read / 1000), quizSeconds: Math.round(t.quiz / 1000) };
       fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function (r) { return r ? r.json().then(function (j) { return { ok: r.ok, j: j }; }) : null; })
         .then(function (res) {
@@ -869,6 +929,9 @@
     var list = (window.QUIZ_PROC && window.QUIZ_PROC[id]) || [];
     var box = document.querySelector('.pquiz[data-proc="' + id + '"]');
     if (!list.length || !box) return;
+    // Chrono du quiz : court tant que le panneau du quiz est ouvert (et l'app visible).
+    box.addEventListener('toggle', function () { ptQuizOpen(box.open); });
+    if (box.open) ptQuizOpen(true);
     var resetBtn = box.querySelector('.pq-reset');
     var reviewBtn = box.querySelector('.pq-review');
     var scoreEl = box.querySelector('.pq-score');
