@@ -346,6 +346,26 @@ footer b{color:var(--muted)}
 .offbar{height:7px;background:var(--card-2);border:1px solid var(--border);border-radius:50px;overflow:hidden;margin:.45rem 0 .3rem}
 .offbar i{display:block;height:100%;width:0;background:linear-gradient(135deg,#3b82f6,#10b981);transition:width .2s}
 #offstat{font-size:.78rem;color:var(--dim);font-weight:700}
+/* Détail du téléchargement hors-ligne : estimation, fichier en cours, liste */
+.offeta{color:var(--dim);font-size:.8rem}
+.offcur{color:var(--dim);font-size:.78rem;font-style:italic;min-height:1.1em}
+.offlist{margin-top:.45rem;font-size:.82rem}
+.offlist summary{cursor:pointer;color:var(--accent-l);font-weight:700;list-style-position:inside}
+.offlist summary:hover{text-decoration:underline}
+.offlist-body{max-height:260px;overflow:auto;margin-top:.35rem;
+  border:1px solid var(--border);border-radius:10px;padding:.4rem .7rem;background:var(--card-2)}
+.offgrp{display:flex;justify-content:space-between;align-items:baseline;gap:.8rem;margin:.55rem 0 .2rem;
+  padding-bottom:.15rem;border-bottom:1px solid var(--border)}
+.offgrp b{font-size:.8rem;text-transform:uppercase;letter-spacing:.4px}
+.offgrp span{color:var(--dim);flex:none}
+.offul{list-style:none;margin:0;padding:0}
+.offul li{display:flex;justify-content:space-between;gap:.8rem;padding:.06rem 0;color:var(--muted)}
+.offul li .offname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.offul li .offsize{color:var(--dim);flex:none}
+.offul li.ok{color:var(--success)}
+.offul li.ok .offname::before{content:'✓ '}
+.offul li.ko{color:#f87171}
+.offul li.ko .offname::before{content:'✗ '}
 
 /* ===== quiz ===== */
 .quizhero{padding:clamp(2rem,5vw,3.4rem) 0 1rem}
@@ -670,119 +690,3 @@ footer b{color:var(--muted)}
 .cbform input:focus{outline:none;border-color:var(--brand)}
 .cbform button{flex:none;width:42px;border:none;border-radius:10px;background:var(--brand);color:#fff;font-size:1rem;cursor:pointer}
 @media print{.cbbtn,.cbpanel{display:none!important}}
-
-/* ===== Outils utilisés — analyses SST (JSA) ===== */
-.outils-lead{color:var(--muted);font-size:.97rem;margin:.1rem 0 .9rem;line-height:1.5}
-.outils-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.6rem}
-.outil-card{display:flex;align-items:center;gap:.65rem;text-align:left;width:100%;
-  background:var(--card-2);border:1px solid var(--border);border-radius:12px;padding:.7rem .8rem;
-  color:var(--text);cursor:pointer;transition:border-color .15s,transform .1s,background .15s}
-.outil-card:hover{border-color:var(--accent-l);background:#1f2a3d}
-.outil-card:active{transform:translateY(1px)}
-.outil-ic{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;
-  border-radius:9px;background:rgba(239,90,92,.14);color:var(--accent-l)}
-.outil-tx{display:flex;flex-direction:column;gap:.1rem;min-width:0;flex:1}
-.outil-tx b{font-size:1rem;line-height:1.15}
-.outil-code{font-size:.74rem;color:var(--dim);letter-spacing:.3px}
-.risk-badge{flex:0 0 auto;font-weight:800;font-size:.92rem;min-width:26px;height:26px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;color:#0a0e17}
-.risk-badge.r-low{background:#34d399}
-.risk-badge.r-med{background:#fbbf24}
-.risk-badge.r-high{background:#f87171}
-
-/* Modale outil — détail sans quitter la page */
-.outil-ov{position:fixed;inset:0;z-index:120;background:rgba(4,7,13,.72);backdrop-filter:blur(3px);
-  display:none;align-items:flex-start;justify-content:center;padding:max(2.5vh,14px);overflow-y:auto}
-.outil-ov.on{display:flex}
-.outil-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:640px;
-  box-shadow:var(--shadow-card);margin:auto 0;animation:omIn .18s ease}
-@keyframes omIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.om-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;
-  padding:1.1rem 1.2rem .9rem;border-bottom:1px solid var(--border)}
-.om-code{font-size:.76rem;color:var(--accent-l);font-weight:700;letter-spacing:.4px}
-.om-head h3{font-family:var(--font-display);font-size:1.5rem;margin:.1rem 0 .15rem;line-height:1.05}
-.om-tache{color:var(--muted);font-size:.9rem}
-.om-x{flex:0 0 auto;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--text);
-  cursor:pointer;padding:.3rem;display:flex;line-height:0}
-.om-x:hover{border-color:var(--accent-l);color:var(--accent-l)}
-.om-risk{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin:.9rem 1.2rem;
-  padding:.6rem .85rem;border-radius:10px;border:1px solid var(--border)}
-.om-risk.r-low{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.4)}
-.om-risk.r-med{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4)}
-.om-risk.r-high{background:rgba(248,113,113,.13);border-color:rgba(248,113,113,.45)}
-.om-rk{font-size:.85rem;color:var(--muted)}
-.om-rv{font-weight:800;font-size:1.05rem}
-.om-noise{display:flex;align-items:center;gap:.45rem;margin:0 1.2rem .6rem;padding:.55rem .85rem;
-  border-radius:10px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.45);
-  color:#fbbf24;font-size:.92rem}
-.om-noise b{color:#fcd34d}
-.om-cols{display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1.4rem;padding:0 1.2rem 1rem}
-.ot-block{padding:.55rem 0}
-.ot-block h4,.om-epi h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-l);
-  margin:0 0 .35rem;font-weight:700;display:flex;align-items:center;gap:.35rem}
-.ot-ico{display:inline-flex;line-height:0;color:var(--accent-l)}
-/* ÉPI : pictogrammes (comme sur les fiches JSA d'origine) */
-.om-epi{padding:.3rem 1.2rem 1.1rem;border-top:1px solid var(--border)}
-.epi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(94px,1fr));gap:.55rem}
-.epi-chip{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.4rem;
-  background:var(--card-2);border:1px solid var(--border);border-radius:11px;padding:.65rem .35rem}
-.epi-ic{display:flex;align-items:center;justify-content:center;width:48px;height:48px;flex:0 0 48px}
-.epi-ic img{width:48px;height:48px;object-fit:contain;display:block}
-.epi-ic svg{width:27px;height:27px;color:#fff;background:#1d4ed8;border-radius:50%;padding:8px;box-sizing:border-box;width:44px;height:44px}
-.epi-lb{font-size:.72rem;line-height:1.2;color:var(--text)}
-.epi-base-note{font-size:.8rem;color:var(--muted);margin:0 0 .6rem;line-height:1.4}
-.ot-ul{margin:0;padding-left:1.1rem;list-style:disc}
-.ot-ul li{font-size:.95rem;line-height:1.45;margin:.12rem 0;color:var(--text)}
-.om-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;padding:.9rem 1.2rem 1.1rem;
-  border-top:1px solid var(--border)}
-.om-src{flex-basis:100%;color:var(--dim);font-size:.78rem;margin-top:.2rem}
-@media (max-width:560px){.om-cols{grid-template-columns:1fr}}
-
-/* ===== Avant la tâche — auto-vérification outils + ÉPI ===== */
-.pretask{border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.05)}
-.pt-lead{color:var(--muted);font-size:.95rem;margin:.1rem 0 .8rem;line-height:1.5}
-.pt-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.5rem}
-.pt-opt{display:flex;align-items:center;gap:.55rem;cursor:pointer;background:var(--card-2);
-  border:1px solid var(--border);border-radius:10px;padding:.55rem .7rem;position:relative;transition:border-color .15s,background .15s}
-.pt-opt:hover{border-color:var(--accent-l)}
-.pt-opt input{position:absolute;opacity:0;width:0;height:0}
-.pt-mark{flex:0 0 19px;width:19px;height:19px;border:2px solid var(--dim);border-radius:5px;display:flex;align-items:center;justify-content:center}
-.pt-opt input:checked + .pt-mark{background:var(--accent);border-color:var(--accent)}
-.pt-opt input:checked + .pt-mark::after{content:'✓';color:#fff;font-size:.8rem;font-weight:900;line-height:1}
-.pt-cat{font-size:.62rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:.1rem .35rem;border-radius:5px;flex:0 0 auto}
-.pt-cat.epi{background:rgba(29,78,216,.18);color:#93c5fd}
-.pt-cat.tool{background:rgba(13,148,136,.18);color:#5eead4}
-.pt-l{font-size:.9rem;line-height:1.2}
-.pt-opt input:disabled{cursor:default}
-.pt-opt.good{border-color:#34d399;background:rgba(52,211,153,.14)}
-.pt-opt.bad{border-color:#f87171;background:rgba(248,113,113,.14)}
-.pt-opt.bad .pt-l{text-decoration:line-through;color:var(--muted)}
-.pt-opt.missed{border-color:#34d399;background:rgba(52,211,153,.12)}
-.pt-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem}
-.pt-fb{margin-top:.6rem;font-size:.92rem;line-height:1.5}
-.pt-fb.on.ok{color:#34d399}
-.pt-fb.on.no{color:var(--text)}
-.pt-fb .pt-miss{color:#fbbf24;font-weight:700}
-.pt-fb .pt-extra{color:#f87171;font-weight:700}
-.pt-q{font-size:1rem;line-height:1.5;margin:.1rem 0 .35rem}
-.pt-q .pt-multi{color:var(--accent-l);font-weight:700;font-size:.85rem}
-/* Référence à la procédure (rétroaction pré-tâche) — révélée au clic */
-.pt-ref{display:none;margin-top:.7rem;padding:.6rem .8rem;border:1px solid rgba(52,211,153,.4);border-radius:10px;
-  background:rgba(52,211,153,.06);font-size:1rem;line-height:1.5}
-.pretask.done .pt-ref{display:block;animation:ptRef .25s ease}
-@keyframes ptRef{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.pt-ref-t{display:block;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#34d399;margin-bottom:.25rem}
-.pt-ref-q{display:block;color:var(--text)}
-.pt-ref-link{display:inline-block;margin-top:.4rem;color:var(--accent-l);font-weight:700;font-size:.85rem;text-decoration:none}
-.pt-ref-src{color:var(--dim);font-weight:600;font-size:.82em}
-/* Groupes de questions pré-tâche + étiquette danger */
-.pt-grp{margin-top:.7rem;padding-top:.4rem}
-.pt-grp + .pt-grp{border-top:1px dashed var(--border);margin-top:1rem}
-.pt-cat.risk{background:rgba(248,113,113,.18);color:#fca5a5}
-/* Affirmations vraies/fausses — une colonne, citation sous chaque affirmation vraie */
-.pt-stmts{grid-template-columns:1fr}
-.pt-item{display:flex;flex-direction:column}
-.pt-stmts .pt-opt{align-items:flex-start}
-.pt-stmts .pt-mark{margin-top:.05rem}
-.pt-stmts .pt-cat{margin-top:.1rem}
-.pt-item .pt-ref{margin:.35rem 0 .2rem 1.9rem;padding:.5rem .7rem;font-size:.92rem}

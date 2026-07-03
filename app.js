@@ -193,45 +193,107 @@
     box.style.display = 'flex';
   }
 
-  /* ---------- disponibilité hors-ligne (pré-téléchargement des PDF) ---------- */
+  /* ---------- disponibilité hors-ligne (pré-téléchargement) ---------- */
   var DL_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>';
   var INSTALL_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M12 7v7m0 0l-3-3m3 3l3-3"/><line x1="11" y1="18.5" x2="13" y2="18.5"/></svg>';
-  function offlineAssets() {
-    var u = ['./', 'index.html', 'styles.css', 'config.js', 'data.js', 'quiz.js', 'app.js',
-      'manifest.webmanifest', 'images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png'];
-    DATA.forEach(function (p) { u.push('pdf/' + encodeURIComponent(p.id) + '.pdf'); });
-    u.push('pdf/centralisateur-dessin.pdf');
-    if (window.FIGURES) {
-      Object.keys(window.FIGURES).forEach(function (id) {
-        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) u.push(f.src); });
-      });
-    }
+  var SIZES = window.ASSET_SIZES || {};
+
+  // Fichiers de l'application — doit refléter les <script> d'index.html.
+  // (La liste CORE du service-worker.js doit rester synchronisée.)
+  var APP_FILES = ['index.html', 'styles.css', 'manifest.webmanifest', 'config.js', 'data.js',
+    'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'quiz.js', 'essentiel.js',
+    'figures.js', 'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
+    'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js',
+    'pdftext.js', 'llm.js', 'chatbot.js', 'app.js', 'sizes.js'];
+  var BRAND_FILES = ['images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
+
+  function offlineGroups() {
+    var pdfs = [], pages = [], figs = [];
+    DATA.forEach(function (p) { pdfs.push('pdf/' + encodeURIComponent(p.id) + '.pdf'); });
+    pdfs.push('pdf/centralisateur-dessin.pdf');
     if (window.PAGES) {
       Object.keys(window.PAGES).forEach(function (key) {
-        (window.PAGES[key] || []).forEach(function (src) { if (src) u.push(src); });
+        (window.PAGES[key] || []).forEach(function (src) { if (src) pages.push(src); });
       });
     }
+    if (window.FIGURES) {
+      Object.keys(window.FIGURES).forEach(function (id) {
+        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) figs.push(f.src); });
+      });
+    }
+    return [
+      { label: 'Application et fiches', files: APP_FILES },
+      { label: 'PDF officiels', files: pdfs, media: true },
+      { label: 'Pages des PDF (images)', files: pages, media: true },
+      { label: 'Photos et schémas', files: figs, media: true },
+      { label: 'Logo et icônes', files: BRAND_FILES }
+    ];
+  }
+  function offlineAssets() {
+    var u = [];
+    offlineGroups().forEach(function (g) { u = u.concat(g.files); });
     return u;
   }
+  function sizeOf(u) { return SIZES[u] || 0; }
+  function sumBytes(files) { var b = 0; files.forEach(function (u) { b += sizeOf(u); }); return b; }
+  function fmtMo(bytes) {
+    if (bytes >= 1048576) {
+      var mo = bytes / 1048576;
+      return String(mo >= 10 ? Math.round(mo) : Math.round(mo * 10) / 10).replace('.', ',') + ' Mo';
+    }
+    return Math.max(1, Math.round(bytes / 1024)) + ' Ko';
+  }
+  function fmtDur(secs) {
+    if (secs < 50) return '~' + Math.max(5, Math.round(secs / 5) * 5) + ' s';
+    var m = Math.round(secs / 60);
+    if (m < 60) return '~' + Math.max(1, m) + ' min';
+    return '~' + Math.floor(m / 60) + ' h ' + ('0' + (m % 60)).slice(-2);
+  }
+  /* Estimation du temps de téléchargement : débit réel de la connexion
+     (navigator.connection.downlink, en Mbit/s) quand le navigateur l'expose,
+     sinon hypothèse prudente de 10 Mbit/s ; + latence par requête (4 en parallèle). */
+  function estimateSecs(bytes, nFiles) {
+    var mbps = (navigator.connection && navigator.connection.downlink) || 0;
+    if (!mbps || mbps <= 0) mbps = 10;
+    return (bytes * 8) / (mbps * 1e6) + (nFiles * 0.09) / 4;
+  }
+  var PDF_CODE = null;
+  function fileLabel(u) {
+    if (!PDF_CODE) {
+      PDF_CODE = {};
+      DATA.forEach(function (p) { PDF_CODE[p.id] = p.code || p.titre || ''; });
+    }
+    var name = decodeURIComponent((u.split('/').pop() || u));
+    if (u.indexOf('pdf/') === 0) {
+      var code = PDF_CODE[name.replace(/\.pdf$/, '')];
+      if (code) return name + ' — ' + code;
+    }
+    return name;
+  }
+  // Liste complète des fichiers, groupée, repliée sous « Voir les fichiers ».
+  function offlineListHTML() {
+    var groups = offlineGroups(), count = 0, total = 0;
+    var inner = groups.map(function (g) {
+      var b = sumBytes(g.files); count += g.files.length; total += b;
+      return '<div class="offgrp"><b>' + esc(g.label) + '</b><span>' + g.files.length +
+        ' fichiers · ' + fmtMo(b) + '</span></div><ul class="offul">' +
+        g.files.map(function (u) {
+          return '<li data-u="' + esc(u) + '"><span class="offname">' + esc(fileLabel(u)) +
+            '</span><span class="offsize">' + fmtMo(sizeOf(u)) + '</span></li>';
+        }).join('') + '</ul>';
+    }).join('');
+    return '<details class="offlist"><summary>Voir les ' + count + ' fichiers (' + fmtMo(total) +
+      ')</summary><div class="offlist-body">' + inner + '</div></details>';
+  }
   function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
-  /* Les PDF sont désormais pré-téléchargés automatiquement par le service
-     worker dès l'installation. On vérifie leur présence réelle dans le Cache
-     Storage pour afficher « Disponible hors-ligne » sans attendre un clic. */
+  /* Les médias sont aussi pré-téléchargés en arrière-plan par le service
+     worker après son activation. On vérifie leur présence réelle dans le
+     Cache Storage pour afficher « Disponible hors-ligne » sans attendre un clic. */
   function verifyOfflineCache() {
-    if (DEMO || !('caches' in window)) return;
-    var pdfs = DATA.map(function (p) { return 'pdf/' + encodeURIComponent(p.id) + '.pdf'; });
-    pdfs.push('pdf/centralisateur-dessin.pdf');
-    if (window.FIGURES) {
-      Object.keys(window.FIGURES).forEach(function (id) {
-        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) pdfs.push(f.src); });
-      });
-    }
-    if (window.PAGES) {
-      Object.keys(window.PAGES).forEach(function (key) {
-        (window.PAGES[key] || []).forEach(function (src) { if (src) pdfs.push(src); });
-      });
-    }
-    Promise.all(pdfs.map(function (u) { return caches.match(u).then(function (r) { return !!r; }); }))
+    if (DEMO || !('caches' in window) || offlineReady()) return;
+    var media = [];
+    offlineGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
+    Promise.all(media.map(function (u) { return caches.match(u).then(function (r) { return !!r; }); }))
       .then(function (found) {
         if (found.length && found.every(Boolean)) {
           try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
@@ -242,42 +304,80 @@
   function renderOffline() {
     var box = $('#offline'); if (!box) return;
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
-    var nPdf = DATA.length + 1;
+    var files = offlineAssets(), totalBytes = sumBytes(files), nPdf = DATA.length + 1;
     if (offlineReady()) {
       box.innerHTML = '<div class="offcard ok"><span class="offic">' + ICON.check + '</span>' +
-        '<div class="offtxt"><b>Disponible hors-ligne</b><span>Toutes les fiches, les ' + nPdf + ' PDF et les figures sont enregistrés sur cet appareil.</span></div>' +
+        '<div class="offtxt"><b>Disponible hors-ligne</b><span>Toutes les fiches, les ' + nPdf +
+        ' PDF et les figures (' + fmtMo(totalBytes) + ') sont enregistrés sur cet appareil.</span></div>' +
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
     } else {
       box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
-        '<div class="offtxt"><b>Préparer la consultation hors-ligne</b><span>Télécharge toutes les fiches, les ' + nPdf + ' PDF et les figures pour les consulter sans réseau (sous terre).</span></div>' +
+        '<div class="offtxt"><b>Préparer la consultation hors-ligne</b>' +
+        '<span>' + files.length + ' fichiers · ' + fmtMo(totalBytes) + ' : toutes les fiches, les ' + nPdf +
+        ' PDF et leurs images, pour consulter sans réseau (sous terre).</span>' +
+        '<span class="offeta">Temps de téléchargement estimé : ' + fmtDur(estimateSecs(totalBytes, files.length)) +
+        ' sur cette connexion</span>' + offlineListHTML() + '</div>' +
         '<button class="btn" id="offBtn">Tout télécharger</button></div>';
     }
-    $('#offBtn').onclick = startPrecache;
+    $('#offBtn').onclick = function () { startPrecache(offlineReady()); };
   }
-  function startPrecache() {
+  /* Téléchargement : 4 fichiers en parallèle ; les fichiers déjà sur
+     l'appareil sont sautés (reprise après interruption) sauf en mode
+     « Mettre à jour » (force=true) qui re-télécharge tout. Progression en
+     fichiers ET en Mo, vitesse mesurée et temps restant réel. */
+  function startPrecache(force) {
     var box = $('#offline'); if (!box) return;
-    var urls = offlineAssets(), total = urls.length, done = 0, failed = 0, i = 0;
+    var urls = ['./'].concat(offlineAssets());
+    var total = urls.length, totalBytes = sumBytes(urls);
     box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
-      '<div class="offtxt" style="flex:1"><b>Téléchargement en cours…</b>' +
-      '<div class="offbar"><i id="offbar"></i></div><span id="offstat">0 / ' + total + '</span></div></div>';
-    function step() {
-      if (i >= urls.length) {
-        try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
-        renderOffline();
-        if (failed) toast(failed + ' fichier(s) non téléchargé(s) — réessayez avec une meilleure connexion.');
-        return;
+      '<div class="offtxt" style="flex:1"><b>' + (force ? 'Mise à jour' : 'Téléchargement') + ' en cours…</b>' +
+      '<div class="offbar"><i id="offbar"></i></div>' +
+      '<span id="offstat">0 / ' + total + ' fichiers · 0 Ko / ' + fmtMo(totalBytes) + '</span>' +
+      '<span id="offeta" class="offeta">Temps restant : calcul en cours…</span>' +
+      '<span id="offcur" class="offcur"></span>' +
+      offlineListHTML() + '</div></div>';
+    var done = 0, failed = 0, bytesDone = 0, netBytes = 0, netStart = Date.now(), i = 0, active = 0;
+    var listEls = {};
+    [].forEach.call(box.querySelectorAll('.offul li'), function (li) { listEls[li.getAttribute('data-u')] = li; });
+    function mark(u, cls) { var li = listEls[u]; if (li) li.className = cls; }
+    function refresh(u) {
+      var pct = totalBytes ? Math.min(100, Math.round(bytesDone / totalBytes * 100)) : Math.round(done / total * 100);
+      var bar = $('#offbar'); if (bar) bar.style.width = pct + '%';
+      var st = $('#offstat'); if (st) st.textContent = done + ' / ' + total + ' fichiers · ' + fmtMo(bytesDone) + ' / ' + fmtMo(totalBytes);
+      var elapsed = (Date.now() - netStart) / 1000;
+      if (elapsed > 3 && netBytes > 0) {
+        var speed = netBytes / elapsed;
+        var eta = $('#offeta');
+        if (eta) eta.textContent = 'Temps restant : ' + fmtDur(Math.max(0, totalBytes - bytesDone) / speed) +
+          ' (' + fmtMo(speed) + '/s)';
       }
-      var u = urls[i++];
-      fetch(u, { cache: 'reload' }).then(function (r) { if (!r || r.status !== 200) failed++; }, function () { failed++; })
-        .then(function () {
-          done++;
-          var pct = Math.round(done / total * 100);
-          var bar = $('#offbar'); if (bar) bar.style.width = pct + '%';
-          var st = $('#offstat'); if (st) st.textContent = done + ' / ' + total;
-          step();
-        });
+      var cur = $('#offcur'); if (cur) cur.textContent = u ? 'En cours : ' + fileLabel(u) : '';
     }
-    step();
+    function finish() {
+      if (!failed) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
+      renderOffline();
+      toast(failed
+        ? failed + ' fichier(s) non téléchargé(s) — réessayez : ce qui est déjà téléchargé ne sera pas repris.'
+        : 'Terminé : tout est disponible hors-ligne (' + fmtMo(bytesDone) + ').');
+    }
+    function next() {
+      if (i >= urls.length) { if (active === 0) finish(); return; }
+      var u = urls[i++]; active++;
+      var precheck = (!force && 'caches' in window) ? caches.match(u) : Promise.resolve(null);
+      precheck.then(function (hit) {
+        if (hit) { bytesDone += sizeOf(u); mark(u, 'ok'); return; }   // déjà sur l'appareil
+        return fetch(u, force ? { cache: 'reload' } : {}).then(function (r) {
+          if (!r || r.status !== 200) { failed++; mark(u, 'ko'); return; }
+          return r.blob().then(function (b) {           // attend le fichier COMPLET
+            var n = (b && b.size) || sizeOf(u);
+            bytesDone += n; netBytes += n; mark(u, 'ok');
+          });
+        });
+      }).catch(function () { failed++; mark(u, 'ko'); })
+        .then(function () { done++; active--; refresh(urls[i]); next(); });
+    }
+    refresh(urls[0]);
+    for (var k = 0; k < 4; k++) next();
   }
   function bindChips(sel, key) {
     var box = $(sel);
@@ -344,9 +444,6 @@
 
     if (p.resume) h += '<div class="sec"><div class="lead2">' + esc(p.resume) + '</div></div>';
 
-    // Avant de commencer : auto-vérification (outils + ÉPI), à choix multiple.
-    h += renderPreTask(p);
-
     // Document officiel (PDF) — AU DÉBUT de la fiche
     if (DEMO) {
       h += '<div class="sec"><h2>Document officiel (PDF)</h2>' +
@@ -390,22 +487,6 @@
 
     // (Section « Objectif » retirée à la demande.)
 
-    // Outils utilisés (analyses de sécurité de tâche — JSA) : information
-    // ressortie sur la fiche, détail consultable sans quitter la page.
-    var toolIds = (window.OUTILS_MAP && window.OUTILS_MAP[p.id]) || [];
-    if (toolIds.length && window.OUTILS) {
-      h += '<div class="sec"><h2>Outils utilisés — analyse SST</h2>' +
-        '<p class="outils-lead">Outils susceptibles d\'être utilisés pour cette procédure. Touchez un outil pour voir son analyse de sécurité (risques, contrôles, ÉPI) sans quitter la page.</p>' +
-        '<div class="outils-grid">' + toolIds.map(function (tid) {
-          var o = window.OUTILS[tid]; if (!o) return '';
-          return '<button type="button" class="outil-card" data-tool="' + esc(tid) + '">' +
-            '<span class="outil-ic">' + ICON.tool + '</span>' +
-            '<span class="outil-tx"><b>' + esc(o.nom) + '</b><span class="outil-code">' + esc(o.code) + '</span></span>' +
-            '<span class="risk-badge ' + riskClass(o.niveau) + '" title="Niveau de risque après contrôles">' + o.niveau + '</span>' +
-          '</button>';
-        }).join('') + '</div></div>';
-    }
-
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
 
     // Quiz de la procédure (couvre l'information importante) — questions mélangées
@@ -445,8 +526,6 @@
     initChecklistState();
     initGallery(figs);
     initProcQuiz(p.id);
-    initOutils();
-    initPreTask();
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
 
@@ -472,213 +551,6 @@
       '<a class="btn attest-btn" href="' + esc(url) + '" target="_blank" rel="noopener">' +
       '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
       ' Attester la lecture</a></div>';
-  }
-
-  /* ---------- Avant la tâche : « identifie les affirmations vraies » ---------- */
-  // UNE seule question. Chaque option est une affirmation complète (ÉPI / Outil /
-  // Danger). Les affirmations VRAIES proviennent UNIQUEMENT de ce qui est écrit
-  // explicitement dans la procédure (window.PRETASK, extrait des PDF) ; chacune
-  // porte sa citation exacte, révélée sous l'affirmation une fois validée.
-  var EPI_EXTRA_TASK = ['Protection auditive', 'Protection faciale', 'Protection respiratoire', 'Harnais de sécurité', 'Combinaison'];
-  var RISK_ALL = ['Coincement / écrasement par des pièces', 'Détente brutale de ressorts comprimés',
-    'Chute de hauteur', 'Chute / projection de tiges', 'Chute d\'objets (monterie / trou)', 'Blessures aux mains',
-    'Éjection sous pression (eau / boyau)', 'Happement par une pièce en rotation', 'Exposition à la poussière (santé)',
-    'Atmosphère dangereuse (gaz)', 'Frappé par un objet échappé', 'Renversement / heurt de véhicule'];
-  // ÉPI additionnel → phrase complète.
-  function epiPhrase(e) {
-    var M = {
-      'Harnais de sécurité': 'Le port du harnais (antichute) et l\'attache sont obligatoires.',
-      'Protection respiratoire': 'La protection respiratoire (masque powerflow) est requise.',
-      'Protection faciale': 'La protection faciale (visière) est requise.',
-      'Protection auditive': 'La protection auditive est requise.',
-      'Combinaison': 'Le port de la combinaison est requis.'
-    };
-    return M[e] || ('Le port de « ' + e + ' » est requis.');
-  }
-  function riskPhrase(r) { return 'Le principal danger de cette tâche est : ' + r.toLowerCase().replace(/\s*\(.*?\)/, '') + '.'; }
-  // Construit la liste d'affirmations (vraies = explicites dans la procédure).
-  function preTaskStatements(p) {
-    var d = (window.PRETASK && window.PRETASK[p.id]) || {};
-    var tools = d.tools || [], addEpi = d.epi || [], O = window.OUTILS || {};
-    var st = [];
-    tools.forEach(function (t) {
-      st.push({ t: 'Une ' + t.toLowerCase() + ' est nécessaire pour cette tâche.', cat: 'Outil', ok: true, ref: d.ref, src: d.src });
-    });
-    addEpi.forEach(function (e) {
-      st.push({ t: epiPhrase(e), cat: 'ÉPI', ok: true, ref: d.ref, src: d.src });
-    });
-    if (d.risque && d.risque.items && d.risque.items.length) {
-      d.risque.items.forEach(function (r) {
-        st.push({ t: riskPhrase(r), cat: 'Danger', ok: true, ref: d.risque.ref, src: d.risque.src });
-      });
-    }
-    // Distracteurs (faux) — affirmations NON écrites dans la procédure.
-    var allTools = Object.keys(O).map(function (id) { return O[id].nom; });
-    shuffle(allTools.filter(function (t) { return tools.indexOf(t) < 0; })).slice(0, 1)
-      .forEach(function (t) { st.push({ t: 'Une ' + t.toLowerCase() + ' est nécessaire pour cette tâche.', cat: 'Outil', ok: false }); });
-    shuffle(EPI_EXTRA_TASK.filter(function (e) { return addEpi.indexOf(e) < 0; })).slice(0, 2)
-      .forEach(function (e) { st.push({ t: epiPhrase(e), cat: 'ÉPI', ok: false }); });
-    var usedRisks = (d.risque && d.risque.items) || [];
-    shuffle(RISK_ALL.filter(function (r) { return usedRisks.indexOf(r) < 0; })).slice(0, d.risque ? 1 : 2)
-      .forEach(function (r) { st.push({ t: riskPhrase(r), cat: 'Danger', ok: false }); });
-    return shuffle(st);
-  }
-  function ptRefHTML(s) {
-    if (!s.ok || !s.ref) return '';
-    return '<div class="pt-ref"><span class="pt-ref-t">Référence à la procédure</span>' +
-      '<span class="pt-ref-q">« ' + esc(s.ref) + ' »' +
-      (s.src ? ' <span class="pt-ref-src">— ' + esc(s.src) + '</span>' : '') + '</span></div>';
-  }
-  function renderPreTask(p) {
-    var stmts = preTaskStatements(p);
-    var items = stmts.map(function (s) {
-      var cls = s.cat === 'Outil' ? 'tool' : (s.cat === 'Danger' ? 'risk' : 'epi');
-      var tag = '<span class="pt-cat ' + cls + '">' + esc(s.cat) + '</span>';
-      return '<div class="pt-item">' +
-        '<label class="pt-opt"><input type="checkbox" data-ok="' + (s.ok ? 1 : 0) + '">' +
-        '<span class="pt-mark"></span>' + tag + '<span class="pt-l">' + esc(s.t) + '</span></label>' +
-        ptRefHTML(s) + '</div>';
-    }).join('');
-    return '<div class="sec pretask"><h2>Avant de commencer</h2>' +
-      '<p class="pt-lead">Les ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, etc.) sont requis en tout temps et ne sont pas dans la question.</p>' +
-      '<div class="pt-grp"><p class="pt-q"><b>Question :</b> sélectionne les <b>affirmations vraies</b> pour cette tâche.' +
-      ' <span class="pt-multi">Plusieurs réponses possibles.</span></p>' +
-      '<div class="pt-opts pt-stmts">' + items + '</div></div>' +
-      '<div class="pt-actions"><button type="button" class="btn pt-check">Valider mes réponses</button>' +
-      '<button type="button" class="btn ghost pt-reset" hidden>Recommencer</button></div>' +
-      '<div class="pt-fb"></div></div>';
-  }
-  function initPreTask() {
-    var box = document.querySelector('.pretask'); if (!box) return;
-    var check = box.querySelector('.pt-check'), reset = box.querySelector('.pt-reset'), fb = box.querySelector('.pt-fb');
-    check.onclick = function () {
-      var miss = 0, wrong = 0, good = 0, req = 0;
-      [].forEach.call(box.querySelectorAll('.pt-opt'), function (o) {
-        var inp = o.querySelector('input'), ok = inp.getAttribute('data-ok') === '1', sel = inp.checked;
-        inp.disabled = true;
-        if (ok) req++;
-        if (ok && sel) { o.classList.add('good'); good++; }
-        else if (!ok && sel) { o.classList.add('bad'); wrong++; }
-        else if (ok && !sel) { o.classList.add('missed'); miss++; }
-      });
-      var perfect = (wrong === 0 && miss === 0);
-      fb.className = 'pt-fb on ' + (perfect ? 'ok' : 'no');
-      fb.innerHTML = perfect
-        ? '<b>✓ Parfait.</b> Tu as identifié toutes les affirmations vraies pour cette tâche.'
-        : '<b>' + good + '/' + req + ' bonne(s).</b> ' +
-          (miss ? '<span class="pt-miss">' + miss + ' affirmation(s) vraie(s) oubliée(s)</span> ' : '') +
-          (wrong ? '<span class="pt-extra">' + wrong + ' affirmation(s) fausse(s) cochée(s)</span> ' : '') +
-          '— les affirmations vraies sont surlignées en vert. La référence à la procédure apparaît sous chaque affirmation vraie.';
-      box.classList.add('done');     // révèle la « Référence à la procédure »
-      check.hidden = true; reset.hidden = false;
-    };
-    reset.onclick = function () {
-      [].forEach.call(box.querySelectorAll('.pt-opt'), function (o) {
-        o.classList.remove('good', 'bad', 'missed');
-        var i = o.querySelector('input'); i.checked = false; i.disabled = false;
-      });
-      box.classList.remove('done');
-      fb.className = 'pt-fb'; fb.innerHTML = ''; check.hidden = false; reset.hidden = true;
-    };
-  }
-
-  /* ---------- outils (analyses SST / JSA) : détail en modale ---------- */
-  // Pictogrammes ÉPI officiels (images, comme sur les fiches JSA d'origine)
-  function epiImg(file, alt) {
-    return '<img src="images/epi/' + file + '" alt="' + alt + '" loading="lazy">';
-  }
-  var EPI_PICTO = {
-    'Lunettes de protection': epiImg('lunettes_protection.png', 'Lunettes de protection'),
-    'Casque de sécurité': epiImg('casque_securite.png', 'Casque de sécurité'),
-    'Protection auditive': epiImg('protection_auditive.png', 'Protection auditive'),
-    'Protection respiratoire': epiImg('protection_respiratoire.png', 'Protection respiratoire'),
-    'Bottes de protection': epiImg('bottes_protection.png', 'Bottes de protection'),
-    'Gants': epiImg('gants.png', 'Gants'),
-    'Combinaison': epiImg('combinaison.png', 'Combinaison'),
-    'Protection faciale': epiImg('protection_faciale.png', 'Protection faciale'),
-    'Harnais de sécurité': epiImg('harnais_securite.png', 'Harnais de sécurité'),
-    'Vêtements haute visibilité': epiImg('vetements_haute_visibilite.png', 'Vêtements haute visibilité')
-  };
-  var epiGeneric = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17a9 9 0 0 1 18 0"/><path d="M2 17h20"/></svg>';
-  // Petites icônes de catégorie de risque
-  var RISK_ICO = {
-    secu: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
-    sante: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-9.2-9.2A4.6 4.6 0 0 1 12 6a4.6 4.6 0 0 1 9.2 5.8C19 16.4 12 21 12 21z"/></svg>',
-    env: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-7 4-12 14-13-1 10-6 14-13 13z"/><path d="M5 21 12 13"/></svg>',
-    ctrl: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
-    epi: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17a9 9 0 0 1 18 0"/><path d="M2 17h20"/><path d="M9 9.5V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3.5"/></svg>'
-  };
-  function riskClass(n) { return n >= 8 ? 'r-high' : n >= 4 ? 'r-med' : 'r-low'; }
-  function riskLabel(n) { return n >= 8 ? 'Élevé' : n >= 4 ? 'Modéré' : 'Faible'; }
-  function outilList(title, arr, ico) {
-    if (!arr || !arr.length) return '';
-    return '<div class="ot-block"><h4>' + (ico ? '<span class="ot-ico">' + ico + '</span>' : '') + esc(title) + '</h4><ul class="ot-ul">' +
-      arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
-  }
-  // ÉPI de base déjà obligatoires sous terre — non répétés par outil.
-  // La protection auditive n'est pas un pictogramme permanent : on la rappelle
-  // par un avis « outil bruyant » quand l'outil présente le risque de bruit.
-  var EPI_BASE = ['Lunettes de protection', 'Casque de sécurité', 'Bottes de protection', 'Gants', 'Vêtements haute visibilité', 'Protection auditive'];
-  function epiChip(x) {
-    return '<span class="epi-chip"><span class="epi-ic">' + (EPI_PICTO[x] || epiGeneric) + '</span><span class="epi-lb">' + esc(x) + '</span></span>';
-  }
-  function epiPicto(arr) {
-    if (!arr || !arr.length) return '';
-    var extra = arr.filter(function (x) { return EPI_BASE.indexOf(x) < 0; });
-    var inner = extra.length
-      ? '<div class="epi-grid">' + extra.map(epiChip).join('') + '</div>'
-      : '<p class="epi-base-note">Aucun ÉPI additionnel : seuls les ÉPI de base souterrains sont requis.</p>';
-    return '<div class="om-epi"><h4><span class="ot-ico">' + RISK_ICO.epi + '</span>ÉPI additionnels (propres à l\'outil)</h4>' +
-      '<p class="epi-base-note">En plus des ÉPI de base obligatoires sous terre (casque, lunettes, bottes, gants, etc.).</p>' +
-      inner + '</div>';
-  }
-  function initOutils() {
-    var cards = document.querySelectorAll('.outil-card');
-    if (!cards.length || !window.OUTILS) return;
-    var ov = document.getElementById('outil-modal');
-    if (!ov) {
-      ov = document.createElement('div');
-      ov.id = 'outil-modal';
-      ov.className = 'outil-ov';
-      ov.innerHTML = '<div class="outil-modal" role="dialog" aria-modal="true"><div class="om-body"></div></div>';
-      document.body.appendChild(ov);
-      // Listeners attachés une seule fois (l'overlay est un singleton).
-      var closeOv = function () { ov.classList.remove('on'); document.body.style.overflow = ''; };
-      ov.addEventListener('click', function (e) {
-        if (e.target === ov || (e.target.closest && e.target.closest('.om-x'))) closeOv();
-      });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeOv(); });
-    }
-    var body = ov.querySelector('.om-body');
-    function open(tid) {
-      var o = window.OUTILS[tid]; if (!o) return;
-      var pdf = 'pdf/' + encodeURIComponent(tid) + '.pdf';
-      body.innerHTML =
-        '<div class="om-head"><div><div class="om-code">' + esc(o.code) + '</div><h3>' + esc(o.nom) + '</h3>' +
-          '<div class="om-tache">' + esc(o.tache) + '</div></div>' +
-          '<button type="button" class="om-x" aria-label="Fermer">' + ICON.close + '</button></div>' +
-        '<div class="om-risk ' + riskClass(o.niveau) + '"><span class="om-rk">Niveau de risque (après contrôles)</span>' +
-          '<span class="om-rv">' + o.niveau + ' · ' + riskLabel(o.niveau) + '</span></div>' +
-        ((o.sante || []).indexOf('Bruit') >= 0
-          ? '<div class="om-noise">🔊 <b>Outil bruyant</b> — port de la protection auditive requis.</div>'
-          : '') +
-        '<div class="om-cols">' +
-          outilList('Risques — Sécurité', o.securite, RISK_ICO.secu) +
-          outilList('Risques — Santé', o.sante, RISK_ICO.sante) +
-          outilList('Risques — Environnement', o.environnement, RISK_ICO.env) +
-          outilList('Mesures de contrôle', o.controles, RISK_ICO.ctrl) +
-        '</div>' +
-        epiPicto(o.epi) +
-        '<div class="om-foot"><a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir la fiche PDF</a>' +
-          '<a class="dl" href="' + pdf + '" download>Télécharger</a>' +
-          '<span class="om-src">Source : analyse SST ' + esc(o.code) + ' · ' + esc(o.date) + '</span></div>';
-      ov.classList.add('on');
-      document.body.style.overflow = 'hidden';
-      var x = body.querySelector('.om-x'); if (x) x.focus();
-    }
-    [].forEach.call(cards, function (c) {
-      c.addEventListener('click', function () { open(c.getAttribute('data-tool')); });
-    });
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */

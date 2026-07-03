@@ -60,7 +60,9 @@ Tout le contenu est dans **`data.js`** (`window.PROCEDURES`). Un objet = une pro
 
 Tous les champs sauf `id`, `titre`, `categorie`, `machines`, `resume` sont facultatifs
 (laisser `""` ou `[]`). **Déposer le PDF** correspondant dans `pdf/` en le nommant
-`<id>.pdf` (ex. `pdf/pro-op-ith-020.pdf`).
+`<id>.pdf` (ex. `pdf/pro-op-ith-020.pdf`). Après tout ajout/retrait de PDF ou
+d'images, relancer `node gen-sizes.js` pour rafraîchir `sizes.js` (tailles servant
+à l'estimation du téléchargement hors-ligne).
 
 Pour mettre à jour le **Code de sécurité**, éditer `window.CODE_SECURITE` dans `data.js`.
 
