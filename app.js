@@ -640,12 +640,27 @@
     var b = pqGetBest(id);
     return (b && b.n > 0) ? { s: b.s, n: b.n, pct: Math.round(b.s / b.n * 100) } : null;
   }
+  // Le quiz de la fiche a-t-il été COMPLÉTÉ (toutes les questions répondues au
+  // moins une fois, peu importe le score) ? pqSetBest n'est enregistré que
+  // lorsque le quiz complet a été répondu, avec n = nombre total de questions.
+  function pqCompleted(p) {
+    var total = (window.QUIZ_PROC && window.QUIZ_PROC[p.id] || []).length;
+    if (!total) return true;                 // pas de quiz → rien à compléter
+    var b = pqGetBest(p.id);
+    return !!(b && b.n === total);
+  }
   function attestationHTML(p) {
     if (!attestEndpoint()) return '';
     var head = '<div class="sec attest-sec" data-proc="' + esc(p.id) + '"><h2>Attestation de lecture</h2>';
-    // Formulaire toujours visible, directement après le quiz (aucune note de
-    // passage exigée). Si le quiz a été joué, on affiche le score à titre
-    // indicatif seulement.
+    // Conditionnel à la PASSATION du quiz : le formulaire n'apparaît qu'une
+    // fois toutes les questions répondues (le score n'a pas d'importance).
+    if (!pqCompleted(p)) {
+      return head +
+        '<p class="attest-lead">Réponds d\'abord à <b>toutes les questions du quiz</b> ci-dessus pour pouvoir attester ' +
+        'ta lecture (le score n\'a pas d\'importance).</p>' +
+        '<button type="button" class="btn attest-btn attest-locked" disabled>' +
+        '🔒 Attester la lecture (complète d\'abord le quiz)</button></div>';
+    }
     var best = pqBestPct(p.id);
     var scoreTxt = best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '';
     return head +
