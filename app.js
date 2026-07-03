@@ -603,6 +603,7 @@
           '<span class="pqs-b">' + (best ? 'Meilleur : ' + best.s + '/' + best.n : 'Commencer') + '</span></summary>' +
           '<div class="pqbody">' + pqitems +
             '<div class="pq-actions"><button type="button" class="btn ghost pq-reset">Recommencer</button>' +
+            (pqGetFails(p.id).length ? '<button type="button" class="btn ghost pq-review">Réviser mes erreurs (' + pqGetFails(p.id).length + ')</button>' : '') +
             '<span class="pq-score" aria-live="polite"></span></div>' +
           '</div>' +
         '</details></div>';
@@ -641,6 +642,18 @@
   function attestationHTML(p) {
     var url = attestUrl(p);
     if (!url) return '';
+    // Note de passage : le quiz de la fiche doit être réussi à 80 % (meilleur
+    // résultat, quiz complet) avant de pouvoir attester la lecture.
+    var quiz = (window.QUIZ_PROC && window.QUIZ_PROC[p.id]) || [];
+    var best = pqGetBest(p.id);
+    if (quiz.length && !(best && best.n > 0 && best.s / best.n >= 0.8)) {
+      return '<div class="sec attest-sec"><h2>Attestation de lecture</h2>' +
+        '<p class="attest-lead">Note de passage requise : obtiens au moins <b>80 %</b> au quiz de cette fiche' +
+        ' pour débloquer l\'attestation.' +
+        (best ? ' Meilleur résultat : <b>' + best.s + '/' + best.n + '</b>.' : '') + '</p>' +
+        '<button type="button" class="btn attest-btn attest-locked" disabled>' +
+        '\uD83D\uDD12 Attester la lecture (réussis d\'abord le quiz)</button></div>';
+    }
     return '<div class="sec attest-sec"><h2>Attestation de lecture</h2>' +
       '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure. ' +
       'Sélectionne ton nom dans la liste et valide — ton attestation est enregistrée et transmise au superviseur.</p>' +
@@ -650,6 +663,17 @@
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
+  // Questions ratées (mode révision) : indices d'origine, persistés par fiche.
+  function pqGetFails(id) { try { var v = JSON.parse(localStorage.getItem('pq_fail_' + id)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function pqSetFails(id, arr) { try { localStorage.setItem('pq_fail_' + id, JSON.stringify(arr)); } catch (e) {} }
+  // Re-rend la section attestation (déblocage en direct quand le quiz est réussi).
+  function updateAttestGate(id) {
+    var sec = document.querySelector('.attest-sec'); if (!sec) return;
+    var p = DATA.filter(function (x) { return x.id === id; })[0]; if (!p) return;
+    var html = attestationHTML(p); if (!html) return;
+    var d = document.createElement('div'); d.innerHTML = html;
+    sec.parentNode.replaceChild(d.firstElementChild, sec);
+  }
   function pqGetBest(id) { try { var v = JSON.parse(localStorage.getItem('pq_' + id)); return (v && typeof v.s === 'number') ? v : null; } catch (e) { return null; } }
   function pqSetBest(id, s, n) {
     var b = pqGetBest(id);
@@ -694,10 +718,30 @@
         '<button type="button" class="btn ghost pq-clear">Effacer</button></div>' +
         '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
     }
+    if (it.t === 'assoc') {
+      // paires paramètre ↔ valeur : mêmes choix (mélangés) pour chaque rangée
+      var rperm = shuffle(it.pairs.map(function (_, j) { return j; }));
+      var selOpts = '<option value="">Choisir…</option>' + rperm.map(function (j) {
+        return '<option value="' + j + '">' + esc(it.pairs[j].r) + '</option>';
+      }).join('');
+      return '<div class="pq pq-assoc" data-i="' + oi + '">' +
+        qhead + '<span class="pq-type">Association</span>' + esc(it.q) +
+        ' <span class="pq-hint">Choisissez la valeur officielle de chaque paramètre, puis validez.</span></p>' +
+        '<div class="pq-pairs">' + it.pairs.map(function (pr, k) {
+          return '<div class="pq-pair" data-k="' + k + '"><span class="pq-pl">' + esc(pr.l) + '</span>' +
+            '<select class="pq-sel">' + selOpts + '</select><span class="pq-cor"></span></div>';
+        }).join('') + '</div>' +
+        '<div class="pq-actions-q"><button type="button" class="btn pq-check" disabled>Valider</button></div>' +
+        '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
+    }
+    // choix de réponse (défaut), texte à trous et chasse à l'erreur : même
+    // mécanique (une seule bonne option), seul le badge change.
+    var badge = it.t === 'trou' ? 'Texte à trous' : it.t === 'erreur' ? 'Chasse à l\'erreur' : '';
     // options mélangées à l'affichage (évite tout patron « toujours la même
     // position ») ; value = index d'origine, la correction est inchangée.
     var perm = shuffle(it.o.map(function (_, j) { return j; }));
-    return '<div class="pq" data-i="' + oi + '">' + qhead + esc(it.q) + '</p>' +
+    return '<div class="pq" data-i="' + oi + '">' + qhead +
+      (badge ? '<span class="pq-type">' + badge + '</span>' : '') + esc(it.q) + '</p>' +
       '<div class="pq-opts">' + perm.map(function (j) {
         return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
       }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div></div>';
@@ -707,18 +751,27 @@
     var box = document.querySelector('.pquiz[data-proc="' + id + '"]');
     if (!list.length || !box) return;
     var resetBtn = box.querySelector('.pq-reset');
+    var reviewBtn = box.querySelector('.pq-review');
     var scoreEl = box.querySelector('.pq-score');
-    var n = list.length;
+    var fails = pqGetFails(id).filter(function (i) { return i < list.length; });
+    var reviewMode = false;
 
     function updateScore() {
-      var answered = box.querySelectorAll('.pq.answered').length;
-      var correct = box.querySelectorAll('.pq.correct').length;
+      var cards = box.querySelectorAll('.pq:not(.pq-hidden)');
+      var n = cards.length, answered = 0, correct = 0;
+      [].forEach.call(cards, function (c) {
+        if (c.classList.contains('answered')) answered++;
+        if (c.classList.contains('correct')) correct++;
+      });
       if (!answered) { scoreEl.textContent = ''; scoreEl.className = 'pq-score'; return; }
       scoreEl.textContent = correct + ' bonne' + (correct > 1 ? 's' : '') + ' / ' + answered + ' répondue' + (answered > 1 ? 's' : '') + ' (sur ' + n + ')';
       if (answered === n) {
         scoreEl.className = 'pq-score ' + (correct === n ? 'perfect' : correct >= Math.ceil(n * 0.8) ? 'pass' : 'fail');
-        pqSetBest(id, correct, n);
-        var sb = box.querySelector('.pqs-b'); if (sb) sb.textContent = 'Meilleur : ' + Math.max(correct, (pqGetBest(id) || { s: 0 }).s) + '/' + n;
+        if (!reviewMode) {                       // la note de passage porte sur le quiz COMPLET
+          pqSetBest(id, correct, n);
+          var sb = box.querySelector('.pqs-b'); if (sb) sb.textContent = 'Meilleur : ' + Math.max(correct, (pqGetBest(id) || { s: 0 }).s) + '/' + n;
+          updateAttestGate(id);
+        }
       } else { scoreEl.className = 'pq-score'; }
     }
     function showExp(card, q) {
@@ -732,11 +785,32 @@
         (msg || (good ? 'Bonne réponse' : 'Mauvaise réponse'));
       fb.className = 'pq-fb on ' + (good ? 'ok' : 'no');
       card.classList.add('answered', good ? 'correct' : 'incorrect');
+      // carnet d'erreurs (mode révision) : une bonne réponse retire la question,
+      // une mauvaise l'ajoute.
+      var oi = parseInt(card.getAttribute('data-i'), 10);
+      var at = fails.indexOf(oi);
+      if (good && at >= 0) fails.splice(at, 1);
+      else if (!good && at < 0) fails.push(oi);
+      pqSetFails(id, fails);
+      if (reviewBtn && !reviewMode) {
+        reviewBtn.textContent = 'Réviser mes erreurs (' + fails.length + ')';
+        reviewBtn.style.display = fails.length ? '' : 'none';
+      }
       updateScore();
     }
 
-    // Choix de réponse + vrai/faux : rétroaction dès qu'une option est cochée
+    // Choix de réponse + vrai/faux : rétroaction dès qu'une option est cochée.
+    // Sélecteurs d'association : activer « Valider » quand tout est choisi.
     box.addEventListener('change', function (e) {
+      if (e.target && e.target.tagName === 'SELECT') {
+        var ac = e.target.closest('.pq-assoc');
+        if (ac && !ac.classList.contains('answered')) {
+          var all = [].slice.call(ac.querySelectorAll('.pq-sel'));
+          var chk = ac.querySelector('.pq-check');
+          if (chk) chk.disabled = !all.every(function (s) { return s.value !== ''; });
+        }
+        return;
+      }
       if (!e.target || e.target.type !== 'radio') return;
       var card = e.target.closest('.pq');
       if (!card || card.classList.contains('answered')) return;
@@ -814,6 +888,24 @@
           ? 'Bonne réponse — toutes les affirmations vraies trouvées'
           : foundGood + ' vraie' + (foundGood > 1 ? 's' : '') + ' sur ' + totalTrue + ' trouvée' + (foundGood > 1 ? 's' : '') +
             (wrong ? ' · ' + wrong + ' fausse' + (wrong > 1 ? 's' : '') + ' cochée' + (wrong > 1 ? 's' : '') : ''));
+      } else if (card.classList.contains('pq-assoc')) {
+        var right = 0, allGoodA = true;
+        [].forEach.call(card.querySelectorAll('.pq-pair'), function (row) {
+          var k = parseInt(row.getAttribute('data-k'), 10);
+          var sel = row.querySelector('.pq-sel');
+          var v = parseInt(sel.value, 10);
+          sel.disabled = true;
+          if (v === k) { row.classList.add('good'); right++; }
+          else {
+            row.classList.add('bad'); allGoodA = false;
+            row.querySelector('.pq-cor').textContent = '→ ' + q.pairs[k].r;
+          }
+        });
+        check.disabled = true;
+        showExp(card, q);
+        settle(card, allGoodA, allGoodA
+          ? 'Bonne réponse — toutes les associations sont exactes'
+          : right + '/' + q.pairs.length + ' association' + (right > 1 ? 's' : '') + ' exacte' + (right > 1 ? 's' : ''));
       } else if (card.classList.contains('pq-ordre')) {
         var allGood = true;
         [].forEach.call(card.querySelectorAll('.pq-step'), function (s) {
@@ -836,7 +928,7 @@
       }
     });
 
-    resetBtn.onclick = function () {
+    function resetAll() {
       [].forEach.call(box.querySelectorAll('.pq'), function (c) { c.classList.remove('answered', 'correct', 'incorrect'); });
       [].forEach.call(box.querySelectorAll('.pq input'), function (r) { r.checked = false; r.disabled = false; });
       [].forEach.call(box.querySelectorAll('.pq-opt'), function (o) { o.classList.remove('good', 'bad', 'missed'); });
@@ -844,11 +936,32 @@
         s.classList.remove('picked', 'good', 'bad'); s.removeAttribute('data-pos'); s.disabled = false;
         var nEl = s.querySelector('.pq-num'); if (nEl) nEl.textContent = '';
       });
-      [].forEach.call(box.querySelectorAll('.pq-check'), function (b) { b.disabled = !!b.closest('.pq-ordre'); });
+      [].forEach.call(box.querySelectorAll('.pq-pair'), function (row) {
+        row.classList.remove('good', 'bad');
+        var sel = row.querySelector('.pq-sel'); sel.value = ''; sel.disabled = false;
+        row.querySelector('.pq-cor').textContent = '';
+      });
+      [].forEach.call(box.querySelectorAll('.pq-check'), function (b) { b.disabled = !!(b.closest('.pq-ordre') || b.closest('.pq-assoc')); });
       [].forEach.call(box.querySelectorAll('.pq-clear'), function (b) { b.disabled = false; });
       [].forEach.call(box.querySelectorAll('.pq-fb'), function (f) { f.className = 'pq-fb'; f.innerHTML = ''; });
       [].forEach.call(box.querySelectorAll('.pq-exp'), function (ex) { ex.classList.remove('on'); ex.innerHTML = ''; });
       scoreEl.textContent = ''; scoreEl.className = 'pq-score';
+    }
+    resetBtn.onclick = resetAll;
+
+    // Mode révision : ne montrer que les questions ratées lors des passages
+    // précédents ; « Revoir tout le quiz » restaure la liste complète.
+    if (reviewBtn) reviewBtn.onclick = function () {
+      reviewMode = !reviewMode && fails.length > 0;
+      resetAll();
+      var failSet = {};
+      fails.forEach(function (i) { failSet[i] = 1; });
+      [].forEach.call(box.querySelectorAll('.pq'), function (c) {
+        var oi = parseInt(c.getAttribute('data-i'), 10);
+        c.classList.toggle('pq-hidden', reviewMode && !failSet[oi]);
+      });
+      reviewBtn.textContent = reviewMode ? 'Revoir tout le quiz' : 'Réviser mes erreurs (' + fails.length + ')';
+      reviewBtn.style.display = (reviewMode || fails.length) ? '' : 'none';
     };
   }
 
@@ -1070,20 +1183,46 @@
   }
 
   /* ---------- quiz éclair sécurité ---------- */
-  var QUIZ = window.QUIZ || [];
   var quizSt = null;
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var QTYPE_LBL = { vf: 'Vrai ou faux', multi: 'Plusieurs réponses', ordre: 'Remettre en ordre',
+    trou: 'Texte à trous', erreur: 'Chasse à l\'erreur' };
+  /* Pool du quiz éclair : les questions du pool historique (window.QUIZ) + les
+     questions typées des fiches (vrai/faux, texte à trous, chasse à l'erreur,
+     plusieurs réponses, remise en ordre) adaptées avec leur procédure source.
+     Les associations restent sur les fiches. */
+  function quizPool() {
+    var pool = (window.QUIZ || []).slice();
+    var QP = window.QUIZ_PROC || {};
+    var byId = {};
+    DATA.forEach(function (p) { byId[p.id] = p; });
+    Object.keys(QP).forEach(function (pid) {
+      var p = byId[pid]; if (!p) return;
+      QP[pid].forEach(function (q) {
+        if (!q.t || q.t === 'assoc') return;
+        var item = { type: q.t, question: q.q, explication: q.e, sourceId: pid,
+          code: p.code || '', titre: p.titre, categorie: p.categorie };
+        if (q.t === 'vf') { item.options = ['Vrai', 'Faux']; item.answer = q.vrai ? 0 : 1; }
+        else if (q.t === 'multi') { item.options = q.o; item.answers = q.a; }
+        else if (q.t === 'ordre') { item.steps = q.o; }
+        else { item.options = q.o; item.answer = q.a; }   // trou / erreur
+        pool.push(item);
+      });
+    });
+    return pool;
+  }
 
   function renderQuiz(view) {
-    if (!QUIZ.length) { view.innerHTML = '<div class="wrap"><div class="empty">Le quiz n\'est pas encore disponible.</div></div>'; return; }
+    var POOL = quizPool();
+    if (!POOL.length) { view.innerHTML = '<div class="wrap"><div class="empty">Le quiz n\'est pas encore disponible.</div></div>'; return; }
     quizSt = null;
-    var cats = {}; QUIZ.forEach(function (q) { cats[q.categorie] = (cats[q.categorie] || 0) + 1; });
+    var cats = {}; POOL.forEach(function (q) { cats[q.categorie] = (cats[q.categorie] || 0) + 1; });
     var catOpts = '<option value="">Toutes les catégories</option>' + Object.keys(cats).sort().map(function (c) {
       return '<option value="' + esc(c) + '">' + esc(c) + ' (' + cats[c] + ')</option>'; }).join('');
     view.innerHTML = '<section class="quizhero"><div class="wrap">' +
       '<span class="eyebrow">Auto-vérification · pas une formation</span>' +
       '<h1>Quiz éclair <span class="hl">sécurité</span></h1>' +
-      '<p class="lead">Teste tes réflexes sur les consignes, distances et interdictions des procédures. ' + QUIZ.length + ' questions au total, tirées au hasard.</p>' +
+      '<p class="lead">Teste tes réflexes sur les consignes, distances et interdictions des procédures. ' + POOL.length + ' questions au total (choix de réponse, vrai ou faux, textes à trous, remises en ordre…), tirées au hasard.</p>' +
       '<div class="quizstart">' +
         '<label class="qsf"><span>Nombre de questions</span><select class="f" id="qN"><option>5</option><option selected>10</option><option>15</option><option value="999">Toutes</option></select></label>' +
         '<label class="qsf"><span>Catégorie</span><select class="f" id="qCat">' + catOpts + '</select></label>' +
@@ -1092,7 +1231,7 @@
     '</div></section>';
     $('#qStart').onclick = function () {
       var n = parseInt($('#qN').value, 10), cat = $('#qCat').value;
-      var pool = QUIZ.filter(function (q) { return !cat || q.categorie === cat; });
+      var pool = POOL.filter(function (q) { return !cat || q.categorie === cat; });
       pool = shuffle(pool).slice(0, Math.min(n, pool.length));
       quizSt = { pool: pool, idx: 0, score: 0, answered: false };
       renderQ(view);
@@ -1100,32 +1239,111 @@
   }
   function renderQ(view) {
     var s = quizSt, q = s.pool[s.idx];
+    var body, hint = '';
+    if (q.type === 'multi') {
+      body = '<div class="qopts">' + shuffle(q.options.map(function (_, i) { return i; })).map(function (i) {
+        return '<button class="qopt qsel" data-i="' + i + '">' + esc(q.options[i]) + '</button>'; }).join('') + '</div>';
+      hint = 'Sélectionne TOUTES les affirmations vraies, puis valide.';
+    } else if (q.type === 'ordre') {
+      var ord = shuffle(q.steps.map(function (_, i) { return i; }));
+      if (ord.every(function (v, j) { return v === j; })) ord.push(ord.shift());
+      body = '<div class="pq-steps qsteps">' + ord.map(function (k) {
+        return '<button type="button" class="pq-step" data-k="' + k + '"><span class="pq-num"></span><span class="pq-txt">' + esc(q.steps[k]) + '</span></button>';
+      }).join('') + '</div>';
+      hint = 'Touche les étapes dans l\'ordre d\'exécution (1, 2, 3…), puis valide.';
+    } else {
+      body = '<div class="qopts">' + shuffle(q.options.map(function (_, i) { return i; })).map(function (i) {
+        return '<button class="qopt" data-i="' + i + '">' + esc(q.options[i]) + '</button>'; }).join('') + '</div>';
+    }
+    var needV = (q.type === 'multi' || q.type === 'ordre');
     view.innerHTML = '<div class="wrap quizwrap">' +
       '<div class="qtop"><a class="back" href="#/quiz">' + ICON.back + ' Quitter</a>' +
         '<span class="qscore">Score : ' + s.score + '</span></div>' +
       '<div class="qbar"><i style="width:' + Math.round(s.idx / s.pool.length * 100) + '%"></i></div>' +
-      '<div class="qcard"><div class="qtag">' + esc(q.code || q.categorie) + ' · Question ' + (s.idx + 1) + '/' + s.pool.length + '</div>' +
+      '<div class="qcard"><div class="qtag">' + esc(q.code || q.categorie) +
+        (q.type && QTYPE_LBL[q.type] ? ' · ' + QTYPE_LBL[q.type] : '') +
+        ' · Question ' + (s.idx + 1) + '/' + s.pool.length + '</div>' +
         '<h2 class="qq">' + esc(q.question) + '</h2>' +
-        '<div class="qopts">' + shuffle(q.options.map(function (_, i) { return i; })).map(function (i) {
-        return '<button class="qopt" data-i="' + i + '">' + esc(q.options[i]) + '</button>'; }).join('') + '</div>' +
+        (hint ? '<p class="qhint">' + hint + '</p>' : '') +
+        body +
+        (needV ? '<div class="qvald"><button class="btn" id="qValider"' + (q.type === 'ordre' ? ' disabled' : '') + '>Valider</button></div>' : '') +
         '<div class="qfb" id="qfb"></div>' +
       '</div></div>';
-    [].forEach.call(document.querySelectorAll('.qopt'), function (b) {
-      b.onclick = function () { pick(view, parseInt(b.getAttribute('data-i'), 10)); };
-    });
+
+    if (q.type === 'multi') {
+      [].forEach.call(document.querySelectorAll('.qsel'), function (b) {
+        b.onclick = function () { if (!s.answered) b.classList.toggle('sel'); };
+      });
+      $('#qValider').onclick = function () {
+        if (s.answered) return; s.answered = true;
+        var okSet = {}; q.answers.forEach(function (i) { okSet[i] = 1; });
+        var good = true;
+        [].forEach.call(document.querySelectorAll('.qsel'), function (b) {
+          var i = parseInt(b.getAttribute('data-i'), 10), sel = b.classList.contains('sel');
+          b.classList.add('locked');
+          if (okSet[i]) { b.classList.add(sel ? 'ok' : 'missed'); if (!sel) good = false; }
+          else if (sel) { b.classList.add('bad'); good = false; }
+        });
+        $('#qValider').disabled = true;
+        qFeedback(view, q, good);
+      };
+    } else if (q.type === 'ordre') {
+      [].forEach.call(document.querySelectorAll('.qsteps .pq-step'), function (st) {
+        st.onclick = function () {
+          if (s.answered) return;
+          var steps = [].slice.call(document.querySelectorAll('.qsteps .pq-step'));
+          if (st.classList.contains('picked')) {
+            var removed = parseInt(st.getAttribute('data-pos'), 10);
+            st.classList.remove('picked'); st.removeAttribute('data-pos');
+            st.querySelector('.pq-num').textContent = '';
+            steps.forEach(function (x) {
+              var pos = parseInt(x.getAttribute('data-pos') || '-1', 10);
+              if (pos > removed) { x.setAttribute('data-pos', String(pos - 1)); x.querySelector('.pq-num').textContent = String(pos); }
+            });
+          } else {
+            var picked = steps.filter(function (x) { return x.classList.contains('picked'); }).length;
+            st.classList.add('picked'); st.setAttribute('data-pos', String(picked));
+            st.querySelector('.pq-num').textContent = String(picked + 1);
+          }
+          var done = steps.filter(function (x) { return x.classList.contains('picked'); }).length;
+          $('#qValider').disabled = done !== steps.length;
+        };
+      });
+      $('#qValider').onclick = function () {
+        if (s.answered || $('#qValider').disabled) return; s.answered = true;
+        var good = true;
+        [].forEach.call(document.querySelectorAll('.qsteps .pq-step'), function (st) {
+          var k = parseInt(st.getAttribute('data-k'), 10), pos = parseInt(st.getAttribute('data-pos'), 10);
+          if (pos === k) st.classList.add('good');
+          else { st.classList.add('bad'); good = false; st.querySelector('.pq-num').textContent = (pos + 1) + ' → ' + (k + 1); }
+          st.disabled = true;
+        });
+        $('#qValider').disabled = true;
+        qFeedback(view, q, good);
+      };
+    } else {
+      [].forEach.call(document.querySelectorAll('.qopt'), function (b) {
+        b.onclick = function () { pick(view, parseInt(b.getAttribute('data-i'), 10)); };
+      });
+    }
   }
   function pick(view, i) {
     var s = quizSt; if (s.answered) return; s.answered = true;
     var q = s.pool[s.idx], correct = q.answer;
-    if (i === correct) s.score++;
     [].forEach.call(document.querySelectorAll('.qopt'), function (b) {
       b.classList.add('locked');
       var bi = parseInt(b.getAttribute('data-i'), 10);
       if (bi === correct) b.classList.add('ok'); else if (bi === i) b.classList.add('bad');
     });
+    qFeedback(view, q, i === correct);
+  }
+  function qFeedback(view, q, good) {
+    var s = quizSt;
+    if (good) s.score++;
+    var qsc = document.querySelector('.qscore'); if (qsc) qsc.textContent = 'Score : ' + s.score;
     var src = q.sourceId ? '<div class="qsrc">Source : <a href="#/p/' + esc(q.sourceId) + '">' + esc(q.code || q.titre) + '</a></div>' : '';
-    $('#qfb').innerHTML = '<div class="qexp ' + (i === correct ? 'good' : 'wrong') + '">' +
-      '<b>' + (i === correct ? '✓ Bonne réponse' : '✗ Mauvaise réponse') + '</b>' +
+    $('#qfb').innerHTML = '<div class="qexp ' + (good ? 'good' : 'wrong') + '">' +
+      '<b>' + (good ? '✓ Bonne réponse' : '✗ Mauvaise réponse') + '</b>' +
       '<p>' + esc(q.explication) + '</p>' + src +
       '<button class="btn" id="qNext">' + (s.idx + 1 < s.pool.length ? 'Question suivante' : 'Voir le résultat') + '</button></div>';
     $('#qNext').onclick = function () { s.idx++; s.answered = false; if (s.idx >= s.pool.length) renderResult(view); else renderQ(view); };

@@ -1,10 +1,13 @@
 /* ===========================================================================
    QUIZ — NOUVEAUX TYPES DE QUESTIONS (par procédure). Fusion dans QUIZ_PROC.
    Types :
-   - { t:'vf', q, vrai:true|false, e }       → vrai ou faux
-   - { t:'multi', q, o:[...], a:[indices], e } → cocher les affirmations vraies
+   - { t:'vf', q, vrai:true|false, e }          → vrai ou faux
+   - { t:'multi', q, o:[...], a:[indices], e }  → cocher les affirmations vraies
    - { t:'ordre', q, o:[étapes DANS L'ORDRE CORRECT], e } → remettre en ordre
      (l'application mélange l'affichage ; o reste l'ordre officiel du PDF)
+   - { t:'trou', q (contient ______), o, a, e } → compléter la consigne
+   - { t:'erreur', q, o:[actions], a:index de l'action FAUTIVE, e } → chasse à l'erreur
+   - { t:'assoc', q, pairs:[{l,r}...], e }      → associer paramètre ↔ valeur
    Chaque question s'appuie sur un fait précis de la procédure officielle et
    porte sa référence (champ e). Générées à partir du texte des PDF puis
    vérifiées contre la source.
@@ -23,7 +26,16 @@
         "e": "« Le centralisateur de tiges est principalement utilisé pour le forage de trous de V-30 pour empêcher l'oscillement des tiges et pour maintenir le V-30 correctement alignée » ; « Faites la procédure contraire lors du démantèlement du centralisateur. » ; « 2 Clés ¾ ou, 1 clé ¾ et 1 box ¾ avec 1 ratchet ou 1 impact » (les clés sont des ¾, et la tige doit être mise sur le train de tige AVANT d'installer le centralisateur)." },
       { "t": "ordre", "q": "Remettez ces étapes de l'installation du centralisateur dans le bon ordre.",
         "o": ["Mettre la tige sur le train de tige", "Aligner l'accouplement du bas d'une des deux pièces sur les coches de slip plate de la tige", "Rapprocher l'autre pièce et l'aligner avec celle déjà maintenue en place", "Mettre les boulons dans les trous prévus à cet effet", "Serrer tous les boulons avec l'outil adéquat (clé ou box)"],
-        "e": "Étapes 3 à 11 de la procédure : « Avant d'installer le centralisateur, la tige doit être mise sur le train de tige » … « Serrer tous les boulons en maintenant une tension sur les lockwashers à l'aide de l'outil adéquat (clé ou box) »" }
+        "e": "Étapes 3 à 11 de la procédure : « Avant d'installer le centralisateur, la tige doit être mise sur le train de tige » … « Serrer tous les boulons en maintenant une tension sur les lockwashers à l'aide de l'outil adéquat (clé ou box) »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Espacement d'installation des centralisateurs", "r": "tous les 40 pieds (ou selon les conditions)" },
+                  { "l": "Poids de chaque pièce du centralisateur", "r": "46 livres chacune (2 pièces)" },
+                  { "l": "Poids total du centralisateur (dessin technique)", "r": "93,0 lbs" },
+                  { "l": "Nombre de travailleurs requis", "r": "2" }],
+        "e": "« Espacement d'installation des centralisateurs : tous les 40 pieds (ou selon les conditions) » ; « Poids de chaque pièce du centralisateur : 46 livres chacune (2 pièces) » ; « Poids total du centralisateur (dessin technique) : 93,0 lbs » ; « Nombre de travailleurs requis : 2 »" },
+      { "t": "erreur", "q": "Un collègue installe le centralisateur. Quelle action est une ERREUR ?",
+        "o": ["Il met la tige sur le train de tige avant l'installation", "Il aligne l'accouplement du haut d'une des pièces sur les coches de slip plate", "Il met 6 boulons dans un sens et 6 dans l'autre", "Il serre en maintenant une tension sur les lockwashers"], "a": 1,
+        "e": "« Aligner l'accouplement du bas d'une des deux pièces du centralisateur sur les coches de slip plate de la tige » — l'accouplement du bas, pas celui du haut." }
     ],
     "dr600-op-002": [
       { "t": "vf", "q": "Pendant toute la durée des opérations de pliage et de dépliage, la foreuse doit rester connectée au 600 volts.", "vrai": true,
@@ -37,7 +49,16 @@
         "e": "« Nous favorisons le remorquage à partir du côté moteur » ; « les chaînes de sécurité à la foreuse et à l'équipement de remorquage EN ''X'' » ; « un objet (ex; une chaudière vide, un bloc de bois ou les fourches d'un tracteur) doit être placé sous la tongue pour la soutenir »" },
       { "t": "ordre", "q": "Remettez ces étapes du repliage de la DR-600-MU dans le bon ordre.",
         "o": ["Utiliser « ROT TABLE » pour ramener la table parallèle à la machine", "Utiliser « LONGITUDINALE » pour rétracter les extensions de table", "Utiliser « DIP » pour positionner le mât à la verticale", "Utiliser « MAST TILT UP » pour rabattre la tour sur la table", "Utiliser « ARM DOWN » pour descendre la tour sur le pilier d'assise"],
-        "e": "Étapes 1, 2, 3, 6 et 8 de la procédure de repliage — « les étapes du repliage demeurent les mêmes et doivent être effectuées dans l'ordre prescrit par cette procédure »" }
+        "e": "Étapes 1, 2, 3, 6 et 8 de la procédure de repliage — « les étapes du repliage demeurent les mêmes et doivent être effectuées dans l'ordre prescrit par cette procédure »" },
+      { "t": "trou", "q": "Lors des déplacements de la DR-600-MU, l'opérateur doit toujours se tenir à plus de ______ de la machine.",
+        "o": ["3 mètres", "5 mètres", "1 mètre", "10 mètres"], "a": 0,
+        "e": "« LORS DES DÉPLACEMENTS, L'OPÉRATEUR DOIT : 1- RESTER IMMOBILE; 2- TOUJOURS SE TENIR À PLUS DE 3 MÈTRES DE LA MACHINE »" },
+      { "t": "trou", "q": "En mode diesel, avec les tractions en direction opposée, la position du potentiomètre ne doit pas dépasser ______ pour éviter de faire caler le moteur.",
+        "o": ["la moitié", "le quart", "les trois quarts", "le maximum"], "a": 0,
+        "e": "« LORS DE L'UTILISATION DES TRACTIONS EN DIRECTION OPPOSÉE SUR MODE DIESEL, LA POSITION DU POTENTIOMÈTRE NE DOIT PAS DÉPASSER LA MOITIÉ POUR ÉVITER DE FAIRE CALER LE MOTEUR »" },
+      { "t": "erreur", "q": "Un collègue prépare le remorquage de la DR-600-MU. Quelle action est une ERREUR ?",
+        "o": ["Il favorise le remorquage à partir du côté moteur", "Il relie les chaînes de sécurité à la foreuse et à l'équipement de remorquage en « X »", "Il enroule le câble de l'écran sur le réservoir hydraulique et le fixe avec des sangles", "Il place un objet (chaudière vide, bloc de bois) sous la tongue"], "a": 2,
+        "e": "« Enroulez le câble de l'écran sur le réservoir à eau et le sécuriser en l'attachant à l'aide de sangles. » — sur le réservoir à eau, pas le réservoir hydraulique." }
     ],
     "pro-dd-st-001": [
       { "t": "vf", "q": "Avant de monter le core barrel complet, vous devez vérifier l'usure du reaming shell avec la jauge à shell et le remplacer au besoin.", "vrai": true,
@@ -65,7 +86,13 @@
         "e": "« Dévisser la backend en utilisant les 2 clés à tube, et le ranger dans un endroit sécuritaire. » ; « Avant de fermer une boite pleine toujours s'assurer que les blocs de métrage soient bien placés et initialisés ». À l'inverse : le travailleur applique la procédure et le superviseur voit au bon déroulement ; « Ne jamais frapper directement sur le tube avec le marteau pour ne pas le bosser » ; le core spring se vérifie « en utilisant un bout de carotte pour voir s'il la retient bien »." },
       { "t": "ordre", "q": "Remettez ces étapes de la procédure « Vider le tube carottier » dans le bon ordre.",
         "o": ["Dévisser la backend et la ranger dans un endroit sécuritaire", "Vider le tube sans jamais s'exposer les mains en avant du tube carottier", "Une fois le tube vide, vérifier le bon fonctionnement du core spring", "Graisser le core spring et le core case pour éviter l'usure prématurée", "Remettre la backend sur le tube et faire une bonne inspection visuelle"],
-        "e": "Étapes 1, 2, 8, 9 et 10 de la procédure — « Après vérification, il est important de graisser le core spring et le core case pour éviter l'usure prématurée. »" }
+        "e": "Étapes 1, 2, 8, 9 et 10 de la procédure — « Après vérification, il est important de graisser le core spring et le core case pour éviter l'usure prématurée. »" },
+      { "t": "trou", "q": "Quand le tube est bloqué loin du bout, insérez une tige d'acier de ______ dans le tube, puis glissez l'anneau et frappez dessus.",
+        "o": ["un pied", "trois pieds", "six pouces", "deux pieds"], "a": 0,
+        "e": "« Quand le tube est bloqué loin du bout du tube, insérer une tige d'acier d'un pied dans le tube, glisser l'anneau sur le tube et frapper dessus jusqu'au déblocage »" },
+      { "t": "erreur", "q": "Un collègue vide le tube carottier. Quelle action est une ERREUR ?",
+        "o": ["Il dévisse la backend avec les 2 clés à tube et la range en lieu sûr", "Il met les mains en avant du tube pour le vider plus vite", "Il place les carottes au fur et à mesure pour ne pas les mélanger", "Il vérifie le core spring avec un bout de carotte une fois le tube vide"], "a": 1,
+        "e": "« Vider le tube de manière à ne jamais s'exposer les mains en avant du tube carottier »" }
     ],
     "pro-dd-st-003": [
       { "t": "vf", "q": "Lors de la construction d'un plancher secondaire, la dernière planche doit se rapprocher à au moins 3 pouces de la tour.", "vrai": true,
@@ -79,7 +106,10 @@
         "e": "« 4- 500 mètres et plus: a. Plancher complet 16 X 32 » ; « Il devra avoir un minimum de 32'' de largeur par 72'' de long et un maximum de 12'' de hauteur » ; « couper des 8''X8'' ou 6''X6'' en bout de 36'' pour faire des cages selon la hauteur désirée »" },
       { "t": "ordre", "q": "Remettez ces étapes de la fabrication du plancher principal dans le bon ordre.",
         "o": ["Placer la structure de base dans le sens contraire du forage (selon l'azimut)", "Mettre la structure de base au niveau avec des cages et des coins de bois", "Disposer les 3''X8'' dans le sens contraire de la structure de base", "Clouer les extrémités des 3''X8'' sur un morceau de la structure de base", "Couper les 3''X8'' de manière carrée et égale avec le bord à l'entrée du plancher"],
-        "e": "Étapes 1 à 6 de la procédure : « 1- Placer la structure de base […] 6- À l'entrée du plancher, les 3''X8'' doivent être coupés de manière carrée et égale avec le bord du plancher »" }
+        "e": "Étapes 1 à 6 de la procédure : « 1- Placer la structure de base […] 6- À l'entrée du plancher, les 3''X8'' doivent être coupés de manière carrée et égale avec le bord du plancher »" },
+      { "t": "trou", "q": "Sur le plancher secondaire, la dernière planche doit se rapprocher à au moins ______ de la tour.",
+        "o": ["3 pouces", "6 pouces", "12 pouces", "2 pieds"], "a": 0,
+        "e": "« La dernière planche doit se rapprocher à au moins 3 pouces de la tour »" }
     ],
     "pro-dd-st-004": [
       { "t": "vf", "q": "Le loading chamber doit demeurer en place en tout temps jusqu'à la remontée du tube carottier au collet, afin d'éviter l'éjection du tube lors de l'interception d'une veine d'eau ou de gaz.", "vrai": true,
@@ -93,7 +123,10 @@
         "e": "« Une inspection visuelle doit être faite avant la manipulation du câble Wire line. » ; « Pour les adaptateurs courts, la tige de forage devra être retirée au complet avec la tête de la foreuse. » ; « Quand ''l'over shot'' est arrivé au fond du trou, purger la pression d'eau dans les tiges de forage »" },
       { "t": "ordre", "q": "Remettez ces étapes de la descente de l'overshot et de la remontée du tube carottier dans le bon ordre.",
         "o": ["Activer la pompe à l'eau", "Quand l'overshot arrive au fond du trou, purger la pression d'eau dans les tiges", "Desserrer le caoutchouc du loading chamber avec la clé à molette", "Évacuer la zone de travail", "Tirer le tube carottier avec la commande du treuil jusqu'au loading chamber"],
-        "e": "Étapes 11 à 15 de la procédure : « 11- Activer la pompe à l'eau […] 15- Tiré le tube carottier en utilisant la commande du treuil jusqu'à l'arrivée de celui-ci dans le loading chamber »" }
+        "e": "Étapes 11 à 15 de la procédure : « 11- Activer la pompe à l'eau […] 15- Tiré le tube carottier en utilisant la commande du treuil jusqu'à l'arrivée de celui-ci dans le loading chamber »" },
+      { "t": "erreur", "q": "Un collègue récupère le tube carottier avec le loading chamber. Quelle action est une ERREUR ?",
+        "o": ["Il active la pompe à l'eau", "Il purge la pression d'eau quand l'overshot est arrivé au fond du trou", "Il desserre le caoutchouc du loading chamber avec un pipe wrench", "Il évacue la zone de travail avant de tirer le tube au treuil"], "a": 2,
+        "e": "« Desserrer le caoutchouc du «loading chamber» avec la clé à molette » — la clé à molette, pas un pipe wrench (interdit pour la water swivel)." }
     ],
     "pro-dd-st-006": [
       { "t": "vf", "q": "Pour dévisser la water swivel à l'aide de la foreuse, la water swivel doit être munie d'un adapteur long.", "vrai": true,
@@ -121,7 +154,13 @@
         "e": "« 10-S'assurer d'appuyer les tiges sur la barre transversale du fond et non sur les côtés » ; « 13-La chaîne de retenue doit être utilisée en tout temps, sauf pendant les actions d'ajout et de retrait des tiges en continu » ; « 8- Relier les deux bouts de chaîne avec un tendeur à cliquet chaîne et serrer le tendeur au maximum »" },
       { "t": "ordre", "q": "Remettez ces étapes de l'installation du support de tiges de forage dans le bon ordre.",
         "o": ["Faire un trou de 18 po de profond au mur avec la foreuse à percussion électrique", "Insérer le eye bolt sans l'enfoncer jusqu'au fond du trou", "À deux, soulever le support et appuyer les pattes du haut au mur", "Passer une chaîne dans le eye bolt jusqu'à son milieu", "Relier les deux bouts de chaîne avec un tendeur à cliquet et serrer au maximum"],
-        "e": "Étapes 2 à 8 de la procédure : « faire un trou de 18 po de profond […] Insérer le eye bolt […] soulever le support […] Passer une chaîne dans le eye bolt jusqu'à son milieu […] Relier les deux bouts de chaîne avec un tendeur à cliquet chaîne »" }
+        "e": "Étapes 2 à 8 de la procédure : « faire un trou de 18 po de profond […] Insérer le eye bolt […] soulever le support […] Passer une chaîne dans le eye bolt jusqu'à son milieu […] Relier les deux bouts de chaîne avec un tendeur à cliquet chaîne »" },
+      { "t": "trou", "q": "Les marques sur la chaîne garantissent que la chaîne « lousse » ne sera jamais à moins de ______ du sol au centre.",
+        "o": ["5 pieds", "3 pieds", "6 pieds", "8 pieds"], "a": 0,
+        "e": "« …pour s'assurer que la chaîne ''lousse'' ne sera jamais moins de 5 pieds du sol au centre. »" },
+      { "t": "erreur", "q": "Un collègue installe le support de tiges de forage. Quelle action est une ERREUR ?",
+        "o": ["Il fait un trou de 18 po de profond au mur avec la foreuse à percussion électrique", "Il insère le eye bolt en l'enfonçant jusqu'au fond du trou", "Il passe la chaîne dans le eye bolt jusqu'à son milieu", "Il serre le tendeur à cliquet au maximum"], "a": 1,
+        "e": "« Insérer le eye bolt, mais ne pas l'enfoncer jusqu'au fond du trou »" }
     ],
     "pro-dd-st-007": [
       { "t": "vf", "q": "Une coulée de 8 sacs remplit un trou de forage NQ sur une longueur d'environ 70 m, en terrain non fracturé.", "vrai": false,
@@ -135,7 +174,13 @@
         "e": "« Laisser 3 m au fond pour ne pas obstruer le tube » ; « Le trou est plein quand la pression dépasse la pression d'eau initiale (la pression sera déterminée par l'ingénierie) » ; « placer toutes les pièces dans un sac d'échantillonnage (sample) fermé avec une ty-rap ». (Le boyau hydraulique est le #16 et la jute s'insère à 1 pied du collet.)" },
       { "t": "ordre", "q": "Remettez ces étapes de préparation du mélange de ciment dans le bon ordre.",
         "o": ["Ajouter la quantité d'eau dans le mélangeur selon la recette", "Mettre le mélangeur en marche", "Ajouter les sacs de ciment par petites quantités dans l'eau", "Laisser mélanger pendant 5 minutes pour obtenir un mélange homogène", "Vider le ciment mélangé dans la cuve de pompage"],
-        "e": "Étapes 8 à 12 de la procédure : « Ajouter la quantité d'eau dans le mélangeur de la machine selon la recette […] Une fois le mélange homogène, vider le ciment mélangé dans la cuve de pompage »" }
+        "e": "Étapes 8 à 12 de la procédure : « Ajouter la quantité d'eau dans le mélangeur de la machine selon la recette […] Une fois le mélange homogène, vider le ciment mélangé dans la cuve de pompage »" },
+      { "t": "trou", "q": "Une coulée de 8 sacs remplit un trou de forage BQ sur une longueur d'environ ______.",
+        "o": ["70 m", "45 m", "25 m", "100 m"], "a": 0,
+        "e": "« Une coulée de 8 sacs rempli un trou sur une longueur d'environ : 70m dans un trou de forage BQ; 45m dans un trou de forage NQ »" },
+      { "t": "trou", "q": "Pendant le pompage d'un trou descendant, si la pression monte à plus de ______, remontez le tube d'une dizaine de pieds vers le collet.",
+        "o": ["30 psi", "15 psi", "60 psi", "100 psi"], "a": 0,
+        "e": "« Si la pression commence à monter à plus de 30 psi, remonter le tube vers le collet du trou d'une dizaine de pieds »" }
     ],
     "pro-dd-st-009-1": [
       { "t": "vf", "q": "Le serrage des 9 boulons du chuck doit être vérifié au début de chaque quart avec la clé dynamométrique, sans les resserrer.", "vrai": true,
@@ -149,7 +194,10 @@
         "e": "« Mettre des oreilles neuves ▪ Mettre un latch piston neuf ▪ Mettre une locking coupling neuve » ; « Les changements de pièces en prévention effectués avant le début du forage viennent diminuer les probabilités de survenance à ''TRÈS IMPROBABLE'' » ; « Si les jaws sont belles visuellement et que la tige glisse, l'état des ressorts seront à vérifier ». (Faux : il est interdit de « faire tourner la tête rapidement et fermer les jaws pour casser une rod » ; si le trou crée un risque de chute, « l'utilisation des tiges de 5 pieds est obligatoire ».)" },
       { "t": "ordre", "q": "Remettez ces étapes à suivre quand on se rend compte que le tube n'est pas latché dans le bon ordre.",
         "o": ["Constater que le tube n'est pas latché (ou qu'il est délatché)", "S'assurer que tous les travailleurs sont en dehors de la porte interverrouillée", "Descendre le bout des tiges le plus proche possible du plancher", "Faire sortir le tube par des va-et-vient des tiges de forage à l'aide de la tête"],
-        "e": "Section « Quand on se rend compte que le tube n'est pas latché » : « Tous les travailleurs doivent être en-dehors de la porte interverrouillée ▪ Descendre le bout des tiges le plus proche du plancher possible; ▪ Effectuer les manœuvres nécessaires pour faire sortir le tube en faisant des mouvements de va-et-vient avec les tiges de forage à l'aide de la tête »" }
+        "e": "Section « Quand on se rend compte que le tube n'est pas latché » : « Tous les travailleurs doivent être en-dehors de la porte interverrouillée ▪ Descendre le bout des tiges le plus proche du plancher possible; ▪ Effectuer les manœuvres nécessaires pour faire sortir le tube en faisant des mouvements de va-et-vient avec les tiges de forage à l'aide de la tête »" },
+      { "t": "trou", "q": "Bris des boulons du chuck : changer les 9 boulons et les serrer à ______.",
+        "o": ["105 lbs/pied", "125 lbs/pied", "85 lbs/pied", "200 lbs/pied"], "a": 0,
+        "e": "« Bris des boulons — CHANGER LES 9 BOULONS ET SERRÉS À 105 LBS/PIED »" }
     ],
     "pro-dd-st-009-2": [
       { "t": "vf", "q": "Le serrage des 9 boulons du chuck doit être vérifié au début de chaque quart avec la clé dynamométrique, sans les resserrer.", "vrai": true,
@@ -177,7 +225,13 @@
         "e": "« Pour commander les équipements pour ancrer le mât utiliser le Code MRI qui est : CASINGKIT » ; « 4 turnbuckles 1'' ¼ X 12 pouces JAW & JAW 15 200 lbs » ; « a. Poids de plus de 8 500 lbs de tuyau dans le trou ». (Le kit contient 4 chaînes — les manilles sont au nombre de 6 — et les ancrages selon devis d'ingénieur ont une capacité de 15 000 lbs.)" },
       { "t": "ordre", "q": "Remettez ces étapes de l'installation d'un tuyau dans le bon ordre.",
         "o": ["Installer la plaque d'assise au niveau supérieur, dans le même angle que le degré du trou", "Déposer le serre-tuyau hydraulique (JAW) sur la plaque, autour du tuyau", "Enligner le bout du tuyau avec le bout de l'adapteur à l'aide du guide à tuyaux", "Serrer les mâchoires hydrauliques sur le tuyau à l'aide de la pompe", "Débuter les travaux de soudage selon le devis du donneur d'ordre"],
-        "e": "Étapes 10 à 15 de la procédure : « Installer la plaque d'assise fournie par le donneur d'ordre […] Débuter les travaux de soudage selon le devis de soudage fourni par le donneur d'ordre »" }
+        "e": "Étapes 10 à 15 de la procédure : « Installer la plaque d'assise fournie par le donneur d'ordre […] Débuter les travaux de soudage selon le devis de soudage fourni par le donneur d'ordre »" },
+      { "t": "trou", "q": "Les ancrages selon devis d'ingénieur doivent avoir une capacité de ______.",
+        "o": ["15 000 lbs", "25 000 lbs", "8 500 lbs", "5 000 lbs"], "a": 0,
+        "e": "« Ancrages selon devis d'ingénieur capacité 15 000 lbs. »" },
+      { "t": "erreur", "q": "Un collègue prépare l'installation de conduites métalliques. Quelle affirmation contient une ERREUR ?",
+        "o": ["Pour un forage-alésage ascendant d'un seul trait, il installe les ancrages du mât avant le forage", "Il garde l'élingue de levage attachée au tubage jusqu'à ce qu'il soit stabilisé avec la soudure", "Il commande les équipements d'ancrage avec le code MRI CASINGKIT", "Il utilise les 6 chaînes graduées ½ po du kit d'ancrage"], "a": 3,
+        "e": "Le kit CASINGKIT contient « 4 chaînes gradées ½'' X 10' » — 4 chaînes, pas 6." }
     ],
     "pro-dd-st-011": [
       { "t": "vf", "q": "Dans le cas particulier où le tube carottier reste coincé dans les tiges ou que le câble est sectionné, vous devez retirer toutes les tiges de forage avant de récupérer le tube carottier.", "vrai": true,
@@ -200,7 +254,14 @@
         "e": "« Nombre de boulons bell housing ↔ moteur électrique : 4 »" },
       { "t": "multi", "q": "Sélectionnez les affirmations vraies pour le changement de coupling (CUBEX).",
         "o": ["La barrure du coupling de la pompe se desserre avec une clé ALLEN 5/16", "La barrure du coupling du moteur électrique se desserre avec une clé ALLEN 5/16", "Il faut appliquer de l'antiseize sur les deux shafts", "Le bell housing est fixé au moteur électrique par 6 boulons", "Il faut toujours bien nettoyer le shaft et l'épaulement de la pompe"], "a": [0, 2, 4],
-        "e": "« Clé ALLEN pour barrure coupling de la pompe : 5/16 » ; « Clé ALLEN pour barrure coupling du moteur électrique : 3/16 » ; « Appliquer de l'antiseize sur les deux shafts » ; « Toujours bien nettoyer le shaft et l'épaulement de la pompe ainsi que le shaft du moteur électrique. »" }
+        "e": "« Clé ALLEN pour barrure coupling de la pompe : 5/16 » ; « Clé ALLEN pour barrure coupling du moteur électrique : 3/16 » ; « Appliquer de l'antiseize sur les deux shafts » ; « Toujours bien nettoyer le shaft et l'épaulement de la pompe ainsi que le shaft du moteur électrique. »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Clé pour boulons pompe ↔ bell housing (2 boulons)", "r": "15/16" },
+                  { "l": "Clé ALLEN pour barrure coupling de la pompe", "r": "5/16" },
+                  { "l": "Clé ALLEN pour barrure coupling du moteur électrique", "r": "3/16" },
+                  { "l": "Clé ALLEN pour barrure du spline sur coupling de la pompe", "r": "1/4" },
+                  { "l": "Clé ALLEN pour 4 boulons bell housing ↔ moteur électrique (tête ALLEN)", "r": "1/2" }],
+        "e": "« Clé pour boulons pompe ↔ bell housing (2 boulons) : 15/16 » ; « Clé ALLEN pour barrure coupling de la pompe : 5/16 » ; « Clé ALLEN pour barrure coupling du moteur électrique : 3/16 » ; « Clé ALLEN pour barrure du spline sur coupling de la pompe : 1/4 » ; « Clé ALLEN pour 4 boulons bell housing ↔ moteur électrique (tête ALLEN) : 1/2 »" }
     ],
     "pro-op-ith-002": [
       { "t": "vf", "q": "Le montage du tire-fort exige exactement 2 manilles 3/4.", "vrai": true,
@@ -221,7 +282,16 @@
         "e": "« Chaînes de sécurité compresseur : 2 chaînes »" },
       { "t": "multi", "q": "Sélectionnez les affirmations vraies pour la démobilisation et le déplacement.",
         "o": ["Le transport dans le godet de la chargeuse est privilégié plutôt que d'attacher la remorque derrière un véhicule", "La barre de tir doit être verrouillée avec son boulon quand elle est rabaissée pour un déplacement", "Le déplacement sans remorque est permis dans la rampe à basse vitesse", "Une seule chaîne de sécurité suffit pour le compresseur"], "a": [0, 1],
-        "e": "« Risque d'écrasement : privilégier le transport dans le godet de la chargeuse plutôt que d'attacher la remorque derrière un véhicule. » ; « Toujours verrouiller la barre de tir avec son boulon quand elle est rabaissée pour un déplacement. » ; « …déplacer la foreuse sans remorque (barre de tir) seulement sur courte distance, à plat; interdit dans la rampe. »" }
+        "e": "« Risque d'écrasement : privilégier le transport dans le godet de la chargeuse plutôt que d'attacher la remorque derrière un véhicule. » ; « Toujours verrouiller la barre de tir avec son boulon quand elle est rabaissée pour un déplacement. » ; « …déplacer la foreuse sans remorque (barre de tir) seulement sur courte distance, à plat; interdit dans la rampe. »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Élingues traîneau/remorque", "r": "2 minimum, 1'' X 8 pieds" },
+                  { "l": "Manilles de fixation des élingues / attache compresseur", "r": "1''1/4 minimum" },
+                  { "l": "Manilles barre de tir (sans remorque)", "r": "3/4''" },
+                  { "l": "Chaînes de sécurité compresseur", "r": "2 chaînes" }],
+        "e": "« Élingues traîneau/remorque : 2 minimum, 1'' X 8 pieds » ; « Manilles de fixation des élingues / attache compresseur : 1''1/4 minimum » ; « Manilles barre de tir (sans remorque) : 3/4'' » ; « Chaînes de sécurité compresseur : 2 chaînes »" },
+      { "t": "erreur", "q": "Un collègue démobilise la foreuse. Quelle action est une ERREUR ?",
+        "o": ["Il inspecte chaque accessoire de levage avant usage", "Il verrouille la barre de tir avec son boulon une fois rabaissée", "Il déplace la foreuse sans remorque dans la rampe, à basse vitesse", "Il purge les boyaux à air et à eau avant de les découpler"], "a": 2,
+        "e": "« …déplacer la foreuse sans remorque (barre de tir) seulement sur courte distance, à plat; interdit dans la rampe. »" }
     ],
     "pro-op-ith-004": [
       { "t": "vf", "q": "Le boyau à eau utilisé est de 2 ½ po de diamètre.", "vrai": false,
@@ -230,7 +300,14 @@
         "e": "« Diamètre des trous de production visés : 3 7/8'' à 6 ½'' »" },
       { "t": "multi", "q": "Sélectionnez les affirmations vraies pour le forage en longtrou (ITH / CUBEX).",
         "o": ["La barricade doit être à au moins 3 mètres (10 pieds) des premières pièces de matériel", "Au-delà de 6 ½ po, les marteaux et forets exigent le chariot ou la cloche et une chaîne", "Le boyau à air basse pression est de 1 po de diamètre", "Le câble électrique s'accroche au mur au niveau des genoux", "Un 2e travailleur est privilégié pour les trous de 200 pieds et plus"], "a": [0, 1, 4],
-        "e": "« Distance mini barricade ↔ premières pièces de matériel : 3 mètres (10 pieds) » ; « Seuil de diamètre exigeant chariot ou cloche et chaîne : plus de 6 ½ po » ; « Diamètre du boyau à air basse pression : 2 ½ po » ; « Hauteur d'accrochage du câble électrique au mur : 4 à 5 pieds du banc (niveau de la poitrine) » ; « Profondeur de trou à partir de laquelle un 2e travailleur est privilégié : 200 pieds et plus »" }
+        "e": "« Distance mini barricade ↔ premières pièces de matériel : 3 mètres (10 pieds) » ; « Seuil de diamètre exigeant chariot ou cloche et chaîne : plus de 6 ½ po » ; « Diamètre du boyau à air basse pression : 2 ½ po » ; « Hauteur d'accrochage du câble électrique au mur : 4 à 5 pieds du banc (niveau de la poitrine) » ; « Profondeur de trou à partir de laquelle un 2e travailleur est privilégié : 200 pieds et plus »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Diamètre des trous de production visés", "r": "3 7/8\" à 6 ½\"" },
+                  { "l": "Distance mini barricade ↔ premières pièces de matériel", "r": "3 mètres (10 pieds)" },
+                  { "l": "Diamètre du boyau à air basse pression", "r": "2 ½ po" },
+                  { "l": "Distance mini mât ↔ console", "r": "1,5 mètre" },
+                  { "l": "Seuil de diamètre pour positionnement manuel des marteaux/forets/tiges", "r": "moins de 6 1/2 po" }],
+        "e": "« Diamètre des trous de production visés : 3 7/8\" à 6 ½\" » ; « Distance mini barricade ↔ premières pièces de matériel : 3 mètres (10 pieds) » ; « Diamètre du boyau à air basse pression : 2 ½ po » ; « Distance mini mât ↔ console : 1,5 mètre » ; « Seuil de diamètre pour positionnement manuel des marteaux/forets/tiges : moins de 6 1/2 po »" }
     ],
     "pro-op-ith-005": [
       { "t": "vf", "q": "Le trou pilote est foré à 10 po de diamètre.", "vrai": false,
@@ -239,13 +316,27 @@
         "e": "« Distance de positionnement foreuse dans l'axe de la V-30 : environ 15 pieds »" },
       { "t": "multi", "q": "Sélectionnez les affirmations vraies pour l'alésage en descendant sans accès (V-30).",
         "o": ["La chaîne entre le gear box et le drive shaft est de grade 80 et mesure 12 pieds", "La tête V-30 doit être entrée d'environ 6 pieds dans le roc avant l'installation du couvert", "Un centralisateur est requis quand la monterie dépasse 40 pieds", "Le marteau de déblocage est de 8 pouces", "Le mât est incliné vers l'arrière à environ 45 degrés pour installer la V-30"], "a": [0, 1, 2],
-        "e": "« Chaîne entre gear box et drive shaft : grade 80, 12 pieds » ; « Profondeur d'entrée de la tête V-30 dans le roc avant installation du couvert : environ 6 pieds » ; « Seuil d'installation d'un centralisateur (monterie) : plus de 40 pieds » ; « Diamètre du marteau de déblocage : 6 pouces » ; « Angle d'inclinaison du mât vers l'arrière (installation V-30) : environ 60 degrés »" }
+        "e": "« Chaîne entre gear box et drive shaft : grade 80, 12 pieds » ; « Profondeur d'entrée de la tête V-30 dans le roc avant installation du couvert : environ 6 pieds » ; « Seuil d'installation d'un centralisateur (monterie) : plus de 40 pieds » ; « Diamètre du marteau de déblocage : 6 pouces » ; « Angle d'inclinaison du mât vers l'arrière (installation V-30) : environ 60 degrés »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Distance mini barricade↔premières pièces de matériel", "r": "3 mètres (10 pieds)" },
+                  { "l": "Diamètre boyau d'air basse pression", "r": "2½ po." },
+                  { "l": "Distance console foreuse↔mât", "r": "1,5 mètre" },
+                  { "l": "Diamètre du trou final (monterie)", "r": "30 pouces" },
+                  { "l": "Angle d'inclinaison du mât vers l'arrière (installation V-30)", "r": "environ 60 degrés" }],
+        "e": "« Distance mini barricade↔premières pièces de matériel : 3 mètres (10 pieds) » ; « Diamètre boyau d'air basse pression : 2½ po. » ; « Distance console foreuse↔mât : 1,5 mètre » ; « Diamètre du trou final (monterie) : 30 pouces » ; « Angle d'inclinaison du mât vers l'arrière (installation V-30) : environ 60 degrés »" }
     ],
     "pro-op-ith-006": [
       { "t": "vf", "q": "L'alésage pour accepter le guide de la V-30 se fait à 10 po.", "vrai": true,
         "e": "« Diamètre d'alésage pour accepter le guide de la V-30 : 10 po. »" },
       { "t": "vf", "q": "Le trou pilote de l'alésage conventionnel est foré à 4 ½ po.", "vrai": false,
-        "e": "« Diamètre du trou pilote : 6½ po. »" }
+        "e": "« Diamètre du trou pilote : 6½ po. »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Température des boyaux tressés haute-température (compresseurs)", "r": "800 degrés F" },
+                  { "l": "Distance foreuse ↔ surcompresseur", "r": "7 mètres" },
+                  { "l": "Diamètre du boyau à air basse pression", "r": "2½ po." },
+                  { "l": "Diamètre du trou pilote", "r": "6½ po." },
+                  { "l": "Diamètre final de la monterie", "r": "30 po." }],
+        "e": "« Température des boyaux tressés haute-température (compresseurs) : 800 degrés F » ; « Distance foreuse ↔ surcompresseur : 7 mètres » ; « Diamètre du boyau à air basse pression : 2½ po. » ; « Diamètre du trou pilote : 6½ po. » ; « Diamètre final de la monterie : 30 po. »" }
     ],
     "pro-op-ith-007": [
       { "t": "vf", "q": "La mesure entre la slip plate et le bout des taillants est de 7 pieds et 6 pouces.", "vrai": true,
@@ -254,7 +345,14 @@
         "e": "« Distance maxi entre les tables du mât et le collet de trou : 2 à 4 pieds »" },
       { "t": "multi", "q": "Sélectionnez les affirmations vraies pour l'alésage ascendant sans accès (V-30).",
         "o": ["L'alésage pour accepter le guide de la V-30 se fait à 10 ½ po", "La tête V-30 doit être entrée d'environ 6 pieds dans le roc avant la pose de la cage", "Le trou pilote est foré à 8 po", "La chaîne entre le gear box et le drive shaft est de grade 60"], "a": [0, 1],
-        "e": "« Diamètre d'alésage pour accepter le guide de la V-30 : 10½ po » ; « Profondeur d'entrée de la tête V-30 dans le roc avant pose de la cage : approx. 6 pieds » ; « Diamètre du trou pilote : 6½ po » ; « Chaîne entre gear box et drive shaft : grade 80, 12 pieds »" }
+        "e": "« Diamètre d'alésage pour accepter le guide de la V-30 : 10½ po » ; « Profondeur d'entrée de la tête V-30 dans le roc avant pose de la cage : approx. 6 pieds » ; « Diamètre du trou pilote : 6½ po » ; « Chaîne entre gear box et drive shaft : grade 80, 12 pieds »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Distance d'exclusion autour du mât pendant le forage", "r": "5 m" },
+                  { "l": "Température des boyaux tressés haute-température des compresseurs", "r": "800 °F" },
+                  { "l": "Diamètre du trou pilote", "r": "6½ po" },
+                  { "l": "Hauteur plancher-toit requise", "r": "12 à 14 pieds (max 4,3 m / 14 pi)" },
+                  { "l": "Diamètre nécessitant le transport du marteau au chariot", "r": "plus de 6½ po" }],
+        "e": "« Distance d'exclusion autour du mât pendant le forage : 5 m » ; « Température des boyaux tressés haute-température des compresseurs : 800 °F » ; « Diamètre du trou pilote : 6½ po » ; « Hauteur plancher-toit requise : 12 à 14 pieds (max 4,3 m / 14 pi) » ; « Diamètre nécessitant le transport du marteau au chariot : plus de 6½ po »" }
     ],
     "pro-op-ith-008": [
       { "t": "vf", "q": "Vous pouvez détacher le harnais dès que le couvercle est déposé à côté de la monterie.", "vrai": false,
@@ -273,7 +371,14 @@
         "e": "« Casing 10 pouces — 1er forage : 6 pouces 1/2 (selon les besoins) »" },
       { "t": "multi", "q": "Sélectionnez les affirmations vraies pour l'installation de tubage (casing).",
         "o": ["Pour un casing de 4 po, le premier forage se fait à 3 7/8 po", "Pour un casing de 10 po, le deuxième forage se fait à 10 po", "Pour un casing de 6 po, le deuxième forage se fait à 8 po", "La procédure de forage de référence est PRO-OP-ITH-012"], "a": [0, 1],
-        "e": "« Casing 4 pouces — 1er forage : 3 pouces 7/8 » ; « Casing 10 pouces — 2e forage : 10 pouces, 1 pied dans le roc solide » ; « Casing 6 pouces — 2e forage : 6 pouces… » ; « Procédure de forage de référence : PRO-OP-ITH-004 »" }
+        "e": "« Casing 4 pouces — 1er forage : 3 pouces 7/8 » ; « Casing 10 pouces — 2e forage : 10 pouces, 1 pied dans le roc solide » ; « Casing 6 pouces — 2e forage : 6 pouces… » ; « Procédure de forage de référence : PRO-OP-ITH-004 »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Distance minimum mât ↔ console", "r": "1,5 m" },
+                  { "l": "Casing 4 pouces — 1er forage", "r": "3 pouces 7/8 (selon les besoins)" },
+                  { "l": "Casing 4 pouces — 2e forage", "r": "4 pouces, 1 pied dans le roc solide" },
+                  { "l": "Casing 6 pouces — 1er forage", "r": "4 pouces 1/2 (selon les besoins)" },
+                  { "l": "Casing 6 pouces — 2e forage", "r": "6 pouces, 1 pied dans le roc solide" }],
+        "e": "« Distance minimum mât ↔ console : 1,5 m » ; « Casing 4 pouces — 1er forage : 3 pouces 7/8 (selon les besoins) » ; « Casing 4 pouces — 2e forage : 4 pouces, 1 pied dans le roc solide » ; « Casing 6 pouces — 1er forage : 4 pouces 1/2 (selon les besoins) » ; « Casing 6 pouces — 2e forage : 6 pouces, 1 pied dans le roc solide »" }
     ],
     "pro-op-ith-016": [
       { "t": "vf", "q": "Le marteau de 4 po pèse 89 lbs.", "vrai": true,
@@ -282,7 +387,17 @@
         "e": "« Dévissage final du marteau (étape 29) : 1 tour seulement »" },
       { "t": "multi", "q": "Sélectionnez les affirmations vraies pour la manipulation des marteaux de forage.",
         "o": ["Le marteau de 3 po pèse 60 lbs", "Pour les marteaux de 3 po et 4 po, la procédure s'applique à partir du point #8", "Le marteau de 6 po accepte des bits de 6, 8 ou 10 po", "Le marteau de 6 po pèse 179 lbs", "Le Driver Sub doit être retiré pendant la manipulation du marteau de 6 po"], "a": [0, 1, 2],
-        "e": "« Poids du marteau 3'' : 60 lbs » ; « Application de la procédure pour les marteaux 3'' et 4'' : à partir du point #8 » ; « Diamètres de bits sur marteau 6'' : 6'', 8'' ou 10'' » ; « Poids du marteau 6'' : 211 lbs » ; « Marteaux de 6'' : toujours transporter avec le chariot prévu et garder le Driver Sub installé pendant la manipulation. »" }
+        "e": "« Poids du marteau 3'' : 60 lbs » ; « Application de la procédure pour les marteaux 3'' et 4'' : à partir du point #8 » ; « Diamètres de bits sur marteau 6'' : 6'', 8'' ou 10'' » ; « Poids du marteau 6'' : 211 lbs » ; « Marteaux de 6'' : toujours transporter avec le chariot prévu et garder le Driver Sub installé pendant la manipulation. »" },
+      { "t": "assoc", "q": "Associez chaque paramètre à sa valeur officielle.",
+        "pairs": [{ "l": "Poids du marteau 3\"", "r": "60 lbs" },
+                  { "l": "Poids du marteau 4\"", "r": "89 lbs" },
+                  { "l": "Poids du marteau 6\"", "r": "211 lbs" },
+                  { "l": "Application de la procédure pour les marteaux 3\" et 4\"", "r": "à partir du point #8" },
+                  { "l": "Dévissage final du marteau (étape 29)", "r": "1 tour seulement" }],
+        "e": "« Poids du marteau 3\" : 60 lbs » ; « Poids du marteau 4\" : 89 lbs » ; « Poids du marteau 6\" : 211 lbs » ; « Application de la procédure pour les marteaux 3\" et 4\" : à partir du point #8 » ; « Dévissage final du marteau (étape 29) : 1 tour seulement »" },
+      { "t": "erreur", "q": "Un collègue manipule un marteau de 6 po. Quelle action est une ERREUR ?",
+        "o": ["Il transporte le marteau avec le chariot prévu à cet effet", "Il garde le Driver Sub installé pendant la manipulation", "Il retire la chaîne de sûreté dès que le marteau est sorti du support", "Il valide que le marteau est vissé au Gear Box avant d'exposer ses mains dessous"], "a": 2,
+        "e": "La chaîne de sûreté se retire « seulement après avoir vissé et accoté le marteau dans le SAVER SUB »." }
     ]
   };
   var Q = window.QUIZ_PROC || (window.QUIZ_PROC = {});

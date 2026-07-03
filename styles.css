@@ -635,6 +635,30 @@ footer b{color:var(--muted)}
 .pq-step:disabled{cursor:default}
 .pq-ol{margin:.2rem 0 .6rem;padding-left:1.3rem}
 .pq-ol li{margin:.2rem 0}
+/* association : paires paramètre ↔ valeur */
+.pq-pairs{display:flex;flex-direction:column;gap:.45rem}
+.pq-pair{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;background:var(--bg-2);
+  border:1px solid var(--border);border-radius:10px;padding:.5rem .7rem}
+.pq-pl{flex:1;min-width:180px;font-size:.9rem;line-height:1.3}
+.pq-sel{flex:none;max-width:100%;background:var(--card-2);color:var(--text);border:1px solid var(--border);
+  border-radius:8px;padding:.4rem .5rem;font:inherit;font-size:.88rem}
+.pq-sel:disabled{opacity:.8}
+.pq-pair.good{border-color:#16a34a;background:rgba(34,197,94,.12)}
+.pq-pair.bad{border-color:var(--brand);background:rgba(210,35,37,.12)}
+.pq-cor{flex-basis:100%;color:#4ade80;font-size:.82rem;font-weight:700}
+.pq-cor:empty{display:none}
+/* mode révision : questions masquées */
+.pq.pq-hidden{display:none}
+/* attestation verrouillée (note de passage 80 %) */
+.attest-btn.attest-locked{opacity:.55;cursor:not-allowed}
+/* quiz éclair : nouveaux types */
+.qhint{color:var(--dim);font-size:.85rem;margin:-.4rem 0 .8rem}
+.qvald{margin-top:.9rem}
+.qopt.sel{border-color:var(--accent-l);background:rgba(210,35,37,.10)}
+.qopt.sel::after{content:' ✓';color:var(--accent-l);font-weight:900}
+.qopt.missed{border-color:#16a34a;border-style:dashed}
+.qopt.missed::after{content:' (vraie — non cochée)';color:#4ade80;font-size:.8rem;font-weight:700}
+.qsteps{margin:.2rem 0 .4rem}
 /* explication = citation de la procédure (toujours affichée après réponse) */
 .pq-exp{display:none;margin-top:.5rem;font-size:1.08rem;line-height:1.6;color:#dbe4f0;
   background:rgba(251,191,36,.07);border:1.5px solid #fbbf24;border-radius:10px;padding:.7rem .85rem}
