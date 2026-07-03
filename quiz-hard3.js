@@ -12,9 +12,6 @@
         "e": "« Ancrage du mât certifié 2500 kg. »" }
     ],
     "pro-op-ith-003": [
-      { "q": "Sans la remorque, à l'aide d'une barre de tir, où est-il interdit de déplacer la foreuse ?",
-        "o": ["Sur un plancher", "Dans la rampe", "Près du mur", "À l'horizontale"], "a": 1,
-        "e": "« Il est interdit de déplacer la foreuse sans la remorque dans la rampe. »" }
     ],
     "pro-op-ith-004": [
       { "q": "Quelle distance minimale doit OBLIGATOIREMENT être respectée entre le mât et la console ?",
@@ -41,9 +38,6 @@
 
     /* ---------------- FORAGE AU DIAMANT (DD) ---------------- */
     "pro-dd-st-002": [
-      { "q": "Comment vérifier de façon sécuritaire si le tube carottier est vide ?",
-        "o": ["Regarder à l'intérieur du tube", "Insérer une tige de métal d'un pied dans l'extrémité et la faire glisser", "Souffler de l'air dedans", "Le secouer près du visage"], "a": 1,
-        "e": "« Ne jamais regarder dans le tube pour voir s'il est vide, insérer plutôt une tige de métal d'un pied dans l'extrémité et la faire glisser dans le tube. »" },
       { "q": "Pourquoi ne jamais faire de mouvement de va-et-vient avec le core knocker ?",
         "o": ["Pour ne pas bosser le tube", "Pour ne pas se coincer les doigts entre le core knocker et le tube", "Pour économiser de l'effort", "Pour ne pas user la carotte"], "a": 1,
         "e": "« Ne jamais effectuer de mouvement de va-et-vient avec le core knocker pour ne pas se coincer les doigts entre le core knocker et le tube. »" }

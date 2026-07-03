@@ -84,28 +84,6 @@ window.QUIZ = [
     ]
   },
   {
-    "id": "q5",
-    "question": "Sur les foreuses CUBEX, avant d'entreprendre tout travail de changement de coupling entre le moteur électrique et la pompe hydraulique, quelle est l'action de sécurité obligatoire à effectuer en premier ?",
-    "options": [
-      "Cadenasser la foreuse",
-      "Appliquer de l'antiseize sur les shafts",
-      "Retirer le bell housing en aluminium",
-      "Insérer à la main les 2 boulons de la pompe"
-    ],
-    "answer": 0,
-    "explication": "La procédure exige de cadenasser la foreuse avant d'entreprendre tout travail de changement de coupling. L'antiseize, le retrait du bell housing et l'insertion des boulons sont des étapes ultérieures du remontage, pas la première action de sécurité.",
-    "sourceId": "pro-mec-011",
-    "code": "PRO-MEC-011",
-    "titre": "Procédure pour changer la coupling entre le moteur électrique et la pompe hydraulique des foreuses CUBEX",
-    "categorie": "Maintenance",
-    "machines": [
-      "CUBEX",
-      "Foreuse CUBEX",
-      "Pompe hydraulique",
-      "Moteur électrique"
-    ]
-  },
-  {
     "id": "q6",
     "question": "Lors du changement de coupling sur une foreuse CUBEX, le bell housing est en aluminium. Quel outil la procédure impose-t-elle pour le décoller sans l'endommager ?",
     "options": [
@@ -210,44 +188,6 @@ window.QUIZ = [
     ]
   },
   {
-    "id": "q11",
-    "question": "Sur la foreuse ITH, avant d'intervenir pour dévisser des tiges ou un marteau coincé, quelle action est obligatoire?",
-    "options": [
-      "Appliquer la procédure de cadenassage",
-      "Augmenter la pression d'air comprimé",
-      "Faire tourner lentement la tige à dévisser",
-      "Décadenasser l'équipement pour le garder mobile"
-    ],
-    "answer": 0,
-    "explication": "La procédure impose d'appliquer le cadenassage avant d'intervenir, et de ne retirer les clés et décadenasser qu'une fois l'opération terminée.",
-    "sourceId": "pro-op-ith-002",
-    "code": "PRO-OP-ITH-002",
-    "titre": "Utilisation de clés et d'un tire-fort pour dévisser des tiges de forages",
-    "categorie": "Manutention",
-    "machines": [
-      "ITH"
-    ]
-  },
-  {
-    "id": "q12",
-    "question": "Sur la foreuse ITH, lorsqu'un coup de masse sur le manche de la clé est nécessaire pour séparer les tiges, quelle consigne de sécurité s'applique?",
-    "options": [
-      "Tenir la masse à une seule main pour aller plus vite",
-      "S'assurer que personne ne se trouve dans la ligne de la masse si elle est échappée",
-      "Se tenir sur une surface meuble pour amortir le choc",
-      "Retirer ses gants pour mieux agripper le manche"
-    ],
-    "answer": 1,
-    "explication": "La procédure exige d'avoir les pieds sur une surface solide et de s'assurer que personne ne se trouve dans la ligne de la masse advenant qu'elle soit échappée.",
-    "sourceId": "pro-op-ith-002",
-    "code": "PRO-OP-ITH-002",
-    "titre": "Utilisation de clés et d'un tire-fort pour dévisser des tiges de forages",
-    "categorie": "Manutention",
-    "machines": [
-      "ITH"
-    ]
-  },
-  {
     "id": "q13",
     "question": "Pour dévisser des tiges de forage avec un palan à levier (come along) sur une foreuse ITH, pour quelle charge l'ancrage utilisé doit-il être certifié?",
     "options": [
@@ -258,44 +198,6 @@ window.QUIZ = [
     ],
     "answer": 2,
     "explication": "La procédure exige d'utiliser uniquement un ancrage certifié pour une charge de 2500 kg.",
-    "sourceId": "pro-op-ith-002a",
-    "code": "PRO-OP-ITH-002A",
-    "titre": "Utilisation de la clé pour dévisser des tiges de forage avec un palan à levier (come along)",
-    "categorie": "Manutention",
-    "machines": [
-      "ITH"
-    ]
-  },
-  {
-    "id": "q14",
-    "question": "Lors du dévissage de tiges avec un palan à levier (come along) sur une foreuse ITH, quelle mesure de sécurité faut-il appliquer avant de manipuler les clés et les tiges?",
-    "options": [
-      "Appliquer la procédure de cadenassage et d'étiquetage (lock out tag out)",
-      "Démarrer le moteur de la foreuse à plein régime",
-      "Retirer les crochets du palan à levier",
-      "Mettre la flèche (boom) en position verticale"
-    ],
-    "answer": 0,
-    "explication": "La procédure impose d'appliquer le cadenassage et l'étiquetage (lock out tag out) avant de manipuler les clés et les tiges. Mettre la flèche en position verticale est faux : la procédure exige la position horizontale.",
-    "sourceId": "pro-op-ith-002a",
-    "code": "PRO-OP-ITH-002A",
-    "titre": "Utilisation de la clé pour dévisser des tiges de forage avec un palan à levier (come along)",
-    "categorie": "Manutention",
-    "machines": [
-      "ITH"
-    ]
-  },
-  {
-    "id": "q15",
-    "question": "Lorsqu'il faut frapper le manche de la clé avec la masse pour séparer des tiges (procédure ITH au palan à levier), quelle précaution est exigée?",
-    "options": [
-      "S'assurer qu'au moins un collègue se tient dans l'axe de chute de la masse pour la récupérer",
-      "S'assurer que les pieds reposent sur une surface solide et que personne ne se trouve dans l'axe si la masse tombe",
-      "Tenir la masse d'une seule main sans regarder la clé",
-      "Se tenir sur une plateforme inclinée pour avoir plus de force"
-    ],
-    "answer": 1,
-    "explication": "La procédure exige d'avoir les pieds sur une surface solide et que personne ne se trouve dans l'axe (ligne de chute) si la masse tombe.",
     "sourceId": "pro-op-ith-002a",
     "code": "PRO-OP-ITH-002A",
     "titre": "Utilisation de la clé pour dévisser des tiges de forage avec un palan à levier (come along)",
@@ -321,26 +223,6 @@ window.QUIZ = [
     "categorie": "Manutention",
     "machines": [
       "ITH"
-    ]
-  },
-  {
-    "id": "q17",
-    "question": "Lors de la démobilisation et du déplacement d'une foreuse ITH, que faire si une anomalie est détectée sur un accessoire de levage avant le déplacement ?",
-    "options": [
-      "Le remplacement de l'accessoire est obligatoire avant d'entreprendre le déplacement",
-      "On peut l'utiliser tant que le déplacement est court",
-      "On peut le réparer soi-même avec du ruban adhésif et continuer",
-      "Il suffit de le signaler au foreur-guide après le déplacement"
-    ],
-    "answer": 0,
-    "explication": "La mise en garde de la procédure exige que les accessoires de levage soient inspectés avant leur utilisation et que tout accessoire présentant une anomalie soit obligatoirement remplacé avant d'entreprendre le déplacement de la foreuse ou de l'équipement.",
-    "sourceId": "pro-op-ith-003",
-    "code": "PRO-OP-ITH-003",
-    "titre": "Démobilisation et déplacement de la foreuse et du compresseur",
-    "categorie": "Démobilisation",
-    "machines": [
-      "Foreuse ITH",
-      "Compresseur"
     ]
   },
   {
@@ -940,26 +822,6 @@ window.QUIZ = [
     ]
   },
   {
-    "id": "q44",
-    "question": "En forage à distance avec foreuse ITH (PRO-OP-ITH-012), que doit faire le foreur s'il constate la présence d'explosif dans le matériel qui sort du trou lors du déblocage ?",
-    "options": [
-      "Accélérer le forage pour évacuer rapidement l'explosif",
-      "Continuer l'opération en ajoutant de l'eau seulement",
-      "Arrêter immédiatement l'opération avec la foreuse et aviser le superviseur",
-      "Retirer l'explosif à la main avant de poursuivre"
-    ],
-    "answer": 2,
-    "explication": "En cas de présence d'explosif dans le matériel qui sort du trou, la procédure exige d'arrêter immédiatement l'opération avec la foreuse et d'aviser le superviseur.",
-    "sourceId": "pro-op-ith-012",
-    "code": "PRO-OP-ITH-012",
-    "titre": "Procédure de forage à distance avec foreuse ITH",
-    "categorie": "Forage",
-    "machines": [
-      "ITH",
-      "CUBEX"
-    ]
-  },
-  {
     "id": "q45",
     "question": "Lors de l'installation d'un tubage (casing) au collet des trous avec la foreuse ITH, dans quel cas est-il interdit de positionner une partie de son corps sous les tables ?",
     "options": [
@@ -1014,28 +876,6 @@ window.QUIZ = [
     ],
     "answer": 0,
     "explication": "Selon les valeurs de la procédure (casings 4, 6 ou 10 pouces), le 2e forage doit pénétrer de 1 pied dans le roc solide.",
-    "sourceId": "pro-op-ith-014",
-    "code": "PRO-OP-ITH-014",
-    "titre": "Procédure d'installation de tubage (casing) au collet des trous",
-    "categorie": "Installation",
-    "machines": [
-      "ITH",
-      "Foreuse ITH",
-      "Marteau",
-      "Mât"
-    ]
-  },
-  {
-    "id": "q48",
-    "question": "Selon la procédure d'installation de tubage (casing) au collet des trous avec la foreuse ITH, pourquoi installe-t-on ce tubage ?",
-    "options": [
-      "Pour protéger le collet contre la chute de roches qui pourrait bloquer le trou et nuire au forage ou au chargement d'explosifs",
-      "Pour augmenter la vitesse de rotation du marteau",
-      "Pour remplacer la slip-plate durant le forage",
-      "Pour servir de point d'ancrage antichute aux travailleurs"
-    ],
-    "answer": 0,
-    "explication": "La procédure précise que le tubage protège le collet des trous contre la chute de roches pouvant bloquer le trou et nuire au forage ou au chargement d'explosifs.",
     "sourceId": "pro-op-ith-014",
     "code": "PRO-OP-ITH-014",
     "titre": "Procédure d'installation de tubage (casing) au collet des trous",
