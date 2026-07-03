@@ -219,7 +219,7 @@
   var APP_FILES = ['index.html', 'styles.css', 'manifest.webmanifest', 'config.js', 'data.js',
     'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'quiz.js', 'essentiel.js',
     'figures.js', 'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
-    'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js',
+    'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-types.js',
     'pdftext.js', 'llm.js', 'chatbot.js', 'app.js', 'sizes.js'];
   var BRAND_FILES = ['images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
@@ -589,18 +589,14 @@
 
     if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
 
-    // Quiz de la procédure (couvre l'information importante) — questions mélangées
+    // Quiz de la procédure (couvre l'information importante) — questions et
+    // types mélangés (choix de réponse, vrai/faux, plusieurs réponses, ordre).
     var pqList = (window.QUIZ_PROC && window.QUIZ_PROC[p.id]) || [];
     if (pqList.length) {
-      shuffle(pqList);                                         // mélange faciles + difficiles
       var best = pqGetBest(p.id);
-      var pqitems = pqList.map(function (it, i) {
-        return '<div class="pq" data-i="' + i + '"><p class="pq-q"><b>' + (i + 1) + '.</b> ' + esc(it.q) + '</p>' +
-          '<div class="pq-opts">' + it.o.map(function (opt, j) {
-            return '<label class="pq-opt"><input type="radio" name="pq_' + i + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(opt) + '</span></label>';
-          }).join('') + '</div>' +
-          '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
-      }).join('');
+      // ordre d'affichage mélangé ; data-i garde l'index d'origine pour la correction
+      var pqOrder = shuffle(pqList.map(function (_, j) { return j; }));
+      var pqitems = pqOrder.map(function (oi, disp) { return pqItemHTML(pqList[oi], oi, disp + 1); }).join('');
       h += '<div class="sec"><h2>Quiz — valider mes connaissances</h2>' +
         '<details class="pquiz" data-proc="' + esc(p.id) + '">' +
           '<summary><span class="pqs-t">' + pqList.length + ' questions · réponse corrigée immédiatement</span>' +
@@ -659,6 +655,53 @@
     var b = pqGetBest(id);
     if (!b || s > b.s) { try { localStorage.setItem('pq_' + id, JSON.stringify({ s: s, n: n })); } catch (e) {} }
   }
+  // Rend une question selon son type. it.t : absent = choix de réponse ;
+  // 'vf' = vrai ou faux ; 'multi' = cocher les affirmations vraies ;
+  // 'ordre' = remettre les étapes en ordre (it.o est DANS l'ordre correct,
+  // l'affichage est mélangé). oi = index d'origine ; num = numéro affiché.
+  function pqItemHTML(it, oi, num) {
+    var qhead = '<p class="pq-q"><b>' + num + '.</b> ';
+    if (it.t === 'vf') {
+      return '<div class="pq pq-vf" data-i="' + oi + '">' +
+        qhead + '<span class="pq-type">Vrai ou faux</span>' + esc(it.q) + '</p>' +
+        '<div class="pq-opts pq-opts-vf">' + ['Vrai', 'Faux'].map(function (opt, j) {
+          return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + opt + '</span></label>';
+        }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div></div>';
+    }
+    if (it.t === 'multi') {
+      // options mélangées à l'affichage ; value = index d'origine
+      var mperm = shuffle(it.o.map(function (_, j) { return j; }));
+      return '<div class="pq pq-multi" data-i="' + oi + '">' +
+        qhead + '<span class="pq-type">Plusieurs réponses</span>' + esc(it.q) +
+        ' <span class="pq-hint">Cochez TOUTES les affirmations vraies, puis validez.</span></p>' +
+        '<div class="pq-opts">' + mperm.map(function (j) {
+          return '<label class="pq-opt"><input type="checkbox" value="' + j + '"><span class="pq-mark pq-sq"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
+        }).join('') + '</div>' +
+        '<div class="pq-actions-q"><button type="button" class="btn pq-check">Valider</button></div>' +
+        '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
+    }
+    if (it.t === 'ordre') {
+      var ord = shuffle(it.o.map(function (_, j) { return j; }));
+      var identity = ord.every(function (v, j) { return v === j; });
+      if (identity) ord.push(ord.shift());     // jamais présenté déjà en ordre
+      return '<div class="pq pq-ordre" data-i="' + oi + '">' +
+        qhead + '<span class="pq-type">Remettre en ordre</span>' + esc(it.q) +
+        ' <span class="pq-hint">Touchez les étapes dans l\'ordre d\'exécution (1, 2, 3…), puis validez.</span></p>' +
+        '<div class="pq-steps">' + ord.map(function (k) {
+          return '<button type="button" class="pq-step" data-k="' + k + '"><span class="pq-num"></span><span class="pq-txt">' + esc(it.o[k]) + '</span></button>';
+        }).join('') + '</div>' +
+        '<div class="pq-actions-q"><button type="button" class="btn pq-check" disabled>Valider</button>' +
+        '<button type="button" class="btn ghost pq-clear">Effacer</button></div>' +
+        '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
+    }
+    // options mélangées à l'affichage (évite tout patron « toujours la même
+    // position ») ; value = index d'origine, la correction est inchangée.
+    var perm = shuffle(it.o.map(function (_, j) { return j; }));
+    return '<div class="pq" data-i="' + oi + '">' + qhead + esc(it.q) + '</p>' +
+      '<div class="pq-opts">' + perm.map(function (j) {
+        return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
+      }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div></div>';
+  }
   function initProcQuiz(id) {
     var list = (window.QUIZ_PROC && window.QUIZ_PROC[id]) || [];
     var box = document.querySelector('.pquiz[data-proc="' + id + '"]');
@@ -678,34 +721,131 @@
         var sb = box.querySelector('.pqs-b'); if (sb) sb.textContent = 'Meilleur : ' + Math.max(correct, (pqGetBest(id) || { s: 0 }).s) + '/' + n;
       } else { scoreEl.className = 'pq-score'; }
     }
+    function showExp(card, q) {
+      var exp = card.querySelector('.pq-exp');
+      exp.innerHTML = '<span class="pq-ref">Référence à la procédure</span>' + esc(q.e);
+      exp.classList.add('on');
+    }
+    function settle(card, good, msg) {
+      var fb = card.querySelector('.pq-fb');
+      fb.innerHTML = '<span class="pq-fi">' + (good ? ICON.check : ICON.close) + '</span>' +
+        (msg || (good ? 'Bonne réponse' : 'Mauvaise réponse'));
+      fb.className = 'pq-fb on ' + (good ? 'ok' : 'no');
+      card.classList.add('answered', good ? 'correct' : 'incorrect');
+      updateScore();
+    }
 
-    // rétroaction immédiate dès qu'une réponse est cochée
+    // Choix de réponse + vrai/faux : rétroaction dès qu'une option est cochée
     box.addEventListener('change', function (e) {
       if (!e.target || e.target.type !== 'radio') return;
       var card = e.target.closest('.pq');
       if (!card || card.classList.contains('answered')) return;
-      var i = parseInt(card.getAttribute('data-i'), 10);
-      var q = list[i];
+      var q = list[parseInt(card.getAttribute('data-i'), 10)];
+      var correct = (q.t === 'vf') ? (q.vrai ? 0 : 1) : q.a;
       var pick = parseInt(e.target.value, 10);
-      var opts = card.querySelectorAll('.pq-opt');
-      var good = pick === q.a;
-      if (opts[q.a]) opts[q.a].classList.add('good');           // toujours montrer la bonne réponse
-      if (!good && opts[pick]) opts[pick].classList.add('bad');
+      var good = pick === correct;
+      var optByVal = function (v) {
+        var inp = card.querySelector('.pq-opts input[value="' + v + '"]');
+        return inp && inp.closest('.pq-opt');
+      };
+      var g = optByVal(correct); if (g) g.classList.add('good');   // toujours montrer la bonne réponse
+      if (!good) { var bd = optByVal(pick); if (bd) bd.classList.add('bad'); }
       [].forEach.call(card.querySelectorAll('input[type="radio"]'), function (r) { r.disabled = true; });
-      var fb = card.querySelector('.pq-fb');
-      fb.innerHTML = '<span class="pq-fi">' + (good ? ICON.check : ICON.close) + '</span>' + (good ? 'Bonne réponse' : 'Mauvaise réponse');
-      fb.className = 'pq-fb on ' + (good ? 'ok' : 'no');
-      var exp = card.querySelector('.pq-exp');                  // explication TOUJOURS (même si bonne), citée de la procédure
-      exp.innerHTML = '<span class="pq-ref">Référence à la procédure</span>' + esc(q.e);
-      exp.classList.add('on');
-      card.classList.add('answered', good ? 'correct' : 'incorrect');
-      updateScore();
+      showExp(card, q);
+      settle(card, good);
+    });
+
+    box.addEventListener('click', function (e) {
+      // remise en ordre : touche les étapes pour bâtir la séquence (1, 2, 3…)
+      var step = e.target.closest && e.target.closest('.pq-step');
+      if (step) {
+        var sc = step.closest('.pq');
+        if (sc.classList.contains('answered')) return;
+        var steps = [].slice.call(sc.querySelectorAll('.pq-step'));
+        if (step.classList.contains('picked')) {
+          var removed = parseInt(step.getAttribute('data-pos'), 10);
+          step.classList.remove('picked'); step.removeAttribute('data-pos');
+          step.querySelector('.pq-num').textContent = '';
+          steps.forEach(function (s) {                    // renumérote les suivantes
+            var pos = parseInt(s.getAttribute('data-pos') || '-1', 10);
+            if (pos > removed) { s.setAttribute('data-pos', String(pos - 1)); s.querySelector('.pq-num').textContent = String(pos); }
+          });
+        } else {
+          var picked = steps.filter(function (s) { return s.classList.contains('picked'); }).length;
+          step.classList.add('picked'); step.setAttribute('data-pos', String(picked));
+          step.querySelector('.pq-num').textContent = String(picked + 1);
+        }
+        var done = steps.filter(function (s) { return s.classList.contains('picked'); }).length;
+        var chk = sc.querySelector('.pq-check'); if (chk) chk.disabled = done !== steps.length;
+        return;
+      }
+      var clearB = e.target.closest && e.target.closest('.pq-clear');
+      if (clearB) {
+        var cc = clearB.closest('.pq');
+        if (cc.classList.contains('answered')) return;
+        [].forEach.call(cc.querySelectorAll('.pq-step'), function (s) {
+          s.classList.remove('picked'); s.removeAttribute('data-pos');
+          s.querySelector('.pq-num').textContent = '';
+        });
+        var chk2 = cc.querySelector('.pq-check'); if (chk2) chk2.disabled = true;
+        return;
+      }
+      var check = e.target.closest && e.target.closest('.pq-check');
+      if (!check) return;
+      var card = check.closest('.pq');
+      if (!card || card.classList.contains('answered')) return;
+      var q = list[parseInt(card.getAttribute('data-i'), 10)];
+
+      if (card.classList.contains('pq-multi')) {
+        var okSet = {}; (q.a || []).forEach(function (j) { okSet[j] = 1; });
+        var good = true, wrong = 0, foundGood = 0, totalTrue = (q.a || []).length;
+        [].forEach.call(card.querySelectorAll('input[type="checkbox"]'), function (b) {
+          var j = parseInt(b.value, 10);
+          var opt = b.closest('.pq-opt');
+          b.disabled = true;
+          if (okSet[j]) {
+            if (b.checked) { opt.classList.add('good'); foundGood++; }
+            else { opt.classList.add('missed'); good = false; }
+          } else if (b.checked) { opt.classList.add('bad'); wrong++; good = false; }
+        });
+        check.disabled = true;
+        showExp(card, q);
+        settle(card, good, good
+          ? 'Bonne réponse — toutes les affirmations vraies trouvées'
+          : foundGood + ' vraie' + (foundGood > 1 ? 's' : '') + ' sur ' + totalTrue + ' trouvée' + (foundGood > 1 ? 's' : '') +
+            (wrong ? ' · ' + wrong + ' fausse' + (wrong > 1 ? 's' : '') + ' cochée' + (wrong > 1 ? 's' : '') : ''));
+      } else if (card.classList.contains('pq-ordre')) {
+        var allGood = true;
+        [].forEach.call(card.querySelectorAll('.pq-step'), function (s) {
+          var k = parseInt(s.getAttribute('data-k'), 10);      // bonne position (0-based)
+          var pos = parseInt(s.getAttribute('data-pos'), 10);  // position choisie
+          if (pos === k) { s.classList.add('good'); }
+          else { s.classList.add('bad'); allGood = false;
+                 s.querySelector('.pq-num').textContent = (pos + 1) + ' → ' + (k + 1); }
+          s.disabled = true;
+        });
+        check.disabled = true;
+        var clr = card.querySelector('.pq-clear'); if (clr) clr.disabled = true;
+        var exp = card.querySelector('.pq-exp');
+        exp.innerHTML = '<span class="pq-ref">Ordre correct selon la procédure</span>' +
+          '<ol class="pq-ol">' + q.o.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' +
+          (q.e ? '<span class="pq-ref">Référence à la procédure</span>' + esc(q.e) : '');
+        exp.classList.add('on');
+        settle(card, allGood, allGood ? 'Bon ordre'
+          : 'Ordre incorrect — sur chaque étape en rouge : votre position → la bonne position');
+      }
     });
 
     resetBtn.onclick = function () {
       [].forEach.call(box.querySelectorAll('.pq'), function (c) { c.classList.remove('answered', 'correct', 'incorrect'); });
-      [].forEach.call(box.querySelectorAll('input[type="radio"]'), function (r) { r.checked = false; r.disabled = false; });
-      [].forEach.call(box.querySelectorAll('.pq-opt'), function (o) { o.classList.remove('good', 'bad'); });
+      [].forEach.call(box.querySelectorAll('.pq input'), function (r) { r.checked = false; r.disabled = false; });
+      [].forEach.call(box.querySelectorAll('.pq-opt'), function (o) { o.classList.remove('good', 'bad', 'missed'); });
+      [].forEach.call(box.querySelectorAll('.pq-step'), function (s) {
+        s.classList.remove('picked', 'good', 'bad'); s.removeAttribute('data-pos'); s.disabled = false;
+        var nEl = s.querySelector('.pq-num'); if (nEl) nEl.textContent = '';
+      });
+      [].forEach.call(box.querySelectorAll('.pq-check'), function (b) { b.disabled = !!b.closest('.pq-ordre'); });
+      [].forEach.call(box.querySelectorAll('.pq-clear'), function (b) { b.disabled = false; });
       [].forEach.call(box.querySelectorAll('.pq-fb'), function (f) { f.className = 'pq-fb'; f.innerHTML = ''; });
       [].forEach.call(box.querySelectorAll('.pq-exp'), function (ex) { ex.classList.remove('on'); ex.innerHTML = ''; });
       scoreEl.textContent = ''; scoreEl.className = 'pq-score';
@@ -966,7 +1106,8 @@
       '<div class="qbar"><i style="width:' + Math.round(s.idx / s.pool.length * 100) + '%"></i></div>' +
       '<div class="qcard"><div class="qtag">' + esc(q.code || q.categorie) + ' · Question ' + (s.idx + 1) + '/' + s.pool.length + '</div>' +
         '<h2 class="qq">' + esc(q.question) + '</h2>' +
-        '<div class="qopts">' + q.options.map(function (o, i) { return '<button class="qopt" data-i="' + i + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
+        '<div class="qopts">' + shuffle(q.options.map(function (_, i) { return i; })).map(function (i) {
+        return '<button class="qopt" data-i="' + i + '">' + esc(q.options[i]) + '</button>'; }).join('') + '</div>' +
         '<div class="qfb" id="qfb"></div>' +
       '</div></div>';
     [].forEach.call(document.querySelectorAll('.qopt'), function (b) {
@@ -977,8 +1118,9 @@
     var s = quizSt; if (s.answered) return; s.answered = true;
     var q = s.pool[s.idx], correct = q.answer;
     if (i === correct) s.score++;
-    [].forEach.call(document.querySelectorAll('.qopt'), function (b, bi) {
+    [].forEach.call(document.querySelectorAll('.qopt'), function (b) {
       b.classList.add('locked');
+      var bi = parseInt(b.getAttribute('data-i'), 10);
       if (bi === correct) b.classList.add('ok'); else if (bi === i) b.classList.add('bad');
     });
     var src = q.sourceId ? '<div class="qsrc">Source : <a href="#/p/' + esc(q.sourceId) + '">' + esc(q.code || q.titre) + '</a></div>' : '';

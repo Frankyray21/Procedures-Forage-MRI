@@ -106,28 +106,6 @@ window.QUIZ = [
     ]
   },
   {
-    "id": "q7",
-    "question": "Au moment du retrait de la pompe hydraulique d'une foreuse CUBEX, alors qu'elle n'est plus retenue que par les boyaux hydrauliques et la sangle, quelle consigne de sécurité s'applique ?",
-    "options": [
-      "Retenir la pompe avec les mains sur les boyaux et éviter de mettre les mains sous la pompe",
-      "Glisser les mains sous la pompe pour mieux la soutenir",
-      "Laisser la pompe reposer au sol sans la retenir",
-      "Desserrer immédiatement la sangle pour libérer la pompe"
-    ],
-    "answer": 0,
-    "explication": "La procédure prescrit de retenir la pompe avec les mains sur les boyaux, d'éviter de se mettre les mains sous la pompe et de protéger ses doigts des coincements. Mettre les mains sous la pompe est explicitement interdit.",
-    "sourceId": "pro-mec-011",
-    "code": "PRO-MEC-011",
-    "titre": "Procédure pour changer la coupling entre le moteur électrique et la pompe hydraulique des foreuses CUBEX",
-    "categorie": "Maintenance",
-    "machines": [
-      "CUBEX",
-      "Foreuse CUBEX",
-      "Pompe hydraulique",
-      "Moteur électrique"
-    ]
-  },
-  {
     "id": "q8",
     "question": "Pourquoi la procédure de changement de coupling des foreuses CUBEX exige-t-elle de remettre le couvercle de plastique à la fin de l'opération ?",
     "options": [
@@ -182,44 +160,6 @@ window.QUIZ = [
     "sourceId": "pro-op-ith-002",
     "code": "PRO-OP-ITH-002",
     "titre": "Utilisation de clés et d'un tire-fort pour dévisser des tiges de forages",
-    "categorie": "Manutention",
-    "machines": [
-      "ITH"
-    ]
-  },
-  {
-    "id": "q13",
-    "question": "Pour dévisser des tiges de forage avec un palan à levier (come along) sur une foreuse ITH, pour quelle charge l'ancrage utilisé doit-il être certifié?",
-    "options": [
-      "500 kg",
-      "1000 kg",
-      "2500 kg",
-      "5000 kg"
-    ],
-    "answer": 2,
-    "explication": "La procédure exige d'utiliser uniquement un ancrage certifié pour une charge de 2500 kg.",
-    "sourceId": "pro-op-ith-002a",
-    "code": "PRO-OP-ITH-002A",
-    "titre": "Utilisation de la clé pour dévisser des tiges de forage avec un palan à levier (come along)",
-    "categorie": "Manutention",
-    "machines": [
-      "ITH"
-    ]
-  },
-  {
-    "id": "q16",
-    "question": "Pour la procédure ITH au palan à levier (come along), quelle condition les crochets du palan doivent-ils respecter?",
-    "options": [
-      "Être en aluminium pour réduire le poids",
-      "Être munis de linguets de sécurité",
-      "Être ouverts pour permettre un décrochage rapide",
-      "Être doublés par un pipe wrench"
-    ],
-    "answer": 1,
-    "explication": "La procédure exige que les crochets du palan à levier soient munis de linguets de sécurité.",
-    "sourceId": "pro-op-ith-002a",
-    "code": "PRO-OP-ITH-002A",
-    "titre": "Utilisation de la clé pour dévisser des tiges de forage avec un palan à levier (come along)",
     "categorie": "Manutention",
     "machines": [
       "ITH"
@@ -404,32 +344,6 @@ window.QUIZ = [
     ]
   },
   {
-    "id": "q26",
-    "question": "Sur la V-30 (alésage en descendant), à quelle distance minimale du mât la console de la foreuse doit-elle être positionnée pour protéger les travailleurs des projections de roches?",
-    "options": [
-      "0,5 mètre du mât",
-      "1 mètre du mât",
-      "1,5 mètre du mât",
-      "3 mètres du mât"
-    ],
-    "answer": 2,
-    "explication": "La procédure exige de positionner la console de la foreuse à 1,5 mètre du mât pour protéger les travailleurs des projections de roches qui peuvent survenir en tout temps.",
-    "sourceId": "pro-op-ith-005",
-    "code": "PRO-OP-ITH-005",
-    "titre": "Alésage en descendant sans accès avec la V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "Foreuse",
-      "Compresseur renforçateur (booster)",
-      "Surcompresseur",
-      "CUBEX",
-      "Centralisateur",
-      "Marteau",
-      "Tête aléseuse V-30"
-    ]
-  },
-  {
     "id": "q27",
     "question": "Pour le forage de la V-30 en descendant, quelle est la règle concernant le couvert (M.R.I. ou client) installé sur la monterie?",
     "options": [
@@ -453,107 +367,6 @@ window.QUIZ = [
       "Centralisateur",
       "Marteau",
       "Tête aléseuse V-30"
-    ]
-  },
-  {
-    "id": "q28",
-    "question": "Lors de l'alésage avec la V-30, à quelle température correspondent les boyaux tressés haute température des compresseurs (CUBEX et surcompresseurs) auxquels il faut porter une attention particulière?",
-    "options": [
-      "400 °F",
-      "600 °F",
-      "800 °F",
-      "1000 °F"
-    ],
-    "answer": 2,
-    "explication": "La procédure indique de porter une attention particulière aux boyaux tressés haute température (800 °F) des compresseurs sur les CUBEX et surcompresseurs, et de n'utiliser que le type de boyau approuvé.",
-    "sourceId": "pro-op-ith-005",
-    "code": "PRO-OP-ITH-005",
-    "titre": "Alésage en descendant sans accès avec la V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "Foreuse",
-      "Compresseur renforçateur (booster)",
-      "Surcompresseur",
-      "CUBEX",
-      "Centralisateur",
-      "Marteau",
-      "Tête aléseuse V-30"
-    ]
-  },
-  {
-    "id": "q29",
-    "question": "Lors de l'alésage conventionnel avec la tête de forage V-30, quelle distance minimale doit être maintenue entre la foreuse et le surcompresseur?",
-    "options": [
-      "3 mètres",
-      "5 mètres",
-      "7 mètres",
-      "10 mètres"
-    ],
-    "answer": 2,
-    "explication": "La procédure (encadré « Standard de positionnement des équipements ») fixe la distance entre la foreuse et le surcompresseur à 7 mètres.",
-    "sourceId": "pro-op-ith-006",
-    "code": "PRO-OP-ITH-006",
-    "titre": "Alésage conventionnel avec la tête de forage V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "CUBEX",
-      "Surcompresseur",
-      "Compresseur renforçateur",
-      "Marteau",
-      "Chargeuse navette",
-      "Camion à flèche"
-    ]
-  },
-  {
-    "id": "q30",
-    "question": "Sur les CUBEX et surcompresseurs utilisés pour l'alésage à la tête V-30, à quelle température peuvent monter les boyaux tressés haute-température des compresseurs, justifiant une attention particulière?",
-    "options": [
-      "400 degrés F",
-      "600 degrés F",
-      "800 degrés F",
-      "1000 degrés F"
-    ],
-    "answer": 2,
-    "explication": "L'encadré INSPECTIONS précise que les boyaux tressés haute-température des compresseurs atteignent 800 degrés F et que seul le type de boyau prescrit doit être utilisé.",
-    "sourceId": "pro-op-ith-006",
-    "code": "PRO-OP-ITH-006",
-    "titre": "Alésage conventionnel avec la tête de forage V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "CUBEX",
-      "Surcompresseur",
-      "Compresseur renforçateur",
-      "Marteau",
-      "Chargeuse navette",
-      "Camion à flèche"
-    ]
-  },
-  {
-    "id": "q31",
-    "question": "Pendant l'alésage avec la V-30, comment doit-on manipuler l'extension du câble électrique lorsqu'elle est sous tension?",
-    "options": [
-      "À mains nues en gardant une prise ferme",
-      "Avec des gants isolants seulement",
-      "Uniquement avec le crochet de plastique",
-      "Avec une pince métallique mise à la terre"
-    ],
-    "answer": 2,
-    "explication": "La procédure exige d'utiliser le crochet de plastique pour manipuler l'extension du câble lorsqu'elle est sous tension.",
-    "sourceId": "pro-op-ith-006",
-    "code": "PRO-OP-ITH-006",
-    "titre": "Alésage conventionnel avec la tête de forage V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "CUBEX",
-      "Surcompresseur",
-      "Compresseur renforçateur",
-      "Marteau",
-      "Chargeuse navette",
-      "Camion à flèche"
     ]
   },
   {

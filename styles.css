@@ -602,6 +602,39 @@ footer b{color:var(--muted)}
 .pq-fb.ok{color:#4ade80}
 .pq-fb.no{color:var(--accent-l)}
 .pq-fb .pq-fi{display:inline-flex}
+/* ===== nouveaux types de questions ===== */
+.pq-type{display:inline-block;font-size:.66rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  background:rgba(99,102,241,.16);color:#a5b4fc;border-radius:6px;padding:.12rem .45rem;margin-right:.45rem;vertical-align:.1em}
+.pq-hint{display:block;margin-top:.25rem;font-size:.82rem;font-weight:500;color:var(--dim)}
+/* vrai / faux : deux options côte à côte */
+.pq-opts-vf{flex-direction:row}
+.pq-opts-vf .pq-opt{flex:1;justify-content:center;max-width:180px}
+/* cases à cocher (plusieurs réponses) */
+.pq-mark.pq-sq{border-radius:6px;display:flex;align-items:center;justify-content:center}
+.pq-opt input:checked~.pq-mark.pq-sq{background:var(--brand);border-color:var(--brand)}
+.pq-opt input:checked~.pq-mark.pq-sq::after{content:'✓';color:#fff;font-size:.8rem;font-weight:900;line-height:1}
+.pq-opt.missed{border-color:#16a34a;border-style:dashed;background:rgba(34,197,94,.07)}
+.pq-opt.missed .pq-txt::after{content:' (vraie — non cochée)';color:#4ade80;font-size:.8rem;font-weight:700}
+.pq-actions-q{display:flex;gap:.6rem;margin-top:.7rem}
+.pq-actions-q .btn{padding:.45rem 1rem;font-size:.85rem}
+.pq-actions-q .btn:disabled{opacity:.45;cursor:default}
+/* remise en ordre : étapes à toucher dans l'ordre */
+.pq-steps{display:flex;flex-direction:column;gap:.45rem}
+.pq-step{display:flex;align-items:center;gap:.6rem;text-align:left;width:100%;cursor:pointer;
+  background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:.55rem .7rem;
+  color:var(--text);font:inherit;font-size:.92rem;line-height:1.35;transition:border-color .12s,background .12s}
+.pq-step:hover:not(:disabled){border-color:var(--dim)}
+.pq-step .pq-num{flex:none;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--dim);border-radius:8px;font-size:.8rem;font-weight:800;color:var(--muted);padding:0 .3rem}
+.pq-step.picked{border-color:var(--accent-l)}
+.pq-step.picked .pq-num{border-color:var(--accent-l);background:rgba(210,35,37,.16);color:var(--accent-l)}
+.pq-step.good{border-color:#16a34a;background:rgba(34,197,94,.12)}
+.pq-step.good .pq-num{border-color:#16a34a;background:#16a34a;color:#fff}
+.pq-step.bad{border-color:var(--brand);background:rgba(210,35,37,.12)}
+.pq-step.bad .pq-num{border-color:var(--brand);background:var(--brand);color:#fff;white-space:nowrap}
+.pq-step:disabled{cursor:default}
+.pq-ol{margin:.2rem 0 .6rem;padding-left:1.3rem}
+.pq-ol li{margin:.2rem 0}
 /* explication = citation de la procédure (toujours affichée après réponse) */
 .pq-exp{display:none;margin-top:.5rem;font-size:1.08rem;line-height:1.6;color:#dbe4f0;
   background:rgba(251,191,36,.07);border:1.5px solid #fbbf24;border-radius:10px;padding:.7rem .85rem}

@@ -20,10 +20,7 @@
     "pro-dd-st-003": [
       { "q": "À partir de quelle hauteur de plancher faut-il installer des garde-corps ?",
         "o": ["Plus haut que 6 pouces", "Plus haut que 12 pouces", "Plus haut que 24 pouces", "Jamais"], "a": 1,
-        "e": "« Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l'article 12 du RSST. »" },
-      { "q": "Quelles dimensions doit respecter une marche de plancher ?",
-        "o": ["Profondeur 8'' min, largeur 36'' min à 60'' max, hauteur max 12''", "Aucune dimension imposée", "1 pied de haut minimum", "Largeur libre"], "a": 0,
-        "e": "« Elles devront avoir une profondeur de 8'' minimum, une largeur de 36'' minimum, un maximum de 60'' de largeur et une hauteur maximum de 12 pouces. »" }    ],
+        "e": "« Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l'article 12 du RSST. »" }],
     "pro-dd-st-004": [
       { "q": "À quelle étape l'aide-foreur peut-il rester dans la zone de travail et utiliser le dead man ?",
         "o": ["En tout temps", "Seulement pour retirer le tube carottier des tiges de forage", "Pendant le mouvement du treuil", "Jamais"], "a": 1,
@@ -34,11 +31,7 @@
     "pro-dd-st-007": [
       { "q": "Combien de douches oculaires minimum doivent être sur le site de cimentation ?",
         "o": ["Aucune", "Minimum 2", "Une seule", "Quatre"], "a": 1,
-        "e": "« Douches oculaires (minimum 2). »" },
-      { "q": "Quelles barrures utilise-t-on pour connecter l'alimentation d'eau au header ?",
-        "o": ["Des colliers ordinaires", "Les barrures CHICAGO", "Du ruban", "Aucune"], "a": 1,
-        "e": "« Connecter l'alimentation d'eau au header, ne pas oublier de mettre les barrures CHICAGO. »" }
-    ],
+        "e": "« Douches oculaires (minimum 2). »" }    ],
     "pro-dd-st-008": [
       { "q": "Quelle est la capacité maximale du support en tiges HQ ?",
         "o": ["240 tiges", "108 tiges (324 m)", "184 tiges", "50 tiges"], "a": 1,
@@ -96,8 +89,8 @@
         "e": "« Le dead man doit être positionné à un minimum de 1,5 mètre de la tour de la foreuse, à côté du rack à rod. »" }
     ],
     "dr600-op-002": [
-      { "q": "Quelle est la première étape du déplacement autonome de la DR-600-MU ?",
-        "o": ["Démarrer la télécommande", "Actionner les 4 pattes de coins pour que les roues ne touchent plus au sol", "Mettre la master switch à On", "Détacher le câble"], "a": 1,
+      { "q": "Lors du déplacement autonome de la DR-600-MU, que faut-il actionner pour que les roues ne touchent plus au sol ?",
+        "o": ["La télécommande", "Les 4 pattes de coins", "La master switch", "Le treuil principal"], "a": 1,
         "e": "« Actionner les 4 pattes de coins afin que les roues ne touchent plus au sol. »" },
       { "q": "Que faut-il vérifier au centre des 4 roues avant le déplacement ?",
         "o": ["La pression des pneus", "Que l'engagement est bien dévissé AU COMPLET", "La graisse", "Rien"], "a": 1,

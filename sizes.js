@@ -1,7 +1,7 @@
 /* Tailles (octets) des fichiers du site — généré par `node gen-sizes.js`.
    Sert à estimer le volume et le temps du téléchargement hors-ligne. */
 window.ASSET_SIZES = {
- "app.js":64693,
+ "app.js":73244,
  "chatbot.js":29013,
  "config.js":2771,
  "data-diamant.js":19352,
@@ -360,7 +360,7 @@ window.ASSET_SIZES = {
  "images/pages/ss-dd-st-001-1.jpg":113074,
  "images/pages/ss-dd-st-001-2.jpg":63849,
  "images/pages/std-dd-installation-1.jpg":68962,
- "index.html":3686,
+ "index.html":3730,
  "llm.js":12237,
  "manifest.webmanifest":828,
  "pages.js":11904,
@@ -423,12 +423,13 @@ window.ASSET_SIZES = {
  "pdftext.js":359413,
  "quiz-dd-equip.js":4595,
  "quiz-diamant.js":10708,
- "quiz-diamant2.js":9562,
+ "quiz-diamant2.js":8807,
  "quiz-hard3.js":6754,
  "quiz-ith-new.js":8357,
  "quiz-securite.js":4336,
- "quiz.js":40135,
- "quiz_proc.js":46950,
- "sizes.js":18012,
- "styles.css":51423
+ "quiz-types.js":48724,
+ "quiz.js":33024,
+ "quiz_proc.js":37462,
+ "sizes.js":18036,
+ "styles.css":53925
 };
