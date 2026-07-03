@@ -609,14 +609,14 @@
         '</details></div>';
     }
 
+    // Attestation de lecture — DIRECTEMENT après le quiz (formulaire toujours visible).
+    h += attestationHTML(p);
+
     if (p.historique && p.historique.length) {
       h += sec('Historique des révisions', '<table class="hist"><thead><tr><th>Date</th><th>Modification</th><th>Par</th></tr></thead><tbody>' +
         p.historique.map(function (r) { return '<tr><td>' + esc(r.date) + '</td><td>' + esc(r.description) + '</td><td>' + esc(r.par) + '</td></tr>'; }).join('') +
         '</tbody></table>');
     }
-
-    // Attestation de lecture (formulaire Airtable pré-rempli) — si configurée.
-    h += attestationHTML(p);
 
     h += '</div>';
     view.innerHTML = h;
@@ -643,22 +643,14 @@
   function attestationHTML(p) {
     if (!attestEndpoint()) return '';
     var head = '<div class="sec attest-sec" data-proc="' + esc(p.id) + '"><h2>Attestation de lecture</h2>';
-    // Note de passage : le quiz de la fiche doit être réussi à 80 % (meilleur
-    // résultat, quiz complet) avant de pouvoir attester la lecture.
-    var quiz = (window.QUIZ_PROC && window.QUIZ_PROC[p.id]) || [];
+    // Formulaire toujours visible, directement après le quiz (aucune note de
+    // passage exigée). Si le quiz a été joué, on affiche le score à titre
+    // indicatif seulement.
     var best = pqBestPct(p.id);
-    if (quiz.length && !(best && best.pct >= 80)) {
-      return head +
-        '<p class="attest-lead">Note de passage requise : obtiens au moins <b>80 %</b> au quiz de cette fiche' +
-        ' pour débloquer l\'attestation.' +
-        (best ? ' Meilleur résultat : <b>' + best.s + '/' + best.n + ' (' + best.pct + ' %)</b>.' : '') + '</p>' +
-        '<button type="button" class="btn attest-btn attest-locked" disabled>' +
-        '🔒 Attester la lecture (réussis d\'abord le quiz)</button></div>';
-    }
     var scoreTxt = best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '';
     return head +
       '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure.' +
-      (scoreTxt ? ' Quiz réussi : <b>' + scoreTxt + '</b>.' : '') +
+      (scoreTxt ? ' Ton résultat au quiz : <b>' + scoreTxt + '</b>.' : '') +
       ' Tape ton nom (choisis-le dans la liste) puis valide — ton attestation est enregistrée pour le suivi des formations.</p>' +
       '<div class="attest-form">' +
         '<label class="attest-field"><span>Ton nom complet</span>' +
@@ -676,7 +668,7 @@
   function attestSig(pid, name) { return pid + '|' + norm(name).trim() + '|' + new Date().toISOString().slice(0, 10); }
   function initAttestation(p) {
     var sec = document.querySelector('.attest-sec[data-proc="' + p.id + '"]'); if (!sec) return;
-    var form = sec.querySelector('.attest-form'); if (!form) return;      // gate encore verrouillée
+    var form = sec.querySelector('.attest-form'); if (!form) return;      // section déjà envoyée (état confirmé)
     var endpoint = attestEndpoint(); if (!endpoint) return;
     var input = form.querySelector('.attest-name');
     var sugg = form.querySelector('.attest-sugg');
