@@ -1,0 +1,14 @@
+# Configuration Wrangler — Worker « Attestations procédures (web) »
+# Déploiement CLI (optionnel) depuis ce dossier :
+#     cd worker && npx wrangler deploy
+# Le secret AIRTABLE_TOKEN se règle dans le tableau de bord Cloudflare
+# (Settings → Variables and Secrets), pas ici.
+#
+# ⚠️ Ce fichier est dans worker/ (et non à la racine) pour ne pas interférer
+# avec le projet Cloudflare Pages qui sert le SITE depuis la racine du dépôt.
+# La méthode recommandée reste le copier-coller de worker.js dans le tableau
+# de bord (voir README.md) — aucun outil à installer.
+
+name = "attestations-procedures"
+main = "worker.js"
+compatibility_date = "2025-09-01"

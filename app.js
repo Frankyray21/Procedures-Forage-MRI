@@ -623,6 +623,7 @@
     initChecklistState();
     initGallery(figs);
     initProcQuiz(p.id);
+    initAttestation(p);
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
 
@@ -630,36 +631,145 @@
      Ouvre un formulaire Airtable pré-rempli (procédure verrouillée). Le bouton
      n'apparaît que si window.SITE_CONFIG.attestation.formUrl est configuré.
      Le travailleur choisit son nom dans la liste, coche « lu et compris », envoie. */
-  function attestUrl(p) {
+  function attestEndpoint() {
     var c = (window.SITE_CONFIG && window.SITE_CONFIG.attestation) || null;
-    if (!c || !c.formUrl) return '';
-    var field = c.procField || 'Procédure';
-    var val = p.code || p.titre;
-    return c.formUrl + (c.formUrl.indexOf('?') < 0 ? '?' : '&') +
-      'prefill_' + encodeURIComponent(field) + '=' + encodeURIComponent(val) +
-      '&hide_' + encodeURIComponent(field) + '=true';
+    return (c && typeof c.endpoint === 'string' && c.endpoint) ? c.endpoint.replace(/\/+$/, '') : '';
+  }
+  // Meilleur score exprimé en % (ou null si jamais joué).
+  function pqBestPct(id) {
+    var b = pqGetBest(id);
+    return (b && b.n > 0) ? { s: b.s, n: b.n, pct: Math.round(b.s / b.n * 100) } : null;
   }
   function attestationHTML(p) {
-    var url = attestUrl(p);
-    if (!url) return '';
+    if (!attestEndpoint()) return '';
+    var head = '<div class="sec attest-sec" data-proc="' + esc(p.id) + '"><h2>Attestation de lecture</h2>';
     // Note de passage : le quiz de la fiche doit être réussi à 80 % (meilleur
     // résultat, quiz complet) avant de pouvoir attester la lecture.
     var quiz = (window.QUIZ_PROC && window.QUIZ_PROC[p.id]) || [];
-    var best = pqGetBest(p.id);
-    if (quiz.length && !(best && best.n > 0 && best.s / best.n >= 0.8)) {
-      return '<div class="sec attest-sec"><h2>Attestation de lecture</h2>' +
+    var best = pqBestPct(p.id);
+    if (quiz.length && !(best && best.pct >= 80)) {
+      return head +
         '<p class="attest-lead">Note de passage requise : obtiens au moins <b>80 %</b> au quiz de cette fiche' +
         ' pour débloquer l\'attestation.' +
-        (best ? ' Meilleur résultat : <b>' + best.s + '/' + best.n + '</b>.' : '') + '</p>' +
+        (best ? ' Meilleur résultat : <b>' + best.s + '/' + best.n + ' (' + best.pct + ' %)</b>.' : '') + '</p>' +
         '<button type="button" class="btn attest-btn attest-locked" disabled>' +
-        '\uD83D\uDD12 Attester la lecture (réussis d\'abord le quiz)</button></div>';
+        '🔒 Attester la lecture (réussis d\'abord le quiz)</button></div>';
     }
-    return '<div class="sec attest-sec"><h2>Attestation de lecture</h2>' +
-      '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure. ' +
-      'Sélectionne ton nom dans la liste et valide — ton attestation est enregistrée et transmise au superviseur.</p>' +
-      '<a class="btn attest-btn" href="' + esc(url) + '" target="_blank" rel="noopener">' +
-      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
-      ' Attester la lecture</a></div>';
+    var scoreTxt = best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '';
+    return head +
+      '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure.' +
+      (scoreTxt ? ' Quiz réussi : <b>' + scoreTxt + '</b>.' : '') +
+      ' Tape ton nom (choisis-le dans la liste) puis valide — ton attestation est enregistrée pour le suivi des formations.</p>' +
+      '<div class="attest-form">' +
+        '<label class="attest-field"><span>Ton nom complet</span>' +
+          '<input type="text" class="attest-name" placeholder="Prénom Nom" autocomplete="off" ' +
+          'role="combobox" aria-autocomplete="list" aria-expanded="false"></label>' +
+        '<div class="attest-sugg" role="listbox" hidden></div>' +
+        '<p class="attest-hint">Commence à taper : ton nom devrait apparaître dans la liste.</p>' +
+        '<button type="button" class="btn attest-btn attest-send">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
+        ' Attester la lecture</button>' +
+        '<div class="attest-msg" aria-live="polite"></div>' +
+      '</div></div>';
+  }
+  // Anti-doublon : un même nom + procédure + jour n'est envoyé qu'une fois.
+  function attestSig(pid, name) { return pid + '|' + norm(name).trim() + '|' + new Date().toISOString().slice(0, 10); }
+  function initAttestation(p) {
+    var sec = document.querySelector('.attest-sec[data-proc="' + p.id + '"]'); if (!sec) return;
+    var form = sec.querySelector('.attest-form'); if (!form) return;      // gate encore verrouillée
+    var endpoint = attestEndpoint(); if (!endpoint) return;
+    var input = form.querySelector('.attest-name');
+    var sugg = form.querySelector('.attest-sugg');
+    var hint = form.querySelector('.attest-hint');
+    var sendBtn = form.querySelector('.attest-send');
+    var msg = form.querySelector('.attest-msg');
+    var pickedId = '', pickedName = '';
+    var HINT0 = 'Commence à taper : ton nom devrait apparaître dans la liste.';
+    try { input.value = localStorage.getItem('attest_name') || ''; } catch (e) {}
+
+    function db(s) { try { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { return s; } }
+    function setHint(t, ok) { hint.textContent = t; hint.classList.toggle('ok', !!ok); }
+    function hideSugg() { sugg.hidden = true; sugg.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); }
+    function clearPick() { if (pickedId) { pickedId = ''; pickedName = ''; setHint(HINT0, false); } }
+    function pick(it) {
+      pickedId = it.id; pickedName = it.name; input.value = it.name;
+      setHint('✓ Relié à ton dossier employé.', true); hideSugg();
+    }
+    function hl(name, term) {
+      var t = db(name.toLowerCase()), qd = db((term || '').toLowerCase()), k = qd ? t.indexOf(qd) : -1;
+      if (k < 0) return esc(name);
+      return esc(name.slice(0, k)) + '<b>' + esc(name.slice(k, k + qd.length)) + '</b>' + esc(name.slice(k + qd.length));
+    }
+    function renderSugg(list, term) {
+      if (!list.length) { hideSugg(); setHint('Aucun employé trouvé — vérifie l\'orthographe (tu peux quand même attester).', false); return; }
+      sugg.innerHTML = '';
+      list.forEach(function (it) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'attest-item'; b.setAttribute('role', 'option');
+        b.innerHTML = hl(it.name, term);
+        b.addEventListener('mousedown', function (e) { e.preventDefault(); pick(it); });
+        sugg.appendChild(b);
+      });
+      sugg.hidden = false; input.setAttribute('aria-expanded', 'true');
+    }
+    var tmr = null, lastReq = 0;
+    function doSearch() {
+      var v = (input.value || '').trim();
+      if (v.length < 2) { hideSugg(); return; }
+      var myReq = ++lastReq;
+      fetch(endpoint + '?q=' + encodeURIComponent(v), { method: 'GET' })
+        .then(function (r) { return r && r.ok ? r.json() : null; })
+        .then(function (d) { if (myReq === lastReq && document.activeElement === input) renderSugg((d && d.results) || [], v); })
+        .catch(function () {});
+    }
+    input.addEventListener('input', function () {
+      if (pickedId && input.value.toLowerCase() !== pickedName.toLowerCase()) clearPick();
+      if (tmr) clearTimeout(tmr); tmr = setTimeout(doSearch, 220);
+    });
+    input.addEventListener('focus', function () { if (!pickedId && (input.value || '').trim().length >= 2) doSearch(); });
+    input.addEventListener('blur', function () { setTimeout(hideSugg, 150); });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideSugg(); });
+
+    sendBtn.onclick = function () {
+      var name = (input.value || '').trim();
+      if (!name) { input.focus(); setHint('Entre ton nom avant d\'attester.', false); return; }
+      if (!navigator.onLine) { msg.className = 'attest-msg no'; msg.textContent = '📴 Hors-ligne : reconnecte-toi au réseau pour envoyer ton attestation.'; return; }
+      var sig = attestSig(p.id, name);
+      var done = '';
+      try { done = localStorage.getItem('attest_sent_' + p.id) || ''; } catch (e) {}
+      if (done === sig) { attestSuccess(sec, name, true); return; }
+      sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
+      var best = pqBestPct(p.id);
+      var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
+        titre: p.titre || '', date: new Date().toISOString().slice(0, 10),
+        score: best ? (best.s + '/' + best.n + ' — ' + best.pct + ' %') : '',
+        revision: p.date_revision || p.date_creation || '' };
+      fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .then(function (r) { return r ? r.json().then(function (j) { return { ok: r.ok, j: j }; }) : null; })
+        .then(function (res) {
+          sendBtn.disabled = false;
+          if (res && res.ok && res.j && res.j.ok) {
+            try { localStorage.setItem('attest_sent_' + p.id, sig); localStorage.setItem('attest_name', name); } catch (e) {}
+            attestSuccess(sec, name, res.j.linked);
+          } else {
+            msg.className = 'attest-msg no';
+            msg.textContent = '⚠️ Enregistrement impossible pour le moment. Réessaie dans un instant.';
+          }
+        })
+        .catch(function () {
+          sendBtn.disabled = false;
+          msg.className = 'attest-msg no';
+          msg.textContent = '⚠️ Service d\'attestation injoignable. Vérifie le réseau et réessaie.';
+        });
+    };
+    setHint(HINT0, false);
+  }
+  function attestSuccess(sec, name, linked) {
+    sec.innerHTML = '<h2>Attestation de lecture</h2>' +
+      '<div class="attest-done"><span class="attest-done-ic">✓</span>' +
+      '<div><strong>Attestation enregistrée</strong>' +
+      '<span>Merci ' + esc(name) + '. Ta lecture de cette procédure est enregistrée' +
+      (linked ? ' et reliée à ton dossier employé' : '') + '.</span></div></div>';
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
@@ -668,11 +778,13 @@
   function pqSetFails(id, arr) { try { localStorage.setItem('pq_fail_' + id, JSON.stringify(arr)); } catch (e) {} }
   // Re-rend la section attestation (déblocage en direct quand le quiz est réussi).
   function updateAttestGate(id) {
-    var sec = document.querySelector('.attest-sec'); if (!sec) return;
+    var sec = document.querySelector('.attest-sec[data-proc="' + id + '"]'); if (!sec) return;
+    if (sec.querySelector('.attest-form') || sec.querySelector('.attest-done')) return;  // déjà débloquée
     var p = DATA.filter(function (x) { return x.id === id; })[0]; if (!p) return;
     var html = attestationHTML(p); if (!html) return;
     var d = document.createElement('div'); d.innerHTML = html;
     sec.parentNode.replaceChild(d.firstElementChild, sec);
+    initAttestation(p);       // câble l'autocomplétion + l'envoi sur la section fraîchement débloquée
   }
   function pqGetBest(id) { try { var v = JSON.parse(localStorage.getItem('pq_' + id)); return (v && typeof v.s === 'number') ? v : null; } catch (e) { return null; } }
   function pqSetBest(id, s, n) {

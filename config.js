@@ -7,24 +7,23 @@ window.SITE_CONFIG = {
   title: "Procédures de forage",
 
   /* -------------------------------------------------------------------------
-     ATTESTATION DE LECTURE (par procédure) — formulaire Airtable.
-     Quand c'est configuré, un bouton « Attester la lecture » apparaît au bas de
-     CHAQUE fiche de procédure et ouvre un formulaire Airtable pré-rempli avec la
-     procédure (verrouillée). Le travailleur choisit son nom et valide.
+     ATTESTATION DE LECTURE (par procédure) → Airtable via un Worker Cloudflare.
+     Sur chaque fiche, une fois le QUIZ RÉUSSI À 80 %, une section « Attestation
+     de lecture » apparaît : le travailleur tape son nom (suggestions tirées du
+     registre des employés), puis « Attester la lecture » enregistre le tout
+     dans Airtable (base « Formations », table « Attestations procédures (web) »).
+     Exactement la même mécanique que le site Prévention TMS.
 
-     • formUrl  : l'URL du formulaire partagé Airtable (commence par
-                  https://airtable.com/app…/pag… ou /shr…).
-     • procField: le NOM EXACT du champ « Procédure » dans le formulaire
-                  (par défaut « Procédure »). Le pré-remplissage utilise la
-                  valeur du champ primaire de la table Procédures = le Code
-                  (ex. PRO-OP-ITH-002).
+     • endpoint : l'URL du Worker Cloudflare « attestations-procedures »
+                  (voir worker/README.md pour le déploiement en 5 min).
 
-     Laisser en commentaire = pas de bouton (tant que la base n'est pas prête).
+     Tant que le Worker n'est pas déployé, le site fonctionne : la section
+     s'affiche, mais l'envoi indique « service injoignable ». Mettre endpoint
+     à "" (vide) masque complètement la section.
   ------------------------------------------------------------------------- */
-  // attestation: {
-  //   formUrl: "https://airtable.com/appXXXXXXXXXXXXXX/pagYYYYYYYYYYYYYY/form",
-  //   procField: "Procédure"
-  // }
+  attestation: {
+    endpoint: "https://attestations-procedures.frankyray-21.workers.dev"
+  }
 };
 
 /* ---------------------------------------------------------------------------
