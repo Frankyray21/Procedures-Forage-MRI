@@ -1,5 +1,7 @@
 # Procédures de forage — Machines Roger International
 
+**🔗 Site publié : <https://frankyray21.github.io/Procedures-Forage-MRI/>**
+
 Site web (application monopage + PWA installable, **consultable hors-ligne**) qui regroupe
 toutes les procédures de travail de forage de M.R.I. :
 
