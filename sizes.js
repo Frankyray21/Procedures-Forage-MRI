@@ -1,8 +1,8 @@
 /* Tailles (octets) des fichiers du site — généré par `node gen-sizes.js`.
    Sert à estimer le volume et le temps du téléchargement hors-ligne. */
 window.ASSET_SIZES = {
- "app.js":59196,
- "chatbot.js":28350,
+ "app.js":64693,
+ "chatbot.js":29013,
  "config.js":2771,
  "data-diamant.js":19352,
  "data-ith-new.js":6975,
@@ -430,5 +430,5 @@ window.ASSET_SIZES = {
  "quiz.js":40135,
  "quiz_proc.js":46950,
  "sizes.js":18012,
- "styles.css":49984
+ "styles.css":51423
 };

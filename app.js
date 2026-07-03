@@ -158,7 +158,23 @@
 
     var q = $('#q');
     q.value = state.q;
-    q.addEventListener('input', function () { state.q = q.value; drawList(); });
+    var qTimer = null;      // léger debounce : la recherche plein-texte balaie tous les PDF
+    q.addEventListener('input', function () {
+      state.q = q.value;
+      clearTimeout(qTimer);
+      qTimer = setTimeout(drawList, state.q.trim() ? 160 : 0);
+    });
+    // « voir plus / voir moins » des passages cités dans les résultats
+    $('#grid').addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('.srmore-b'); if (!b) return;
+      e.preventDefault();
+      var more = b.previousElementSibling;
+      if (more && more.classList.contains('srmore')) {
+        var on = more.classList.toggle('open');
+        b.textContent = on ? 'Voir moins' : '+ ' + more.childElementCount + ' autre' +
+          (more.childElementCount > 1 ? 's' : '') + ' passage' + (more.childElementCount > 1 ? 's' : '');
+      }
+    });
     $('#catChips').addEventListener('click', function (e) {
       var b = e.target.closest('.chip'); if (!b) return;
       state.cat = b.getAttribute('data-cat') || '';
@@ -402,10 +418,94 @@
     return true;
   }
   function drawList() {
+    var grid = $('#grid'), count = $('#count');
+    if (!grid) return;
+    var qStr = (state.q || '').trim();
+    // Recherche « comme l'assistant » : dès qu'on tape 2 caractères et que
+    // l'index plein-texte des PDF est prêt, on utilise le même moteur que la
+    // bulle de conversation (chatbot.js) — synonymes, radicaux, tolérance aux
+    // fautes, score par passage — et on affiche les passages cités.
+    var S = window.MRI_SEARCH;
+    if (qStr.length >= 2 && S && S.ready()) { grid.classList.add('srmode'); drawSearch(qStr, S, grid, count); return; }
+    grid.classList.remove('srmode');
     var list = DATA.filter(matches);
-    $('#count').textContent = list.length + (list.length > 1 ? ' procédures' : ' procédure');
-    if (!list.length) { $('#grid').innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.</div>'; return; }
-    $('#grid').innerHTML = list.map(card).join('');
+    count.textContent = list.length + (list.length > 1 ? ' procédures' : ' procédure');
+    if (!list.length) { grid.innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.</div>'; return; }
+    grid.innerHTML = list.map(card).join('');
+  }
+  function passageHTML(r, terms) {
+    var it = r.item;
+    return '<div class="srp"><div class="srp-t">« ' + window.MRI_SEARCH.highlight(it.text, terms) + ' »</div>' +
+      '<a class="srp-src" href="#/p/' + esc(it.pid) + '">Ouvrir la fiche' + (it.source ? ' · ' + esc(it.source) : '') + ' →</a></div>';
+  }
+  function drawSearch(qStr, S, grid, count) {
+    var eq = S.expandQuery(qStr);
+    var res = S.search(qStr, eq, { noCut: true });
+    // Portée = section courante + filtres actifs (catégorie, équipement).
+    var inScope = {};
+    DATA.forEach(function (p) {
+      if (inSection(p, state.fam) &&
+          (!state.cat || p.categorie === state.cat) &&
+          (!state.mach || machinesOf(p).indexOf(state.mach) >= 0)) inScope[p.id] = p;
+    });
+    // Coupe de la traîne faible APRÈS filtrage (mêmes seuils que l'assistant :
+    // ≥ 45 % du meilleur score de la portée, au moins les 3 meilleurs gardés).
+    res = res.filter(function (r) { return !!inScope[r.item.pid]; });
+    if (res.length) {
+      var top = res[0].score, MINKEEP = 3;
+      res = res.filter(function (r, idx) { return idx < MINKEEP || r.score >= top * 0.45; });
+    }
+    // Passages regroupés par procédure, groupes ordonnés par pertinence
+    // (même logique que la bulle de conversation).
+    var groups = [], gmap = {};
+    res.forEach(function (r) {
+      var p = inScope[r.item.pid];
+      var g = gmap[p.id];
+      if (!g) { g = gmap[p.id] = { p: p, best: r.score, items: [] }; groups.push(g); }
+      g.items.push(r);
+      if (r.score > g.best) g.best = r.score;
+    });
+    groups.sort(function (a, b) { return b.best - a.best; });
+    // Procédures qui correspondent par leur fiche (titre, code, résumé,
+    // consignes) via les mêmes variantes (radical, faute, synonyme) : chaque
+    // mot tapé doit matcher par au moins une de ses variantes. Ajoutées après
+    // les procédures citées.
+    Object.keys(inScope).forEach(function (id) {
+      if (gmap[id]) return;
+      var p = inScope[id];
+      var hay = norm([p.titre, p.code, p.resume, p.categorie, (p.machines || []).join(' '),
+        (p.consignes_securite || []).map(function (c) { return c.regle; }).join(' ')].join(' '));
+      var ok = eq.coreSets.length && eq.coreSets.every(function (set) {
+        return set.some(function (w) { return hay.indexOf(w) >= 0; });
+      });
+      if (ok) groups.push({ p: p, best: 0, items: [] });
+    });
+    var nPass = groups.reduce(function (a, g) { return a + g.items.length; }, 0);
+    if (!groups.length) {
+      count.textContent = '0 procédure';
+      grid.innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.<br>' +
+        '<span class="srhint">Essaie d\'autres mots — ex. « bris de tige », « cadenassage », « distance surcompresseur ».</span></div>';
+      return;
+    }
+    count.textContent = groups.length + (groups.length > 1 ? ' procédures' : ' procédure') +
+      (nPass ? ' · ' + nPass + ' passage' + (nPass > 1 ? 's' : '') + ' cité' + (nPass > 1 ? 's' : '') + ' des PDF officiels' : '');
+    var PER_GROUP = 3;   // passages visibles par procédure (le reste derrière « voir plus »)
+    grid.innerHTML = groups.map(function (g, gi) {
+      var h = card(g.p);
+      if (g.items.length) {
+        var head = g.items.slice(0, PER_GROUP), rest = g.items.slice(PER_GROUP);
+        var inner = head.map(function (r) { return passageHTML(r, eq.terms); }).join('');
+        if (rest.length) {
+          inner += '<div class="srmore">' + rest.map(function (r) { return passageHTML(r, eq.terms); }).join('') + '</div>' +
+            '<button type="button" class="srmore-b">+ ' + rest.length + ' autre' + (rest.length > 1 ? 's' : '') +
+            ' passage' + (rest.length > 1 ? 's' : '') + '</button>';
+        }
+        h += '<details class="srdet"' + (gi === 0 ? ' open' : '') + '>' +
+          '<summary>' + g.items.length + ' passage' + (g.items.length > 1 ? 's' : '') + ' du PDF officiel</summary>' +
+          '<div class="srpass">' + inner + '</div></details>';
+      }
+      return '<div class="srgrp">' + h + '</div>';
+    }).join('');
   }
   function card(p) {
     var col = catColor(p.categorie);

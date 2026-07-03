@@ -185,7 +185,7 @@
     });
   }
 
-  function search(query, eq) {
+  function search(query, eq, opts) {
     eq = eq || expandQuery(query);
     var qt = eq.terms, core = eq.core, coreSets = eq.coreSets;
     if (!qt.length) return [];
@@ -222,6 +222,10 @@
     }
     // Coupe la traîne faible : on ne garde que ce qui s'approche du meilleur score
     // (≥ 45 %), tout en gardant au moins les 3 meilleurs passages.
+    // opts.noCut : la barre de recherche coupe elle-même APRÈS avoir appliqué
+    // ses filtres (section, catégorie, équipement), sinon un filtre actif
+    // pourrait vider des groupes pourtant pertinents dans sa portée.
+    if (opts && opts.noCut) return out;
     if (out.length) {
       var top = out[0].score, MINKEEP = 3;
       out = out.filter(function (r, idx) { return idx < MINKEEP || r.score >= top * 0.45; });
@@ -502,6 +506,16 @@
       if (e.target.closest && e.target.closest('a')) { toggle(false); }
     });
   }
+
+  // API publique : la barre de recherche du site réutilise EXACTEMENT le même
+  // moteur que l'assistant (synonymes du forage, radicaux, tolérance aux
+  // fautes, score par passage, coupe de la traîne faible, surlignage).
+  window.MRI_SEARCH = {
+    ready: function () { return INDEX.length > 0; },
+    expandQuery: expandQuery,
+    search: search,
+    highlight: highlight
+  };
 
   function init() {
     if (!window.PDFTEXT || !Object.keys(window.PDFTEXT).length) { setTimeout(init, 300); return; }

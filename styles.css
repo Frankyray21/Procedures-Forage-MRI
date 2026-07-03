@@ -485,6 +485,27 @@ footer b{color:var(--muted)}
 
 /* ===== liste dense des procédures ===== */
 .plist2{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))}
+/* ===== recherche : passages cités (même moteur que l'assistant) ===== */
+.plist2.srmode{grid-template-columns:1fr}
+.srgrp{display:flex;flex-direction:column;gap:.3rem}
+.srdet{margin:0 0 .2rem;border:1px solid var(--border);border-radius:10px;background:var(--bg-2);overflow:hidden}
+.srdet summary{cursor:pointer;list-style-position:inside;padding:.45rem .7rem;font-size:.78rem;font-weight:800;
+  color:var(--accent-l);letter-spacing:.2px}
+.srdet summary:hover{background:var(--card-2)}
+.srdet[open] summary{border-bottom:1px solid var(--border)}
+.srpass{padding:.15rem .55rem .45rem}
+.srp{margin:.4rem 0;padding:.5rem .6rem;background:var(--card-2);border:1px solid var(--border);border-radius:10px}
+.srp-t{font-size:.86rem;line-height:1.45}
+.srp .cbhl{background:#fde047;color:#111827;border-radius:3px;padding:0 .12em;font-weight:700;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.srp-src{display:block;margin-top:.3rem;font-size:.76rem;font-weight:700;color:var(--accent-l);text-decoration:none}
+.srp-src:hover{text-decoration:underline}
+.srmore{display:none}
+.srmore.open{display:block}
+.srmore-b{display:inline-block;margin:.15rem 0 .25rem;background:transparent;border:1px dashed var(--border);
+  border-radius:8px;color:var(--accent-l);font-weight:700;font-size:.78rem;padding:.3rem .6rem;cursor:pointer}
+.srmore-b:hover{border-color:var(--accent-l)}
+.srhint{display:block;margin-top:.5rem;font-size:.85rem}
 .prow{display:flex;align-items:center;gap:.7rem;background:var(--card);border:1px solid var(--border);
   border-left:3px solid var(--cat,var(--brand));border-radius:11px;padding:.65rem .85rem;
   transition:transform .15s,border-color .15s,background .15s}
