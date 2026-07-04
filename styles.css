@@ -93,6 +93,12 @@ main{padding-bottom:5rem;animation:fade .4s ease}
   font-size:.85rem;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);
   transition:.18s;white-space:nowrap;cursor:pointer}
 .chip:hover{color:#fff;border-color:rgba(210,35,37,.5)}
+/* Écrans tactiles (gants) : cibles d'au moins ~42px de haut */
+@media (pointer:coarse){
+  .chip{padding:.72rem .95rem}
+  .pdfbox a.dl{padding:.5rem .55rem;margin:-.3rem 0}
+  .back{padding:.45rem .6rem .45rem 0}
+}
 .chip.on{color:#fff;background:rgba(210,35,37,.16);border-color:var(--brand)}
 .chip .ct{font-size:.72rem;color:var(--dim)}
 .chip.on .ct{color:var(--accent-l)}
