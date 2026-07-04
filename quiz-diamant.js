@@ -47,13 +47,13 @@
     ],
     "pro-dd-st-008": [
       { "q": "Tu fais le trou du eye bolt dans le mur. Quelle profondeur et quelle hauteur ?",
-        "o": ["6 po de profond, au sol", "18 po de profond, a 5 pi du plancher", "1 m de profond, au plafond", "12 po de profond, a 2 pi"], "a": 1,
+        "o": ["6 po de profond, au sol", "18 po de profond, à 5 pi du plancher", "1 m de profond, au plafond", "12 po de profond, à 2 pi"], "a": 1,
         "e": "« Au mur, situer le centre du support et faire un trou de 18 po de profond avec la foreuse à percussion électrique à ± 5 pi du plancher. »" },
-      { "q": "Le support de tiges doit etre penche a quel angle ?",
-        "o": ["45 degres", "Entre 75 et 80 degres", "90 degres", "Entre 20 et 30 degres"], "a": 1,
+      { "q": "Le support de tiges doit être penché à quel angle ?",
+        "o": ["45 degrés", "Entre 75 et 80 degrés", "90 degrés", "Entre 20 et 30 degrés"], "a": 1,
         "e": "« S'assurer d'avoir un angle entre 75° et 80°. »" },
       { "q": "Comment ranges-tu les tiges dans le support ?",
-        "o": ["En vrac", "En quinconce, rangee par rangee depuis la gauche, appuyees sur la barre du fond", "Debout", "Sur les cotes"], "a": 1,
+        "o": ["En vrac", "En quinconce, rangée par rangée depuis la gauche, appuyées sur la barre du fond", "Debout", "Sur les côtés"], "a": 1,
         "e": "« Placer les tiges dans le support en quinconce […] par rangée à partir de la gauche » et « S'assurer d'appuyer les tiges sur la barre transversale du fond et non sur les côtés. »" }
     ],
     "pro-dd-st-009-1": [
@@ -109,11 +109,11 @@
         "e": "« Le système d'interverrouillage « FORTRESS » comprend 2 pièces : la coulisse et la serrure. »" }
     ],
     "dr600-op-002": [
-      { "q": "Les planetaires (l'engagement des roues) sont desengages. Que se passe-t-il ?",
-        "o": ["La foreuse freine toute seule", "La foreuse n'a AUCUN frein", "Les roues se bloquent", "Le moteur s'arrete"], "a": 1,
+      { "q": "Les planétaires (l'engagement des roues) sont désengagés. Que se passe-t-il ?",
+        "o": ["La foreuse freine toute seule", "La foreuse n'a AUCUN frein", "Les roues se bloquent", "Le moteur s'arrête"], "a": 1,
         "e": "« ATTENTION, IL N'Y A AUCUN FREIN SUR LA FOREUSE SI LES PLANÉTAIRES SONT DÉSENGAGÉS. »" },
-      { "q": "Avant de deplacer la foreuse, combien d'arrets d'urgence faut-il desactiver ?",
-        "o": ["Un seul", "3 en tout : un sur chaque boitier electrique et un « Pull cord »", "Deux", "Aucun"], "a": 1,
+      { "q": "Avant de déplacer la foreuse, combien d'arrêts d'urgence faut-il désactiver ?",
+        "o": ["Un seul", "3 en tout : un sur chaque boîtier électrique et un « Pull cord »", "Deux", "Aucun"], "a": 1,
         "e": "« Assurez-vous que tous les arrêts d'urgence sont désactivés […]. Il y en a 3 au total : Un sur chaque boîtier électrique et un « Pull cord » qu'on réactive avec le bouton bleu. »" }
     ],
     "std-dd-installation": [

@@ -33,14 +33,14 @@
         "e": "« Bien graisser les filets du driver sub. »" }
     ],
     "pro-pt-001": [
-      { "q": "Le bras telescopique du PIPE-TUB mesure quelle longueur ?",
+      { "q": "Le bras télescopique du PIPE-TUB mesure quelle longueur ?",
         "o": ["6 pi (1,8 m)", "12 pi (3,66 m)", "20 pi (6 m)", "8 pi (2,4 m)"], "a": 1,
         "e": "« …manipuler des tiges au train de forage au moyen d'un bras télescopique de 12 pi [3,66 m]. »" },
-      { "q": "Pendant le forage, a quelle distance du mat place-t-on les controles ?",
-        "o": ["Tout pres", "A plus de 1,5 metre du mat", "A 0,5 metre", "Sur le mat"], "a": 1,
+      { "q": "Pendant le forage, à quelle distance du mât place-t-on les contrôles ?",
+        "o": ["Tout près", "À plus de 1,5 mètre du mât", "À 0,5 mètre", "Sur le mât"], "a": 1,
         "e": "« Positionner les contrôles à plus de 1,5 mètre du mât de la foreuse et à 1,5 mètre du bras collier. »" },
-      { "q": "Tu n'utilises pas la commande a distance. Que fais-tu ?",
-        "o": ["Rien", "Mettre la fiche d'obturation dans la boite de connexion", "Debrancher la foreuse", "La laisser pendre"], "a": 1,
+      { "q": "Tu n'utilises pas la commande à distance. Que fais-tu ?",
+        "o": ["Rien", "Mettre la fiche d'obturation dans la boîte de connexion", "Débrancher la foreuse", "La laisser pendre"], "a": 1,
         "e": "« Si la commande à distance n'est pas utilisée, la fiche d'obturation doit être insérée dans la boîte de connexion. »" }
     ],
     "pro-op-sm-001": [

@@ -8,30 +8,30 @@
 window.QUIZ_PROC = {
   "centralisateur": [
     { "q": "Combien de travailleurs faut-il pour poser le centralisateur ?",
-      "o": ["1 travailleur", "2 travailleurs", "3 travailleurs", "Selon qui est la"], "a": 1,
+      "o": ["1 travailleur", "2 travailleurs", "3 travailleurs", "Selon qui est là"], "a": 1,
       "e": "« L'installation du centralisateur doit toujours se faire à deux travailleurs. »" },
-    { "q": "Combien pese chaque piece du centralisateur ?",
+    { "q": "Combien pèse chaque pièce du centralisateur ?",
       "o": ["12 livres", "25 livres", "46 livres", "93 livres"], "a": 2,
       "e": "« Se positionner [...] avant de manipuler les pièces du centralisateur, qui pèsent 46 livres chacune. »" },
     { "q": "Quel outil ne faut-il PAS utiliser pour serrer les boulons ?",
-      "o": ["Une cle ou un box", "Un wescot ou un pipe wrench", "Une cle Allen", "Un tournevis"], "a": 1,
+      "o": ["Une clé ou un box", "Un wescot ou un pipe wrench", "Une clé Allen", "Un tournevis"], "a": 1,
       "e": "« L'utilisation d'un wescot ou d'un pipe wrench n'est pas adéquate. »" },
-    { "q": "Combien de boulons, de locknuts et de lockwashers faut-il verifier ?",
+    { "q": "Combien de boulons, de locknuts et de lockwashers faut-il vérifier ?",
       "o": ["6 de chaque", "8 de chaque", "12 de chaque", "16 de chaque"], "a": 2,
       "e": "« Vérifier la présence des 12 boulons, 12 locknuts et 12 lockwashers avant le serrage. »" },
     { "q": "Tous les combien de pieds pose-t-on un centralisateur ?",
       "o": ["Tous les 20 pieds", "Tous les 40 pieds", "Tous les 60 pieds", "Tous les 100 pieds"], "a": 1,
       "e": "« Espacement d'installation des centralisateurs : tous les 40 pieds (ou selon les conditions). »" },
-    { "q": "Faut-il serrer les boulons et les ecrous dans un ordre precis ?",
-      "o": ["Oui, en etoile", "Oui, dans le sens de l'horloge", "Non, aucun ordre impose", "Oui, du bas vers le haut"], "a": 2,
+    { "q": "Faut-il serrer les boulons et les écrous dans un ordre précis ?",
+      "o": ["Oui, en étoile", "Oui, dans le sens de l'horloge", "Non, aucun ordre imposé", "Oui, du bas vers le haut"], "a": 2,
       "e": "« Il n'y a pas de séquence d'installation ou de serrage des boulons et des écrous. »" },
-    { "q": "Quand tu mets les boulons dans les trous, quel danger faut-il eviter ?",
-      "o": ["Abimer les filets", "Echapper la piece", "Une brulure", "Un choc electrique"], "a": 0,
+    { "q": "Quand tu mets les boulons dans les trous, quel danger faut-il éviter ?",
+      "o": ["Abîmer les filets", "Échapper la pièce", "Une brûlure", "Un choc électrique"], "a": 0,
       "e": "« Attention de ne pas endommager les filets des boulons quand vous les entrez dans les trous prévus à cet effet. »" },
     { "q": "Comment place-t-on les boulons sur le centralisateur ?",
-      "o": ["Tous du meme cote", "6 d'un cote et 6 de l'autre", "4 et 8", "Au hasard"], "a": 1,
+      "o": ["Tous du même côté", "6 d'un côté et 6 de l'autre", "4 et 8", "Au hasard"], "a": 1,
       "e": "« Répartition des boulons : 6 dans un sens et 6 dans l'autre sens. »" },
-    { "q": "Combien pese le centralisateur au complet ?",
+    { "q": "Combien pèse le centralisateur au complet ?",
       "o": ["46 lbs", "93 lbs", "12 lbs", "211 lbs"], "a": 1,
       "e": "« Poids total du centralisateur (dessin technique) : 93,0 lbs. »" }
   ],
@@ -98,17 +98,17 @@ window.QUIZ_PROC = {
       "e": "« Éloigner le réducteur (gearbox) le plus possible des tables pour disposer d'assez d'espace afin d'installer la clé. »" }
   ],
   "pro-op-ith-003": [
-    { "q": "Pour relier le traineau au vehicule, il faut combien d'elingues et de quelle taille ?",
-      "o": ["1 elingue de 1/2 pouce", "2 elingues de 1 pouce sur 8 pieds", "2 elingues de 4 pieds", "3 elingues de 1 pouce"], "a": 1,
+    { "q": "Pour relier le traîneau au véhicule, il faut combien d'élingues et de quelle taille ?",
+      "o": ["1 élingue de 1/2 pouce", "2 élingues de 1 pouce sur 8 pieds", "2 élingues de 4 pieds", "3 élingues de 1 pouce"], "a": 1,
       "e": "« Relier le traîneau ou la remorque au véhicule avec deux élingues d'au moins 1'' X 8 pieds. »" },
-    { "q": "Quelle est la taille minimale des manilles qui tiennent les elingues ?",
+    { "q": "Quelle est la taille minimale des manilles qui tiennent les élingues ?",
       "o": ["1/2 pouce", "3/4 de pouce", "1 pouce et quart", "2 pouces"], "a": 2,
       "e": "« ...fixées avec des manilles de 1''1/4 minimum. »" },
     { "q": "Combien de boulons doivent être en place sur la barre de tir du compresseur ?",
       "o": ["1 boulon", "2 boulons", "4 boulons", "Aucun"], "a": 1,
       "e": "« Verrouiller la barre de tir du compresseur avec le boulon [...] et s'assurer que les deux boulons sont en place pour limiter le pivot. »" },
     { "q": "Sans remorque, avec quelles manilles pose-t-on la barre de tir ?",
-      "o": ["Manilles de 1/2 pouce", "Manilles de 3/4 de pouce (et 1 pouce et quart cote chargeuse)", "Manilles de 2 pouces", "Sans manille"], "a": 1,
+      "o": ["Manilles de 1/2 pouce", "Manilles de 3/4 de pouce (et 1 pouce et quart côté chargeuse)", "Manilles de 2 pouces", "Sans manille"], "a": 1,
       "e": "« ...installer la barre de tir avec des manilles 3/4'', la raccorder à la chargeuse-navette avec une manille de 1 1/4'' et installer une chaîne de sécurité. »" }  ],
   "pro-op-ith-004": [
     { "q": "Le câble électrique est sous tension. Avec quoi tiens-tu sa rallonge ?",
@@ -197,8 +197,8 @@ window.QUIZ_PROC = {
     { "q": "Quelle distance faut-il entre la foreuse et le compresseur ?",
       "o": ["3 m", "5 m", "7 m", "12 m"], "a": 2,
       "e": "« Maintenir une distance de 7 mètres entre la foreuse et le compresseur. »" },
-    { "q": "Avec quoi touche-t-on un cable electrique sous tension ?",
-      "o": ["Le crochet en plastique", "Une cle", "Les mains avec des gants", "Une pince"], "a": 0,
+    { "q": "Avec quoi touche-t-on un câble électrique sous tension ?",
+      "o": ["Le crochet en plastique", "Une clé", "Les mains avec des gants", "Une pince"], "a": 0,
       "e": "« Manipuler toute extension de câble sous tension uniquement avec le crochet de plastique. »" },
     { "q": "La monterie fait plus de 40 pieds. Tous les combien pose-t-on un centralisateur ?",
       "o": ["Tous les 20 pieds", "Tous les 40 pieds", "Tous les 100 pieds", "Un seul suffit"], "a": 1,
@@ -236,25 +236,25 @@ window.QUIZ_PROC = {
   ],
   "pro-op-ith-014": [
     { "q": "Quand est-il interdit de mettre ton corps sous les tables ?",
-      "o": ["Ce n'est jamais interdit", "Si le marteau n'est pas monte et la slip-plate est ouverte", "Seulement la nuit", "Quand la foreuse tourne"], "a": 1,
+      "o": ["Ce n'est jamais interdit", "Si le marteau n'est pas monté et la slip-plate est ouverte", "Seulement la nuit", "Quand la foreuse tourne"], "a": 1,
       "e": "« Il est interdit à qui que ce soit de positionner toute partie de son corps sous les tables si le marteau n'est pas monté au-delà des tables et que la slip plate n'est pas fermée. »" },
-    { "q": "Quelle distance faut-il garder entre le mat et la console ?",
+    { "q": "Quelle distance faut-il garder entre le mât et la console ?",
       "o": ["0,5 m", "1 m", "1,5 m", "3 m"], "a": 2,
       "e": "« Une distance minimum de 1,5 mètre entre le mât et la console doit obligatoirement être respectée. »" },
-    { "q": "Une piece bouge. Ou ne dois-tu pas te placer ?",
-      "o": ["Derriere la console", "Entre la console et le mat, ou a moins de 1,5 m du mat", "Pres du tubage", "Au sol"], "a": 1,
+    { "q": "Une pièce bouge. Où ne dois-tu pas te placer ?",
+      "o": ["Derrière la console", "Entre la console et le mât, ou à moins de 1,5 m du mât", "Près du tubage", "Au sol"], "a": 1,
       "e": "« Quand une pièce est en mouvement, aucun travailleur ne peut se placer entre la console et le mât, ni à moins de 1,5 mètre du mât de tous les côtés. »" },
     { "q": "Avant de nettoyer, que fais-tu du marteau et de la slip-plate ?",
       "o": ["Rien", "Monter le marteau au-dessus des tables, fermer la slip-plate, poser la bit dessus et fermer l'interrupteur", "Baisser le marteau", "Ouvrir la slip-plate"], "a": 1,
       "e": "« Avant de procéder au nettoyage, monter le marteau au-delà des tables, fermer la slip-plate ou les jaws, appuyer la bit sur la slip-plate ou les jaws, et fermer l'interrupteur de la foreuse. »" },
     { "q": "Comment visses-tu le marteau au saver sub ?",
-      "o": ["A fond, mais sans forcer", "Le plus fort possible", "A moitie", "A la cle a choc"], "a": 0,
+      "o": ["À fond, mais sans forcer", "Le plus fort possible", "À moitié", "À la clé à choc"], "a": 0,
       "e": "« Visser le marteau au saver sub au complet sans le serrer avec force. »" },
-    { "q": "Pourquoi la longueur du tubage qui depasse peut-elle changer ?",
-      "o": ["A cause du vent", "A cause de la boue de forage qui s'accumule", "A cause du gel", "Elle ne change pas"], "a": 1,
+    { "q": "Pourquoi la longueur du tubage qui dépasse peut-elle changer ?",
+      "o": ["À cause du vent", "À cause de la boue de forage qui s'accumule", "À cause du gel", "Elle ne change pas"], "a": 1,
       "e": "« La longueur de dépassement peut changer pendant le forage à cause de l'accumulation de boue de forage. »" },
-    { "q": "Avant d'installer le tubage, quelle procedure suis-tu et que verifies-tu ?",
-      "o": ["Aucune", "La procedure PRO-OP-ITH-004, et verifier que la foreuse est bien alignee selon les plans", "Seulement le cadenassage", "PRO-MEC-011"], "a": 1,
+    { "q": "Avant d'installer le tubage, quelle procédure suis-tu et que vérifies-tu ?",
+      "o": ["Aucune", "La procédure PRO-OP-ITH-004, et vérifier que la foreuse est bien alignée selon les plans", "Seulement le cadenassage", "PRO-MEC-011"], "a": 1,
       "e": "« Respecter au préalable la procédure de forage PRO-OP-ITH-004 et s'assurer que la foreuse est bien alignée selon les plans de forage avant l'installation du tubage. »" },
     { "q": "Au 2e forage, sur quelle longueur le casing entre-t-il dans le roc dur ?",
       "o": ["1 pouce", "1 pied", "3 pieds", "Il n'entre pas dans le roc"], "a": 1,
@@ -292,10 +292,10 @@ window.QUIZ_PROC = {
   var HARD = {
     "centralisateur": [
       { "q": "Pendant que tu serres les boulons, sur quoi gardes-tu de la tension, et avec quel outil ?", "d": "difficile",
-        "o": ["Rien de special", "Une tension sur les lockwashers, avec une cle ou un box", "Une tension sur les boyaux, avec un wescot", "Le mat a l'horizontale"], "a": 1,
+        "o": ["Rien de spécial", "Une tension sur les lockwashers, avec une clé ou un box", "Une tension sur les boyaux, avec un wescot", "Le mât à l'horizontale"], "a": 1,
         "e": "« Serrer tous les boulons en maintenant une tension sur les lockwashers à l'aide de l'outil adéquat (clé ou box). »" },
-      { "q": "Avant de lever une piece du centralisateur, que dois-tu faire ? (une piece pese 46 livres)", "d": "difficile",
-        "o": ["Travailler seul mais vite", "Etre deux ET bien se placer avant de la prendre", "Porter un harnais antichute", "Utiliser un pipe wrench"], "a": 1,
+      { "q": "Avant de lever une pièce du centralisateur, que dois-tu faire ? (une pièce pèse 46 livres)", "d": "difficile",
+        "o": ["Travailler seul mais vite", "Être deux ET bien se placer avant de la prendre", "Porter un harnais antichute", "Utiliser un pipe wrench"], "a": 1,
         "e": "« Toujours installer le centralisateur à deux travailleurs. » et « Se positionner [...] avant de manipuler les pièces du centralisateur, qui pèsent 46 livres chacune. »" }
     ],
     "pro-mec-011": [
@@ -311,11 +311,11 @@ window.QUIZ_PROC = {
     "pro-op-ith-002a": [
     ],
     "pro-op-ith-003": [
-      { "q": "On deplace la foreuse sans remorque. Quand est-ce permis ?", "d": "difficile",
-        "o": ["Partout, meme dans la rampe", "Sur du plat, sur une courte distance, a basse vitesse - jamais dans la rampe", "Seulement en descendant la rampe", "Jamais"], "a": 1,
+      { "q": "On déplace la foreuse sans remorque. Quand est-ce permis ?", "d": "difficile",
+        "o": ["Partout, même dans la rampe", "Sur du plat, sur une courte distance, à basse vitesse - jamais dans la rampe", "Seulement en descendant la rampe", "Jamais"], "a": 1,
         "e": "« Ne déplacer la foreuse sans remorque qu'à plat, sur de courtes distances et à basse vitesse; il est interdit de la déplacer sans remorque dans la rampe. »" },
-      { "q": "Le deplacement est fini. Que fait-on du traineau ?", "d": "difficile",
-        "o": ["On l'attache au mur", "On le laisse par terre et on met un ruban jaune", "On le suspend au mat", "On le remonte sur la remorque"], "a": 1,
+      { "q": "Le déplacement est fini. Que fait-on du traîneau ?", "d": "difficile",
+        "o": ["On l'attache au mur", "On le laisse par terre et on met un ruban jaune", "On le suspend au mât", "On le remonte sur la remorque"], "a": 1,
         "e": "« Ne jamais attacher le traîneau au mur après le déplacement; le laisser par terre et le signaler avec un ruban jaune. »" }
     ],
     "pro-op-ith-004": [
@@ -332,7 +332,7 @@ window.QUIZ_PROC = {
     ],
     "pro-op-ith-007": [
       { "q": "Quelle hauteur faut-il entre le plancher et le toit ? Et si c'est plus de 14 pieds ?", "d": "difficile",
-        "o": ["Pas de regle", "12 a 14 pieds; si c'est plus, on monte le plancher avec de la roche cassee", "Juste 6 pieds", "Au moins 30 pieds"], "a": 1,
+        "o": ["Pas de règle", "12 à 14 pieds; si c'est plus, on monte le plancher avec de la roche cassée", "Juste 6 pieds", "Au moins 30 pieds"], "a": 1,
         "e": "« Maintenir une hauteur plancher-toit entre 12 et 14 pieds (max 4,3 m); au-delà de 4,3 m (14 pi), relever le plancher avec de la roche abattue. »" }    ],
     "pro-op-ith-008": [
 ],
@@ -364,8 +364,8 @@ window.QUIZ_PROC = {
     "pro-op-ith-002a": [
     ],
     "pro-op-ith-003": [
-      { "q": "Pendant l'embarquement de la foreuse, ou doit se placer l'operateur ?", "d": "difficile",
-        "o": ["A cote de la remorque", "Dans le panier, avec la chaine garde-corps en place", "Au sol, pour guider", "Dans le vehicule"], "a": 1,
+      { "q": "Pendant l'embarquement de la foreuse, où doit se placer l'opérateur ?", "d": "difficile",
+        "o": ["À côté de la remorque", "Dans le panier, avec la chaîne garde-corps en place", "Au sol, pour guider", "Dans le véhicule"], "a": 1,
         "e": "« Lors de l'embarquement de la foreuse, l'opérateur doit toujours se placer à l'intérieur du panier et mettre la chaîne garde-corps. »" }
     ],
     "pro-op-ith-004": [
@@ -378,8 +378,8 @@ window.QUIZ_PROC = {
     "pro-op-ith-006": [
     ],
     "pro-op-ith-007": [
-      { "q": "Une tige casse. Que fait-on de la tige cassee ?", "d": "difficile",
-        "o": ["On la jette", "On met une etiquette dessus, on la renvoie au fournisseur et on remplit un rapport", "On la repare", "On la reutilise"], "a": 1,
+      { "q": "Une tige casse. Que fait-on de la tige cassée ?", "d": "difficile",
+        "o": ["On la jette", "On met une étiquette dessus, on la renvoie au fournisseur et on remplit un rapport", "On la répare", "On la réutilise"], "a": 1,
         "e": "« Après un bris de tige, retirer et vérifier toutes les autres tiges; étiqueter et retourner la tige brisée au fournisseur; remplir un rapport d'incident. »" }
     ],
     "pro-op-ith-008": [

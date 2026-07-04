@@ -36,8 +36,8 @@
       { "q": "Combien de tiges HQ le support peut-il tenir au maximum ?",
         "o": ["240 tiges", "108 tiges (324 m)", "184 tiges", "50 tiges"], "a": 1,
         "e": "« La capacité maximale en fonction de la résistance du support est de : HQ = 108 tiges, 324m ; NQ = 184 tiges, 552m ; BQ = 240 tiges, 720m. »" },
-      { "q": "Quel outil sert a separer des tiges graissees, dures a prendre ?",
-        "o": ["Les mains", "Un tournevis plat", "Une cle a tube", "Un marteau"], "a": 1,
+      { "q": "Quel outil sert à séparer des tiges graissées, dures à prendre ?",
+        "o": ["Les mains", "Un tournevis plat", "Une clé à tube", "Un marteau"], "a": 1,
         "e": "« L'utilisation d'un tournevis plat sera préconisée pour les séparer et aider à les prendre. »" }
     ],
     "pro-dd-st-011": [
@@ -86,11 +86,11 @@
         "e": "« Le dead man doit être positionné à un minimum de 1,5 mètre de la tour de la foreuse, à côté du rack à rod. »" }
     ],
     "dr600-op-002": [
-      { "q": "La foreuse va se deplacer seule. Qu'est-ce qui leve les roues du sol ?",
-        "o": ["La telecommande", "Les 4 pattes de coins", "La master switch", "Le treuil principal"], "a": 1,
+      { "q": "La foreuse va se déplacer seule. Qu'est-ce qui lève les roues du sol ?",
+        "o": ["La télécommande", "Les 4 pattes de coins", "La master switch", "Le treuil principal"], "a": 1,
         "e": "« Actionner les 4 pattes de coins afin que les roues ne touchent plus au sol. »" },
-      { "q": "Avant de deplacer la foreuse, que verifies-tu au centre des 4 roues ?",
-        "o": ["La pression des pneus", "Que l'engagement est devisse AU COMPLET", "La graisse", "Rien"], "a": 1,
+      { "q": "Avant de déplacer la foreuse, que vérifies-tu au centre des 4 roues ?",
+        "o": ["La pression des pneus", "Que l'engagement est dévissé AU COMPLET", "La graisse", "Rien"], "a": 1,
         "e": "« S'assurer que l'engagement au centre des 4 roues est bien dévissé AU COMPLET. »" }
     ],
     "std-dd-installation": [

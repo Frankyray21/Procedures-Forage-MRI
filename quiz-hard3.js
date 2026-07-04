@@ -32,11 +32,11 @@
         "e": "« …le boyau où l'on pompe le ciment doit être plié en deux et 2 ty-rap doivent le tenir plié jusqu'à ce que le temps de cure de 24 hrs soit complété pour empêcher le ciment de ressortir du boyau. »" }
     ],
     "pro-dd-st-008": [
-      { "q": "A quelle hauteur du sol doivent etre les crochets de la chaine ?",
+      { "q": "À quelle hauteur du sol doivent être les crochets de la chaîne ?",
         "o": ["Entre 40 et 50 pouces", "Entre 66 et 72 pouces", "Entre 80 et 90 pouces", "Au ras du sol"], "a": 1,
         "e": "« Les crochets doivent être à maximum 72 pouces et minimum 66 pouces du sol pour s'assurer que la chaîne ''lousse'' ne sera jamais moins de 5 pieds du sol au centre. »" },
-      { "q": "Une tige tombe vers un travailleur. La chaine doit l'arreter avant quel angle ?",
-        "o": ["45 degres", "60 degres", "80 degres", "90 degres"], "a": 2,
+      { "q": "Une tige tombe vers un travailleur. La chaîne doit l'arrêter avant quel angle ?",
+        "o": ["45 degrés", "60 degrés", "80 degrés", "90 degrés"], "a": 2,
         "e": "« La chaîne doit être ajustée de façon que les tiges ne puissent dépasser 80° si elles chutent vers un travailleur. »" }
     ],
     "pro-dd-st-009-1": [
