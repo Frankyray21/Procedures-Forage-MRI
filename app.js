@@ -53,9 +53,17 @@
   };
 
   /* ---------- routage ---------- */
+  // Position de défilement des listes, restaurée au retour d'une fiche
+  // (sinon l'utilisateur repart toujours du haut de la liste).
+  var listScroll = {};
+  var prevHash = location.hash || '#/';
   function route() {
     var h = location.hash || '#/';
     var view = $('#view');
+    if (prevHash.indexOf('#/diamant') === 0) listScroll.diamant = window.scrollY;
+    else if (prevHash.indexOf('#/procedures') === 0) listScroll[''] = window.scrollY;
+    var fromFiche = prevHash.indexOf('#/p/') === 0;
+    prevHash = h;
     window.scrollTo(0, 0);
     if (h.indexOf('#/p/') !== 0) ptLeavePage();      // quitte une fiche → fige le temps de consultation
     if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : 'procedures'); }
@@ -63,8 +71,8 @@
     else if (h.indexOf('#/suivi') === 0) { renderSuivi(view); setNav('suivi'); }
     // Code de sécurité : retiré du site (non publié) — anciens liens redirigés.
     else if (h.indexOf('#/code') === 0) { location.replace('#/procedures'); return; }
-    else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); }
-    else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); }
+    else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); if (fromFiche) window.scrollTo(0, listScroll.diamant || 0); }
+    else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); if (fromFiche) window.scrollTo(0, listScroll[''] || 0); }
     else { renderPortail(view); setNav(''); }
   }
   function setNav(which) {
@@ -745,6 +753,10 @@
     var sec = document.querySelector('.attest-sec[data-proc="' + p.id + '"]'); if (!sec) return;
     var form = sec.querySelector('.attest-form'); if (!form) return;      // section déjà envoyée (état confirmé)
     var endpoint = attestEndpoint(); if (!endpoint) return;
+    // Une attestation attend déjà son envoi pour cette fiche : pas de re-saisie.
+    var pending = '';
+    try { pending = localStorage.getItem('attest_pending_' + p.id) || ''; } catch (e) {}
+    if (pending) { attestQueued(sec, suiviName(), null); return; }
     var input = form.querySelector('.attest-name');
     var sugg = form.querySelector('.attest-sugg');
     var hint = form.querySelector('.attest-hint');
@@ -802,7 +814,6 @@
     sendBtn.onclick = function () {
       var name = (input.value || '').trim();
       if (!name) { input.focus(); setHint('Entre ton nom avant d\'attester.', false); return; }
-      if (!navigator.onLine) { msg.className = 'attest-msg no'; msg.textContent = 'Hors-ligne : reconnecte-toi au réseau pour envoyer ton attestation.'; return; }
       var best = pqBestPct(p.id);
       var t = ptSnapshot(p.id);      // temps de consultation + temps de quiz (suivi gestionnaire)
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
@@ -815,13 +826,17 @@
       var done = '';
       try { done = localStorage.getItem('attest_sent_' + p.id) || ''; } catch (e) {}
       if (done === sig) { attestSuccess(sec, name, true, payload, ''); return; }
+      try { localStorage.setItem('attest_name', name); } catch (e) {}
+      // Hors-ligne (cas normal sous terre) : on met en file d'attente locale,
+      // l'envoi partira tout seul au retour du réseau.
+      if (!navigator.onLine) { aqAdd(p.id, sig, payload); attestQueued(sec, name, payload); return; }
       sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
       fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function (r) { return r ? r.json().then(function (j) { return { ok: r.ok, j: j }; }) : null; })
         .then(function (res) {
           sendBtn.disabled = false;
           if (res && res.ok && res.j && res.j.ok) {
-            try { localStorage.setItem('attest_sent_' + p.id, sig); localStorage.setItem('attest_name', name); } catch (e) {}
+            try { localStorage.setItem('attest_sent_' + p.id, sig); } catch (e) {}
             attestSuccess(sec, name, res.j.linked, payload, res.j.id || '');
           } else {
             msg.className = 'attest-msg no';
@@ -829,12 +844,57 @@
           }
         })
         .catch(function () {
+          // Réseau tombé pendant l'envoi : même filet de sécurité que hors-ligne.
           sendBtn.disabled = false;
-          msg.className = 'attest-msg no';
-          msg.textContent = 'Service d\'attestation injoignable. Vérifie le réseau et réessaie.';
+          aqAdd(p.id, sig, payload);
+          attestQueued(sec, name, payload);
         });
     };
     setHint(HINT0, false);
+  }
+
+  /* ---------- file d'attente hors-ligne des attestations ----------
+     Sous terre, pas de réseau : l'attestation est enregistrée sur l'appareil
+     (attest_queue + marqueur attest_pending_<id>) puis envoyée automatiquement
+     dès que la connexion revient (événement online, ou à l'ouverture de l'app). */
+  function aqGet() { try { var v = JSON.parse(localStorage.getItem('attest_queue')); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function aqSet(q) { try { localStorage.setItem('attest_queue', JSON.stringify(q)); } catch (e) {} }
+  function aqAdd(pid, sig, payload) {
+    var q = aqGet().filter(function (it) { return it.sig !== sig; });
+    q.push({ pid: pid, sig: sig, payload: payload });
+    aqSet(q);
+    try { localStorage.setItem('attest_pending_' + pid, payload.date || ''); } catch (e) {}
+  }
+  var aqBusy = false;
+  function aqFlush() {
+    if (aqBusy || !navigator.onLine) return;
+    var endpoint = attestEndpoint(); if (!endpoint) return;
+    var q = aqGet(); if (!q.length) return;
+    aqBusy = true;
+    var it = q[0];
+    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(it.payload) })
+      .then(function (r) { return r && r.ok ? r.json() : null; })
+      .then(function (j) {
+        aqBusy = false;
+        if (!(j && j.ok)) return;                      // on réessaiera au prochain signal
+        aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
+        try {
+          localStorage.removeItem('attest_pending_' + it.pid);
+          localStorage.setItem('attest_sent_' + it.pid, it.sig);
+        } catch (e) {}
+        toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
+        aqFlush();                                     // suivante, s'il y en a
+      })
+      .catch(function () { aqBusy = false; });
+  }
+  window.addEventListener('online', aqFlush);
+  // État « enregistrée sur l'appareil, envoi au retour du réseau ».
+  function attestQueued(sec, name, payload) {
+    sec.innerHTML = '<h2>Attestation de lecture</h2>' +
+      '<div class="attest-done attest-wait"><span class="attest-done-ic">…</span>' +
+      '<div><strong>Attestation enregistrée sur l\'appareil</strong>' +
+      '<span>' + (name ? 'Merci ' + esc(name) + '. ' : '') + 'Pas de réseau pour le moment : ton attestation sera envoyée ' +
+      'automatiquement dès que la connexion revient. Rien d\'autre à faire.</span></div></div>';
   }
   /* ---------- PDF (attestation travailleur + fiche gestionnaire) ----------
      Générés dans le navigateur (jsPDF, chargé à la demande seulement) à partir
@@ -1690,6 +1750,10 @@
     try { raw = localStorage.getItem('attest_sent_' + id) || ''; } catch (e) {}
     if (raw) { var parts = raw.split('|'); return { date: parts[2] || '', score: '', src: 'local' }; }
     try {
+      var pd = localStorage.getItem('attest_pending_' + id);
+      if (pd) return { date: pd, score: '', src: 'pending' };
+    } catch (e) {}
+    try {
       var h = JSON.parse(localStorage.getItem('attest_hist_' + id));
       if (h && h.date) return { date: h.date, score: h.score || '', src: 'hist' };
     } catch (e) {}
@@ -1710,7 +1774,8 @@
     else if (best) badges += '<span class="sv-b sv-warn">Quiz à refaire (questions mises à jour)</span>';
     else badges += '<span class="sv-b sv-mute">Quiz à faire</span>';
     if (toReview) badges += '<span class="sv-b sv-rev">' + toReview + ' question' + (toReview > 1 ? 's' : '') + ' à réviser</span>';
-    if (att) badges += '<span class="sv-b sv-ok">' + ICON.check + ' Attestée' + (att.date ? ' le ' + esc(fmtDateFR(att.date)) : '') + '</span>';
+    if (att && att.src === 'pending') badges += '<span class="sv-b sv-warn">Attestée — envoi au retour du réseau</span>';
+    else if (att) badges += '<span class="sv-b sv-ok">' + ICON.check + ' Attestée' + (att.date ? ' le ' + esc(fmtDateFR(att.date)) : '') + '</span>';
     else if (read && !best) badges += '<span class="sv-b sv-mute">Consultée</span>';
 
     return '<a class="sv-row" href="#/p/' + esc(p.id) + '">' +
@@ -1899,5 +1964,6 @@
   window.addEventListener('hashchange', route);
   document.addEventListener('DOMContentLoaded', function () {
     route(); initInstall(); initChecklistEvents();
+    aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
   });
 })();
