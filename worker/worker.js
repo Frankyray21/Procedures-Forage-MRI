@@ -20,6 +20,11 @@
    ENDPOINTS :
    • GET  /?q=<texte>  → recherche d'employés (autocomplétion). Renvoie
                          { ok:true, results:[{ id, name }, ...] }
+   • GET  /?hist=<nom> → historique des attestations de ce nom (correspondance
+                         exacte, casse/accents ignorés) pour la page « Mon
+                         suivi » du site. Renvoie { ok:true, results:[{ proc,
+                         titre, date, score, statut }, ...] } — SANS les champs
+                         de temps (réservés aux gestionnaires).
    • GET  /            → page d'état { ok:true, service:"attestations-procedures" }
    • POST /            → enregistre une attestation. Corps JSON :
        { "name":"...", "employeeId":"rec...(opt)",
@@ -58,11 +63,14 @@ export default {
       return new Response(null, { status: 204, headers: cors });
     }
 
-    // GET : recherche d'employés (?q=...) ou simple page d'état.
+    // GET : recherche d'employés (?q=...), historique (?hist=...) ou état.
     if (request.method === "GET") {
       const url = new URL(request.url);
       if (url.searchParams.has("q")) {
         return searchEmployees(url.searchParams.get("q") || "", env, cors);
+      }
+      if (url.searchParams.has("hist")) {
+        return listAttestations(url.searchParams.get("hist") || "", env, cors);
       }
       return json({ ok: true, service: "attestations-procedures" }, 200, cors);
     }
@@ -210,6 +218,44 @@ async function searchEmployees(q, env, cors) {
       const sb = deburr(b.name.toLowerCase()).startsWith(safe) ? 0 : 1;
       return sa - sb || a.name.localeCompare(b.name, "fr");
     });
+  return json({ ok: true, results }, 200, cors);
+}
+
+/* ── historique des attestations d'un nom (page « Mon suivi » du site) ──────
+   Correspondance EXACTE du nom (casse/accents ignorés). Ne renvoie JAMAIS les
+   champs de temps (« Temps sur la fiche », etc.) : réservés aux gestionnaires. */
+async function listAttestations(name, env, cors) {
+  const term = deburr(clean(name, 120).toLowerCase()).replace(/["\\]/g, " ").trim();
+  if (term.length < 2) return json({ ok: true, results: [] }, 200, cors);
+  if (!env.AIRTABLE_TOKEN) {
+    return json({ ok: false, error: "AIRTABLE_TOKEN non configuré." }, 500, cors);
+  }
+  const field = stripAccentsFormula(`LOWER({Nom})`);
+  const formula = `TRIM(${field})="${term}"`;
+  const wanted = ["Procédure", "Titre procédure", "Date", "Score quiz", "Statut"];
+  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`
+            + `?filterByFormula=${encodeURIComponent(formula)}`
+            + `&maxRecords=200`
+            + `&sort%5B0%5D%5Bfield%5D=Date&sort%5B0%5D%5Bdirection%5D=desc`
+            + wanted.map((f) => `&fields%5B%5D=${encodeURIComponent(f)}`).join("");
+  let at;
+  try {
+    at = await fetch(url, { headers: { "Authorization": `Bearer ${env.AIRTABLE_TOKEN}` } });
+  } catch (e) {
+    return json({ ok: false, results: [] }, 502, cors);
+  }
+  if (!at.ok) return json({ ok: false, results: [] }, 200, cors);
+  const data = await at.json();
+  const results = (data.records || []).map((r) => {
+    const f = r.fields || {};
+    return {
+      proc:   String(f["Procédure"] || ""),
+      titre:  String(f["Titre procédure"] || ""),
+      date:   String(f["Date"] || ""),
+      score:  String(f["Score quiz"] || ""),
+      statut: String(f["Statut"] || ""),
+    };
+  }).filter((r) => r.proc);
   return json({ ok: true, results }, 200, cors);
 }
 

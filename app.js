@@ -60,7 +60,9 @@
     if (h.indexOf('#/p/') !== 0) ptLeavePage();      // quitte une fiche → fige le temps de consultation
     if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : 'procedures'); }
     else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
-    else if (h.indexOf('#/code') === 0) { renderCode(view); setNav('code'); }
+    else if (h.indexOf('#/suivi') === 0) { renderSuivi(view); setNav('suivi'); }
+    // Code de sécurité : retiré du site (non publié) — anciens liens redirigés.
+    else if (h.indexOf('#/code') === 0) { location.replace('#/procedures'); return; }
     else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); }
     else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); }
     else { renderPortail(view); setNav(''); }
@@ -197,7 +199,7 @@
           (diamant
             ? '<div class="stat"><b><a href="#/procedures" style="color:var(--accent-l)">ITH&nbsp;»</a></b><span>Foreuses ITH/CUBEX</span></div>'
             : '<div class="stat"><b>' + nbConsignes + '</b><span>Consignes</span></div>') +
-          '<div class="stat"><b><a href="#/code" style="color:var(--accent-l)">Code&nbsp;»</a></b><span>de sécurité</span></div>' +
+          '<div class="stat"><b><a href="#/suivi" style="color:var(--accent-l)">Suivi&nbsp;»</a></b><span>de mes formations</span></div>' +
         '</div>' +
       '</div></section>' +
       '<div class="wrap"><div class="install" id="install"></div><div class="offline" id="offline"></div></div>' +
@@ -946,6 +948,7 @@
           '<p class="attest-pdf-hint">La fiche gestionnaire contient les détails de suivi (temps, statut) — à remettre à ton superviseur.</p>' +
           '<div class="attest-pdf-msg" aria-live="polite"></div>' +
         '</div>' : '') +
+      '<p class="attest-next"><a href="#/suivi">Voir mon suivi de formation ' + ICON.arrow + '</a></p>' +
       '</div></div>';
     if (!payload) return;
     var msgEl = sec.querySelector('.attest-pdf-msg');
@@ -1666,6 +1669,149 @@
     $('#qAgain').onclick = function () { renderQuiz(view); };
   }
 
+  /* ---------- vue : Mon suivi (progression + résultats détaillés) ----------
+     Tout est calculé à partir des données DE CET APPAREIL (localStorage) :
+     meilleurs scores de quiz (pq_*), attestations envoyées (attest_sent_*),
+     fiches consultées (pt_read_*). La page fonctionne entièrement hors-ligne.
+     « Récupérer mon historique » interroge le Worker (Airtable) par nom exact
+     pour retrouver les attestations faites depuis un autre appareil — sans mot
+     de passe. Les temps de consultation ne sont JAMAIS montrés ici : ils sont
+     réservés aux gestionnaires (Airtable). */
+  function suiviName() {
+    try { return localStorage.getItem('suivi_name') || localStorage.getItem('attest_name') || ''; } catch (e) { return ''; }
+  }
+  // Attestation connue pour cette fiche : envoyée depuis CET appareil
+  // (attest_sent_) ou retrouvée dans l'historique Airtable (attest_hist_).
+  function attestInfo(id) {
+    var raw = '';
+    try { raw = localStorage.getItem('attest_sent_' + id) || ''; } catch (e) {}
+    if (raw) { var parts = raw.split('|'); return { date: parts[2] || '', score: '', src: 'local' }; }
+    try {
+      var h = JSON.parse(localStorage.getItem('attest_hist_' + id));
+      if (h && h.date) return { date: h.date, score: h.score || '', src: 'hist' };
+    } catch (e) {}
+    return null;
+  }
+  function suiviRowHTML(p) {
+    var total = (window.QUIZ_PROC && window.QUIZ_PROC[p.id] || []).length;
+    var best = pqGetBest(p.id);
+    var att = attestInfo(p.id);
+    var read = ptGet('pt_read_' + p.id) > 0;
+    var quizDone = !!(best && total && best.n === total);
+    var pct = (best && best.n) ? Math.round(best.s / best.n * 100) : null;
+    var toReview = quizDone ? pqGetFails(p.id).filter(function (i) { return i < total; }).length : 0;
+
+    var badges = '';
+    if (!total) badges += '<span class="sv-b sv-mute">Pas de quiz</span>';
+    else if (quizDone) badges += '<span class="sv-b ' + (pct === 100 ? 'sv-ok' : pct >= 80 ? 'sv-pass' : 'sv-warn') + '">Quiz ' + best.s + '/' + best.n + ' · ' + pct + ' %</span>';
+    else if (best) badges += '<span class="sv-b sv-warn">Quiz à refaire (questions mises à jour)</span>';
+    else badges += '<span class="sv-b sv-mute">Quiz à faire</span>';
+    if (toReview) badges += '<span class="sv-b sv-rev">' + toReview + ' question' + (toReview > 1 ? 's' : '') + ' à réviser</span>';
+    if (att) badges += '<span class="sv-b sv-ok">' + ICON.check + ' Attestée' + (att.date ? ' le ' + esc(fmtDateFR(att.date)) : '') + '</span>';
+    else if (read && !best) badges += '<span class="sv-b sv-mute">Consultée</span>';
+
+    return '<a class="sv-row" href="#/p/' + esc(p.id) + '">' +
+      '<span class="sv-dot" style="--c:' + catColor(p.categorie) + '"></span>' +
+      '<span class="sv-t"><b>' + esc(p.titre) + '</b>' +
+        (p.code ? '<span class="sv-code">' + esc(p.code) + '</span>' : '') + '</span>' +
+      '<span class="sv-badges">' + badges + '</span>' + ICON.arrow + '</a>';
+  }
+  function suiviGroupHTML(titre, procs) {
+    var att = procs.filter(function (p) { return !!attestInfo(p.id); }).length;
+    var pctA = procs.length ? Math.round(att / procs.length * 100) : 0;
+    return '<div class="sec sv-group"><h2>' + esc(titre) + '</h2>' +
+      '<div class="sv-gbar"><div class="sv-gfill" style="width:' + pctA + '%"></div></div>' +
+      '<p class="sv-gtxt">' + att + ' / ' + procs.length + ' procédures attestées</p>' +
+      '<div class="sv-rows">' + procs.map(suiviRowHTML).join('') + '</div></div>';
+  }
+  function renderSuivi(view) {
+    var withQuiz = DATA.filter(function (p) { return (window.QUIZ_PROC && window.QUIZ_PROC[p.id] || []).length > 0; });
+    var quizDone = withQuiz.filter(function (p) {
+      var b = pqGetBest(p.id), t = (window.QUIZ_PROC[p.id] || []).length;
+      return !!(b && b.n === t);
+    });
+    var attested = DATA.filter(function (p) { return !!attestInfo(p.id); });
+    var played = withQuiz.map(function (p) { return pqBestPct(p.id); }).filter(Boolean);
+    var avg = played.length ? Math.round(played.reduce(function (a, b) { return a + b.pct; }, 0) / played.length) : null;
+    var name = suiviName();
+
+    var ith = DATA.filter(function (p) { return p.famille !== 'diamant'; });
+    var diam = DATA.filter(function (p) { return p.famille === 'diamant'; });
+
+    view.innerHTML =
+      '<section class="hero herosm"><div class="wrap">' +
+        '<span class="eyebrow">Suivi de formation</span>' +
+        '<h1>Mon <span class="hl">suivi</span></h1>' +
+        '<p class="lead">Ta progression sur les procédures : quiz complétés, attestations envoyées et résultats détaillés.' +
+        (name ? ' Résultats enregistrés sur cet appareil' + (name ? ' — <b>' + esc(name) + '</b>' : '') + '.' : '') + '</p>' +
+        '<div class="stats">' +
+          '<div class="stat"><b>' + attested.length + ' / ' + DATA.length + '</b><span>Attestations</span></div>' +
+          '<div class="stat"><b>' + quizDone.length + ' / ' + withQuiz.length + '</b><span>Quiz complétés</span></div>' +
+          '<div class="stat"><b>' + (avg == null ? '—' : avg + ' %') + '</b><span>Score moyen</span></div>' +
+        '</div>' +
+      '</div></section>' +
+      '<div class="wrap">' +
+        suiviSyncHTML() +
+        '<div class="secwrap"><h2 class="sv-h2">Résultats détaillés</h2>' +
+          suiviGroupHTML('Foreuses ITH / CUBEX', ith) +
+          suiviGroupHTML('Forage au diamant', diam) +
+        '</div>' +
+        '<p class="sv-note">Les résultats affichés ici restent sur ton appareil. Les gestionnaires font le suivi officiel à partir des attestations envoyées.</p>' +
+      '</div>';
+    initSuiviSync(view);
+  }
+  function suiviSyncHTML() {
+    if (!attestEndpoint()) return '';
+    return '<div class="sv-sync">' +
+      '<b>Changer d\'appareil ?</b>' +
+      '<p>Tes attestations sont enregistrées pour le suivi officiel même si tu changes de téléphone. Pour les revoir ici, entre ton nom exact (le même que sur tes attestations) :</p>' +
+      '<div class="sv-form">' +
+        '<input type="text" class="sv-name" placeholder="Prénom Nom" autocomplete="off" value="' + esc(suiviName()) + '">' +
+        '<button type="button" class="btn sv-fetch">Récupérer mon historique</button>' +
+      '</div><div class="sv-msg" aria-live="polite"></div></div>';
+  }
+  function initSuiviSync(view) {
+    var box = view.querySelector('.sv-sync'); if (!box) return;
+    var input = box.querySelector('.sv-name');
+    var btn = box.querySelector('.sv-fetch');
+    var msg = box.querySelector('.sv-msg');
+    btn.onclick = function () {
+      var name = (input.value || '').trim();
+      if (name.length < 2) { msg.className = 'sv-msg no'; msg.textContent = 'Entre ton nom complet.'; input.focus(); return; }
+      if (!navigator.onLine) { msg.className = 'sv-msg no'; msg.textContent = 'Hors-ligne : reconnecte-toi au réseau pour récupérer ton historique.'; return; }
+      btn.disabled = true; msg.className = 'sv-msg'; msg.textContent = 'Recherche…';
+      fetch(attestEndpoint() + '?hist=' + encodeURIComponent(name))
+        .then(function (r) { return r && r.ok ? r.json() : null; })
+        .then(function (d) {
+          btn.disabled = false;
+          var list = (d && d.ok && d.results) || null;
+          if (!list) { msg.className = 'sv-msg no'; msg.textContent = 'Service injoignable pour le moment. Réessaie plus tard.'; return; }
+          var found = 0;
+          list.forEach(function (r) {
+            var pid = CODE_TO_ID[String(r.proc || '').toUpperCase()] ||
+              (DATA.some(function (p) { return p.id === r.proc; }) ? r.proc : '');
+            if (!pid) return;
+            found++;
+            // On garde la plus récente si plusieurs attestations existent.
+            try {
+              var prev = JSON.parse(localStorage.getItem('attest_hist_' + pid) || 'null');
+              if (!prev || String(r.date) > String(prev.date)) {
+                localStorage.setItem('attest_hist_' + pid, JSON.stringify({ date: r.date || '', score: r.score || '' }));
+              }
+            } catch (e) {}
+          });
+          try { localStorage.setItem('suivi_name', name); } catch (e) {}
+          if (!found) { msg.className = 'sv-msg no'; msg.textContent = 'Aucune attestation trouvée à ce nom. Vérifie l\'orthographe exacte (Prénom Nom).'; return; }
+          renderSuivi($('#view'));
+          toast(found + ' attestation' + (found > 1 ? 's' : '') + ' retrouvée' + (found > 1 ? 's' : '') + '.');
+        })
+        .catch(function () {
+          btn.disabled = false;
+          msg.className = 'sv-msg no'; msg.textContent = 'Service injoignable. Vérifie le réseau et réessaie.';
+        });
+    };
+  }
+
   /* ---------- portail ---------- */
   function renderPortail(view) {
     var nProd = DATA.filter(function (p) { return p.famille !== 'diamant'; }).length;
@@ -1675,7 +1821,7 @@
       '<p class="plead">Choisis ton espace.</p>' +
       '<div class="portal-cards">' +
         '<a class="portal-card kb" href="#/procedures"><div class="pc-ic">' + ICON.doc + '</div>' +
-          '<h2>Foreuses ITH / CUBEX</h2><p>Procédures de forage et d\'alésage (ITH, CUBEX, V-30) : consignes, valeurs-clés, PDF officiel, quiz et Code de sécurité.</p>' +
+          '<h2>Foreuses ITH / CUBEX</h2><p>Procédures de forage et d\'alésage (ITH, CUBEX, V-30) : consignes, valeurs-clés, PDF officiel et quiz.</p>' +
           '<div class="pc-meta">' + nProd + ' procédures · disponible hors-ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
         '<a class="portal-card diam" href="#/diamant"><div class="pc-ic">' + ICON.doc + '</div>' +
@@ -1683,6 +1829,8 @@
           '<div class="pc-meta">' + nDiam + ' procédures · disponible hors-ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
       '</div>' +
+      '<a class="portal-suivi" href="#/suivi">' + ICON.check +
+        ' <b>Mon suivi de formation</b><span>Quiz complétés, attestations, résultats détaillés</span>' + ICON.arrow + '</a>' +
     '</div></section>';
   }
 

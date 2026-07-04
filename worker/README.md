@@ -30,6 +30,19 @@ Prévention TMS. Le fichier à déployer est **[`worker.js`](./worker.js)**.
    C'est cette URL qui est déjà renseignée dans `config.js`
    (`attestation.endpoint`) — si ton URL diffère, ajuste-la là.
 
+> **Après chaque modification de `worker.js` dans ce dépôt**, il faut re-coller
+> le fichier dans l'éditeur Cloudflare et re-déployer (le Worker ne se met pas
+> à jour tout seul).
+
+### Endpoints
+
+| Requête | Rôle |
+| --- | --- |
+| `GET /` | État du service (`{ ok:true, service:… }`) |
+| `GET /?q=<texte>` | Autocomplétion des noms d'employés (formulaire d'attestation) |
+| `GET /?hist=<nom>` | Historique des attestations de ce nom — page « Mon suivi » du site. Renvoie `proc, titre, date, score, statut` ; **jamais** les champs de temps (réservés aux gestionnaires) |
+| `POST /` | Enregistre une attestation dans Airtable |
+
 ### Le jeton Airtable (`AIRTABLE_TOKEN`)
 
 Si tu dois en créer un : **airtable.com/create/tokens**

@@ -780,6 +780,8 @@ footer b{color:var(--muted)}
   display:flex;align-items:center;justify-content:center;font-size:1.1rem}
 .attest-done strong{display:block;font-size:1rem}
 .attest-done span{color:var(--muted);font-size:.9rem;line-height:1.4}
+.attest-next{margin:.6rem 0 0;font-size:.9rem}
+.attest-next a{color:#34d399;font-weight:700;display:inline-flex;align-items:center;gap:.3rem}
 .attest-pdfs{margin-top:.7rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 .attest-pdf-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--card-2);
   border:1px solid var(--border);color:var(--text);border-radius:10px;padding:.5rem .8rem;
@@ -789,6 +791,53 @@ footer b{color:var(--muted)}
 .attest-pdf-msg{flex-basis:100%;font-size:.82rem;color:#fca5a5;min-height:1.1em}
 .cbmore{display:none}
 .cbmore.open{display:block}
+/* ---------- Mon suivi (progression + résultats détaillés) ---------- */
+.hero.herosm{padding:clamp(1.6rem,4vw,2.6rem) 0 1.2rem}
+.portal-suivi{display:flex;align-items:center;gap:.7rem;margin-top:1.2rem;padding:.85rem 1.1rem;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);font-size:.94rem}
+.portal-suivi svg:first-child{color:var(--success)}
+.portal-suivi b{white-space:nowrap}
+.portal-suivi span{color:var(--muted);flex:1;font-size:.85rem}
+.portal-suivi svg:last-child{color:var(--accent-l)}
+.portal-suivi:hover{border-color:rgba(16,185,129,.4)}
+.sv-sync{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin:1.2rem 0}
+.sv-sync b{font-size:.95rem}
+.sv-sync p{color:var(--muted);font-size:.88rem;line-height:1.5;margin:.35rem 0 .7rem;max-width:560px}
+.sv-form{display:flex;flex-wrap:wrap;gap:.5rem}
+.sv-name{flex:1;min-width:200px;max-width:320px;background:var(--card-2);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font:inherit;font-size:.95rem;padding:.55rem .75rem}
+.sv-name:focus{outline:none;border-color:var(--accent)}
+.sv-msg{font-size:.86rem;font-weight:600;margin-top:.5rem;min-height:1.1em}
+.sv-msg.no{color:#fca5a5}
+.sv-h2{font-family:var(--font-display);font-size:1.6rem;font-weight:800;margin:1.6rem 0 .2rem}
+.sv-group{margin:1.4rem 0}
+.sv-gbar{height:7px;background:var(--card-2);border-radius:99px;overflow:hidden;margin:.5rem 0 .3rem}
+.sv-gfill{height:100%;background:var(--success);border-radius:99px;transition:width .4s}
+.sv-gtxt{font-size:.82rem;color:var(--dim);margin:0 0 .7rem}
+.sv-rows{display:flex;flex-direction:column;gap:.45rem}
+.sv-row{display:flex;align-items:center;gap:.65rem;padding:.65rem .8rem;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;color:var(--text)}
+.sv-row:hover{border-color:rgba(210,35,37,.35)}
+.sv-row>svg{flex:none;color:var(--dim)}
+.sv-dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--c,#d22325)}
+.sv-t{flex:1;min-width:0}
+.sv-t b{display:block;font-size:.92rem;line-height:1.25}
+.sv-code{font-size:.72rem;color:var(--dim);letter-spacing:.04em}
+.sv-badges{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:flex-end}
+.sv-b{display:inline-flex;align-items:center;gap:.25rem;font-size:.72rem;font-weight:700;
+  padding:.18rem .5rem;border-radius:999px;border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+.sv-b svg{width:11px;height:11px}
+.sv-b.sv-ok{color:#34d399;border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
+.sv-b.sv-pass{color:#a7f3d0;border-color:rgba(52,211,153,.25)}
+.sv-b.sv-warn{color:#fbbf24;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.06)}
+.sv-b.sv-rev{color:#fca5a5;border-color:rgba(252,165,165,.35)}
+.sv-b.sv-mute{color:var(--dim)}
+.sv-note{color:var(--dim);font-size:.82rem;margin:1.4rem 0 2rem;max-width:560px}
+@media (max-width:640px){
+  .sv-row{flex-wrap:wrap}
+  .sv-t{flex-basis:calc(100% - 3rem)}
+  .sv-badges{justify-content:flex-start;padding-left:1.35rem}
+}
 .cbmore-b{margin:.15rem 0 .25rem;font-size:.78rem;font-weight:700;color:var(--accent-l);
   background:transparent;border:0;cursor:pointer;padding:.1rem 0;text-decoration:underline}
 .cbmore-b:hover{color:var(--text)}
