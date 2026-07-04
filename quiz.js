@@ -5,12 +5,12 @@
 window.QUIZ = [
   {
     "id": "q1",
-    "question": "Pour l'installation du centralisateur (procédure M.R.I.), combien de travailleurs sont obligatoires pour réaliser l'opération ?",
+    "question": "Tu installes le centralisateur. Combien de travailleurs faut-il pour faire le travail ?",
     "options": [
-      "1 seul travailleur expérimenté",
+      "1 seul travailleur",
       "2 travailleurs",
       "3 travailleurs",
-      "Peu importe, selon la disponibilité"
+      "Ça dépend, selon qui est là"
     ],
     "answer": 1,
     "explication": "La procédure indique en avertissement majeur : « L'installation du centralisateur doit TOUJOURS se faire à deux travailleurs. » La fiche des valeurs confirme : « Nombre de travailleurs requis : 2 ».",
@@ -25,7 +25,7 @@ window.QUIZ = [
   },
   {
     "id": "q2",
-    "question": "Lors de l'installation du centralisateur, quel outil est-il INTERDIT d'utiliser pour serrer les boulons ?",
+    "question": "Tu installes le centralisateur. Quel outil est interdit pour serrer les boulons ?",
     "options": [
       "Une clé (box)",
       "Un wescot ou un pipe wrench",
@@ -45,12 +45,12 @@ window.QUIZ = [
   },
   {
     "id": "q3",
-    "question": "Pour le centralisateur, quel danger de manutention justifie de bien se positionner avant de manipuler les pièces ?",
+    "question": "Le centralisateur a un danger. Pourquoi bien te placer avant de prendre une pièce ?",
     "options": [
       "Chaque pièce pèse 46 livres",
-      "Les pièces sont coupantes",
+      "Les pièces coupent",
       "Les pièces sont à 800 °F",
-      "Les pièces sont sous tension électrique"
+      "Les pièces ont du courant électrique"
     ],
     "answer": 0,
     "explication": "La procédure avertit : « Risque de manutention : chaque pièce pèse 46 livres. Se positionner correctement avant de soulever/manipuler les pièces. » (2 pièces de 46 livres chacune).",
@@ -65,7 +65,7 @@ window.QUIZ = [
   },
   {
     "id": "q4",
-    "question": "Avant le serrage du centralisateur, quelle quantité de quincaillerie faut-il vérifier comme étant présente ?",
+    "question": "Avant de serrer le centralisateur, combien de pièces dois-tu vérifier ?",
     "options": [
       "6 boulons, 6 locknuts et 6 lockwashers",
       "12 boulons, 12 locknuts et 12 lockwashers",
@@ -85,9 +85,9 @@ window.QUIZ = [
   },
   {
     "id": "q6",
-    "question": "Lors du changement de coupling sur une foreuse CUBEX, le bell housing est en aluminium. Quel outil la procédure impose-t-elle pour le décoller sans l'endommager ?",
+    "question": "Tu changes la coupling sur une foreuse CUBEX. Le bell housing est en aluminium. Quel outil tu prends pour le décoller sans l'abîmer ?",
     "options": [
-      "Une masse de caoutchouc",
+      "Une masse en caoutchouc",
       "Un marteau en acier",
       "Un pipe wrench",
       "Une pry bar frappée à la masse"
@@ -107,12 +107,12 @@ window.QUIZ = [
   },
   {
     "id": "q8",
-    "question": "Pourquoi la procédure de changement de coupling des foreuses CUBEX exige-t-elle de remettre le couvercle de plastique à la fin de l'opération ?",
+    "question": "Tu changes la coupling d'une foreuse CUBEX. Pourquoi remettre le couvercle de plastique à la fin ?",
     "options": [
-      "Pour rétablir la protection, mesure issue d'un début d'incendie causé par la surchauffe du bell housing et du couvercle",
+      "Pour remettre la protection. Un feu a déjà commencé quand le bell housing et le couvercle ont trop chauffé",
       "Pour empêcher l'antiseize de couler sur le moteur électrique",
-      "Pour maintenir la coupling « FLUSH » au shaft",
-      "Pour garantir l'alignement des 2 boulons de la pompe"
+      "Pour garder la coupling « FLUSH » au shaft",
+      "Pour bien aligner les 2 boulons de la pompe"
     ],
     "answer": 0,
     "explication": "La consigne précise de remettre le couvercle de plastique pour rétablir la protection, mesure issue d'un début d'incendie causé par la surchauffe du bell housing et du couvercle. Les autres options ne correspondent à aucune raison invoquée par la procédure.",
@@ -129,7 +129,7 @@ window.QUIZ = [
   },
   {
     "id": "q9",
-    "question": "Sur la foreuse ITH, lors du dévissage de tiges de forage à l'aide de clés et d'un tire-fort, quelle est la charge certifiée de l'ancrage du mât à ne jamais dépasser lors de la mise en tension?",
+    "question": "Sur la foreuse ITH, tu dévisses des tiges avec des clés et un tire-fort. L'ancrage du mât ne doit jamais dépasser quelle charge ?",
     "options": [
       "1000 kg",
       "2500 kg",
@@ -148,12 +148,12 @@ window.QUIZ = [
   },
   {
     "id": "q10",
-    "question": "Pour dévisser des tiges de forage sur la foreuse ITH, quelle exigence s'applique aux crochets du tire-fort utilisé?",
+    "question": "Tu dévisses des tiges sur la foreuse ITH. Que doivent avoir les crochets du tire-fort ?",
     "options": [
-      "Ils doivent être peints en jaune",
-      "Ils doivent être munis d'un linguet",
-      "Ils doivent être en aluminium",
-      "Ils doivent être doublés pour redonder la charge"
+      "Ils sont peints en jaune",
+      "Ils ont un linguet",
+      "Ils sont en aluminium",
+      "Ils sont doublés pour partager la charge"
     ],
     "answer": 1,
     "explication": "La procédure exige de n'utiliser qu'un tire-fort dont les crochets sont munis de linguet (N.B. : les crochets doivent être munis de linguet).",
@@ -167,12 +167,12 @@ window.QUIZ = [
   },
   {
     "id": "q18",
-    "question": "Pour le déplacement de la foreuse ITH sans remorque (à l'aide d'une barre de tir), qu'est-ce qui est interdit par la procédure ?",
+    "question": "Tu déplaces la foreuse ITH sans remorque, avec une barre de tir. Qu'est-ce qui est interdit ?",
     "options": [
-      "Déplacer la foreuse sans remorque dans la rampe",
-      "Déplacer la foreuse à plat sur de courtes distances",
-      "Déplacer la foreuse à basse vitesse",
-      "Installer une chaîne de sécurité reliant la foreuse à la chargeuse"
+      "La déplacer sans remorque dans la rampe",
+      "La déplacer à plat sur une courte distance",
+      "La déplacer à basse vitesse",
+      "Mettre une chaîne de sécurité entre la foreuse et la chargeuse"
     ],
     "answer": 0,
     "explication": "La procédure permet le déplacement sans remorque à plat, sur de courtes distances et à basse vitesse, mais précise qu'il est interdit de déplacer la foreuse sans la remorque dans la rampe. L'installation d'une chaîne de sécurité reliant la foreuse à la chargeuse est au contraire exigée.",
@@ -187,10 +187,10 @@ window.QUIZ = [
   },
   {
     "id": "q19",
-    "question": "Lors de l'embarquement de la foreuse ITH durant la démobilisation, où l'opérateur doit-il se placer ?",
+    "question": "Tu embarques la foreuse ITH pour la démobilisation. Où dois-tu te placer ?",
     "options": [
-      "Toujours à l'intérieur du panier de la foreuse, en mettant la chaîne garde-corps",
-      "Debout sur le mât pour mieux voir la manoeuvre",
+      "Toujours dans le panier de la foreuse, avec la chaîne garde-corps",
+      "Debout sur le mât pour mieux voir",
       "À côté de la foreuse, à moins de 1 mètre des tractions",
       "Sur la remorque, derrière le compresseur"
     ],
@@ -207,12 +207,12 @@ window.QUIZ = [
   },
   {
     "id": "q20",
-    "question": "Pour relier le traîneau ou la remorque au véhicule lors du déplacement de la foreuse ITH, quelle exigence la procédure impose-t-elle pour les élingues ?",
+    "question": "Tu relies le traîneau ou la remorque au véhicule pour déplacer la foreuse ITH. Que faut-il pour les élingues ?",
     "options": [
-      "Deux élingues d'au moins 1'' X 8 pieds, fixées avec des manilles de 1''1/4 minimum",
-      "Une seule élingue de 3/4'' fixée avec une manille de 1/2''",
-      "Deux chaînes de plastique sans manille",
-      "Une élingue de 1'' X 8 pieds fixée avec un wescot"
+      "Deux élingues d'au moins 1'' x 8 pieds, avec des manilles de 1''1/4 au minimum",
+      "Une seule élingue de 3/4'' avec une manille de 1/2''",
+      "Deux chaînes en plastique sans manille",
+      "Une élingue de 1'' x 8 pieds fixée avec un wescot"
     ],
     "answer": 0,
     "explication": "Les valeurs de la procédure précisent deux élingues minimum de 1'' X 8 pieds, fixées avec des manilles de 1''1/4 minimum, pour relier le traîneau ou la remorque au véhicule.",
@@ -227,7 +227,7 @@ window.QUIZ = [
   },
   {
     "id": "q21",
-    "question": "Sur la foreuse ITH, lors du forage de production (3 7/8\" à 6 ½\"), quelle distance minimale doit obligatoirement être respectée entre le mât et la console?",
+    "question": "Sur la foreuse ITH, tu fais du forage de production. Quelle distance minimale tu gardes entre le mât et la console ?",
     "options": [
       "0,5 mètre",
       "1 mètre",
@@ -250,7 +250,7 @@ window.QUIZ = [
   },
   {
     "id": "q22",
-    "question": "Lors du forage de production sur la foreuse ITH, à quelle température correspondent les boyaux tressés haute température des compresseurs (CUBEX et surcompresseurs) auxquels il faut porter une attention particulière?",
+    "question": "Tu fais du forage de production sur la foreuse ITH. Les boyaux tressés des compresseurs sont faits pour une haute température. Laquelle ?",
     "options": [
       "400 °F",
       "600 °F",
@@ -273,12 +273,12 @@ window.QUIZ = [
   },
   {
     "id": "q23",
-    "question": "Pendant le forage de production sur la foreuse ITH, avec quoi doit-on manipuler l'extension du câble électrique lorsqu'elle est sous tension?",
+    "question": "Tu fais du forage de production sur la foreuse ITH. La rallonge du câble électrique est sous tension. Avec quoi tu la touches ?",
     "options": [
-      "Uniquement avec le crochet de plastique",
-      "À mains nues avec des gants en cuir",
-      "Avec une pince métallique isolée",
-      "En la tirant directement par le câble"
+      "Seulement avec le crochet en plastique",
+      "À mains nues, avec des gants en cuir",
+      "Avec une pince en métal isolée",
+      "En tirant direct sur le câble"
     ],
     "answer": 0,
     "explication": "La procédure indique de ne manipuler l'extension du câble électrique sous tension qu'avec le crochet de plastique, afin d'éviter tout contact électrique dangereux.",
@@ -296,7 +296,7 @@ window.QUIZ = [
   },
   {
     "id": "q24",
-    "question": "Sur la foreuse ITH, lors du forage de production, quelle distance doit être maintenue entre la foreuse et le surcompresseur?",
+    "question": "Sur la foreuse ITH, en forage de production, quelle distance tu gardes entre la foreuse et le surcompresseur ?",
     "options": [
       "3 mètres",
       "5 mètres",
@@ -319,12 +319,12 @@ window.QUIZ = [
   },
   {
     "id": "q25",
-    "question": "Lors de l'alésage en descendant avec la V-30, un foret se brise et tombe dans la monterie de 30 pouces. Que doit faire le travailleur pour le récupérer?",
+    "question": "Tu fais l'alésage en descendant avec la V-30. Un foret se brise et tombe dans la monterie de 30 pouces. Que fais-tu ?",
     "options": [
-      "Entrer dans la monterie de 30 pouces avec un harnais pour récupérer la pièce",
-      "Il est strictement interdit d'entrer dans la monterie; utiliser les équipements adaptés de M.R.I.",
-      "Descendre dans le trou seulement si un deuxième travailleur surveille en haut",
-      "Récupérer la pièce à la main en s'attachant à un bloc rétractable"
+      "Tu entres dans la monterie de 30 pouces avec un harnais pour prendre la pièce",
+      "Tu n'entres jamais dans la monterie. Tu utilises les équipements de M.R.I.",
+      "Tu descends dans le trou si un autre travailleur surveille en haut",
+      "Tu prends la pièce à la main, attaché à un bloc rétractable"
     ],
     "answer": 1,
     "explication": "La procédure indique qu'il est STRICTEMENT INTERDIT à un employé d'entrer dans la monterie de 30 pouces pour récupérer quoi que ce soit; M.R.I. dispose d'équipements adaptés pour extraire les matériaux brisés dans les trous (ex. tiges ou forets).",
@@ -345,12 +345,12 @@ window.QUIZ = [
   },
   {
     "id": "q27",
-    "question": "Pour le forage de la V-30 en descendant, quelle est la règle concernant le couvert (M.R.I. ou client) installé sur la monterie?",
+    "question": "Tu forages avec la V-30 en descendant. Quelle est la règle pour le couvert (de M.R.I. ou du client) sur la monterie ?",
     "options": [
       "Il est facultatif si le trou fait moins de 40 pieds",
-      "Son installation est obligatoire en tout temps lors du forage en descendant",
-      "Il n'est requis qu'à la fin du forage",
-      "Il peut être retiré sans précaution dès que le forage est en cours"
+      "Il est obligatoire en tout temps quand tu forages en descendant",
+      "Il faut le mettre seulement à la fin du forage",
+      "Tu peux l'enlever sans précaution dès que le forage commence"
     ],
     "answer": 1,
     "explication": "La procédure précise que l'installation du couvert fourni par M.R.I. ou le client sur la monterie est obligatoire en tout temps lors du forage de V-30 en descendant.",
@@ -371,12 +371,12 @@ window.QUIZ = [
   },
   {
     "id": "q32",
-    "question": "Pour suspendre et positionner la tête V-30 lors de l'alésage conventionnel, quelle chaîne de levage doit obligatoirement être utilisée?",
+    "question": "Tu suspends et places la tête V-30 pour l'alésage. Quelle chaîne de levage tu dois utiliser ?",
     "options": [
       "Une chaîne de grade 80 (7100 lbs)",
       "Une chaîne de grade 30 (1900 lbs)",
       "Une chaîne de grade 43 (3500 lbs)",
-      "N'importe quelle chaîne disponible sur le chantier"
+      "N'importe quelle chaîne du chantier"
     ],
     "answer": 0,
     "explication": "La procédure impose une chaîne de grade 80 (7100 lbs) pour suspendre et positionner la tête V-30.",
@@ -396,7 +396,7 @@ window.QUIZ = [
   },
   {
     "id": "q33",
-    "question": "Lors d'un alésage ascendant sans accès avec la tête V-30, à quelle distance minimale du mât de la foreuse toute personne doit-elle se tenir pendant le forage (zone d'exclusion) ?",
+    "question": "Tu fais un alésage ascendant sans accès avec la tête V-30. Pendant le forage, à quelle distance du mât tout le monde doit rester ?",
     "options": [
       "1,5 mètre",
       "3 mètres",
@@ -421,90 +421,12 @@ window.QUIZ = [
     ]
   },
   {
-    "id": "q34",
-    "question": "Lors d'un alésage ascendant sans accès avec la tête V-30, comment doit-on manipuler une extension du câble électrique lorsqu'elle est sous tension ?",
-    "options": [
-      "À mains nues avec des gants de cuir",
-      "Uniquement avec le crochet de plastique prévu à cet effet",
-      "Avec une clé à pipe (pipe wrench)",
-      "Avec un wescot isolé"
-    ],
-    "answer": 1,
-    "explication": "La procédure exige d'utiliser obligatoirement le crochet de plastique pour manipuler toute extension de câble lorsqu'elle est sous tension.",
-    "sourceId": "pro-op-ith-007",
-    "code": "PRO-OP-ITH-007",
-    "titre": "Alésage ascendant sans accès avec la tête V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "ITH",
-      "Foreuse",
-      "Surcompresseur",
-      "Compresseur renforçateur",
-      "CUBEX",
-      "Marteau (ITH)",
-      "Centralisateur"
-    ]
-  },
-  {
-    "id": "q35",
-    "question": "Lors d'un alésage ascendant sans accès avec la tête V-30, quelle distance doit obligatoirement séparer la foreuse du surcompresseur (compresseur) ?",
-    "options": [
-      "3 mètres",
-      "5 mètres",
-      "7 mètres",
-      "15 mètres"
-    ],
-    "answer": 2,
-    "explication": "La procédure fixe une distance de 7 mètres à maintenir entre la foreuse et le compresseur (surcompresseur).",
-    "sourceId": "pro-op-ith-007",
-    "code": "PRO-OP-ITH-007",
-    "titre": "Alésage ascendant sans accès avec la tête V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "ITH",
-      "Foreuse",
-      "Surcompresseur",
-      "Compresseur renforçateur",
-      "CUBEX",
-      "Marteau (ITH)",
-      "Centralisateur"
-    ]
-  },
-  {
-    "id": "q36",
-    "question": "Sur les CUBEX et surcompresseurs utilisés pour l'alésage ascendant V-30, quelle caractéristique impose une attention particulière lors de l'inspection des boyaux tressés des compresseurs ?",
-    "options": [
-      "Ils peuvent atteindre une haute température de 800 °F",
-      "Ils sont sous une tension de 600 V",
-      "Ils contiennent du gaz inflammable sous 800 psi",
-      "Ils gèlent en dessous de 800 °F"
-    ],
-    "answer": 0,
-    "explication": "La procédure insiste sur les boyaux tressés haute-température (800 °F) des compresseurs, dont seul le type approuvé doit être utilisé.",
-    "sourceId": "pro-op-ith-007",
-    "code": "PRO-OP-ITH-007",
-    "titre": "Alésage ascendant sans accès avec la tête V-30",
-    "categorie": "Alésage",
-    "machines": [
-      "V-30",
-      "ITH",
-      "Foreuse",
-      "Surcompresseur",
-      "Compresseur renforçateur",
-      "CUBEX",
-      "Marteau (ITH)",
-      "Centralisateur"
-    ]
-  },
-  {
     "id": "q37",
-    "question": "Sur la V-30, lorsqu'un taillant se brise dans un trou descendant (monterie), quel outil le travailleur doit-il utiliser pour récupérer le taillant ou les pièces brisées au fond de la monterie ?",
+    "question": "Sur la V-30, un taillant se brise dans un trou qui descend (monterie). Quel outil tu prends pour sortir les pièces au fond ?",
     "options": [
-      "Le racloir de monterie (raise scraper) conçu à cet effet",
-      "Une perche aimantée fixée à une élingue",
-      "Ses mains, en descendant prudemment au fond de la monterie",
+      "Le racloir de monterie (raise scraper) fait pour ça",
+      "Une perche aimantée au bout d'une élingue",
+      "Tes mains, en descendant doucement au fond",
       "Un palan à chaîne accroché au mât de la V-30"
     ],
     "answer": 0,
@@ -519,12 +441,12 @@ window.QUIZ = [
   },
   {
     "id": "q38",
-    "question": "Sur la V-30, lorsqu'un taillant se brise ou que des outils sont échappés dans une monterie en forage descendant, qui est autorisé à descendre au fond de la monterie pour récupérer les pièces métalliques ?",
+    "question": "Sur la V-30, un taillant se brise ou des outils tombent dans une monterie en forage descendant. Qui a le droit de descendre au fond pour prendre les pièces en métal ?",
     "options": [
-      "Le foreur responsable seulement",
-      "Un travailleur portant un harnais et attaché à une ligne de vie",
-      "L'aide-foreur, sous la surveillance du superviseur",
-      "Personne : il est strictement défendu à quiconque, et en tout temps, d'y descendre"
+      "Seulement le foreur responsable",
+      "Un travailleur avec un harnais, attaché à une ligne de vie",
+      "L'aide-foreur, si le superviseur surveille",
+      "Personne. C'est défendu à tout le monde, en tout temps"
     ],
     "answer": 3,
     "explication": "La procédure interdit strictement à quiconque, et ce en tout temps, de descendre au fond de la monterie pour dégager ou récupérer les pièces métalliques, les outils, les taillants ou tout autre équipement.",
@@ -538,12 +460,12 @@ window.QUIZ = [
   },
   {
     "id": "q39",
-    "question": "Pour l'intervention sur une V-30 après bris d'un taillant, quelle protection contre les chutes est obligatoire avant d'enlever le couvercle de la monterie et pendant qu'il est retiré ?",
+    "question": "Sur la V-30, après le bris d'un taillant, tu vas enlever le couvercle de la monterie. Quelle protection contre les chutes est obligatoire avant et pendant que le couvercle est enlevé ?",
     "options": [
-      "Porter le harnais et rester attaché à un ancrage ou à une ligne de vie",
-      "Porter uniquement un casque et des bottes de sécurité",
-      "Installer une rambarde temporaire autour de la monterie",
-      "Aucune, à condition de rester à plus de 1,5 m du trou"
+      "Porter le harnais et rester attaché à un ancrage ou une ligne de vie",
+      "Porter juste un casque et des bottes de sécurité",
+      "Mettre une rambarde temporaire autour de la monterie",
+      "Aucune, si tu restes à plus de 1,5 m du trou"
     ],
     "answer": 0,
     "explication": "Le port du harnais est obligatoire et le travailleur doit rester attaché à un ancrage ou à une ligne de vie durant la manipulation du couvercle et tant que le couvercle est retiré de la monterie, en raison du risque de chute dans la monterie.",
@@ -557,12 +479,12 @@ window.QUIZ = [
   },
   {
     "id": "q40",
-    "question": "Sur la V-30, que doit faire le travailleur avec le couvercle de la monterie entre deux manipulations du racloir lors de la récupération d'un taillant brisé ?",
+    "question": "Sur la V-30, tu récupères un taillant brisé avec le racloir. Que fais-tu avec le couvercle de la monterie entre deux manipulations ?",
     "options": [
-      "Le laisser ouvert pour accélérer les manipulations successives",
+      "Le laisser ouvert pour aller plus vite",
       "Le remettre sur la monterie",
-      "Le remplacer par un ruban de signalisation rouge",
-      "Le déposer à 1,5 m du trou pour dégager l'accès"
+      "Le remplacer par un ruban rouge de signalisation",
+      "Le poser à 1,5 m du trou pour dégager l'accès"
     ],
     "answer": 1,
     "explication": "La procédure exige de remettre le couvercle sur la monterie entre les manipulations du racloir, puis de couvrir la monterie de façon sécuritaire une fois les travaux terminés.",
@@ -576,7 +498,7 @@ window.QUIZ = [
   },
   {
     "id": "q41",
-    "question": "Lors du forage à distance avec une foreuse ITH (PRO-OP-ITH-012), quelle distance minimale doit-on installer entre le foreur (système de commande à distance) et le trou à forer ?",
+    "question": "Tu fais du forage à distance avec une foreuse ITH. Quelle distance minimale tu mets entre le foreur (commande à distance) et le trou à forer ?",
     "options": [
       "50' (15 mètres)",
       "7 mètres",
@@ -596,12 +518,12 @@ window.QUIZ = [
   },
   {
     "id": "q42",
-    "question": "En forage à distance avec foreuse ITH (PRO-OP-ITH-012), comment le foreur et l'aide-foreur doivent-ils se positionner par rapport à la ligne de sautage ?",
+    "question": "En forage à distance avec une foreuse ITH, où le foreur et l'aide-foreur doivent-ils se placer par rapport à la ligne de sautage ?",
     "options": [
-      "Ils peuvent s'y tenir si un superviseur les surveille",
-      "Ils ne doivent jamais se tenir dans la ligne de sautage et doivent rester du côté de la sortie",
-      "Ils doivent se placer directement dans la ligne de sautage pour mieux voir le trou",
-      "Ils doivent se tenir à 1,5 mètre de la ligne de sautage"
+      "Ils peuvent y rester si un superviseur les surveille",
+      "Jamais dans la ligne de sautage. Ils restent du côté de la sortie",
+      "Direct dans la ligne de sautage, pour mieux voir le trou",
+      "À 1,5 mètre de la ligne de sautage"
     ],
     "answer": 1,
     "explication": "La procédure interdit de se tenir dans la ligne de sautage : le foreur et l'aide-foreur doivent rester du côté de la sortie sans que rien ne bloque l'accès.",
@@ -616,11 +538,11 @@ window.QUIZ = [
   },
   {
     "id": "q43",
-    "question": "En forage à distance (PRO-OP-ITH-012), lors du déblocage d'un trou dynamité avec de l'amex (ANFO), quelle action est exigée pour diminuer le risque d'explosion ?",
+    "question": "En forage à distance, tu débloques un trou dynamité avec de l'amex (ANFO). Que dois-tu faire pour baisser le risque d'explosion ?",
     "options": [
-      "Augmenter la pression d'air comprimé dans les tiges",
+      "Mettre plus de pression d'air dans les tiges",
       "Mettre de l'eau dans les tiges de forage",
-      "Souffler les tiges à l'air sec avant le déblocage",
+      "Souffler les tiges à l'air sec avant de débloquer",
       "Vaporiser de l'huile dans les tiges de forage"
     ],
     "answer": 1,
@@ -636,12 +558,12 @@ window.QUIZ = [
   },
   {
     "id": "q45",
-    "question": "Lors de l'installation d'un tubage (casing) au collet des trous avec la foreuse ITH, dans quel cas est-il interdit de positionner une partie de son corps sous les tables ?",
+    "question": "Tu installes un tubage (casing) au collet des trous avec la foreuse ITH. Quand est-il interdit de mettre une partie de ton corps sous les tables ?",
     "options": [
-      "Tant que le marteau n'est pas monté au-delà des tables et que la slip-plate n'est pas fermée",
-      "Uniquement lorsque la foreuse est sous tension",
-      "Seulement si un deuxième travailleur n'est pas présent",
-      "Tant que le tubage n'a pas pénétré de 1 pied dans le roc solide"
+      "Tant que le marteau n'est pas monté au-dessus des tables et que la slip-plate n'est pas fermée",
+      "Seulement quand la foreuse est sous tension",
+      "Seulement s'il n'y a pas un deuxième travailleur",
+      "Tant que le tubage n'est pas entré de 1 pied dans le roc solide"
     ],
     "answer": 0,
     "explication": "La procédure interdit formellement à quiconque de positionner toute partie de son corps sous les tables si le marteau n'est pas monté au-delà des tables ET que la slip-plate n'est pas fermée.",
@@ -657,30 +579,8 @@ window.QUIZ = [
     ]
   },
   {
-    "id": "q46",
-    "question": "Pour l'installation du tubage (casing) au collet des trous avec la foreuse ITH, quelle distance minimale doit obligatoirement être respectée entre le mât et la console ?",
-    "options": [
-      "1,5 mètre",
-      "1 mètre",
-      "3 mètres",
-      "0,5 mètre"
-    ],
-    "answer": 0,
-    "explication": "La procédure exige obligatoirement une distance minimum de 1,5 mètre entre le mât et la console; de plus, quand une pièce est en mouvement, aucun travailleur ne doit se tenir à moins de 1,5 m du mât, de tous les côtés.",
-    "sourceId": "pro-op-ith-014",
-    "code": "PRO-OP-ITH-014",
-    "titre": "Procédure d'installation de tubage (casing) au collet des trous",
-    "categorie": "Installation",
-    "machines": [
-      "ITH",
-      "Foreuse ITH",
-      "Marteau",
-      "Mât"
-    ]
-  },
-  {
     "id": "q47",
-    "question": "Lors de l'installation d'un tubage (casing) au collet des trous avec la foreuse ITH, de quelle profondeur le 2e forage doit-il pénétrer dans le roc solide ?",
+    "question": "Tu installes un tubage (casing) au collet des trous avec la foreuse ITH. De combien le 2e forage doit-il entrer dans le roc solide ?",
     "options": [
       "1 pied dans le roc solide",
       "1 mètre dans le roc solide",
@@ -702,11 +602,11 @@ window.QUIZ = [
   },
   {
     "id": "q49",
-    "question": "Selon la procédure de manipulation des marteaux de forage (PRO-OP-ITH-016), comment doivent toujours être transportés les marteaux de 6 pouces?",
+    "question": "Selon la procédure des marteaux de forage, comment tu transportes toujours les marteaux de 6 pouces ?",
     "options": [
-      "À l'aide du chariot conçu à cet effet",
-      "À la main par un seul travailleur",
-      "En les attachant directement à la console de la foreuse",
+      "Avec le chariot fait pour ça",
+      "À la main, par un seul travailleur",
+      "Attachés direct à la console de la foreuse",
       "Sur l'épaule de l'aide-foreur"
     ],
     "answer": 0,
@@ -725,12 +625,12 @@ window.QUIZ = [
   },
   {
     "id": "q50",
-    "question": "Pour la manipulation des marteaux de forage (PRO-OP-ITH-016), que faut-il valider chaque fois qu'on doit exposer les mains sous le marteau?",
+    "question": "Tu manipules les marteaux de forage. Chaque fois que tu mets les mains sous le marteau, que dois-tu vérifier ?",
     "options": [
       "Que le marteau est bien vissé au « GEAR BOX »",
-      "Que le chariot est verrouillé",
+      "Que le chariot est barré",
       "Que la radio est allumée",
-      "Que le « DRIVER SUB » est retiré"
+      "Que le « DRIVER SUB » est enlevé"
     ],
     "answer": 0,
     "explication": "L'avertissement est clair : à chaque fois qu'on doit s'exposer les mains sous le marteau, il faut valider que le marteau est bien vissé au GEAR BOX.",
@@ -748,12 +648,12 @@ window.QUIZ = [
   },
   {
     "id": "q51",
-    "question": "Lors de la manipulation des marteaux de forage (PRO-OP-ITH-016), quelle pièce doit être installée sur les marteaux en tout temps?",
+    "question": "Tu manipules les marteaux de forage. Quelle pièce doit rester installée sur le marteau en tout temps ?",
     "options": [
       "Le « DRIVER SUB »",
       "Le centralisateur",
       "Le whip check",
-      "Le crochet de plastique"
+      "Le crochet en plastique"
     ],
     "answer": 0,
     "explication": "La consigne impose d'installer le « DRIVER SUB » sur les marteaux en tout temps lors de la manipulation.",
@@ -771,12 +671,12 @@ window.QUIZ = [
   },
   {
     "id": "q52",
-    "question": "D'après la procédure PRO-OP-ITH-016, quand peut-on retirer la chaîne de sûreté du chariot lors de la manipulation d'un marteau?",
+    "question": "Tu manipules un marteau. Quand peux-tu enlever la chaîne de sûreté du chariot ?",
     "options": [
       "Seulement après avoir vissé et accoté le marteau dans le « SAVER SUB »",
-      "Dès que le marteau est sorti de son support",
+      "Dès que le marteau sort de son support",
       "Avant de visser le marteau au « GEAR BOX »",
-      "À tout moment, car elle n'est pas obligatoire"
+      "N'importe quand, elle n'est pas obligatoire"
     ],
     "answer": 0,
     "explication": "La consigne précise de retirer la chaîne de sûreté du chariot seulement après avoir vissé et accoté le marteau dans le « SAVER SUB », pour éviter l'exposition à la chute d'un marteau.",

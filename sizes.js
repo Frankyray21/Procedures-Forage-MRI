@@ -428,7 +428,7 @@ window.ASSET_SIZES = {
  "quiz-ith-new.js":8077,
  "quiz-securite.js":4215,
  "quiz-types.js":116019,
- "quiz.js":33024,
+ "quiz.js":27801,
  "quiz_proc.js":33744,
  "sizes.js":18037,
  "styles.css":57263
