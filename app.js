@@ -798,11 +798,6 @@
       var name = (input.value || '').trim();
       if (!name) { input.focus(); setHint('Entre ton nom avant d\'attester.', false); return; }
       if (!navigator.onLine) { msg.className = 'attest-msg no'; msg.textContent = '📴 Hors-ligne : reconnecte-toi au réseau pour envoyer ton attestation.'; return; }
-      var sig = attestSig(p.id, name);
-      var done = '';
-      try { done = localStorage.getItem('attest_sent_' + p.id) || ''; } catch (e) {}
-      if (done === sig) { attestSuccess(sec, name, true); return; }
-      sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
       var best = pqBestPct(p.id);
       var t = ptSnapshot(p.id);      // temps de consultation + temps de quiz (suivi gestionnaire)
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
@@ -811,13 +806,18 @@
         revision: p.date_revision || p.date_creation || '',
         readTime: fmtDuration(t.read), quizTime: fmtDuration(t.quiz),
         readSeconds: Math.round(t.read / 1000), quizSeconds: Math.round(t.quiz / 1000) };
+      var sig = attestSig(p.id, name);
+      var done = '';
+      try { done = localStorage.getItem('attest_sent_' + p.id) || ''; } catch (e) {}
+      if (done === sig) { attestSuccess(sec, name, true, payload, ''); return; }
+      sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
       fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function (r) { return r ? r.json().then(function (j) { return { ok: r.ok, j: j }; }) : null; })
         .then(function (res) {
           sendBtn.disabled = false;
           if (res && res.ok && res.j && res.j.ok) {
             try { localStorage.setItem('attest_sent_' + p.id, sig); localStorage.setItem('attest_name', name); } catch (e) {}
-            attestSuccess(sec, name, res.j.linked);
+            attestSuccess(sec, name, res.j.linked, payload, res.j.id || '');
           } else {
             msg.className = 'attest-msg no';
             msg.textContent = '⚠️ Enregistrement impossible pour le moment. Réessaie dans un instant.';
@@ -831,12 +831,137 @@
     };
     setHint(HINT0, false);
   }
-  function attestSuccess(sec, name, linked) {
+  /* ---------- PDF (attestation travailleur + fiche gestionnaire) ----------
+     Générés dans le navigateur (jsPDF, chargé à la demande seulement) à partir
+     des mêmes données que l'envoi Airtable — aucun appel serveur de plus. */
+  var JSPDF_SRC = 'vendor/jspdf.umd.min.js';
+  var jsPdfReady = null;
+  function ensureJsPDF() {
+    if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve();
+    if (jsPdfReady) return jsPdfReady;
+    jsPdfReady = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = JSPDF_SRC;
+      s.onload = function () { resolve(); };
+      s.onerror = function () { jsPdfReady = null; reject(new Error('jspdf')); };
+      document.head.appendChild(s);
+    });
+    return jsPdfReady;
+  }
+  var logoDataUrl = null;
+  function getLogo() {
+    if (logoDataUrl) return Promise.resolve(logoDataUrl);
+    return fetch('images/logo_roger.png').then(function (r) { return r.ok ? r.blob() : null; })
+      .then(function (blob) {
+        if (!blob) return null;
+        return new Promise(function (resolve) {
+          var fr = new FileReader();
+          fr.onload = function () { logoDataUrl = fr.result; resolve(logoDataUrl); };
+          fr.onerror = function () { resolve(null); };
+          fr.readAsDataURL(blob);
+        });
+      }).catch(function () { return null; });
+  }
+  function pdfSlug(s) {
+    var t = String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return t || 'document';
+  }
+  function fmtDateFR(iso) {
+    try {
+      var d = new Date((iso || '') + 'T00:00:00');
+      if (isNaN(d.getTime())) return iso || '';
+      return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch (e) { return iso || ''; }
+  }
+  function pdfHeader(doc, logo, title) {
+    var x0 = 20;
+    if (logo) { try { doc.addImage(logo, 'PNG', x0, 10, 20, 20); x0 = 44; } catch (e) {} }
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(20);
+    doc.text('Machines Roger International', x0, 18);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(110);
+    doc.text('Procédures de forage — sécurité', x0, 24);
+    doc.setDrawColor(200); doc.line(20, 34, 190, 34);
+    doc.setTextColor(20); doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
+    doc.text(title, 20, 46);
+    return 60;
+  }
+  function pdfField(doc, y, label, value) {
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(20);
+    doc.text(label, 20, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(40);
+    doc.text(doc.splitTextToSize(String(value || '—'), 105), 78, y);
+    return y + 9;
+  }
+  function pdfFooter(doc) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150);
+    doc.text('Document généré automatiquement le ' + new Date().toLocaleString('fr-FR') +
+      ' — Machines Roger International', 20, 285);
+  }
+  function buildWorkerPdf(payload, logo) {
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var y = pdfHeader(doc, logo, 'Attestation de lecture');
+    y = pdfField(doc, y, 'Nom', payload.name);
+    y = pdfField(doc, y, 'Procédure', (payload.proc || '') + (payload.titre ? ' — ' + payload.titre : ''));
+    y = pdfField(doc, y, 'Date', fmtDateFR(payload.date));
+    if (payload.revision) y = pdfField(doc, y, 'Révision de la procédure', payload.revision);
+    if (payload.score) y = pdfField(doc, y, 'Résultat au quiz', payload.score);
+    y += 8;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(40);
+    doc.text(doc.splitTextToSize('Cette personne atteste avoir consulté cette fiche de procédure ' +
+      'et complété le quiz associé sur le site des procédures de forage de Machines Roger International.', 170), 20, y);
+    pdfFooter(doc);
+    return doc;
+  }
+  function buildManagerPdf(payload, linked, recordId, logo) {
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var y = pdfHeader(doc, logo, 'Fiche de suivi — gestionnaire');
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5); doc.setTextColor(130);
+    doc.text('Usage interne — gestion des formations. Ne pas remettre au travailleur.', 20, y - 8);
+    y = pdfField(doc, y, 'Nom', payload.name);
+    y = pdfField(doc, y, 'Procédure', (payload.proc || '') + (payload.titre ? ' — ' + payload.titre : ''));
+    y = pdfField(doc, y, 'Date', fmtDateFR(payload.date));
+    if (payload.revision) y = pdfField(doc, y, 'Révision de la procédure', payload.revision);
+    if (payload.score) y = pdfField(doc, y, 'Résultat au quiz', payload.score);
+    y = pdfField(doc, y, 'Relié au registre employé', linked ? 'Oui' : 'Non — à relier manuellement');
+    y = pdfField(doc, y, 'Temps sur la fiche', (payload.readTime || '—') +
+      (payload.readSeconds != null ? ' (' + payload.readSeconds + ' s)' : ''));
+    y = pdfField(doc, y, 'Temps sur le quiz', (payload.quizTime || '—') +
+      (payload.quizSeconds != null ? ' (' + payload.quizSeconds + ' s)' : ''));
+    y = pdfField(doc, y, 'Source', 'Site procédures (web)');
+    if (recordId) y = pdfField(doc, y, 'Référence Airtable', recordId);
+    pdfFooter(doc);
+    return doc;
+  }
+  function attestSuccess(sec, name, linked, payload, recordId) {
     sec.innerHTML = '<h2>Attestation de lecture</h2>' +
       '<div class="attest-done"><span class="attest-done-ic">✓</span>' +
       '<div><strong>Attestation enregistrée</strong>' +
       '<span>Merci ' + esc(name) + '. Ta lecture de cette procédure est enregistrée' +
-      (linked ? ' et reliée à ton dossier employé' : '') + '.</span></div></div>';
+      (linked ? ' et reliée à ton dossier employé' : '') + '.</span>' +
+      (payload ?
+        '<div class="attest-pdfs">' +
+          '<button type="button" class="attest-pdf-btn attest-pdf-w">📄 Mon attestation (PDF)</button>' +
+          '<button type="button" class="attest-pdf-btn attest-pdf-m">📋 Fiche gestionnaire (PDF)</button>' +
+          '<p class="attest-pdf-hint">La fiche gestionnaire contient les détails de suivi (temps, statut) — à remettre à ton superviseur.</p>' +
+          '<div class="attest-pdf-msg" aria-live="polite"></div>' +
+        '</div>' : '') +
+      '</div></div>';
+    if (!payload) return;
+    var msgEl = sec.querySelector('.attest-pdf-msg');
+    function fail() { msgEl.textContent = '⚠️ PDF indisponible hors-ligne au premier essai — réessaie une fois en ligne.'; }
+    sec.querySelector('.attest-pdf-w').onclick = function () {
+      msgEl.textContent = '';
+      Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
+        buildWorkerPdf(payload, r[1]).save(pdfSlug(payload.proc) + '-' + pdfSlug(name) + '-attestation.pdf');
+      }).catch(fail);
+    };
+    sec.querySelector('.attest-pdf-m').onclick = function () {
+      msgEl.textContent = '';
+      Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
+        buildManagerPdf(payload, linked, recordId, r[1]).save(pdfSlug(payload.proc) + '-' + pdfSlug(name) + '-gestionnaire.pdf');
+      }).catch(fail);
+    };
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */

@@ -780,6 +780,13 @@ footer b{color:var(--muted)}
   display:flex;align-items:center;justify-content:center;font-size:1.1rem}
 .attest-done strong{display:block;font-size:1rem}
 .attest-done span{color:var(--muted);font-size:.9rem;line-height:1.4}
+.attest-pdfs{margin-top:.7rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.attest-pdf-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--card-2);
+  border:1px solid var(--border);color:var(--text);border-radius:10px;padding:.5rem .8rem;
+  font:inherit;font-size:.86rem;font-weight:700;cursor:pointer}
+.attest-pdf-btn:hover{border-color:#34d399;color:#34d399}
+.attest-pdf-hint{flex-basis:100%;font-size:.78rem;color:var(--dim);margin:.1rem 0 0}
+.attest-pdf-msg{flex-basis:100%;font-size:.82rem;color:#fca5a5;min-height:1.1em}
 .cbmore{display:none}
 .cbmore.open{display:block}
 .cbmore-b{margin:.15rem 0 .25rem;font-size:.78rem;font-weight:700;color:var(--accent-l);

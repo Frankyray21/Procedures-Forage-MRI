@@ -1,5 +1,5 @@
 /* Service worker — cache hors-ligne (app shell + données + PDF).
-   Stratégie (v57) :
+   Stratégie (v68) :
    - DEUX caches : l'application (versionné — remplacé à chaque déploiement)
      et les MÉDIAS pdf/images (persistant — les ~70 Mo de PDF et d'images ne
      sont PAS re-téléchargés quand le site est mis à jour).
@@ -16,7 +16,7 @@
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
      retarder l'installation. Le bouton « Tout télécharger » de l'accueil
      affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v60';
+const VERSION = 'mri-proc-v68';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -44,6 +44,7 @@ const CORE = [
   './quiz-types.js',
   './app.js',
   './sizes.js',
+  './vendor/jspdf.umd.min.js',
   './manifest.webmanifest',
   './images/logo_roger.png',
   './icons/icon-192.png',
