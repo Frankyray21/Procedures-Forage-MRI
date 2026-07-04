@@ -628,11 +628,16 @@
               return '<img src="' + esc(src) + '" alt="' + esc(label) + ' — page ' + (i + 1) + '" loading="lazy">';
             }).join('') + '</div>'
           : '<iframe src="' + pdf + '#view=FitH" title="' + esc(label) + '" loading="lazy"></iframe>';
+        // Visionneuse repliée par défaut : la fiche reste courte sur téléphone
+        // (plus de bloc gris de 78vh) et les images de pages ne se chargent
+        // qu'à l'ouverture.
         return '<div class="pdfbox">' +
           '<div class="bar">' + ICON.doc + '<b>' + esc(label) + '</b><span class="sp"></span>' +
             '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
             '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
-          body + '</div>';
+          '<details class="pdfview"><summary>Feuilleter le document ici' +
+            (pages.length ? '<span class="pv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + '</span>' : '') +
+          '</summary>' + body + '</details></div>';
       };
       var pdfInner = pdfBox(p.id, p.code || p.titre);
       if (p.id === 'centralisateur') {
