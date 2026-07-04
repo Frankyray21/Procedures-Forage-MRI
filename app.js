@@ -202,7 +202,6 @@
           '<div class="stat"><b><a href="#/suivi" style="color:var(--accent-l)">Suivi&nbsp;»</a></b><span>de mes formations</span></div>' +
         '</div>' +
       '</div></section>' +
-      '<div class="wrap"><div class="install" id="install"></div><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="search">' + ICON.search +
           '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" autocomplete="off">' +
@@ -212,7 +211,9 @@
         '</div>' +
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
-      '<div class="wrap"><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>';
+      '<div class="wrap"><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>' +
+      // Installation + hors-ligne APRÈS le contenu : la recherche d'abord.
+      '<div class="wrap"><div class="install" id="install"></div><div class="offline" id="offline"></div></div>';
 
     var q = $('#q');
     q.value = state.q;
@@ -718,7 +719,7 @@
         '<p class="attest-lead">Réponds d\'abord à <b>toutes les questions du quiz</b> ci-dessus pour pouvoir attester ' +
         'ta lecture (le score n\'a pas d\'importance).</p>' +
         '<button type="button" class="btn attest-btn attest-locked" disabled>' +
-        '🔒 Attester la lecture (complète d\'abord le quiz)</button></div>';
+        'Attester la lecture (complète d\'abord le quiz)</button></div>';
     }
     var best = pqBestPct(p.id);
     var scoreTxt = best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '';
@@ -768,6 +769,8 @@
     }
     function renderSugg(list, term) {
       if (!list.length) { hideSugg(); setHint('Aucun employé trouvé — vérifie l\'orthographe (tu peux quand même attester).', false); return; }
+      // Positionne la liste juste sous le champ (et non sous tout le formulaire).
+      sugg.style.top = (input.offsetTop + input.offsetHeight + 4) + 'px';
       sugg.innerHTML = '';
       list.forEach(function (it) {
         var b = document.createElement('button');
@@ -799,7 +802,7 @@
     sendBtn.onclick = function () {
       var name = (input.value || '').trim();
       if (!name) { input.focus(); setHint('Entre ton nom avant d\'attester.', false); return; }
-      if (!navigator.onLine) { msg.className = 'attest-msg no'; msg.textContent = '📴 Hors-ligne : reconnecte-toi au réseau pour envoyer ton attestation.'; return; }
+      if (!navigator.onLine) { msg.className = 'attest-msg no'; msg.textContent = 'Hors-ligne : reconnecte-toi au réseau pour envoyer ton attestation.'; return; }
       var best = pqBestPct(p.id);
       var t = ptSnapshot(p.id);      // temps de consultation + temps de quiz (suivi gestionnaire)
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
@@ -822,13 +825,13 @@
             attestSuccess(sec, name, res.j.linked, payload, res.j.id || '');
           } else {
             msg.className = 'attest-msg no';
-            msg.textContent = '⚠️ Enregistrement impossible pour le moment. Réessaie dans un instant.';
+            msg.textContent = 'Enregistrement impossible pour le moment. Réessaie dans un instant.';
           }
         })
         .catch(function () {
           sendBtn.disabled = false;
           msg.className = 'attest-msg no';
-          msg.textContent = '⚠️ Service d\'attestation injoignable. Vérifie le réseau et réessaie.';
+          msg.textContent = 'Service d\'attestation injoignable. Vérifie le réseau et réessaie.';
         });
     };
     setHint(HINT0, false);
@@ -943,8 +946,8 @@
       (linked ? ' et reliée à ton dossier employé' : '') + '.</span>' +
       (payload ?
         '<div class="attest-pdfs">' +
-          '<button type="button" class="attest-pdf-btn attest-pdf-w">📄 Mon attestation (PDF)</button>' +
-          '<button type="button" class="attest-pdf-btn attest-pdf-m">📋 Fiche gestionnaire (PDF)</button>' +
+          '<button type="button" class="attest-pdf-btn attest-pdf-w">' + ICON.doc + ' Mon attestation (PDF)</button>' +
+          '<button type="button" class="attest-pdf-btn attest-pdf-m">' + ICON.doc + ' Fiche gestionnaire (PDF)</button>' +
           '<p class="attest-pdf-hint">La fiche gestionnaire contient les détails de suivi (temps, statut) — à remettre à ton superviseur.</p>' +
           '<div class="attest-pdf-msg" aria-live="polite"></div>' +
         '</div>' : '') +
@@ -952,7 +955,7 @@
       '</div></div>';
     if (!payload) return;
     var msgEl = sec.querySelector('.attest-pdf-msg');
-    function fail() { msgEl.textContent = '⚠️ PDF indisponible hors-ligne au premier essai — réessaie une fois en ligne.'; }
+    function fail() { msgEl.textContent = 'PDF indisponible hors-ligne au premier essai — réessaie une fois en ligne.'; }
     sec.querySelector('.attest-pdf-w').onclick = function () {
       msgEl.textContent = '';
       Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
@@ -1850,7 +1853,7 @@
       deferredPrompt.prompt();
       deferredPrompt.userChoice.finally(function () { deferredPrompt = null; renderInstall(); updateInstallBtn(); });
     } else if (isIOS()) {
-      toast('Sur iPhone/iPad : touchez Partager ⬆️ puis « Sur l\'écran d\'accueil ».');
+      toast('Sur iPhone/iPad : touchez « Partager » puis « Sur l\'écran d\'accueil ».');
     } else {
       toast('Menu du navigateur (⋮) → « Installer l\'application » ou « Ajouter à l\'écran d\'accueil ».');
     }
@@ -1865,7 +1868,7 @@
     var box = $('#install'); if (!box) return;
     if (isStandalone()) { box.innerHTML = ''; return; }
     var hint = isIOS()
-      ? 'Sur iPhone/iPad : touchez <b>Partager ⬆️</b> puis <b>« Sur l\'écran d\'accueil »</b>.'
+      ? 'Sur iPhone/iPad : touchez <b>Partager</b> puis <b>« Sur l\'écran d\'accueil »</b>.'
       : 'Installez l\'application sur votre appareil pour un accès rapide et hors-ligne.';
     box.innerHTML = '<div class="offcard install"><span class="offic">' + INSTALL_ICON + '</span>' +
       '<div class="offtxt"><b>Installer l\'application</b><span>' + hint + '</span></div>' +

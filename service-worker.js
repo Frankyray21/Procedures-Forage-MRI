@@ -16,7 +16,7 @@
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
      retarder l'installation. Le bouton « Tout télécharger » de l'accueil
      affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v69';
+const VERSION = 'mri-proc-v70';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -45,6 +45,14 @@ const CORE = [
   './app.js',
   './sizes.js',
   './vendor/jspdf.umd.min.js',
+  './vendor/fonts/barlow-latin-400-normal.woff2',
+  './vendor/fonts/barlow-latin-500-normal.woff2',
+  './vendor/fonts/barlow-latin-600-normal.woff2',
+  './vendor/fonts/barlow-latin-700-normal.woff2',
+  './vendor/fonts/barlow-latin-800-normal.woff2',
+  './vendor/fonts/barlow-condensed-latin-600-normal.woff2',
+  './vendor/fonts/barlow-condensed-latin-700-normal.woff2',
+  './vendor/fonts/barlow-condensed-latin-800-normal.woff2',
   './manifest.webmanifest',
   './images/logo_roger.png',
   './icons/icon-192.png',

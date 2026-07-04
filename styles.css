@@ -2,7 +2,16 @@
    Procédures de forage — Machines Roger International
    Système de design repris du site Prévention TMS (Barlow / rouge)
    =========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap');
+/* Polices auto-hébergées (vendor/fonts) : disponibles hors-ligne, aucun appel
+   externe. Sous-ensemble latin (couvre le français, œ inclus). */
+@font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:swap;src:url('vendor/fonts/barlow-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:500;font-display:swap;src:url('vendor/fonts/barlow-latin-500-normal.woff2') format('woff2')}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:swap;src:url('vendor/fonts/barlow-latin-600-normal.woff2') format('woff2')}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:700;font-display:swap;src:url('vendor/fonts/barlow-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:800;font-display:swap;src:url('vendor/fonts/barlow-latin-800-normal.woff2') format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:600;font-display:swap;src:url('vendor/fonts/barlow-condensed-latin-600-normal.woff2') format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url('vendor/fonts/barlow-condensed-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:800;font-display:swap;src:url('vendor/fonts/barlow-condensed-latin-800-normal.woff2') format('woff2')}
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
@@ -281,8 +290,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:center}
 footer b{color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%) translateY(120%);z-index:120;
   background:var(--card-2);border:1px solid var(--border);border-radius:12px;padding:.8rem 1.1rem;display:flex;gap:.7rem;
-  align-items:center;box-shadow:0 14px 40px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.2,.8,.2,1);max-width:90vw}
-.toast.show{transform:translateX(-50%) translateY(0)}
+  align-items:center;box-shadow:0 14px 40px rgba(0,0,0,.5);max-width:90vw;opacity:0;visibility:hidden;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s,visibility 0s .35s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
 .toast b{color:#fff}.toast button{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:.4rem .7rem;font-weight:700;font-size:.82rem}
 
 /* ===== liste de vérification (checklist) ===== */
@@ -525,11 +536,16 @@ footer b{color:var(--muted)}
 @media(max-width:860px){
   .code-layout{grid-template-columns:1fr}
   .code-toc{display:none}
-  .appbar nav a.lbl{display:none}
+  /* nav compacte : les sections restent atteignables sur mobile */
+  .appbar nav{gap:.1rem}
+  .appbar nav a.lbl{font-size:.8rem;padding:.4rem .5rem}
+  .appbar .ver{display:none}
   .portal-cards{grid-template-columns:1fr}
 }
 @media(max-width:520px){
-  .appbar .brand .bt span{display:none}
+  .appbar .brand .bt{display:none}
+  .appbar{padding-left:.6rem;padding-right:.4rem}
+  .appbar nav a.lbl{font-size:.78rem;padding:.4rem .42rem}
   .pdfbox iframe,.pdfbox object,.pdfbox .pdfpages{height:70vh}
   .stats{gap:1rem}
 }
@@ -680,6 +696,7 @@ footer b{color:var(--muted)}
 .cbbtn{position:fixed;right:18px;bottom:18px;z-index:1100;width:56px;height:56px;border-radius:50%;
   border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;
   background:linear-gradient(160deg,var(--brand),#9e1b1d);box-shadow:0 8px 22px rgba(210,35,37,.45);transition:.18s}
+@media(max-width:640px){.cbbtn{width:48px;height:48px;right:12px;bottom:12px}}
 .cbbtn:hover{transform:translateY(-2px) scale(1.04)}
 .cbbtn.hide{display:none}
 .cbpanel{position:fixed;right:18px;bottom:18px;z-index:1101;width:min(380px,calc(100vw - 24px));
@@ -761,7 +778,7 @@ footer b{color:var(--muted)}
 .attest-name{background:var(--card-2);border:1px solid var(--border);border-radius:10px;color:var(--text);
   font:inherit;font-size:1rem;padding:.6rem .75rem}
 .attest-name:focus{outline:none;border-color:#10b981}
-.attest-sugg{position:absolute;left:0;right:0;top:100%;z-index:20;margin-top:.2rem;max-height:230px;overflow:auto;
+.attest-sugg{position:absolute;left:0;right:0;top:0;z-index:20;max-height:230px;overflow:auto;
   background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 .attest-sugg[hidden]{display:none}
 .attest-item{display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--text);
