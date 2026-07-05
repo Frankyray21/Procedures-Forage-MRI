@@ -356,6 +356,11 @@
   }
   function enableAI() {
     if (!window.MRI_LLM) return;
+    if (!navigator.onLine && !window.MRI_LLM.isReady()) {
+      pushMsg('bot', '<p>L\'assistant IA a besoin de réseau pour son premier téléchargement. ' +
+        'En attendant, la recherche classique fonctionne, même sans réseau.</p>');
+      return;
+    }
     var msg = pushMsg('bot', '<p>Téléchargement du modèle (<b>une seule fois</b>, ' +
       'Wi-Fi conseillé). Ensuite chargé depuis le cache (Internet non requis pour cette étape).</p><div class="cbprog"><i></i></div>' +
       '<div class="cbprogt">Initialisation…</div>');
@@ -371,10 +376,13 @@
       aiOn = true; setAiBadge();
       MX.provider = window.MRI_LLM.active(); MX.model = window.MRI_LLM.model();
       MX.initMs = Math.round(performance.now() - t0); MX.fromCache = !sawDownload;
-      msg.innerHTML = '<p>Assistant IA prêt (<span class="cbmono">' + esc(MX.model || 'modèle local') + '</span>) ' +
-        'en <b>' + (MX.initMs / 1000).toFixed(1) + ' s</b>' + (MX.fromCache ? ' (depuis le cache)' : ' (1er téléchargement)') + '. ' +
-        'Je réponds <b>en citant</b> les procédures. Pose ta question.</p>' +
-        '<p><button class="cbchip" data-act="export" type="button">Exporter les mesures</button></p>';
+      var dbg = !!(window.SITE_CONFIG && window.SITE_CONFIG.debugIA);
+      msg.innerHTML = dbg
+        ? '<p>Assistant IA prêt (<span class="cbmono">' + esc(MX.model || 'modèle local') + '</span>) ' +
+          'en <b>' + (MX.initMs / 1000).toFixed(1) + ' s</b>' + (MX.fromCache ? ' (depuis le cache)' : ' (1er téléchargement)') + '. ' +
+          'Je réponds <b>en citant</b> les procédures. Pose ta question.</p>' +
+          '<p><button class="cbchip" data-act="export" type="button">Exporter les mesures</button></p>'
+        : '<p>Assistant IA prêt. Je réponds <b>en citant</b> les procédures. Pose ta question.</p>';
     }).catch(function (e) {
       aiOn = false; setAiBadge();
       var m = (e && e.message) || 'erreur';
@@ -408,13 +416,14 @@
       var stats = (window.MRI_LLM.stats && window.MRI_LLM.stats()) || '';
       MX.runs.push({ q: text, ms: ms, chars: full.length, words: words, estTokens: estTok,
         estTokPerSec: Math.round(tps * 10) / 10, engineStats: stats });
+      var dbg = !!(window.SITE_CONFIG && window.SITE_CONFIG.debugIA);
       var src = '<div class="cbsources"><span>Sources citées&nbsp;:</span>' + passages.map(function (pp, i) {
         return '<a href="#/p/' + esc(pp.pid) + '">[' + (i + 1) + '] ' + esc(pp.ptitre) +
           (pp.source ? ' · ' + esc(pp.source) : '') + ' →</a>';
       }).join('') + '</div>' +
-      '<div class="cbmetrics">' + (ms / 1000).toFixed(1) + ' s · ~' + (Math.round(tps * 10) / 10) + ' tok/s · ' +
+      (dbg ? '<div class="cbmetrics">' + (ms / 1000).toFixed(1) + ' s · ~' + (Math.round(tps * 10) / 10) + ' tok/s · ' +
         words + ' mots' + (stats ? ' · ' + esc(stats) : '') +
-        ' · <button class="cbx2" data-act="export" type="button">exporter</button></div>' +
+        ' · <button class="cbx2" data-act="export" type="button">exporter</button></div>' : '') +
       '<p class="cbnote">Réponse générée localement à partir des procédures citées. Toujours valider sur la fiche.</p>';
       msg.insertAdjacentHTML('beforeend', src);
       body.scrollTop = body.scrollHeight;
@@ -517,8 +526,14 @@
     highlight: highlight
   };
 
+  var initTries = 0;
   function init() {
-    if (!window.PDFTEXT || !Object.keys(window.PDFTEXT).length) { setTimeout(init, 300); return; }
+    if (!window.PDFTEXT || !Object.keys(window.PDFTEXT).length) {
+      // Attente BORNÉE de pdftext.js (60 s max) : si le fichier ne charge
+      // jamais, on démarre quand même — recherche limitée aux fiches, mais
+      // l'assistant reste présent au lieu de disparaître sans explication.
+      if (++initTries < 200) { setTimeout(init, 300); return; }
+    }
     buildIndex();
     buildUI();
   }

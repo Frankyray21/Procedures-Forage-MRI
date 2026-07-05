@@ -322,15 +322,23 @@
     }
     return [
       { label: 'Application et fiches', files: APP_FILES },
-      { label: 'PDF officiels', files: pdfs, media: true },
+      // Optionnel : chaque page des PDF est déjà incluse en image dans les
+      // fiches — le fichier PDF lui-même ne sert qu'aux boutons Ouvrir /
+      // Télécharger (et reste pré-téléchargé en arrière-plan par le service
+      // worker quand le réseau le permet).
+      { label: 'PDF officiels', files: pdfs, media: true, optional: true },
       { label: 'Pages des PDF (images)', files: pages, media: true },
       { label: 'Photos et schémas', files: figs, media: true },
       { label: 'Logo et icônes', files: BRAND_FILES }
     ];
   }
+  function includePdfs() { try { return localStorage.getItem('offline_pdfs') === '1'; } catch (e) { return false; } }
+  function activeGroups() {
+    return offlineGroups().filter(function (g) { return !g.optional || includePdfs(); });
+  }
   function offlineAssets() {
     var u = [];
-    offlineGroups().forEach(function (g) { u = u.concat(g.files); });
+    activeGroups().forEach(function (g) { u = u.concat(g.files); });
     return u;
   }
   function sizeOf(u) { return SIZES[u.split('?')[0]] || 0; }
@@ -371,7 +379,7 @@
   }
   // Liste complète des fichiers, groupée, repliée sous « Voir les fichiers ».
   function offlineListHTML() {
-    var groups = offlineGroups(), count = 0, total = 0;
+    var groups = activeGroups(), count = 0, total = 0;
     var inner = groups.map(function (g) {
       var b = sumBytes(g.files); count += g.files.length; total += b;
       return '<div class="offgrp"><b>' + esc(g.label) + '</b><span>' + g.files.length +
@@ -399,7 +407,7 @@
   function verifyAll() {
     if (!('caches' in window)) return Promise.resolve(false);
     var media = [];
-    offlineGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
+    activeGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
     return Promise.all(media.map(function (u) {
       return caches.match(u).then(function (r) { return !!r; });
     })).then(function (found) {
@@ -415,7 +423,7 @@
   function verifyOfflineCache() {
     if (DEMO || !('caches' in window) || offlineReady()) return;
     var media = [];
-    offlineGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
+    activeGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
     Promise.all(media.map(function (u) { return caches.match(u).then(function (r) { return !!r; }); }))
       .then(function (found) {
         if (found.length && found.every(Boolean)) {
@@ -430,17 +438,25 @@
     var files = offlineAssets(), totalBytes = sumBytes(files), nPdf = DATA.length + 1;
     if (offlineReady()) {
       box.innerHTML = '<div class="offcard ok"><span class="offic">' + ICON.check + '</span>' +
-        '<div class="offtxt"><b>Disponible hors ligne</b><span>Toutes les fiches, les ' + nPdf +
-        ' PDF et les figures (' + fmtMo(totalBytes) + ') sont enregistrés sur cet appareil.</span></div>' +
+        '<div class="offtxt"><b>Disponible hors ligne</b><span>Toutes les fiches' +
+        (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
+        ') sont enregistrés sur cet appareil.</span></div>' +
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
     } else {
       box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
         '<div class="offtxt"><b>Préparer la consultation hors ligne</b>' +
-        '<span>' + files.length + ' fichiers · ' + fmtMo(totalBytes) + ' : toutes les fiches, les ' + nPdf +
-        ' PDF et leurs images, pour consulter sans réseau (sous terre).</span>' +
+        '<span>' + files.length + ' fichiers · ' + fmtMo(totalBytes) + ' : toutes les fiches avec chaque page en image, pour consulter sans réseau (sous terre).</span>' +
         '<span class="offeta">Temps de téléchargement estimé : ' + fmtDur(estimateSecs(totalBytes, files.length)) +
-        ' sur cette connexion</span>' + offlineListHTML() + '</div>' +
+        ' sur cette connexion</span>' +
+        '<label class="offopt"><input type="checkbox" id="offPdf"' + (includePdfs() ? ' checked' : '') + '> ' +
+          'Inclure aussi les ' + nPdf + ' fichiers PDF officiels (chaque page est déjà incluse en image)</label>' +
+        offlineListHTML() + '</div>' +
         '<button class="btn" id="offBtn">Tout télécharger</button></div>';
+      var pdfCb = $('#offPdf');
+      if (pdfCb) pdfCb.onchange = function () {
+        try { localStorage.setItem('offline_pdfs', pdfCb.checked ? '1' : '0'); } catch (e) {}
+        renderOffline();
+      };
     }
     $('#offBtn').onclick = function () { startPrecache(offlineReady()); };
   }
@@ -1154,7 +1170,7 @@
       var mperm = shuffle(it.o.map(function (_, j) { return j; }));
       return '<div class="pq pq-multi" data-i="' + oi + '">' +
         qhead + '<span class="pq-type">Plusieurs réponses</span>' + esc(it.q) +
-        ' <span class="pq-hint">Cochez TOUTES les affirmations vraies, puis validez.</span></p>' +
+        ' <span class="pq-hint">Coche TOUTES les affirmations vraies, puis valide.</span></p>' +
         '<div class="pq-opts">' + mperm.map(function (j) {
           return '<label class="pq-opt"><input type="checkbox" value="' + j + '"><span class="pq-mark pq-sq"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
         }).join('') + '</div>' +
@@ -1167,7 +1183,7 @@
       if (identity) ord.push(ord.shift());     // jamais présenté déjà en ordre
       return '<div class="pq pq-ordre" data-i="' + oi + '">' +
         qhead + '<span class="pq-type">Remettre en ordre</span>' + esc(it.q) +
-        ' <span class="pq-hint">Touchez les étapes dans l\'ordre d\'exécution (1, 2, 3…), puis validez.</span></p>' +
+        ' <span class="pq-hint">Touche les étapes dans l\'ordre (1, 2, 3…), puis valide.</span></p>' +
         '<div class="pq-steps">' + ord.map(function (k) {
           return '<button type="button" class="pq-step" data-k="' + k + '"><span class="pq-num"></span><span class="pq-txt">' + esc(it.o[k]) + '</span></button>';
         }).join('') + '</div>' +
@@ -1183,7 +1199,7 @@
       }).join('');
       return '<div class="pq pq-assoc" data-i="' + oi + '">' +
         qhead + '<span class="pq-type">Association</span>' + esc(it.q) +
-        ' <span class="pq-hint">Choisissez la valeur officielle de chaque paramètre, puis validez.</span></p>' +
+        ' <span class="pq-hint">Choisis la valeur officielle de chaque paramètre, puis valide.</span></p>' +
         '<div class="pq-pairs">' + it.pairs.map(function (pr, k) {
           return '<div class="pq-pair" data-k="' + k + '"><span class="pq-pl">' + esc(pr.l) + '</span>' +
             '<select class="pq-sel">' + selOpts + '</select><span class="pq-cor"></span></div>';
@@ -1924,7 +1940,7 @@
   });
   window.addEventListener('appinstalled', function () {
     deferredPrompt = null; updateInstallBtn(); renderInstall();
-    toast('Application installée. Retrouvez-la sur votre écran d\'accueil.');
+    toast('Application installée. Retrouve-la sur ton écran d\'accueil.');
   });
 
   var toastT;
