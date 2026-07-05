@@ -16,7 +16,7 @@
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
      retarder l'installation. Le bouton « Tout télécharger » de l'accueil
      affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v74';
+const VERSION = 'mri-proc-v75';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -70,22 +70,36 @@ function mediaAssets() {
   try {
     self.window = self;
     importScripts('./data.js', './data-diamant.js', './data-securite.js', './data-ith-new.js', './figures.js', './pages.js');
+    // Suffixe ?r=<révision> : un PDF révisé change d'URL → re-téléchargé, et
+    // l'ancienne copie est purgée (voir purgeOldRevs). Mêmes URLs que la page.
+    const REV = {};
+    (self.PROCEDURES || []).forEach((p) => { REV[p.id] = p.date_revision || p.date_creation || ''; });
+    const withRev = (u, id) => (REV[id] ? u + '?r=' + encodeURIComponent(REV[id]) : u);
     const list = (self.PROCEDURES || []).map(
-      (p) => './pdf/' + encodeURIComponent(p.id) + '.pdf'
+      (p) => withRev('./pdf/' + encodeURIComponent(p.id) + '.pdf', p.id)
     );
     list.push('./pdf/centralisateur-dessin.pdf');
     const figs = self.FIGURES || {};
     Object.keys(figs).forEach((id) => {
-      (figs[id] || []).forEach((f) => { if (f && f.src) list.push('./' + f.src); });
+      (figs[id] || []).forEach((f) => { if (f && f.src) list.push(withRev('./' + f.src, id)); });
     });
     const pages = self.PAGES || {};
     Object.keys(pages).forEach((key) => {
-      (pages[key] || []).forEach((src) => { if (src) list.push('./' + src); });
+      (pages[key] || []).forEach((src) => { if (src) list.push(withRev('./' + src, key)); });
     });
     return list;
   } catch (err) {
     return [];
   }
+}
+
+/* Purge les anciennes révisions d'un fichier (même chemin, ?r= différent). */
+function purgeOldRevs(cache, absUrl) {
+  return cache.keys().then((ks) => Promise.all(ks.map((k) => {
+    const ku = new URL(k.url);
+    if (ku.pathname === absUrl.pathname && k.url !== absUrl.href) return cache.delete(k);
+    return null;
+  }))).catch(() => null);
 }
 const MEDIA_LIST = mediaAssets();
 
@@ -99,7 +113,8 @@ function precacheMedia() {
       if (i >= MEDIA_LIST.length) { if (active === 0) resolve(); return; }
       const u = MEDIA_LIST[i++]; active++;
       cache.match(u)
-        .then((hit) => (hit ? null : cache.add(u).catch(() => null)))
+        .then((hit) => (hit ? null :
+          cache.add(u).then(() => purgeOldRevs(cache, new URL(u, self.location.href))).catch(() => null)))
         .catch(() => null)
         .then(() => { active--; next(); });
     };
@@ -190,9 +205,13 @@ self.addEventListener('fetch', (e) => {
       fetch(req).then((res) => {
         if (res && res.status === 200) {
           const copy = res.clone();
-          caches.open(cacheName).then((c) => c.put(req, copy));
+          caches.open(cacheName).then((c) =>
+            c.put(req, copy).then(() => (isMedia ? purgeOldRevs(c, url) : null))
+          );
         }
         return res;
+      // Hors-ligne : à défaut de la révision demandée, servir l'ancienne copie
+      // du même fichier (?r= différent) plutôt que rien.
       }).catch(() => caches.match(req, { ignoreSearch: true }))
     )
   );

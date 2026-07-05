@@ -291,18 +291,33 @@
     'pdftext.js', 'llm.js', 'chatbot.js', 'app.js', 'sizes.js'];
   var BRAND_FILES = ['images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
+  /* Suffixe ?r=<révision> sur les URLs de médias : quand un PDF officiel est
+     révisé (date_revision change), seule cette URL change — le service worker
+     re-télécharge CE fichier et purge l'ancien, au lieu de garder à jamais la
+     vieille version en cache. Hors-ligne, l'ancienne copie reste servie en
+     secours tant que la nouvelle n'est pas descendue. */
+  var MEDIA_CACHE = 'mri-media-v1';        // même nom que dans service-worker.js
+  var REV_BY_ID = null;
+  function mediaRev(id) {
+    if (!REV_BY_ID) {
+      REV_BY_ID = {};
+      DATA.forEach(function (p) { REV_BY_ID[p.id] = p.date_revision || p.date_creation || ''; });
+    }
+    return REV_BY_ID[id] || '';
+  }
+  function withRev(u, id) { var r = mediaRev(id); return r ? u + '?r=' + encodeURIComponent(r) : u; }
   function offlineGroups() {
     var pdfs = [], pages = [], figs = [];
-    DATA.forEach(function (p) { pdfs.push('pdf/' + encodeURIComponent(p.id) + '.pdf'); });
+    DATA.forEach(function (p) { pdfs.push(withRev('pdf/' + encodeURIComponent(p.id) + '.pdf', p.id)); });
     pdfs.push('pdf/centralisateur-dessin.pdf');
     if (window.PAGES) {
       Object.keys(window.PAGES).forEach(function (key) {
-        (window.PAGES[key] || []).forEach(function (src) { if (src) pages.push(src); });
+        (window.PAGES[key] || []).forEach(function (src) { if (src) pages.push(withRev(src, key)); });
       });
     }
     if (window.FIGURES) {
       Object.keys(window.FIGURES).forEach(function (id) {
-        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) figs.push(f.src); });
+        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) figs.push(withRev(f.src, id)); });
       });
     }
     return [
@@ -318,7 +333,7 @@
     offlineGroups().forEach(function (g) { u = u.concat(g.files); });
     return u;
   }
-  function sizeOf(u) { return SIZES[u] || 0; }
+  function sizeOf(u) { return SIZES[u.split('?')[0]] || 0; }
   function sumBytes(files) { var b = 0; files.forEach(function (u) { b += sizeOf(u); }); return b; }
   function fmtMo(bytes) {
     if (bytes >= 1048576) {
@@ -347,7 +362,7 @@
       PDF_CODE = {};
       DATA.forEach(function (p) { PDF_CODE[p.id] = p.code || p.titre || ''; });
     }
-    var name = decodeURIComponent((u.split('/').pop() || u));
+    var name = decodeURIComponent((u.split('?')[0].split('/').pop() || u));
     if (u.indexOf('pdf/') === 0) {
       var code = PDF_CODE[name.replace(/\.pdf$/, '')];
       if (code) return name + ' — ' + code;
@@ -370,6 +385,30 @@
       ')</summary><div class="offlist-body">' + inner + '</div></details>';
   }
   function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
+  // Supprime du cache les anciennes révisions (même chemin, ?r= différent).
+  function purgeOldRevs(c, u) {
+    var target = new URL(u, location.href);
+    return c.keys().then(function (ks) {
+      return Promise.all(ks.map(function (k) {
+        var ku = new URL(k.url);
+        if (ku.pathname === target.pathname && k.url !== target.href) return c.delete(k);
+      }));
+    }).catch(function () {});
+  }
+  // Tout est-il RÉELLEMENT sur l'appareil ? (médias exacts + coquille app)
+  function verifyAll() {
+    if (!('caches' in window)) return Promise.resolve(false);
+    var media = [];
+    offlineGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
+    return Promise.all(media.map(function (u) {
+      return caches.match(u).then(function (r) { return !!r; });
+    })).then(function (found) {
+      if (!found.every(Boolean)) return false;
+      return caches.match('./index.html', { ignoreSearch: true }).then(function (ix) {
+        return ix ? caches.match('app.js', { ignoreSearch: true }).then(function (a) { return !!a; }) : false;
+      });
+    }).catch(function () { return false; });
+  }
   /* Les médias sont aussi pré-téléchargés en arrière-plan par le service
      worker après son activation. On vérifie leur présence réelle dans le
      Cache Storage pour afficher « Disponible hors-ligne » sans attendre un clic. */
@@ -438,13 +477,22 @@
       var cur = $('#offcur'); if (cur) cur.textContent = u ? 'En cours : ' + fileLabel(u) : '';
     }
     function finish() {
-      if (!failed) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
-      renderOffline();
-      toast(failed
+      // « Prêt hors ligne » seulement après VÉRIFICATION réelle du Cache
+      // Storage (médias présents + coquille de l'app en cache) — plus de faux
+      // « tout est enregistré ».
+      verifyAll().then(function (ok) {
+        if (!failed && ok) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
+        renderOffline();
+        if (!failed && !ok) {
+          toast('Téléchargement terminé, mais la vérification est incomplète — rouvre l\'app puis réessaie « Tout télécharger ».');
+          return;
+        }
+        toast(failed
         ? (failed > 1
           ? failed + ' fichiers n\'ont pas été téléchargés. Appuie encore sur « Tout télécharger » pour compléter — ce qui est déjà sur l\'appareil est conservé.'
           : 'Un fichier n\'a pas été téléchargé. Appuie encore sur « Tout télécharger » pour compléter — ce qui est déjà sur l\'appareil est conservé.')
         : 'Terminé : tout est disponible hors ligne (' + fmtMo(bytesDone) + ').');
+      });
     }
     function next() {
       if (i >= urls.length) { if (active === 0) finish(); return; }
@@ -454,9 +502,21 @@
         if (hit) { bytesDone += sizeOf(u); mark(u, 'ok'); return; }   // déjà sur l'appareil
         return fetch(u, force ? { cache: 'reload' } : {}).then(function (r) {
           if (!r || r.status !== 200) { failed++; mark(u, 'ko'); return; }
+          // Mise en cache EXPLICITE des médias (sans dépendre de l'interception
+          // par le service worker, absente au tout premier chargement) + purge
+          // des anciennes révisions du même fichier.
+          var putP = Promise.resolve();
+          var isMedia = u.indexOf('pdf/') === 0 || u.indexOf('images/pages/') >= 0 || u.indexOf('images/figures/') >= 0;
+          if (isMedia && 'caches' in window) {
+            var copy = r.clone();
+            putP = caches.open(MEDIA_CACHE).then(function (c) {
+              return c.put(u, copy).then(function () { return purgeOldRevs(c, u); });
+            }).catch(function () {});
+          }
           return r.blob().then(function (b) {           // attend le fichier COMPLET
             var n = (b && b.size) || sizeOf(u);
             bytesDone += n; netBytes += n; mark(u, 'ok');
+            return putP;
           });
         });
       }).catch(function () { failed++; mark(u, 'ko'); })
@@ -624,11 +684,11 @@
       // mobile et hors-ligne, contrairement aux <iframe> de PDF). Repli sur
       // une <iframe> si les images de pages ne sont pas disponibles.
       var pdfBox = function (key, label) {
-        var pdf = 'pdf/' + encodeURIComponent(key) + '.pdf';
+        var pdf = withRev('pdf/' + encodeURIComponent(key) + '.pdf', key);
         var pages = (window.PAGES && window.PAGES[key]) || [];
         var body = pages.length
           ? '<div class="pdfpages">' + pages.map(function (src, i) {
-              return '<img src="' + esc(src) + '" alt="' + esc(label) + ' — page ' + (i + 1) + '" loading="lazy">';
+              return '<img src="' + esc(withRev(src, key)) + '" alt="' + esc(label) + ' — page ' + (i + 1) + '" loading="lazy">';
             }).join('') + '</div>'
           : '<iframe src="' + pdf + '#view=FitH" title="' + esc(label) + '" loading="lazy"></iframe>';
         // Visionneuse repliée par défaut : la fiche reste courte sur téléphone
@@ -655,7 +715,7 @@
       h += '<div class="sec"><h2>Photos et schémas</h2>' +
         '<div class="gallery">' + figs.map(function (f, i) {
           return '<button class="gfig" type="button" data-i="' + i + '">' +
-            '<img src="' + esc(f.src) + '" alt="Photo ou schéma, page ' + esc(f.page) + '" loading="lazy">' +
+            '<img src="' + esc(withRev(f.src, p.id)) + '" alt="Photo ou schéma, page ' + esc(f.page) + '" loading="lazy">' +
             '<span class="gpage">p. ' + esc(f.page) + '</span></button>';
         }).join('') + '</div></div>';
     }
@@ -697,7 +757,7 @@
     view.innerHTML = h;
     ptStartPage(p.id);          // démarre le chrono de consultation (suivi gestionnaire)
     initChecklistState();
-    initGallery(figs);
+    initGallery(figs, p.id);
     initProcQuiz(p.id);
     initAttestation(p);
   }
@@ -1367,7 +1427,7 @@
   }
 
   /* ---------- galerie photos / schémas + visionneuse plein écran ---------- */
-  function initGallery(figs) {
+  function initGallery(figs, pid) {
     if (!figs || !figs.length) return;
     var lb = document.getElementById('lightbox');
     if (!lb) {
@@ -1385,7 +1445,7 @@
     var img = lb.querySelector('.lb-img'), count = lb.querySelector('.lb-count'), cur = 0;
     function show(i) {
       cur = (i + figs.length) % figs.length;
-      img.src = figs[cur].src;
+      img.src = withRev(figs[cur].src, pid);
       img.alt = 'Photo ou schéma agrandi, page ' + figs[cur].page;
       count.textContent = (cur + 1) + ' / ' + figs.length + '  ·  p. ' + figs[cur].page;
     }
