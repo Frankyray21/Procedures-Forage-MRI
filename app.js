@@ -718,7 +718,7 @@
   function procState(p) {
     var hasQuiz = !!(window.QUIZ_PROC && (window.QUIZ_PROC[p.id] || []).length);
     if (attestInfo(p.id)) return '<span class="pstate2 ok">' + ICON.check + ' Attestée</span>';
-    if (hasQuiz && pqCompleted(p)) return '<span class="pstate2 todo">Quiz fait — à attester</span>';
+    if (hasQuiz && pqCompleted(p)) return '<span class="pstate2 todo">Pas attestée</span>';
     if (pqGetBest(p.id)) return '<span class="pstate2 mid">Quiz en cours</span>';
     return '';
   }
