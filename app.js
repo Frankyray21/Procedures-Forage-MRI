@@ -1952,8 +1952,18 @@
 
   /* ---------- démarrage ---------- */
   window.addEventListener('hashchange', route);
+  // Thème clair / sombre : sombre par défaut (sous terre), choix mémorisé.
+  function initTheme() {
+    var b = $('#themeBtn'); if (!b) return;
+    b.addEventListener('click', function () {
+      var light = document.documentElement.getAttribute('data-theme') === 'light';
+      if (light) document.documentElement.removeAttribute('data-theme');
+      else document.documentElement.setAttribute('data-theme', 'light');
+      try { localStorage.setItem('theme', light ? 'dark' : 'light'); } catch (e) {}
+    });
+  }
   document.addEventListener('DOMContentLoaded', function () {
-    route(); initInstall(); initChecklistEvents();
+    route(); initInstall(); initChecklistEvents(); initTheme();
     aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
   });
 })();
