@@ -7,9 +7,21 @@ toutes les procédures de travail de forage de M.R.I. :
 
 - Chaque procédure est **adaptée en page web moderne** (objectif, étapes, avertissements,
   consignes, valeurs clés) **et** conserve son **PDF officiel** consultable et téléchargeable.
-- Un **Code de sécurité du forage** regroupe toutes les consignes obligatoires, classées par
-  thème, chaque article citant ses procédures sources.
+- Un **quiz** par fiche (types variés) débloque l'**attestation de lecture**, envoyée à
+  Airtable via un Worker Cloudflare (avec file d'attente hors ligne : l'attestation part
+  automatiquement au retour du réseau). Deux PDF générés sur l'appareil : attestation du
+  travailleur et fiche gestionnaire.
+- Une page **Mon suivi** (`#/suivi`) montre la progression (quiz complétés, attestations,
+  résultats détaillés) — locale à l'appareil, avec récupération de l'historique par nom.
+- **Thème sombre par défaut** (sous terre) et **thème clair** (bouton dans la barre).
 - **Accès libre** (aucun mot de passe). Interface en **français**, design Barlow / rouge (M.R.I.).
+
+> Le **Code de sécurité** a été retiré du site (non publié) — ses données restent dans
+> `code-securite-data.js`, non chargé.
+
+**Déployer une nouvelle version** : lancer `node bump-version.js` (synchronise `?v=`,
+la version affichée au pied de page et le cache du service worker), puis commit + push sur
+`main`. Le Worker (`worker/`) se redéploie automatiquement via Cloudflare à chaque push.
 
 ---
 

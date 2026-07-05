@@ -6,8 +6,9 @@
 #
 # ⚠️ Ce fichier est dans worker/ (et non à la racine) pour ne pas interférer
 # avec le projet Cloudflare Pages qui sert le SITE depuis la racine du dépôt.
-# La méthode recommandée reste le copier-coller de worker.js dans le tableau
-# de bord (voir README.md) — aucun outil à installer.
+# Le Worker est CONNECTÉ AU DÉPÔT GITHUB (Cloudflare → Settings → Build,
+# root directory = worker) : chaque push sur main le redéploie automatiquement
+# — plus besoin de copier-coller worker.js dans le tableau de bord.
 
 name = "attestations-procedures"
 main = "worker.js"
