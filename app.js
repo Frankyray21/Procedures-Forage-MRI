@@ -814,10 +814,12 @@
         // Visionneuse repliée par défaut : la fiche reste courte sur téléphone
         // (plus de bloc gris de 78vh) et les images de pages ne se chargent
         // qu'à l'ouverture. Un APERÇU (première page, rognée) reste visible
-        // dans le résumé : toucher l'aperçu ouvre la visionneuse complète.
+        // sous le pli : le toucher ouvre le document en PLEIN ÉCRAN
+        // (visionneuse #docfs — voir initDocViewer).
         var thumb = pages.length
-          ? '<span class="pv-thumb"><img src="' + esc(withRev(pages[0], key)) + '" alt="Aperçu : ' + esc(label) + ', page 1" loading="lazy">' +
-            '<span class="pv-more">Aperçu — toucher pour feuilleter' + (pages.length > 1 ? ' les ' + pages.length + ' pages' : '') + '</span></span>'
+          ? '<button type="button" class="pv-thumb" data-doc="' + esc(key) + '" data-label="' + esc(label) + '">' +
+            '<img src="' + esc(withRev(pages[0], key)) + '" alt="Aperçu : ' + esc(label) + ', page 1" loading="lazy">' +
+            '<span class="pv-more">Aperçu — toucher pour lire en plein écran (' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + ')</span></button>'
           : '';
         return '<div class="pdfbox">' +
           '<div class="bar">' + ICON.doc + '<b>' + esc(label) + '</b><span class="sp"></span>' +
@@ -825,8 +827,8 @@
             '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
           '<details class="pdfview"><summary>Feuilleter le document ici' +
             (pages.length ? '<span class="pv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + '</span>' : '') +
-            thumb +
-          '</summary>' + body + '</details></div>';
+          '</summary>' + body + '</details>' +
+          thumb + '</div>';
       };
       var pdfInner = pdfBox(p.id, p.code || p.titre);
       if (p.id === 'centralisateur') {
@@ -885,6 +887,7 @@
     try { localStorage.setItem('last_proc', p.id); } catch (e) {}
     initChecklistState();
     initGallery(figs, p.id);
+    initDocViewer();
     initProcQuiz(p.id);
     initAttestation(p);
   }
@@ -1585,6 +1588,48 @@
       reviewBtn.textContent = reviewMode ? 'Revoir tout le quiz' : 'Réviser mes erreurs (' + fails.length + ')';
       reviewBtn.style.display = (reviewMode || fails.length) ? '' : 'none';
     };
+  }
+
+  /* ---------- document officiel : lecture en plein écran ----------
+     Ouverte en touchant l'aperçu (première page) de la fiche : toutes les
+     pages du document, à pleine largeur, avec barre de titre et « Fermer ».
+     Mêmes URLs versionnées (?r=) que la fiche → fonctionne hors-ligne. */
+  function initDocViewer() {
+    var btns = document.querySelectorAll('.pv-thumb');
+    if (!btns.length) return;
+    var fs = document.getElementById('docfs');
+    if (!fs) {
+      fs = document.createElement('div');
+      fs.id = 'docfs';
+      fs.className = 'docfs';
+      fs.innerHTML =
+        '<div class="docfs-bar"><b class="docfs-t"></b><span class="docfs-n"></span>' +
+          '<button class="docfs-close" type="button">' + ICON.close + ' Fermer</button></div>' +
+        '<div class="docfs-pages"></div>';
+      document.body.appendChild(fs);
+      fs.querySelector('.docfs-close').onclick = function () {
+        fs.classList.remove('on');
+        fs.querySelector('.docfs-pages').innerHTML = '';   // libère les images
+      };
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && fs.classList.contains('on')) fs.querySelector('.docfs-close').click();
+      });
+    }
+    [].forEach.call(btns, function (b) {
+      b.onclick = function () {
+        var key = b.getAttribute('data-doc'), label = b.getAttribute('data-label') || '';
+        var pages = (window.PAGES && window.PAGES[key]) || [];
+        if (!pages.length) return;
+        fs.querySelector('.docfs-t').textContent = label;
+        fs.querySelector('.docfs-n').textContent = pages.length + ' page' + (pages.length > 1 ? 's' : '');
+        var box = fs.querySelector('.docfs-pages');
+        box.innerHTML = pages.map(function (src, i) {
+          return '<img src="' + esc(withRev(src, key)) + '" alt="' + esc(label) + ' — page ' + (i + 1) + '" loading="lazy">';
+        }).join('');
+        box.scrollTop = 0;
+        fs.classList.add('on');
+      };
+    });
   }
 
   /* ---------- galerie photos / schémas + visionneuse plein écran ---------- */

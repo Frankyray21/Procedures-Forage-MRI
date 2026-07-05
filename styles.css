@@ -191,7 +191,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .pdfbox .bar b{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:.92rem}
 .pdfbox .bar .sp{margin-left:auto}
 .pdfbox a.dl{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:700;color:var(--accent-l)}
-.pdfview>summary{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;padding:.7rem .9rem;cursor:pointer;list-style:none;
+.pdfview>summary{display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem;cursor:pointer;list-style:none;
   color:var(--accent-l);font-weight:700;font-size:.9rem;user-select:none}
 .pdfview>summary::-webkit-details-marker{display:none}
 .pdfview>summary::before{content:'';width:0;height:0;border-left:6px solid currentColor;
@@ -200,14 +200,35 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .pdfview>summary:hover{background:rgba(255,255,255,.04)}
 .pdfview .pv-n{margin-left:auto;font-size:.78rem;font-weight:700;color:var(--dim)}
 .pdfview[open]>summary{border-bottom:1px solid var(--border)}
-/* Aperçu de la première page, visible avant d'ouvrir la visionneuse */
-.pdfview .pv-thumb{flex:1 0 100%;position:relative;display:block;margin:.15rem 0 .1rem;
-  max-height:280px;overflow:hidden;border:1px solid var(--border);border-radius:10px;background:#525659}
-.pdfview .pv-thumb img{width:100%;max-width:640px;height:auto;display:block;margin:0 auto}
-.pdfview .pv-thumb .pv-more{position:absolute;left:0;right:0;bottom:0;padding:2rem .9rem .6rem;
+/* Aperçu de la première page — le toucher ouvre le document en plein écran */
+.pdfbox .pv-thumb{position:relative;display:block;width:calc(100% - 1.8rem);margin:0 .9rem .9rem;padding:0;
+  max-height:280px;overflow:hidden;border:1px solid var(--border);border-radius:10px;background:#525659;
+  cursor:pointer;font:inherit;text-align:center}
+.pdfbox .pv-thumb img{width:100%;max-width:640px;height:auto;display:block;margin:0 auto}
+.pdfbox .pv-thumb .pv-more{position:absolute;left:0;right:0;bottom:0;padding:2rem .9rem .6rem;
   text-align:center;font-size:.8rem;font-weight:700;color:#fff;
   background:linear-gradient(to bottom,transparent,rgba(10,14,23,.88))}
-.pdfview[open] .pv-thumb{display:none}
+.pdfview[open]+.pv-thumb{display:none}
+
+/* Visionneuse plein écran du document officiel (ouverte depuis l'aperçu) */
+/* z-index au-dessus du bouton d'assistant (1100) : rien ne flotte sur le document */
+.docfs{position:fixed;inset:0;z-index:1200;display:none;flex-direction:column;background:#30343b}
+.docfs.on{display:flex}
+.docfs-bar{flex:none;display:flex;align-items:center;gap:.6rem;
+  padding:calc(.55rem + env(safe-area-inset-top)) .9rem .55rem;
+  background:#0a0e17;color:#fff;border-bottom:1px solid rgba(255,255,255,.14)}
+.docfs-bar b{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:.9rem;
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.docfs-n{flex:none;font-size:.78rem;font-weight:700;color:#9aa7bd}
+.docfs-close{flex:none;margin-left:auto;display:inline-flex;align-items:center;gap:.35rem;
+  border:1px solid rgba(255,255,255,.3);background:none;color:#fff;font:inherit;font-size:.85rem;
+  font-weight:700;padding:.42rem .75rem;border-radius:9px;cursor:pointer}
+.docfs-close svg{width:15px;height:15px}
+.docfs-pages{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;align-items:center;gap:12px}
+.docfs-pages img{width:100%;max-width:980px;height:auto;display:block;border-radius:4px;
+  box-shadow:0 2px 10px rgba(0,0,0,.45)}
 .pdfbox iframe,.pdfbox object{width:100%;height:78vh;border:0;display:block;background:#525659}
 .pdfbox .pdfpages{height:78vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#525659;
   padding:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
