@@ -1337,7 +1337,7 @@
     }
     function showExp(card, q) {
       var exp = card.querySelector('.pq-exp');
-      exp.innerHTML = '<span class="pq-ref">Référence à la procédure</span>' + esc(q.e);
+      exp.innerHTML = '<span class="pq-ref">Référence à la procédure</span>' + refsHTML(q.e);
       exp.classList.add('on');
     }
     function settle(card, good, msg) {
@@ -1482,7 +1482,7 @@
         var exp = card.querySelector('.pq-exp');
         exp.innerHTML = '<span class="pq-ref">Ordre correct selon la procédure</span>' +
           '<ol class="pq-ol">' + q.o.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' +
-          (q.e ? '<span class="pq-ref">Référence à la procédure</span>' + esc(q.e) : '');
+          (q.e ? '<span class="pq-ref">Référence à la procédure</span>' + refsHTML(q.e) : '');
         exp.classList.add('on');
         settle(card, allGood, allGood ? 'Bon ordre'
           : 'Ordre incorrect — sur chaque étape en rouge : votre position → la bonne position');
@@ -1609,6 +1609,29 @@
       [].forEach.call(box.querySelectorAll('input[type=checkbox]'), function (cb) { cb.checked = false; });
       ckSet(box.getAttribute('data-proc'), []); ckUpdate(box);
     });
+  }
+  /* Référence(s) à la procédure : s'il y a PLUSIEURS citations « … » (questions
+     à plusieurs réponses, remises en ordre…), chacune va sur sa propre ligne à
+     puce — au lieu d'un bloc de texte où l'on se perd. Les commentaires entre
+     les citations restent attachés à la citation qu'ils suivent. */
+  function refsHTML(e) {
+    var txt = String(e || '');
+    var quotes = txt.match(/«[^»]*»/g) || [];
+    if (quotes.length < 2) return esc(txt);
+    var first = txt.indexOf(quotes[0]);
+    var prefix = txt.slice(0, first).replace(/[\s:;…]+$/, '').trim();
+    var out = prefix ? '<span class="pq-refpre">' + esc(prefix) + '</span>' : '';
+    out += '<ul class="pq-refs">';
+    var pos = first;
+    quotes.forEach(function (q, i) {
+      var at = txt.indexOf(q, pos);
+      pos = at + q.length;
+      var nextAt = (i + 1 < quotes.length) ? txt.indexOf(quotes[i + 1], pos) : txt.length;
+      var between = txt.slice(pos, nextAt).replace(/^[\s;:…]+|[\s;:…]+$/g, '').trim();
+      out += '<li>' + esc(q) + (between ? ' <span class="pq-refnote">' + esc(between) + '</span>' : '') + '</li>';
+      pos = nextAt;
+    });
+    return out + '</ul>';
   }
   function pills(arr, cls) {
     return '<div class="pill-list">' + arr.map(function (x) { return '<span class="pill ' + cls + '">' + esc(x) + '</span>'; }).join('') + '</div>';
@@ -1791,7 +1814,7 @@
     var src = q.sourceId ? '<div class="qsrc">Source : <a href="#/p/' + esc(q.sourceId) + '">' + esc(q.code || q.titre) + '</a></div>' : '';
     $('#qfb').innerHTML = '<div class="qexp ' + (good ? 'good' : 'wrong') + '">' +
       '<b>' + (good ? '✓ Bonne réponse' : '✗ Mauvaise réponse') + '</b>' +
-      '<p>' + esc(q.explication) + '</p>' + src +
+      '<p>' + refsHTML(q.explication) + '</p>' + src +
       '<button class="btn" id="qNext">' + (s.idx + 1 < s.pool.length ? 'Question suivante' : 'Voir le résultat') + '</button></div>';
     $('#qNext').onclick = function () { s.idx++; s.answered = false; if (s.idx >= s.pool.length) renderResult(view); else renderQ(view); };
   }
