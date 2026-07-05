@@ -643,7 +643,7 @@
       '<div class="prow-main">' +
         '<span class="ptitle">' + esc(p.titre) + '</span>' +
         '<div class="prow-tags">' +
-          '<span class="pcat"><i style="background:' + col + '"></i>' + esc(p.categorie) + '</span>' +
+          '<span class="pcat"><i style="background:var(--dim)"></i>' + esc(p.categorie) + '</span>' +
           (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
         '</div>' +
       '</div>' +
@@ -1562,7 +1562,20 @@
         '<label class="qsf"><span>Catégorie</span><select class="f" id="qCat">' + catOpts + '</select></label>' +
         '<button class="btn" id="qStart">Démarrer le quiz</button>' +
       '</div>' +
+      '<div class="chips qcatchips" id="qCatChips">' +
+        '<button type="button" class="chip on" data-qcat="">Toutes</button>' +
+        Object.keys(cats).sort().map(function (c) {
+          return '<button type="button" class="chip" data-qcat="' + esc(c) + '">' + esc(c) + ' <span class="ct">' + cats[c] + '</span></button>';
+        }).join('') +
+      '</div>' +
     '</div></section>';
+    // les puces règlent la catégorie (plus faciles à toucher que le menu)
+    $('#qCatChips').addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('.chip'); if (!b) return;
+      $('#qCat').value = b.getAttribute('data-qcat') || '';
+      [].forEach.call(document.querySelectorAll('#qCatChips .chip'), function (c) { c.classList.remove('on'); });
+      b.classList.add('on');
+    });
     $('#qStart').onclick = function () {
       var n = parseInt($('#qN').value, 10), cat = $('#qCat').value;
       var pool = POOL.filter(function (q) { return !cat || q.categorie === cat; });
@@ -1846,8 +1859,8 @@
     var nProd = DATA.filter(function (p) { return p.famille !== 'diamant'; }).length;
     var nDiam = DATA.filter(function (p) { return p.famille === 'diamant'; }).length;
     view.innerHTML = '<section class="portal"><div class="wrap">' +
-      '<div class="phead2"><img src="images/logo_roger.png" alt="Machines Roger International"><div><h1>Sécurité du forage</h1><p>Machines Roger International</p></div></div>' +
-      '<p class="plead">Choisis ton espace.</p>' +
+      '<div class="phead2"><div><h1>Sécurité du forage</h1><p>Machines Roger International</p></div></div>' +
+      '<p class="plead">Choisis ton secteur.</p>' +
       '<div class="portal-cards">' +
         '<a class="portal-card kb" href="#/procedures"><div class="pc-ic">' + ICON.doc + '</div>' +
           '<h2>Foreuses ITH / CUBEX</h2><p>Procédures de forage et d\'alésage (ITH, CUBEX, V-30) : consignes, valeurs-clés, PDF officiel et quiz.</p>' +
