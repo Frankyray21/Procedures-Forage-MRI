@@ -149,6 +149,25 @@
   function famData() {
     return DATA.filter(function (p) { return inSection(p, state.fam); });
   }
+  /* Tri par code de procédure (PRO-OP-ITH-002 → 002A → 004 → 012…) : les
+     segments numériques sont comparés en NOMBRES (002 avant 012, pas l'ordre
+     alphabétique). Les fiches sans code vont à la fin, triées par titre. */
+  function cmpCode(a, b) {
+    var ca = String(a.code || '').toUpperCase(), cb = String(b.code || '').toUpperCase();
+    if (!ca && !cb) return String(a.titre || '').localeCompare(String(b.titre || ''), 'fr');
+    if (!ca) return 1;
+    if (!cb) return -1;
+    var ra = ca.match(/\d+|\D+/g) || [], rb = cb.match(/\d+|\D+/g) || [];
+    for (var i = 0; i < Math.max(ra.length, rb.length); i++) {
+      var x = ra[i], y = rb[i];
+      if (x === undefined) return -1;
+      if (y === undefined) return 1;
+      var nx = /^\d/.test(x), ny = /^\d/.test(y);
+      if (nx && ny) { var d = parseInt(x, 10) - parseInt(y, 10); if (d) return d; }
+      else { var c = x.localeCompare(y, 'fr'); if (c) return c; }
+    }
+    return 0;
+  }
   // Classement des filtres : catégories par flux de travail, machines regroupées
   var CAT_ORDER = ['Forage', 'Alésage', 'Carottage & tube', 'Cimentation', 'Installation', 'Installation & plancher',
     'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Équipements & véhicules', 'Démobilisation', 'Sécurité'];
@@ -589,7 +608,7 @@
     var S = window.MRI_SEARCH;
     if (qStr.length >= 2 && S && S.ready()) { grid.classList.add('srmode'); drawSearch(qStr, S, grid, count); return; }
     grid.classList.remove('srmode');
-    var list = DATA.filter(matches);
+    var list = DATA.filter(matches).sort(cmpCode);
     count.textContent = list.length + (list.length > 1 ? ' procédures' : ' procédure');
     if (!list.length) { grid.innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.</div>'; return; }
     grid.innerHTML = list.map(card).join('');
@@ -1835,8 +1854,8 @@
     var avg = played.length ? Math.round(played.reduce(function (a, b) { return a + b.pct; }, 0) / played.length) : null;
     var name = suiviName();
 
-    var ith = DATA.filter(function (p) { return p.famille !== 'diamant'; });
-    var diam = DATA.filter(function (p) { return p.famille === 'diamant'; });
+    var ith = DATA.filter(function (p) { return p.famille !== 'diamant'; }).sort(cmpCode);
+    var diam = DATA.filter(function (p) { return p.famille === 'diamant'; }).sort(cmpCode);
 
     view.innerHTML =
       '<section class="hero herosm"><div class="wrap">' +
