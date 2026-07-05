@@ -813,13 +813,19 @@
           : '<iframe src="' + pdf + '#view=FitH" title="' + esc(label) + '" loading="lazy"></iframe>';
         // Visionneuse repliée par défaut : la fiche reste courte sur téléphone
         // (plus de bloc gris de 78vh) et les images de pages ne se chargent
-        // qu'à l'ouverture.
+        // qu'à l'ouverture. Un APERÇU (première page, rognée) reste visible
+        // dans le résumé : toucher l'aperçu ouvre la visionneuse complète.
+        var thumb = pages.length
+          ? '<span class="pv-thumb"><img src="' + esc(withRev(pages[0], key)) + '" alt="Aperçu : ' + esc(label) + ', page 1" loading="lazy">' +
+            '<span class="pv-more">Aperçu — toucher pour feuilleter' + (pages.length > 1 ? ' les ' + pages.length + ' pages' : '') + '</span></span>'
+          : '';
         return '<div class="pdfbox">' +
           '<div class="bar">' + ICON.doc + '<b>' + esc(label) + '</b><span class="sp"></span>' +
             '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
             '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
           '<details class="pdfview"><summary>Feuilleter le document ici' +
             (pages.length ? '<span class="pv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + '</span>' : '') +
+            thumb +
           '</summary>' + body + '</details></div>';
       };
       var pdfInner = pdfBox(p.id, p.code || p.titre);
