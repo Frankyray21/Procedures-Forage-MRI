@@ -707,16 +707,19 @@
         '<div class="prow-tags">' +
           '<span class="pcat"><i style="background:var(--dim)"></i>' + esc(p.categorie) + '</span>' +
           (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
+          procState(p) +
         '</div>' +
       '</div>' +
-      procState(p.id) +
       '<span class="parrow">' + ICON.arrow + '</span></a>';
   }
-  // Pastille d'état : verte = attestée, ambre = quiz commencé — la liste
-  // devient une liste de contrôle (mêmes données locales que Mon suivi).
-  function procState(id) {
-    if (attestInfo(id)) return '<span class="pstate ok" title="Attestée">' + ICON.check + '</span>';
-    if (pqGetBest(id)) return '<span class="pstate mid" title="Quiz commencé"></span>';
+  // État de formation en toutes lettres (mêmes données locales que Mon suivi) :
+  // vert = attestée ; ambre = quiz complété, il ne manque que l'attestation ;
+  // gris = quiz commencé mais pas terminé. Rien = pas commencé.
+  function procState(p) {
+    var hasQuiz = !!(window.QUIZ_PROC && (window.QUIZ_PROC[p.id] || []).length);
+    if (attestInfo(p.id)) return '<span class="pstate2 ok">' + ICON.check + ' Attestée</span>';
+    if (hasQuiz && pqCompleted(p)) return '<span class="pstate2 todo">Quiz fait — à attester</span>';
+    if (pqGetBest(p.id)) return '<span class="pstate2 mid">Quiz en cours</span>';
     return '';
   }
 

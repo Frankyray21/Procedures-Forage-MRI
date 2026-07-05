@@ -888,11 +888,14 @@ footer b{color:var(--muted)}
 .lgrp-h::before{content:'';width:4px;height:1rem;background:var(--brand);border-radius:3px}
 .lgrp-h .ct{font-size:.78rem;color:var(--dim);font-weight:700}
 .lgrp-rows{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))}
-.pstate{flex:none;display:inline-flex;align-items:center;justify-content:center;margin-right:.15rem}
-.pstate.ok{width:22px;height:22px;border-radius:50%;background:rgba(16,185,129,.15);color:var(--success)}
-.pstate.ok svg{width:13px;height:13px}
-.pstate.mid{width:10px;height:10px;border-radius:50%;background:var(--warn)}
-:root[data-theme="light"] .pstate.ok{color:#047857}
+.pstate2{display:inline-flex;align-items:center;gap:.28rem;font-size:.72rem;font-weight:800;
+  letter-spacing:.02em;padding:.14rem .5rem;border-radius:999px;white-space:nowrap}
+.pstate2 svg{width:11px;height:11px}
+.pstate2.ok{color:#34d399;background:rgba(16,185,129,.13);border:1px solid rgba(16,185,129,.4)}
+.pstate2.todo{color:#fbbf24;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.45)}
+.pstate2.mid{color:var(--dim);background:var(--card-2);border:1px solid var(--border)}
+:root[data-theme="light"] .pstate2.ok{color:#047857}
+:root[data-theme="light"] .pstate2.todo{color:#92400e;border-color:rgba(180,83,9,.45);background:rgba(180,83,9,.07)}
 .lgrp .pcat{display:none}  /* la section porte déjà le nom de la tâche */
 /* bandeau hors ligne compact (en haut de la liste) */
 .offcard.slim{margin-top:1rem;padding:.65rem .9rem;gap:.8rem}
