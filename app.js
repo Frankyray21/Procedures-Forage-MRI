@@ -230,6 +230,7 @@
           '<div class="stat"><b><a href="#/suivi" style="color:var(--accent-l)">Suivi&nbsp;»</a></b><span>de mes formations</span></div>' +
         '</div>' +
       '</div></section>' +
+      '<div class="wrap"><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="search">' + ICON.search +
           '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" aria-label="Rechercher une procédure" autocomplete="off">' +
@@ -240,8 +241,8 @@
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
       '<div class="wrap"><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>' +
-      // Installation + hors-ligne APRÈS le contenu : la recherche d'abord.
-      '<div class="wrap"><div class="install" id="install"></div><div class="offline" id="offline"></div></div>';
+      // Installation après le contenu ; le hors ligne est en haut (compact).
+      '<div class="wrap"><div class="install" id="install"></div></div>';
 
     var q = $('#q');
     q.value = state.q;
@@ -456,19 +457,20 @@
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
     var files = offlineAssets(), totalBytes = sumBytes(files), nPdf = DATA.length + 1;
     if (offlineReady()) {
-      box.innerHTML = '<div class="offcard ok"><span class="offic">' + ICON.check + '</span>' +
+      box.innerHTML = '<div class="offcard ok slim"><span class="offic">' + ICON.check + '</span>' +
         '<div class="offtxt"><b>Disponible hors ligne</b><span>Toutes les fiches' +
         (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
-        ') sont enregistrés sur cet appareil.</span></div>' +
+        ') sont sur cet appareil.</span></div>' +
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
     } else {
-      box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
-        '<div class="offtxt"><b>Préparer la consultation hors ligne</b>' +
-        '<span>' + files.length + ' fichiers · ' + fmtMo(totalBytes) + ' : toutes les fiches avec chaque page en image, pour consulter sans réseau (sous terre).</span>' +
-        '<span class="offeta">Temps de téléchargement estimé : ' + fmtDur(estimateSecs(totalBytes, files.length)) +
-        ' sur cette connexion</span>' +
-        '<label class="offopt"><input type="checkbox" id="offPdf"' + (includePdfs() ? ' checked' : '') + '> ' +
+      box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
+        '<div class="offtxt"><b>Consulter sans réseau (sous terre)</b>' +
+        '<span>' + files.length + ' fichiers · ' + fmtMo(totalBytes) + ' · ' +
+          fmtDur(estimateSecs(totalBytes, files.length)) + ' sur cette connexion</span>' +
+        '<details class="offlist offmore"><summary>Options et liste des fichiers</summary>' +
+          '<label class="offopt"><input type="checkbox" id="offPdf"' + (includePdfs() ? ' checked' : '') + '> ' +
           'Inclure aussi les ' + nPdf + ' fichiers PDF officiels (chaque page est déjà incluse en image)</label>' +
+        '</details>' +
         offlineListHTML() + '</div>' +
         '<button class="btn" id="offBtn">Tout télécharger</button></div>';
       var pdfCb = $('#offPdf');
@@ -496,9 +498,9 @@
     box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
       '<div class="offtxt" style="flex:1"><b>' + (force ? 'Mise à jour' : 'Téléchargement') + ' en cours…</b>' +
       '<div class="offbar"><i id="offbar"></i></div>' +
+      '<span id="offcur" class="offcur" aria-live="polite"></span>' +
       '<span id="offstat">0 / ' + total + ' fichiers · 0 Ko / ' + fmtMo(totalBytes) + '</span>' +
       '<span id="offeta" class="offeta">Temps restant : calcul en cours…</span>' +
-      '<span id="offcur" class="offcur"></span>' +
       offlineListHTML() + '</div></div>';
     var done = 0, failed = 0, bytesDone = 0, netBytes = 0, netStart = Date.now(), i = 0, active = 0;
     var listEls = {};
@@ -515,7 +517,7 @@
         if (eta) eta.textContent = 'Temps restant : ' + fmtDur(Math.max(0, totalBytes - bytesDone) / speed) +
           ' (' + fmtMo(speed) + '/s)';
       }
-      var cur = $('#offcur'); if (cur) cur.textContent = u ? 'En cours : ' + fileLabel(u) : '';
+      var cur = $('#offcur'); if (cur) cur.textContent = u ? 'Télécharge : ' + fileLabel(u) : '';
     }
     function finish() {
       // « Prêt hors ligne » seulement après VÉRIFICATION réelle du Cache

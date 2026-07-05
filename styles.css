@@ -894,3 +894,12 @@ footer b{color:var(--muted)}
 .pstate.mid{width:10px;height:10px;border-radius:50%;background:var(--warn)}
 :root[data-theme="light"] .pstate.ok{color:#047857}
 .lgrp .pcat{display:none}  /* la section porte déjà le nom de la tâche */
+/* bandeau hors ligne compact (en haut de la liste) */
+.offcard.slim{margin-top:1rem;padding:.65rem .9rem;gap:.8rem}
+.offcard.slim .offic{width:34px;height:34px}
+.offcard.slim .offtxt{gap:0}
+.offcard.slim .offtxt b{font-size:.95rem}
+.offcard.slim .offtxt>span{font-size:.82rem;color:var(--muted)}
+.offmore{margin:.25rem 0 0}
+.offcur{display:block;font-weight:700;color:var(--text);font-size:.92rem;margin:.2rem 0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
