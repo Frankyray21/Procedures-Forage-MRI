@@ -240,7 +240,7 @@
         '</div>' +
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
-      '<div class="wrap"><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>' +
+      '<div class="wrap"><div id="resumeRow"></div><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>' +
       // Installation après le contenu ; le hors ligne est en haut (compact).
       '<div class="wrap"><div class="install" id="install"></div></div>';
 
@@ -610,6 +610,16 @@
     var S = window.MRI_SEARCH;
     if (qStr.length >= 2 && S && S.ready()) { grid.classList.add('srmode'); drawSearch(qStr, S, grid, count); return; }
     grid.classList.remove('srmode');
+    // « Reprendre » : dernière fiche consultée de cette section (navigation seulement)
+    var rr = $('#resumeRow');
+    if (rr) {
+      var lp = '';
+      try { lp = localStorage.getItem('last_proc') || ''; } catch (e) {}
+      var p0 = lp ? DATA.filter(function (x) { return x.id === lp; })[0] : null;
+      rr.innerHTML = (p0 && inSection(p0, state.fam))
+        ? '<a class="resume-l" href="#/p/' + esc(p0.id) + '"><span>Reprendre</span><b>' + esc(p0.titre) + '</b>' + ICON.arrow + '</a>'
+        : '';
+    }
     var list = DATA.filter(matches).sort(cmpCode);
     count.textContent = list.length + (list.length > 1 ? ' procédures' : ' procédure');
     if (!list.length) { grid.innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.</div>'; return; }
@@ -829,6 +839,7 @@
     h += '</div>';
     view.innerHTML = h;
     ptStartPage(p.id);          // démarre le chrono de consultation (suivi gestionnaire)
+    try { localStorage.setItem('last_proc', p.id); } catch (e) {}
     initChecklistState();
     initGallery(figs, p.id);
     initProcQuiz(p.id);
@@ -914,7 +925,7 @@
     try { input.value = localStorage.getItem('attest_name') || ''; } catch (e) {}
 
     function db(s) { try { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { return s; } }
-    function setHint(t, ok) { hint.textContent = t; hint.classList.toggle('ok', !!ok); }
+    function setHint(t, ok) { hint.textContent = t; hint.className = 'attest-hint' + (ok ? ' ok' : ''); }
     function hideSugg() { sugg.hidden = true; sugg.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); }
     function clearPick() { if (pickedId) { pickedId = ''; pickedName = ''; setHint(HINT0, false); } }
     function pick(it) {
@@ -927,7 +938,14 @@
       return esc(name.slice(0, k)) + '<b>' + esc(name.slice(k, k + qd.length)) + '</b>' + esc(name.slice(k + qd.length));
     }
     function renderSugg(list, term) {
-      if (!list.length) { hideSugg(); setHint('Aucun employé trouvé — vérifie l\'orthographe (tu peux quand même attester).', false); return; }
+      if (!list.length) {
+        hideSugg();
+        hint.innerHTML = '<b>Ton nom n\'est pas encore dans la liste des employés.</b> ' +
+          'Tu peux quand même attester : écris ton nom au complet et envoie — ' +
+          'le bureau le reliera à ton dossier.';
+        hint.className = 'attest-hint warn';
+        return;
+      }
       // Positionne la liste juste sous le champ (et non sous tout le formulaire).
       sugg.style.top = (input.offsetTop + input.offsetHeight + 4) + 'px';
       sugg.innerHTML = '';
