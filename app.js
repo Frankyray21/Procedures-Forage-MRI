@@ -611,7 +611,17 @@
     var list = DATA.filter(matches).sort(cmpCode);
     count.textContent = list.length + (list.length > 1 ? ' procédures' : ' procédure');
     if (!list.length) { grid.innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.</div>'; return; }
-    grid.innerHTML = list.map(card).join('');
+    // Sections par TÂCHE, dans l'ordre du flux de travail (CAT_ORDER) ;
+    // à l'intérieur de chaque section, l'ordre reste celui des codes.
+    var byCat = {};
+    list.forEach(function (p) { (byCat[p.categorie] = byCat[p.categorie] || []).push(p); });
+    var order = CAT_ORDER.filter(function (c) { return byCat[c]; })
+      .concat(Object.keys(byCat).filter(function (c) { return CAT_ORDER.indexOf(c) < 0; }));
+    grid.innerHTML = order.map(function (c) {
+      return '<div class="lgrp"><h3 class="lgrp-h">' + esc(c) +
+        ' <span class="ct">' + byCat[c].length + '</span></h3>' +
+        '<div class="lgrp-rows">' + byCat[c].map(card).join('') + '</div></div>';
+    }).join('');
   }
   function passageHTML(r, terms) {
     var it = r.item;
@@ -697,7 +707,15 @@
           (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
         '</div>' +
       '</div>' +
+      procState(p.id) +
       '<span class="parrow">' + ICON.arrow + '</span></a>';
+  }
+  // Pastille d'état : verte = attestée, ambre = quiz commencé — la liste
+  // devient une liste de contrôle (mêmes données locales que Mon suivi).
+  function procState(id) {
+    if (attestInfo(id)) return '<span class="pstate ok" title="Attestée">' + ICON.check + '</span>';
+    if (pqGetBest(id)) return '<span class="pstate mid" title="Quiz commencé"></span>';
+    return '';
   }
 
   /* ---------- vue : procédure ---------- */
