@@ -240,7 +240,7 @@
         '</div>' +
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
-      '<div class="wrap"><div id="resumeRow"></div><div class="count" id="count"></div><div class="plist2" id="grid"></div></div>' +
+      '<div class="wrap"><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmode" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
       // Installation après le contenu ; le hors ligne est en haut (compact).
       '<div class="wrap"><div class="install" id="install"></div></div>';
 
@@ -610,6 +610,7 @@
     var S = window.MRI_SEARCH;
     if (qStr.length >= 2 && S && S.ready()) { grid.classList.add('srmode'); drawSearch(qStr, S, grid, count); return; }
     grid.classList.remove('srmode');
+    renderListMode();
     // « Reprendre » : dernière fiche consultée de cette section (navigation seulement)
     var rr = $('#resumeRow');
     if (rr) {
@@ -623,17 +624,53 @@
     var list = DATA.filter(matches).sort(cmpCode);
     count.textContent = list.length + (list.length > 1 ? ' procédures' : ' procédure');
     if (!list.length) { grid.innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.</div>'; return; }
-    // Sections par TÂCHE, dans l'ordre du flux de travail (CAT_ORDER) ;
+    // Sections par TÂCHE (ordre du flux de travail) ou par MACHINE, au choix ;
     // à l'intérieur de chaque section, l'ordre reste celui des codes.
+    var groups = buildGroups(list);
+    grid.innerHTML = groups.map(function (g) {
+      return '<div class="lgrp"><h3 class="lgrp-h">' + esc(g.label) +
+        ' <span class="ct">' + g.items.length + '</span></h3>' +
+        '<div class="lgrp-rows">' + g.items.map(card).join('') + '</div></div>';
+    }).join('');
+  }
+  function listMode() { try { return localStorage.getItem('list_mode') === 'mach' ? 'mach' : 'cat'; } catch (e) { return 'cat'; } }
+  function renderListMode() {
+    var box = $('#lmode'); if (!box) return;
+    var m = listMode();
+    box.innerHTML = '<button type="button" class="lmode-b' + (m === 'cat' ? ' on' : '') + '" data-m="cat">Par tâche</button>' +
+      '<button type="button" class="lmode-b' + (m === 'mach' ? ' on' : '') + '" data-m="mach">Par machine</button>';
+    [].forEach.call(box.querySelectorAll('.lmode-b'), function (b) {
+      b.onclick = function () {
+        try { localStorage.setItem('list_mode', b.getAttribute('data-m')); } catch (e) {}
+        drawList();
+      };
+    });
+  }
+  function buildGroups(list) {
+    if (listMode() === 'mach') {
+      // Par machine : une procédure utilisée avec plusieurs machines apparaît
+      // sous chacune (c'est comme ça qu'on la cherche sur le terrain).
+      var by = {}, autres = [];
+      list.forEach(function (p) {
+        var ms = machinesOf(p);
+        var extra = (p.machines || []).some(function (m) { return norm(m).indexOf('diamant') >= 0; }) ? ['Foreuse au diamant'] : [];
+        var all = ms.concat(extra.filter(function (m) { return ms.indexOf(m) < 0; }));
+        if (!all.length) { autres.push(p); return; }
+        all.forEach(function (m) { (by[m] = by[m] || []).push(p); });
+      });
+      var groups = MACH_ORDER.filter(function (m) { return by[m]; })
+        .map(function (m) { return { label: m, items: by[m] }; });
+      Object.keys(by).forEach(function (m) {
+        if (MACH_ORDER.indexOf(m) < 0) groups.push({ label: m, items: by[m] });
+      });
+      if (autres.length) groups.push({ label: 'Autres', items: autres });
+      return groups;
+    }
     var byCat = {};
     list.forEach(function (p) { (byCat[p.categorie] = byCat[p.categorie] || []).push(p); });
-    var order = CAT_ORDER.filter(function (c) { return byCat[c]; })
-      .concat(Object.keys(byCat).filter(function (c) { return CAT_ORDER.indexOf(c) < 0; }));
-    grid.innerHTML = order.map(function (c) {
-      return '<div class="lgrp"><h3 class="lgrp-h">' + esc(c) +
-        ' <span class="ct">' + byCat[c].length + '</span></h3>' +
-        '<div class="lgrp-rows">' + byCat[c].map(card).join('') + '</div></div>';
-    }).join('');
+    return CAT_ORDER.filter(function (c) { return byCat[c]; })
+      .concat(Object.keys(byCat).filter(function (c) { return CAT_ORDER.indexOf(c) < 0; }))
+      .map(function (c) { return { label: c, items: byCat[c] }; });
   }
   function passageHTML(r, terms) {
     var it = r.item;
@@ -1918,8 +1955,19 @@
     var avg = played.length ? Math.round(played.reduce(function (a, b) { return a + b.pct; }, 0) / played.length) : null;
     var name = suiviName();
 
-    var ith = DATA.filter(function (p) { return p.famille !== 'diamant'; }).sort(cmpCode);
-    var diam = DATA.filter(function (p) { return p.famille === 'diamant'; }).sort(cmpCode);
+    // Ordre utile : d'abord « quiz fait, pas complétée » (il ne manque qu'un
+    // geste), puis quiz en cours, puis pas commencées ; les complétées à la fin.
+    function svRank(p) {
+      if (attestInfo(p.id)) return 3;
+      var total = (window.QUIZ_PROC && window.QUIZ_PROC[p.id] || []).length;
+      var b = pqGetBest(p.id);
+      if (b && total && b.n === total) return 0;
+      if (b) return 1;
+      return 2;
+    }
+    function svCmp(a, b) { return svRank(a) - svRank(b) || cmpCode(a, b); }
+    var ith = DATA.filter(function (p) { return p.famille !== 'diamant'; }).sort(svCmp);
+    var diam = DATA.filter(function (p) { return p.famille === 'diamant'; }).sort(svCmp);
 
     view.innerHTML =
       '<section class="hero herosm"><div class="wrap">' +
