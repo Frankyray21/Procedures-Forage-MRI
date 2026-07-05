@@ -341,9 +341,9 @@
         nbQuestions: MX.runs.length, device: MX.device, runs: MX.runs };
       var json = JSON.stringify(data, null, 2);
       var url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
-      var m = pushMsg('bot', '<p>📊 Mesures de la session (copie automatique tentée) :</p>' +
+      var m = pushMsg('bot', '<p>Mesures de la session (copie automatique tentée)&nbsp;:</p>' +
         '<textarea class="cbexp" readonly rows="7" onclick="this.select()">' + esc(json) + '</textarea>' +
-        '<p><a class="cbdl" href="' + url + '" download="mesures-ia-mri.json">⬇️ Télécharger le JSON</a></p>');
+        '<p><a class="cbdl" href="' + url + '" download="mesures-ia-mri.json">Télécharger le JSON</a></p>');
       try { navigator.clipboard && navigator.clipboard.writeText(json); } catch (e) {}
       body.scrollTop = body.scrollHeight;
     });
@@ -356,7 +356,7 @@
   }
   function enableAI() {
     if (!window.MRI_LLM) return;
-    var msg = pushMsg('bot', '<p>⏳ Téléchargement / chargement du modèle (<b>une seule fois</b>, ' +
+    var msg = pushMsg('bot', '<p>Téléchargement du modèle (<b>une seule fois</b>, ' +
       'Wi-Fi conseillé). Ensuite chargé depuis le cache (Internet non requis pour cette étape).</p><div class="cbprog"><i></i></div>' +
       '<div class="cbprogt">Initialisation…</div>');
     var bar = msg.querySelector('.cbprog i'), txt = msg.querySelector('.cbprogt');
@@ -371,18 +371,18 @@
       aiOn = true; setAiBadge();
       MX.provider = window.MRI_LLM.active(); MX.model = window.MRI_LLM.model();
       MX.initMs = Math.round(performance.now() - t0); MX.fromCache = !sawDownload;
-      msg.innerHTML = '<p>✅ Assistant IA prêt (<span class="cbmono">' + esc(MX.model || 'modèle local') + '</span>) ' +
+      msg.innerHTML = '<p>Assistant IA prêt (<span class="cbmono">' + esc(MX.model || 'modèle local') + '</span>) ' +
         'en <b>' + (MX.initMs / 1000).toFixed(1) + ' s</b>' + (MX.fromCache ? ' (depuis le cache)' : ' (1er téléchargement)') + '. ' +
         'Je réponds <b>en citant</b> les procédures. Pose ta question.</p>' +
-        '<p><button class="cbchip" data-act="export" type="button">📊 Exporter les mesures</button></p>';
+        '<p><button class="cbchip" data-act="export" type="button">Exporter les mesures</button></p>';
     }).catch(function (e) {
       aiOn = false; setAiBadge();
       var m = (e && e.message) || 'erreur';
       var net = /fetch|réseau|reseau|network|import|CDN|load/i.test(m);
-      msg.innerHTML = '<p>⚠️ Impossible d\'activer l\'IA (' + esc(m) + ').</p>' +
+      msg.innerHTML = '<p>Impossible d\'activer l\'IA (' + esc(m) + ').</p>' +
         (net ? '<p class="cbnote">Le moteur se télécharge depuis Internet au 1er lancement. ' +
           'Vérifie la <b>connexion</b>, et que le réseau n\'a pas bloqué les CDN ' +
-          '(esm.run / esm.sh / jsdelivr). En attendant, la recherche classique fonctionne hors-ligne.</p>'
+          'En attendant, la recherche classique fonctionne, même sans réseau.</p>'
           : '<p class="cbnote">Je continue en recherche classique.</p>');
     });
   }
@@ -412,7 +412,7 @@
         return '<a href="#/p/' + esc(pp.pid) + '">[' + (i + 1) + '] ' + esc(pp.ptitre) +
           (pp.source ? ' · ' + esc(pp.source) : '') + ' →</a>';
       }).join('') + '</div>' +
-      '<div class="cbmetrics">⏱ ' + (ms / 1000).toFixed(1) + ' s · ~' + (Math.round(tps * 10) / 10) + ' tok/s · ' +
+      '<div class="cbmetrics">' + (ms / 1000).toFixed(1) + ' s · ~' + (Math.round(tps * 10) / 10) + ' tok/s · ' +
         words + ' mots' + (stats ? ' · ' + esc(stats) : '') +
         ' · <button class="cbx2" data-act="export" type="button">exporter</button></div>' +
       '<p class="cbnote">Réponse générée localement à partir des procédures citées. Toujours valider sur la fiche.</p>';
@@ -420,7 +420,7 @@
       body.scrollTop = body.scrollHeight;
     }).catch(function (e) {
       p.classList.remove('cbtyping');
-      p.innerHTML = '⚠️ Erreur de génération. Voici les passages trouvés&nbsp;:';
+      p.innerHTML = 'Erreur de génération. Voici les passages trouvés&nbsp;:';
       msg.insertAdjacentHTML('beforeend', answerHTML(text));
     });
   }
@@ -442,12 +442,12 @@
     var btn = el('<button class="cbbtn" id="cbBtn" aria-label="Assistant procédures" title="Assistant procédures">' + ICON_CHAT + '</button>');
     var aiCanRun = !!(window.MRI_LLM && window.MRI_LLM.available());
     panel = el('<div class="cbpanel" role="dialog" aria-label="Assistant procédures">' +
-      '<div class="cbhead"><b>Assistant procédures</b><span class="cboff">hors-ligne</span>' +
+      '<div class="cbhead"><b>Assistant procédures</b><span class="cboff">hors ligne</span>' +
         (aiCanRun ? '<button class="cbai" id="cbAi" type="button" aria-label="Assistant IA (bêta)" title="Activer l\'assistant IA (bêta)">IA</button>' : '') +
         '<button class="cbx" id="cbClose" aria-label="Fermer">' + ICON_CLOSE + '</button></div>' +
-      '<div class="cbbody" id="cbBody"></div>' +
+      '<div class="cbbody" id="cbBody" role="log" aria-live="polite"></div>' +
       '<form class="cbform" id="cbForm">' +
-        '<input id="cbInput" type="text" autocomplete="off" placeholder="Pose ta question…">' +
+        '<input id="cbInput" type="text" autocomplete="off" placeholder="Pose ta question…" aria-label="Ta question à l\'assistant">' +
         '<button type="submit" aria-label="Envoyer">▶</button>' +
       '</form></div>');
     document.body.appendChild(btn);
@@ -462,7 +462,7 @@
         if (!body.childElementCount) {
           pushMsg('bot', '<p>Bonjour&nbsp;! Je cherche dans les procédures et réponds en citant ' +
             'le texte officiel. Exemples&nbsp;:</p><div class="cbsugg">' +
-            ['Distance foreuse ↔ surcompresseur', 'Que faire si une tige casse ?', 'Cadenassage avant intervention',
+            ['Quelle distance entre la foreuse et le surcompresseur ?', 'Que faire si une tige casse ?', 'Cadenassage avant intervention',
              'Poids d\'un marteau de 6 pouces'].map(function (s) {
               return '<button class="cbchip" type="button">' + esc(s) + '</button>';
             }).join('') + '</div>');

@@ -7,7 +7,6 @@
   var CFG   = window.SITE_CONFIG || {};
   var DEMO  = !!(CFG && CFG.demo);
   var DATA  = (window.PROCEDURES || []).slice();
-  var CODE  = window.CODE_SECURITE || null;
 
   var CAT_COLORS = {
     'Forage': '#d22325', 'Alésage': '#3b82f6', 'Installation': '#10b981',
@@ -31,7 +30,9 @@
   }
   function $(sel, root) { return (root || document).querySelector(sel); }
   function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
-  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  // NOTE : shuffle (mélange sur COPIE) est déclarée une seule fois, plus bas
+  // avec les utilitaires du quiz éclair — une 2e déclaration ici créait deux
+  // sémantiques concurrentes (en place vs copie) départagées par le hoisting.
   var ICON = {
     arrow: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
     back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6 6l-6-6 6-6"/></svg>',
@@ -60,6 +61,7 @@
   function route() {
     var h = location.hash || '#/';
     var view = $('#view');
+    view.removeAttribute('data-boot');   // le contenu réel remplace l'état « Chargement… »
     if (prevHash.indexOf('#/diamant') === 0) listScroll.diamant = window.scrollY;
     else if (prevHash.indexOf('#/procedures') === 0) listScroll[''] = window.scrollY;
     var fromFiche = prevHash.indexOf('#/p/') === 0;
@@ -138,7 +140,6 @@
 
   /* ---------- vue : accueil ---------- */
   var state = { q: '', cat: '', mach: '', fam: '' };
-  var codeFam = 'ith';   // Code de sécurité affiché : 'ith' (production) ou 'dd' (diamant)
   // fam '' = foreuses ITH/CUBEX/V-30 (par défaut) ; 'diamant' = forage au diamant
   // Appartenance d'une procédure à une section. famille 'commun' = les deux.
   function inSection(p, fam) {
@@ -199,8 +200,8 @@
         '<span class="eyebrow">' + (diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
         '<h1>' + (diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de <span class="hl">forage</span>') + '</h1>' +
         '<p class="lead">' + (diamant
-          ? 'Procédures de forage au diamant de Machines Roger International (carottage, planchers, déplacements, sécurité). Chaque fiche conserve son PDF officiel, visionnable et recherchable hors-ligne.'
-          : 'Toutes les procédures de travail de Machines Roger International, accessibles, recherchables et consultables hors-ligne. Chaque procédure conserve son PDF officiel.') + '</p>' +
+          ? 'Procédures de forage au diamant de Machines Roger International : carottage, planchers, déplacements, sécurité. Chaque fiche contient le PDF officiel de la procédure, consultable même sans réseau.'
+          : 'Toutes les procédures de travail de Machines Roger International, sur ton téléphone, même sans réseau. Chaque fiche contient le PDF officiel de la procédure.') + '</p>' +
         '<div class="stats">' +
           '<div class="stat"><b>' + D.length + '</b><span>Procédures</span></div>' +
           '<div class="stat"><b>' + Object.keys(cats).length + '</b><span>Catégories</span></div>' +
@@ -212,7 +213,7 @@
       '</div></section>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="search">' + ICON.search +
-          '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" autocomplete="off">' +
+          '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" aria-label="Rechercher une procédure" autocomplete="off">' +
         '</div>' +
         '<div class="chips" id="catChips">' +
           '<button class="chip on" data-cat="">Toutes</button>' + catChips +
@@ -390,12 +391,12 @@
     var files = offlineAssets(), totalBytes = sumBytes(files), nPdf = DATA.length + 1;
     if (offlineReady()) {
       box.innerHTML = '<div class="offcard ok"><span class="offic">' + ICON.check + '</span>' +
-        '<div class="offtxt"><b>Disponible hors-ligne</b><span>Toutes les fiches, les ' + nPdf +
+        '<div class="offtxt"><b>Disponible hors ligne</b><span>Toutes les fiches, les ' + nPdf +
         ' PDF et les figures (' + fmtMo(totalBytes) + ') sont enregistrés sur cet appareil.</span></div>' +
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
     } else {
       box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
-        '<div class="offtxt"><b>Préparer la consultation hors-ligne</b>' +
+        '<div class="offtxt"><b>Préparer la consultation hors ligne</b>' +
         '<span>' + files.length + ' fichiers · ' + fmtMo(totalBytes) + ' : toutes les fiches, les ' + nPdf +
         ' PDF et leurs images, pour consulter sans réseau (sous terre).</span>' +
         '<span class="offeta">Temps de téléchargement estimé : ' + fmtDur(estimateSecs(totalBytes, files.length)) +
@@ -440,8 +441,10 @@
       if (!failed) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
       renderOffline();
       toast(failed
-        ? failed + ' fichier(s) non téléchargé(s) — réessayez : ce qui est déjà téléchargé ne sera pas repris.'
-        : 'Terminé : tout est disponible hors-ligne (' + fmtMo(bytesDone) + ').');
+        ? (failed > 1
+          ? failed + ' fichiers n\'ont pas été téléchargés. Appuie encore sur « Tout télécharger » pour compléter — ce qui est déjà sur l\'appareil est conservé.'
+          : 'Un fichier n\'a pas été téléchargé. Appuie encore sur « Tout télécharger » pour compléter — ce qui est déjà sur l\'appareil est conservé.')
+        : 'Terminé : tout est disponible hors ligne (' + fmtMo(bytesDone) + ').');
     }
     function next() {
       if (i >= urls.length) { if (active === 0) finish(); return; }
@@ -652,7 +655,7 @@
       h += '<div class="sec"><h2>Photos et schémas</h2>' +
         '<div class="gallery">' + figs.map(function (f, i) {
           return '<button class="gfig" type="button" data-i="' + i + '">' +
-            '<img src="' + esc(f.src) + '" alt="Image ' + (i + 1) + '" loading="lazy">' +
+            '<img src="' + esc(f.src) + '" alt="Photo ou schéma, page ' + esc(f.page) + '" loading="lazy">' +
             '<span class="gpage">p. ' + esc(f.page) + '</span></button>';
         }).join('') + '</div></div>';
     }
@@ -745,7 +748,7 @@
           '<input type="text" class="attest-name" placeholder="Prénom Nom" autocomplete="off" ' +
           'role="combobox" aria-autocomplete="list" aria-expanded="false"></label>' +
         '<div class="attest-sugg" role="listbox" hidden></div>' +
-        '<p class="attest-hint">Commence à taper : ton nom devrait apparaître dans la liste.</p>' +
+        '<p class="attest-hint">Commence à taper, puis choisis ton nom dans la liste.</p>' +
         '<button type="button" class="btn attest-btn attest-send">' +
         '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
         ' Attester la lecture</button>' +
@@ -768,7 +771,7 @@
     var sendBtn = form.querySelector('.attest-send');
     var msg = form.querySelector('.attest-msg');
     var pickedId = '', pickedName = '';
-    var HINT0 = 'Commence à taper : ton nom devrait apparaître dans la liste.';
+    var HINT0 = 'Commence à taper, puis choisis ton nom dans la liste.';
     try { input.value = localStorage.getItem('attest_name') || ''; } catch (e) {}
 
     function db(s) { try { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { return s; } }
@@ -877,20 +880,36 @@
     var q = aqGet(); if (!q.length) return;
     aqBusy = true;
     var it = q[0];
+    function aqDrop() { aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; })); }
     fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(it.payload) })
-      .then(function (r) { return r && r.ok ? r.json() : null; })
-      .then(function (j) {
-        aqBusy = false;
-        if (!(j && j.ok)) return;                      // on réessaiera au prochain signal
-        aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
-        try {
-          localStorage.removeItem('attest_pending_' + it.pid);
-          localStorage.setItem('attest_sent_' + it.pid, it.sig);
-        } catch (e) {}
-        toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
-        aqFlush();                                     // suivante, s'il y en a
+      .then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; });
       })
-      .catch(function () { aqBusy = false; });
+      .then(function (res) {
+        aqBusy = false;
+        if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {          // envoyé
+          aqDrop();
+          try {
+            localStorage.removeItem('attest_pending_' + it.pid);
+            localStorage.setItem('attest_sent_' + it.pid, it.sig);
+          } catch (e) {}
+          toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
+          aqFlush();                                   // suivante, s'il y en a
+          return;
+        }
+        if (res.st >= 400 && res.st < 500) {
+          // Rejet DÉFINITIF du serveur (donnée invalide) : on retire l'élément
+          // pour ne pas bloquer les attestations suivantes, et on rouvre la
+          // possibilité d'attester cette fiche.
+          aqDrop();
+          try { localStorage.removeItem('attest_pending_' + it.pid); } catch (e) {}
+          toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » refusée — refais-la depuis la fiche.');
+          aqFlush();
+          return;
+        }
+        // 5xx / réponse inattendue : panne passagère, on réessaiera au prochain signal.
+      })
+      .catch(function () { aqBusy = false; });         // réseau : on réessaiera
   }
   window.addEventListener('online', aqFlush);
   // État « enregistrée sur l'appareil, envoi au retour du réseau ».
@@ -1020,7 +1039,7 @@
       '</div></div>';
     if (!payload) return;
     var msgEl = sec.querySelector('.attest-pdf-msg');
-    function fail() { msgEl.textContent = 'PDF indisponible hors-ligne au premier essai — réessaie une fois en ligne.'; }
+    function fail() { msgEl.textContent = 'PDF indisponible pour le moment — réessaie quand tu as du réseau.'; }
     sec.querySelector('.attest-pdf-w').onclick = function () {
       msgEl.textContent = '';
       Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
@@ -1052,7 +1071,10 @@
   function pqGetBest(id) { try { var v = JSON.parse(localStorage.getItem('pq_' + id)); return (v && typeof v.s === 'number') ? v : null; } catch (e) { return null; } }
   function pqSetBest(id, s, n) {
     var b = pqGetBest(id);
-    if (!b || s > b.s) { try { localStorage.setItem('pq_' + id, JSON.stringify({ s: s, n: n })); } catch (e) {} }
+    // Écrase aussi quand le NOMBRE de questions a changé (quiz mis à jour) :
+    // sinon un ancien record 9/10 rend un nouveau 8/8 imbattable et
+    // l'attestation reste verrouillée pour toujours.
+    if (!b || b.n !== n || s > b.s) { try { localStorage.setItem('pq_' + id, JSON.stringify({ s: s, n: n })); } catch (e) {} }
   }
   // Rend une question selon son type. it.t : absent = choix de réponse ;
   // 'vf' = vrai ou faux ; 'multi' = cocher les affirmations vraies ;
@@ -1147,7 +1169,8 @@
         scoreEl.className = 'pq-score ' + (correct === n ? 'perfect' : correct >= Math.ceil(n * 0.8) ? 'pass' : 'fail');
         if (!reviewMode) {                       // la note de passage porte sur le quiz COMPLET
           pqSetBest(id, correct, n);
-          var sb = box.querySelector('.pqs-b'); if (sb) sb.textContent = 'Meilleur : ' + Math.max(correct, (pqGetBest(id) || { s: 0 }).s) + '/' + n;
+          var sb = box.querySelector('.pqs-b'); var nb = pqGetBest(id);
+          if (sb && nb) sb.textContent = 'Meilleur : ' + nb.s + '/' + nb.n;
           updateAttestGate(id);
         }
       } else { scoreEl.className = 'pq-score'; }
@@ -1363,6 +1386,7 @@
     function show(i) {
       cur = (i + figs.length) % figs.length;
       img.src = figs[cur].src;
+      img.alt = 'Photo ou schéma agrandi, page ' + figs[cur].page;
       count.textContent = (cur + 1) + ' / ' + figs.length + '  ·  p. ' + figs[cur].page;
     }
     function open(i) { show(i); lb.classList.add('on'); }
@@ -1376,13 +1400,22 @@
     lb.querySelector('.lb-prev').onclick = function (e) { e.stopPropagation(); show(cur - 1); };
     lb.querySelector('.lb-next').onclick = function (e) { e.stopPropagation(); show(cur + 1); };
     lb.onclick = function (e) { if (e.target === lb) close(); };
-    document.onkeydown = function (e) {
-      if (!lb.classList.contains('on')) return;
-      if (e.key === 'Escape') close();
-      else if (e.key === 'ArrowLeft') show(cur - 1);
-      else if (e.key === 'ArrowRight') show(cur + 1);
-    };
+    // Un seul écouteur clavier global, posé une fois (document.onkeydown
+    // écrasait tout autre gestionnaire et survivait à la fiche).
+    lbKeys.show = show; lbKeys.close = close;
+    if (!lbKeys.bound) {
+      lbKeys.bound = true;
+      document.addEventListener('keydown', function (e) {
+        var box = document.getElementById('lightbox');
+        if (!box || !box.classList.contains('on')) return;
+        if (e.key === 'Escape') lbKeys.close();
+        else if (e.key === 'ArrowLeft') lbKeys.show(lbKeys.cur() - 1);
+        else if (e.key === 'ArrowRight') lbKeys.show(lbKeys.cur() + 1);
+      });
+    }
+    lbKeys.cur = function () { return cur; };
   }
+  var lbKeys = { bound: false, show: null, close: null, cur: function () { return 0; } };
 
   /* ---------- liste de vérification (checklist) ---------- */
   function ckGet(id) { try { return JSON.parse(localStorage.getItem('ck_' + id) || '[]'); } catch (e) { return []; } }
@@ -1421,145 +1454,8 @@
     return '<div class="pill-list">' + arr.map(function (x) { return '<span class="pill ' + cls + '">' + esc(x) + '</span>'; }).join('') + '</div>';
   }
 
-  /* ---------- vue : Code de sécurité ---------- */
-  function renderCode(view) {
-    if (!CODE || !CODE.chapitres) { view.innerHTML = '<div class="wrap"><div class="empty">Le Code de sécurité n\'est pas encore disponible.</div></div>'; return; }
-    var CHAP_ICON = {
-      'energie-cadenassage': '🔒', 'air-comprime-boyaux': '💨', 'zones-exclusion-positionnement': '🚧',
-      'pieces-mouvement-mat': '⚙️', 'protection-chutes-explosifs': '💥', 'manutention-levage': '⛓️',
-      'outils-cles': '🔧', 'inspection-verification': '🔍', 'communication-signalisation': '🚩',
-      'epi-eau-ventilation': '🦺',
-      'dd-tube-carottier': '🪨', 'dd-cable-treuil': '🪢', 'dd-planchers-hauteur': '🪜',
-      'dd-support-tiges': '⛓️', 'dd-forage-distance': '🎯', 'dd-cimentation-entretien': '🧱',
-      'dd-gaz': '💨', 'dd-vehicules': '🚜', 'ith-defoncage-accueil': '🧨'
-    };
-    // Le Code affiché suit la section courante : Forage au diamant (DD) si on
-    // vient de la section Diamant, sinon Forage de production (ITH). On ne
-    // montre que le code concerné (pas les deux).
-    codeFam = (state.fam === 'diamant') ? 'dd' : 'ith';
-    // 'commun' = chapitre affiché dans les deux codes.
-    var chapitres = CODE.chapitres.filter(function (c) { var f = c.famille || 'ith'; return f === codeFam || f === 'commun'; });
-    var isDD = codeFam === 'dd';
-    var nbArt = chapitres.reduce(function (n, c) { return n + ((c.articles || []).length); }, 0);
-
-    // ---- Valeurs-clés de référence : agrégées FIDÈLEMENT des procédures (aucune invention) ----
-    var cats = [
-      { t: 'Distances, zones et hauteurs', re: /(distance|zone|exclusion|hauteur|espacement|plancher|collet)/, rows: [] },
-      { t: 'Air, pression et température', re: /(pression|temperature|degres|°f|boyau|air|psi)/, rows: [] },
-      { t: 'Diamètres et dimensions', re: /(diametre|pouce|\bpo\b|casing|trou|monterie|alesage)/, rows: [] },
-      { t: 'Poids, charges et gréage', re: /(poids|lbs|livres|charge|capacite|\bkg\b|manille|elingue|chaine|grade|ancrage)/, rows: [] },
-      { t: 'Autres repères', re: null, rows: [] }
-    ];
-    var seenKV = {};
-    (DATA || []).filter(function (p) { return (p.famille === 'diamant') === isDD; }).forEach(function (p) {
-      (p.valeurs_cles || []).forEach(function (v) {
-        if (!v || !v.libelle || v.valeur == null) return;
-        var k = norm(v.libelle + '|' + v.valeur); if (seenKV[k]) return; seenKV[k] = 1;
-        var nl = norm(v.libelle + ' ' + v.valeur);
-        var cat = cats.find(function (c) { return c.re && c.re.test(nl); }) || cats[cats.length - 1];
-        cat.rows.push({ l: v.libelle, v: v.valeur, src: p.code || p.titre, id: p.id });
-      });
-    });
-    var nbKV = Object.keys(seenKV).length;
-    var kvHTML = cats.filter(function (c) { return c.rows.length; }).map(function (c) {
-      return '<div class="kvgrp"><h4>' + esc(c.t) + '</h4><table class="kvt"><tbody>' +
-        c.rows.map(function (r) {
-          return '<tr><td class="kvl">' + esc(r.l) + '</td><td class="kvv">' + esc(r.v) + '</td>' +
-            '<td class="kvs"><a href="#/p/' + esc(r.id) + '">' + esc(r.src) + '</a></td></tr>';
-        }).join('') + '</tbody></table></div>';
-    }).join('');
-    var valuesSection = nbKV ? '<section class="chap" id="chap-valeurs-cles"><h2><span class="cic">📊</span> Valeurs-clés de référence</h2>' +
-      '<p class="ci">Repère rapide des valeurs chiffrées (distances, pressions, dimensions, charges) extraites des procédures. Le détail figure sur chaque fiche.</p>' +
-      '<details class="kvbox"><summary>Afficher les ' + nbKV + ' valeurs-clés</summary>' + kvHTML + '</details></section>' : '';
-
-    var toc = (nbKV ? '<a href="#chap-valeurs-cles">📊 Valeurs-clés de référence</a>' : '') +
-      chapitres.map(function (c) {
-        return '<a href="#chap-' + esc(c.id) + '">' + (CHAP_ICON[c.id] || '•') + ' ' + esc(c.titre) + '</a>';
-      }).join('');
-    var body = chapitres.map(function (c) {
-      var arts = (c.articles || []).map(function (a) {
-        var srcs = (a.sources || []).map(function (s) {
-          var sid = CODE_TO_ID[String(s).toUpperCase()];
-          return sid ? '<a href="#/p/' + esc(sid) + '">' + esc(s) + '</a>' : '<a>' + esc(s) + '</a>';
-        }).join('');
-        return '<div class="art"><h3><span class="an">' + esc(a.num) + '</span> ' + esc(a.titre) + '</h3>' +
-          '<p>' + esc(a.texte) + '</p>' + (srcs ? '<div class="srcs">' + srcs + '</div>' : '') + '</div>';
-      }).join('');
-      return '<section class="chap" id="chap-' + esc(c.id) + '"><h2><span class="cic">' + (CHAP_ICON[c.id] || '•') + '</span> ' + esc(c.titre) + '</h2>' +
-        (c.intro ? '<p class="ci">' + esc(c.intro) + '</p>' : '') + arts + '</section>';
-    }).join('');
-
-    var preamb = isDD
-      ? "Ce volet du Code de sécurité regroupe les consignes propres au forage au diamant (carottage) — foreuses STM-1500 et DR-600. Les règles sont extraites des procédures de forage au diamant (PRO-DD-ST, PRO-OP-DD, DR-600, SS-DD-ST, STD-DD) et ont un caractère obligatoire. Pour les opérations communes (cadenassage, manutention, ÉPI…), se référer aussi au Code de sécurité du forage de production."
-      : (CODE.preambule || '');
-    var volet = isDD ? 'Forage au diamant (DD)' : 'Forage de production (ITH)';
-    var metaKV = nbKV ? ' · ' + nbKV + ' valeurs-clés' : '';
-    view.innerHTML =
-      '<section class="code-hero"><div class="wrap">' +
-        '<span class="eyebrow">Règlement interne</span>' +
-        '<h1>Code de sécurité du forage</h1>' +
-        '<div class="code-volet ' + (isDD ? 'dd' : 'ith') + '">' + (isDD ? '💎' : '🛠️') + ' Volet : ' + esc(volet) + '</div>' +
-        '<div class="code-meta">' + chapitres.length + ' chapitres · ' + nbArt + ' articles' + metaKV + '</div>' +
-        '<div class="preamble">' + esc(preamb) + '</div>' +
-        '<div class="code-tools">' +
-          '<div class="csearch">' + ICON.search + '<input id="codeSearch" type="search" placeholder="Rechercher dans le code…" autocomplete="off"></div>' +
-          '<button class="btn ghost" id="codePrint" type="button">Imprimer</button>' +
-        '</div>' +
-      '</div></section>' +
-      '<div class="wrap"><div class="code-layout">' +
-        '<nav class="code-toc" id="codeToc">' + toc + '</nav>' +
-        '<div id="codeBody">' + valuesSection + body + '<div class="empty" id="codeNoRes" style="display:none">Aucun article ne correspond à votre recherche.</div></div>' +
-      '</div></div>';
-    initScrollspy();
-    initCodeTools();
-  }
-  function initCodeTools() {
-    var inp = document.getElementById('codeSearch');
-    var noRes = document.getElementById('codeNoRes');
-    if (inp) inp.addEventListener('input', function () {
-      var q = norm(inp.value), shown = 0;
-      [].forEach.call(document.querySelectorAll('#codeBody .chap'), function (sec) {
-        var arts = sec.querySelectorAll('.art'), any = false;
-        if (arts.length) {
-          [].forEach.call(arts, function (a) {
-            var m = !q || norm(a.textContent).indexOf(q) >= 0;
-            a.style.display = m ? '' : 'none'; if (m) any = true;
-          });
-          sec.style.display = any ? '' : 'none';
-        } else { // section valeurs-clés (pas d'.art)
-          any = !q || norm(sec.textContent).indexOf(q) >= 0;
-          sec.style.display = any ? '' : 'none';
-        }
-        if (any) shown++;
-      });
-      if (noRes) noRes.style.display = shown ? 'none' : 'block';
-    });
-    var pr = document.getElementById('codePrint');
-    if (pr) pr.addEventListener('click', function () {
-      var kv = document.querySelector('#codeBody .kvbox'); if (kv) kv.open = true;  // imprimer les valeurs-clés
-      document.body.classList.add('print-code');
-      var done = function () { document.body.classList.remove('print-code'); window.removeEventListener('afterprint', done); };
-      window.addEventListener('afterprint', done);
-      window.print();
-      setTimeout(done, 1500);
-    });
-  }
-  function initScrollspy() {
-    var links = Array.prototype.slice.call(document.querySelectorAll('#codeToc a'));
-    var map = {};
-    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
-    if (!('IntersectionObserver' in window)) return;
-    var obs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) {
-          links.forEach(function (l) { l.classList.remove('active'); });
-          if (map[en.target.id]) map[en.target.id].classList.add('active');
-        }
-      });
-    }, { rootMargin: '-20% 0px -70% 0px' });
-    document.querySelectorAll('.chap').forEach(function (s) { obs.observe(s); });
-  }
-
+  /* (Vue « Code de sécurité » retirée du site — données conservées dans
+     code-securite-data.js, non chargé ; historique complet dans git.) */
   /* ---------- quiz éclair sécurité ---------- */
   var quizSt = null;
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -1600,7 +1496,7 @@
     view.innerHTML = '<section class="quizhero"><div class="wrap">' +
       '<span class="eyebrow">Auto-vérification · pas une formation</span>' +
       '<h1>Quiz éclair <span class="hl">sécurité</span></h1>' +
-      '<p class="lead">Teste tes réflexes sur les consignes, distances et interdictions des procédures. ' + POOL.length + ' questions au total (choix de réponse, vrai ou faux, textes à trous, remises en ordre…), tirées au hasard.</p>' +
+      '<p class="lead">Questions tirées au hasard des procédures : consignes, distances, interdictions. ' + POOL.length + ' questions au total (choix de réponse, vrai ou faux, textes à trous, remises en ordre…).</p>' +
       '<div class="quizstart">' +
         '<label class="qsf"><span>Nombre de questions</span><select class="f" id="qN"><option>5</option><option selected>10</option><option>15</option><option value="999">Toutes</option></select></label>' +
         '<label class="qsf"><span>Catégorie</span><select class="f" id="qCat">' + catOpts + '</select></label>' +
@@ -1636,7 +1532,7 @@
     var needV = (q.type === 'multi' || q.type === 'ordre');
     view.innerHTML = '<div class="wrap quizwrap">' +
       '<div class="qtop"><a class="back" href="#/quiz">' + ICON.back + ' Quitter</a>' +
-        '<span class="qscore">Score : ' + s.score + '</span></div>' +
+        '<span class="qscore" aria-live="polite">Score\u00a0: ' + s.score + '</span></div>' +
       '<div class="qbar"><i style="width:' + Math.round(s.idx / s.pool.length * 100) + '%"></i></div>' +
       '<div class="qcard"><div class="qtag">' + esc(q.code || q.categorie) +
         (q.type && QTYPE_LBL[q.type] ? ' · ' + QTYPE_LBL[q.type] : '') +
@@ -1645,7 +1541,7 @@
         (hint ? '<p class="qhint">' + hint + '</p>' : '') +
         body +
         (needV ? '<div class="qvald"><button class="btn" id="qValider"' + (q.type === 'ordre' ? ' disabled' : '') + '>Valider</button></div>' : '') +
-        '<div class="qfb" id="qfb"></div>' +
+        '<div class="qfb" id="qfb" role="status" aria-live="polite"></div>' +
       '</div></div>';
 
     if (q.type === 'multi') {
@@ -1718,7 +1614,7 @@
   function qFeedback(view, q, good) {
     var s = quizSt;
     if (good) s.score++;
-    var qsc = document.querySelector('.qscore'); if (qsc) qsc.textContent = 'Score : ' + s.score;
+    var qsc = document.querySelector('.qscore'); if (qsc) qsc.textContent = 'Score\u00a0: ' + s.score;
     var src = q.sourceId ? '<div class="qsrc">Source : <a href="#/p/' + esc(q.sourceId) + '">' + esc(q.code || q.titre) + '</a></div>' : '';
     $('#qfb').innerHTML = '<div class="qexp ' + (good ? 'good' : 'wrong') + '">' +
       '<b>' + (good ? '✓ Bonne réponse' : '✗ Mauvaise réponse') + '</b>' +
@@ -1728,7 +1624,7 @@
   }
   function renderResult(view) {
     var s = quizSt, pct = Math.round(s.score / s.pool.length * 100);
-    var msg = pct >= 80 ? 'Excellent — des réflexes solides.' : pct >= 60 ? 'Correct, mais quelques consignes à revoir.' : 'À retravailler : consulte les fiches et les PDF officiels.';
+    var msg = pct >= 80 ? 'Très bon résultat.' : pct >= 60 ? 'Bien. Quelques consignes sont à revoir.' : 'À retravailler. Relis les fiches, puis réessaie.';
     view.innerHTML = '<div class="wrap quizwrap"><div class="qresult">' +
       '<div class="qring" style="--p:' + pct + '"><span>' + pct + '%</span></div>' +
       '<h2>' + s.score + ' / ' + s.pool.length + '</h2><p class="lead">' + esc(msg) + '</p>' +
@@ -1851,7 +1747,7 @@
     btn.onclick = function () {
       var name = (input.value || '').trim();
       if (name.length < 2) { msg.className = 'sv-msg no'; msg.textContent = 'Entre ton nom complet.'; input.focus(); return; }
-      if (!navigator.onLine) { msg.className = 'sv-msg no'; msg.textContent = 'Hors-ligne : reconnecte-toi au réseau pour récupérer ton historique.'; return; }
+      if (!navigator.onLine) { msg.className = 'sv-msg no'; msg.textContent = 'Hors ligne : reconnecte-toi au réseau pour récupérer ton historique.'; return; }
       btn.disabled = true; msg.className = 'sv-msg'; msg.textContent = 'Recherche…';
       fetch(attestEndpoint() + '?hist=' + encodeURIComponent(name))
         .then(function (r) { return r && r.ok ? r.json() : null; })
@@ -1895,11 +1791,11 @@
       '<div class="portal-cards">' +
         '<a class="portal-card kb" href="#/procedures"><div class="pc-ic">' + ICON.doc + '</div>' +
           '<h2>Foreuses ITH / CUBEX</h2><p>Procédures de forage et d\'alésage (ITH, CUBEX, V-30) : consignes, valeurs-clés, PDF officiel et quiz.</p>' +
-          '<div class="pc-meta">' + nProd + ' procédures · disponible hors-ligne</div>' +
+          '<div class="pc-meta">' + nProd + ' procédures · disponible hors ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
         '<a class="portal-card diam" href="#/diamant"><div class="pc-ic">' + ICON.doc + '</div>' +
           '<h2>Forage au diamant</h2><p>Procédures de forage au diamant : carottage, planchers, déplacements (DR-600, STM-1500), sécurité. PDF officiel visionnable et recherchable.</p>' +
-          '<div class="pc-meta">' + nDiam + ' procédures · disponible hors-ligne</div>' +
+          '<div class="pc-meta">' + nDiam + ' procédures · disponible hors ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
       '</div>' +
       '<a class="portal-suivi" href="#/suivi">' + ICON.check +
@@ -1939,7 +1835,7 @@
     if (isStandalone()) { box.innerHTML = ''; return; }
     var hint = isIOS()
       ? 'Sur iPhone/iPad : touchez <b>Partager</b> puis <b>« Sur l\'écran d\'accueil »</b>.'
-      : 'Installez l\'application sur votre appareil pour un accès rapide et hors-ligne.';
+      : 'Installe l\'application sur ton téléphone : accès rapide, même sans réseau.';
     box.innerHTML = '<div class="offcard install"><span class="offic">' + INSTALL_ICON + '</span>' +
       '<div class="offtxt"><b>Installer l\'application</b><span>' + hint + '</span></div>' +
       '<button class="btn" id="installCardBtn">Installer</button></div>';

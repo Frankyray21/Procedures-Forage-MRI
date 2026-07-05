@@ -16,7 +16,7 @@
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
      retarder l'installation. Le bouton « Tout télécharger » de l'accueil
      affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v73';
+const VERSION = 'mri-proc-v74';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -108,12 +108,19 @@ function precacheMedia() {
 }
 
 /* Installation rapide et fiable : seulement l'app (~2 Mo), pas les 70 Mo de
-   médias — eux partent en arrière-plan à l'activation. */
+   médias — eux partent en arrière-plan à l'activation.
+   Un échec sur un fichier CRITIQUE (js/css/données) fait échouer l'install :
+   le navigateur retentera, plutôt que de déclarer l'app « prête » avec un
+   script manquant (= page blanche sous terre). Seuls polices/icônes/logo
+   sont tolérés en absence. */
+function optional(u) {
+  return u.indexOf('/fonts/') >= 0 || u.indexOf('./icons/') === 0 || u.indexOf('logo_roger') >= 0;
+}
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(VERSION).then((c) =>
-      Promise.all(CORE.map((u) => c.add(u).catch(() => null)))
+      Promise.all(CORE.map((u) => (optional(u) ? c.add(u).catch(() => null) : c.add(u))))
     )
   );
 });
@@ -136,16 +143,23 @@ self.addEventListener('fetch', (e) => {
   const isMedia = path.includes('/pdf/') || path.includes('/images/pages/') || path.includes('/images/figures/');
   const cacheName = isMedia ? MEDIA : VERSION;
 
-  // Navigations / index.html : réseau d'abord — c'est lui qui versionne tout le reste.
+  // Navigations / index.html : réseau d'abord — c'est lui qui versionne tout
+  // le reste — mais avec un DÉLAI MAXIMAL : en réseau dégradé (une barre de
+  // signal), on sert le cache après ~3 s au lieu de geler le lancement ; le
+  // fetch continue en arrière-plan et rafraîchit le cache pour la fois suivante.
   if (req.mode === 'navigate' || path === '/' || path.endsWith('/') || /index\.html$/.test(path)) {
+    const net = fetch(req, { cache: 'reload' }).then((res) => {
+      if (res && res.status === 200) {
+        const copy = res.clone();
+        caches.open(VERSION).then((c) => c.put(req, copy));
+      }
+      return res;
+    });
+    const fromCache = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match('./index.html'));
+    const timer = new Promise((resolve) => setTimeout(() => resolve(null), 3000));
     e.respondWith(
-      fetch(req, { cache: 'reload' }).then((res) => {
-        if (res && res.status === 200) {
-          const copy = res.clone();
-          caches.open(VERSION).then((c) => c.put(req, copy));
-        }
-        return res;
-      }).catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match('./index.html')))
+      Promise.race([net.catch(() => null), timer])
+        .then((res) => res || fromCache().then((hit) => hit || net))
     );
     return;
   }
@@ -164,12 +178,15 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Cache d'abord : réponse instantanée et zéro donnée consommée si déjà là
-  // (les URLs de l'app sont versionnées par ?v=, les médias ne changent pas
-  // sans redéploiement). Réseau si absent, puis mise en cache. Hors-ligne :
+  // Cache d'abord : réponse instantanée et zéro donnée consommée si déjà là.
+  // Pour les fichiers de l'APP, la correspondance ignore le ?v= : le cache
+  // VERSION est reconstruit à chaque déploiement, donc './app.js' précaché
+  // répond aussi à './app.js?v=213' — sinon chaque fichier serait re-téléchargé
+  // au premier lancement de chaque nouvelle version. Les médias gardent la
+  // correspondance exacte. Réseau si absent, puis mise en cache. Hors-ligne :
   // repli sur une version précédente du même fichier plutôt que rien.
   e.respondWith(
-    caches.match(req).then((hit) => hit ||
+    caches.match(req, isMedia ? undefined : { ignoreSearch: true }).then((hit) => hit ||
       fetch(req).then((res) => {
         if (res && res.status === 200) {
           const copy = res.clone();
