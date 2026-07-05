@@ -16,7 +16,7 @@
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
      retarder l'installation. Le bouton « Tout télécharger » de l'accueil
      affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v78';
+const VERSION = 'mri-proc-v79';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -54,6 +54,8 @@ const CORE = [
   './vendor/fonts/barlow-condensed-latin-700-normal.woff2',
   './vendor/fonts/barlow-condensed-latin-800-normal.woff2',
   './manifest.webmanifest',
+  './suivi.html',
+  './admin.html',
   './images/logo_roger.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -129,15 +131,28 @@ function precacheMedia() {
    script manquant (= page blanche sous terre). Seuls polices/icônes/logo
    sont tolérés en absence. */
 function optional(u) {
-  return u.indexOf('/fonts/') >= 0 || u.indexOf('./icons/') === 0 || u.indexOf('logo_roger') >= 0;
+  return u.indexOf('/fonts/') >= 0 || u.indexOf('./icons/') === 0 || u.indexOf('logo_roger') >= 0 ||
+    u === './suivi.html' || u === './admin.html';
 }
 self.addEventListener('install', (e) => {
   self.skipWaiting();
-  e.waitUntil(
-    caches.open(VERSION).then((c) =>
-      Promise.all(CORE.map((u) => (optional(u) ? c.add(u).catch(() => null) : c.add(u))))
-    )
-  );
+  e.waitUntil((async () => {
+    const c = await caches.open(VERSION);
+    // Découvre le ?v= courant en lisant index.html : les js/css sont mis en
+    // cache SOUS LEUR URL VERSIONNÉE — correspondance exacte ensuite, donc ni
+    // fichier périmé servi après un déploiement, ni double téléchargement.
+    let v = '';
+    const ix = await fetch('./index.html', { cache: 'reload' });
+    if (!ix || ix.status !== 200) throw new Error('index.html indisponible');
+    const txt = await ix.clone().text();
+    const m = txt.match(/\?v=(\d+)/);
+    if (m) v = '?v=' + m[1];
+    await c.put('./index.html', ix);
+    await Promise.all(CORE.map((u) => {
+      const vu = (v && /\.(js|css)$/.test(u) && u.indexOf('/vendor/') < 0) ? u + v : u;
+      return optional(u) ? c.add(vu).catch(() => null) : c.add(vu);
+    }));
+  })());
 });
 
 self.addEventListener('activate', (e) => {
@@ -173,7 +188,7 @@ self.addEventListener('fetch', (e) => {
     const fromCache = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match('./index.html'));
     const timer = new Promise((resolve) => setTimeout(() => resolve(null), 3000));
     e.respondWith(
-      Promise.race([net.catch(() => null), timer])
+      Promise.race([net.then((r) => (r && r.status === 200 ? r : null)).catch(() => null), timer])
         .then((res) => res || fromCache().then((hit) => hit || net))
     );
     return;
@@ -201,7 +216,7 @@ self.addEventListener('fetch', (e) => {
   // correspondance exacte. Réseau si absent, puis mise en cache. Hors-ligne :
   // repli sur une version précédente du même fichier plutôt que rien.
   e.respondWith(
-    caches.match(req, isMedia ? undefined : { ignoreSearch: true }).then((hit) => hit ||
+    caches.match(req).then((hit) => hit ||
       fetch(req).then((res) => {
         if (res && res.status === 200) {
           const copy = res.clone();

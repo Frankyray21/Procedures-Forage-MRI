@@ -466,6 +466,12 @@
      fichiers ET en Mo, vitesse mesurée et temps restant réel. */
   function startPrecache(force) {
     var box = $('#offline'); if (!box) return;
+    if (!navigator.onLine) {
+      toast('Pas de réseau : lance le téléchargement quand tu as du Wi-Fi ou du signal.');
+      return;
+    }
+    // Stockage persistant (au mieux) : évite que le système purge le pack.
+    try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
     var urls = ['./'].concat(offlineAssets());
     var total = urls.length, totalBytes = sumBytes(urls);
     box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
@@ -518,6 +524,15 @@
         if (hit) { bytesDone += sizeOf(u); mark(u, 'ok'); return; }   // déjà sur l'appareil
         return fetch(u, force ? { cache: 'reload' } : {}).then(function (r) {
           if (!r || r.status !== 200) { failed++; mark(u, 'ko'); return; }
+          // Refuse une réponse de repli du service worker (ancienne révision
+          // servie via ignoreSearch) : la révision de r.url doit être celle
+          // demandée, sinon on marquerait du périmé comme à jour.
+          var wantQ = (u.indexOf('?') >= 0) ? u.slice(u.indexOf('?')) : '';
+          if (r.url) {
+            var gotQ = '';
+            try { gotQ = new URL(r.url).search; } catch (e2) {}
+            if (wantQ && gotQ !== wantQ) { failed++; mark(u, 'ko'); return; }
+          }
           // Mise en cache EXPLICITE des médias (sans dépendre de l'interception
           // par le service worker, absente au tout premier chargement) + purge
           // des anciennes révisions du même fichier.
@@ -840,6 +855,12 @@
     // Une attestation attend déjà son envoi pour cette fiche : pas de re-saisie.
     var pending = '';
     try { pending = localStorage.getItem('attest_pending_' + p.id) || ''; } catch (e) {}
+    if (pending && !aqGet().some(function (it) { return it.pid === p.id; })) {
+      // Marqueur orphelin (file corrompue ou écriture échouée) : on rouvre le
+      // formulaire plutôt que d'afficher pour toujours « sera envoyée ».
+      try { localStorage.removeItem('attest_pending_' + p.id); } catch (e) {}
+      pending = '';
+    }
     if (pending) { attestQueued(sec, suiviName(), null); return; }
     var input = form.querySelector('.attest-name');
     var sugg = form.querySelector('.attest-sugg');
@@ -970,6 +991,7 @@
             localStorage.setItem('attest_sent_' + it.pid, it.sig);
           } catch (e) {}
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
+          aqRefreshView(it.pid);
           aqFlush();                                   // suivante, s'il y en a
           return;
         }
@@ -983,9 +1005,29 @@
           aqFlush();
           return;
         }
-        // 5xx / réponse inattendue : panne passagère, on réessaiera au prochain signal.
+        // 5xx / réponse inattendue : panne passagère → réessai programmé.
+        aqRetryLater();
       })
-      .catch(function () { aqBusy = false; });         // réseau : on réessaiera
+      .catch(function () { aqBusy = false; aqRetryLater(); });   // réseau : réessai programmé
+  }
+  // Réessai automatique borné (le seul événement « online » ne suffit pas :
+  // un 5xx peut arriver alors que le réseau est déjà là).
+  var aqRetryT = null, aqRetries = 0;
+  function aqRetryLater() {
+    if (aqRetryT || aqRetries >= 10 || !aqGet().length) return;
+    aqRetries++;
+    aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(); }, 60000);
+  }
+  // Si la fiche ou le suivi de cette attestation est à l'écran, refléter l'envoi.
+  function aqRefreshView(pid) {
+    var h = location.hash || '';
+    if (h === '#/p/' + pid) {
+      var sec = document.querySelector('.attest-sec[data-proc="' + pid + '"]');
+      var p = DATA.filter(function (x) { return x.id === pid; })[0];
+      if (sec && p) attestSuccess(sec, suiviName(), true, null, '');
+    } else if (h.indexOf('#/suivi') === 0) {
+      renderSuivi($('#view'));
+    }
   }
   window.addEventListener('online', aqFlush);
   // État « enregistrée sur l'appareil, envoi au retour du réseau ».
@@ -1844,12 +1886,13 @@
           btn.disabled = false;
           var list = (d && d.ok && d.results) || null;
           if (!list) { msg.className = 'sv-msg no'; msg.textContent = 'Service injoignable pour le moment. Réessaie plus tard.'; return; }
+          var seen = {};
           var found = 0;
           list.forEach(function (r) {
             var pid = CODE_TO_ID[String(r.proc || '').toUpperCase()] ||
               (DATA.some(function (p) { return p.id === r.proc; }) ? r.proc : '');
             if (!pid) return;
-            found++;
+            if (!seen[pid]) { seen[pid] = 1; found++; }
             // On garde la plus récente si plusieurs attestations existent.
             try {
               var prev = JSON.parse(localStorage.getItem('attest_hist_' + pid) || 'null');

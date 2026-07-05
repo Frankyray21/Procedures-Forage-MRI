@@ -23,8 +23,9 @@
    • GET  /?hist=<nom> → historique des attestations de ce nom (correspondance
                          exacte, casse/accents ignorés) pour la page « Mon
                          suivi » du site. Renvoie { ok:true, results:[{ proc,
-                         titre, date, score, statut }, ...] } — SANS les champs
-                         de temps (réservés aux gestionnaires).
+                         titre, date }, ...] } — volontairement minimal
+                         (pas de score, de statut ni de temps : l'endpoint est
+                         public, seuls la procédure et la date sont exposées).
    • GET  /            → page d'état { ok:true, service:"attestations-procedures" }
    • POST /            → enregistre une attestation. Corps JSON :
        { "name":"...", "employeeId":"rec...(opt)",
@@ -232,7 +233,8 @@ async function listAttestations(name, env, cors) {
   }
   const field = stripAccentsFormula(`LOWER({Nom})`);
   const formula = `TRIM(${field})="${term}"`;
-  const wanted = ["Procédure", "Titre procédure", "Date", "Score quiz", "Statut"];
+  // Vie privée : pas de score ni de statut nominatifs sur un endpoint public.
+  const wanted = ["Procédure", "Titre procédure", "Date"];
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`
             + `?filterByFormula=${encodeURIComponent(formula)}`
             + `&maxRecords=200`
@@ -249,11 +251,9 @@ async function listAttestations(name, env, cors) {
   const results = (data.records || []).map((r) => {
     const f = r.fields || {};
     return {
-      proc:   String(f["Procédure"] || ""),
-      titre:  String(f["Titre procédure"] || ""),
-      date:   String(f["Date"] || ""),
-      score:  String(f["Score quiz"] || ""),
-      statut: String(f["Statut"] || ""),
+      proc:  String(f["Procédure"] || ""),
+      titre: String(f["Titre procédure"] || ""),
+      date:  String(f["Date"] || ""),
     };
   }).filter((r) => r.proc);
   return json({ ok: true, results }, 200, cors);

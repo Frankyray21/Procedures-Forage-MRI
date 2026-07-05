@@ -46,8 +46,8 @@ img{max-width:100%}
 .appbar .brand img{height:34px;width:auto;background:#000;border-radius:6px;padding:3px 6px}
 .appbar .brand .bt{display:flex;flex-direction:column;line-height:1.05;min-width:0}
 .appbar .brand .bt b{font-family:var(--font-display);font-size:1.02rem;font-weight:800;letter-spacing:.02em;
-  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.appbar .brand .bt span{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f1f5f9}
+.appbar .brand .bt span{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:#8694ad}
 .appbar nav{display:flex;gap:.2rem;margin-left:auto;align-items:center}
 .appbar nav a{padding:.45rem .8rem;border-radius:9px;font-weight:700;font-size:.9rem;color:var(--muted);
   transition:color .2s,background .2s;white-space:nowrap}
@@ -445,11 +445,8 @@ footer b{color:var(--muted)}
 .att-empty{color:#5b6678}
 .att-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;border-top:1px solid #e2e8f0;padding-top:1rem;color:#5b6678;font-size:.85rem;font-weight:600}
 @media print{
-  body{background:#fff}
-  .appbar,.gate,footer,.toast,.back,.qacts{display:none!important}
-  body *{visibility:hidden}
-  #attest,#attest *{visibility:visible}
-  #attest{position:absolute;left:0;top:0;width:100%;box-shadow:none;border:none;margin:0}
+  body{background:#fff;color:#111}
+  .appbar,.gate,footer,.toast,.back,.qacts,.cbbtn,.cbpanel,.offcard,.install{display:none!important}
 }
 
 /* ===== liste dense des procédures ===== */
@@ -857,6 +854,7 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .chip.on{color:#b81b1d}
 :root[data-theme="light"] .chip[data-cat]:not([data-cat=""]).on::before{background:#b81b1d}
 :root[data-theme="light"] .appbar nav a{color:#c8d0dc}
+:root[data-theme="light"] .iconbtn{color:#c8d0dc;border-color:#2a3446}
 :root[data-theme="light"] .qopt.ok,:root[data-theme="light"] .pq.correct .pq-exp{color:#065f46}
 :root[data-theme="light"] .qopt.bad{color:#991b1b}
 :root[data-theme="light"] .pill.epi,:root[data-theme="light"] .done-badge{color:#047857}
