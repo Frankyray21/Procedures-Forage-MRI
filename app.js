@@ -717,8 +717,8 @@
   // gris = quiz commencé mais pas terminé. Rien = pas commencé.
   function procState(p) {
     var hasQuiz = !!(window.QUIZ_PROC && (window.QUIZ_PROC[p.id] || []).length);
-    if (attestInfo(p.id)) return '<span class="pstate2 ok">' + ICON.check + ' Signée</span>';
-    if (hasQuiz && pqCompleted(p)) return '<span class="pstate2 todo">Pas signée</span>';
+    if (attestInfo(p.id)) return '<span class="pstate2 ok">' + ICON.check + ' Complétée</span>';
+    if (hasQuiz && pqCompleted(p)) return '<span class="pstate2 todo">Pas complétée</span>';
     if (pqGetBest(p.id)) return '<span class="pstate2 mid">Quiz en cours</span>';
     return '';
   }
@@ -1848,8 +1848,8 @@
     else if (best) badges += '<span class="sv-b sv-warn">Quiz à refaire (questions mises à jour)</span>';
     else badges += '<span class="sv-b sv-mute">Quiz à faire</span>';
     if (toReview) badges += '<span class="sv-b sv-rev">' + toReview + ' question' + (toReview > 1 ? 's' : '') + ' à réviser</span>';
-    if (att && att.src === 'pending') badges += '<span class="sv-b sv-warn">Signée — envoi au retour du réseau</span>';
-    else if (att) badges += '<span class="sv-b sv-ok">' + ICON.check + ' Signée' + (att.date ? ' le ' + esc(fmtDateFR(att.date)) : '') + '</span>';
+    if (att && att.src === 'pending') badges += '<span class="sv-b sv-warn">Complétée — envoi au retour du réseau</span>';
+    else if (att) badges += '<span class="sv-b sv-ok">' + ICON.check + ' Complétée' + (att.date ? ' le ' + esc(fmtDateFR(att.date)) : '') + '</span>';
     else if (read && !best) badges += '<span class="sv-b sv-mute">Consultée</span>';
 
     return '<a class="sv-row" href="#/p/' + esc(p.id) + '">' +
