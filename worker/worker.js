@@ -23,10 +23,18 @@
    • GET  /?hist=<nom> → historique des attestations de ce nom (correspondance
                          exacte, casse/accents ignorés) pour la page « Mon
                          suivi » du site. Renvoie { ok:true, results:[{ proc,
-                         titre, date }, ...] } — volontairement minimal
-                         (pas de score, de statut ni de temps : l'endpoint est
-                         public, seuls la procédure et la date sont exposées).
+                         titre, date }, ...], progress:{...}|null } — volontairement
+                         minimal (pas de statut ni de temps : l'endpoint est
+                         public). `progress` = progression sauvegardée (meilleurs
+                         scores de quiz), pour restaurer sur un nouvel appareil.
    • GET  /            → page d'état { ok:true, service:"attestations-procedures" }
+   • POST / (type:"progress") → sauvegarde la progression du travailleur dans
+       son dossier « Liste employé (registre formation) », champ « Progression
+       procédures (web) ». Corps JSON :
+       { "type":"progress", "name":"Prénom Nom",
+         "data":{ "v":1, "pq":{ "pro-op-ith-004":{ "s":10, "n":12 }, ... } } }
+       Renvoie { ok:true, linked:bool } — linked=false si le nom ne correspond
+       à aucun employé (rien n'est stocké, sans erreur).
    • POST /            → enregistre une attestation. Corps JSON :
        { "name":"...", "employeeId":"rec...(opt)",
          "proc":"PRO-OP-ITH-004", "titre":"Forage en longtrou (ITH / CUBEX)",
@@ -47,6 +55,9 @@ const AIRTABLE_TABLE = "tblKKK7xpP1MwRvYw";   // table « Attestations procédur
 /* Liste des employés, pour relier l'attestation au bon dossier. */
 const EMP_TABLE      = "tbllKuNePDWZMr1cz";   // « Liste employé (registre formation) »
 const EMP_NAME_FIELD = "Name";                // champ principal = nom complet
+/* Progression du site (meilleurs scores de quiz), sauvegardée sur le dossier
+   de l'employé pour être restaurée sur un nouvel appareil / appareil partagé. */
+const PROG_FIELD     = "Progression procédures (web)";
 
 /* Origines autorisées à appeler le Worker depuis un navigateur (CORS). */
 const ALLOWED_ORIGINS = [
@@ -92,6 +103,12 @@ export default {
     if (!name) {
       return json({ ok: false, error: "Nom manquant." }, 400, cors);
     }
+
+    // Sauvegarde de progression (pas une attestation).
+    if (body.type === "progress") {
+      return saveProgress(name, body.data, env, cors);
+    }
+
     const proc = clean(body.proc, 60);
     if (!proc) {
       return json({ ok: false, error: "Procédure manquante." }, 400, cors);
@@ -240,9 +257,13 @@ async function listAttestations(name, env, cors) {
             + `&maxRecords=200`
             + `&sort%5B0%5D%5Bfield%5D=Date&sort%5B0%5D%5Bdirection%5D=desc`
             + wanted.map((f) => `&fields%5B%5D=${encodeURIComponent(f)}`).join("");
-  let at;
+  // Attestations + progression sauvegardée, en parallèle.
+  let at, emp;
   try {
-    at = await fetch(url, { headers: { "Authorization": `Bearer ${env.AIRTABLE_TOKEN}` } });
+    [at, emp] = await Promise.all([
+      fetch(url, { headers: { "Authorization": `Bearer ${env.AIRTABLE_TOKEN}` } }),
+      findEmployee(name, env, true),
+    ]);
   } catch (e) {
     return json({ ok: false, results: [] }, 502, cors);
   }
@@ -256,27 +277,91 @@ async function listAttestations(name, env, cors) {
       date:  String(f["Date"] || ""),
     };
   }).filter((r) => r.proc);
-  return json({ ok: true, results }, 200, cors);
+  return json({ ok: true, results, progress: (emp && emp.progress) || null }, 200, cors);
+}
+
+/* ── sauvegarde de la progression (meilleurs scores de quiz) ────────────────
+   Écrite sur le dossier de l'employé (champ « Progression procédures (web) »)
+   quand le nom correspond EXACTEMENT à un employé — sinon on répond quand même
+   ok:true (linked:false) : rien n'est stocké, le site garde la copie locale. */
+async function saveProgress(name, data, env, cors) {
+  if (!env.AIRTABLE_TOKEN) {
+    return json({ ok: false, error: "AIRTABLE_TOKEN non configuré." }, 500, cors);
+  }
+  const prog = sanitizeProgress(data);
+  if (!prog) return json({ ok: false, error: "Progression invalide." }, 400, cors);
+  const emp = await findEmployee(name, env, false);
+  if (!emp || !emp.id) return json({ ok: true, linked: false }, 200, cors);
+  try {
+    const at = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${EMP_TABLE}/${emp.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Authorization": `Bearer ${env.AIRTABLE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields: { [PROG_FIELD]: JSON.stringify(prog) } }),
+      }
+    );
+    if (!at.ok) return json({ ok: false, error: "Airtable a refusé la sauvegarde." }, 502, cors);
+    return json({ ok: true, linked: true }, 200, cors);
+  } catch (e) {
+    return json({ ok: false, error: "Airtable injoignable." }, 502, cors);
+  }
+}
+
+/* Ne garde que la forme attendue : { v:1, pq:{ <id proc>:{ s, n } } } — borné
+   (300 procédures max, ids ≤ 60 car., scores entiers 0…999). Renvoie null si
+   le corps n'a pas cette forme. */
+function sanitizeProgress(data) {
+  if (!data || typeof data !== "object" || !data.pq || typeof data.pq !== "object") return null;
+  const pq = {};
+  let count = 0;
+  for (const key of Object.keys(data.pq)) {
+    if (count >= 300) break;
+    const id = clean(key, 60);
+    const v = data.pq[key];
+    if (!id || !v || typeof v !== "object") continue;
+    const s = Math.round(Number(v.s)), n = Math.round(Number(v.n));
+    if (!isFinite(s) || !isFinite(n) || s < 0 || n < 1 || n > 999 || s > n) continue;
+    pq[id] = { s, n };
+    count++;
+  }
+  return { v: 1, pq };
 }
 
 /* Cherche UN employé dont le nom complet correspond exactement (casse/accents
    ignorés). Renvoie son record id, ou "" si aucun / plusieurs (ambigu). */
 async function findEmployeeByName(name, env) {
+  const emp = await findEmployee(name, env, false);
+  return (emp && emp.id) || "";
+}
+
+/* Comme ci-dessus, mais renvoie { id, progress } — progress (objet ou null)
+   n'est lu que si withProgress est vrai. null si aucun employé unique. */
+async function findEmployee(name, env, withProgress) {
   const term = deburr(clean(name, 120).toLowerCase()).replace(/["\\]/g, " ").trim();
-  if (term.length < 2) return "";
+  if (term.length < 2) return null;
   const field = stripAccentsFormula(`LOWER({${EMP_NAME_FIELD}})`);
   const formula = `TRIM(${field})="${term}"`;
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${EMP_TABLE}`
             + `?filterByFormula=${encodeURIComponent(formula)}`
-            + `&maxRecords=2&fields%5B%5D=${encodeURIComponent(EMP_NAME_FIELD)}`;
+            + `&maxRecords=2&fields%5B%5D=${encodeURIComponent(EMP_NAME_FIELD)}`
+            + (withProgress ? `&fields%5B%5D=${encodeURIComponent(PROG_FIELD)}` : "");
   try {
     const at = await fetch(url, { headers: { "Authorization": `Bearer ${env.AIRTABLE_TOKEN}` } });
-    if (!at.ok) return "";
+    if (!at.ok) return null;
     const data = await at.json();
     const recs = data.records || [];
-    return recs.length === 1 ? recs[0].id : "";
+    if (recs.length !== 1) return null;
+    let progress = null;
+    if (withProgress) {
+      try { progress = sanitizeProgress(JSON.parse(recs[0].fields[PROG_FIELD] || "")); } catch (e) {}
+    }
+    return { id: recs[0].id, progress };
   } catch (e) {
-    return "";
+    return null;
   }
 }
 

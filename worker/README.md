@@ -41,8 +41,9 @@ Prévention TMS. Le fichier à déployer est **[`worker.js`](./worker.js)**.
 | --- | --- |
 | `GET /` | État du service (`{ ok:true, service:… }`) |
 | `GET /?q=<texte>` | Autocomplétion des noms d'employés (formulaire d'attestation) |
-| `GET /?hist=<nom>` | Historique des attestations de ce nom — page « Mon suivi » du site. Renvoie **uniquement** `proc, titre, date` (endpoint public : pas de score, de statut ni de temps) |
+| `GET /?hist=<nom>` | Historique des attestations de ce nom — page « Mon suivi » du site. Renvoie **uniquement** `proc, titre, date` + `progress` (meilleurs scores de quiz sauvegardés — endpoint public : pas de statut ni de temps) |
 | `POST /` | Enregistre une attestation dans Airtable |
+| `POST /` avec `type:"progress"` | Sauvegarde la progression du travailleur (meilleurs scores de quiz, JSON borné) dans son dossier « Liste employé (registre formation) », champ « Progression procédures (web) ». `linked:false` si le nom ne correspond à aucun employé (rien n'est stocké) |
 
 ### Le jeton Airtable (`AIRTABLE_TOKEN`)
 

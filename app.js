@@ -30,6 +30,57 @@
   }
   function $(sel, root) { return (root || document).querySelector(sel); }
   function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+
+  /* ---------- profil travailleur (appareil partagé, changement d'appareil) ----
+     Les données personnelles (scores de quiz, attestations vues, checklists,
+     chronos) sont rangées PAR TRAVAILLEUR : clé « u:<nom normalisé>:<clé> ».
+     Tant qu'aucun profil n'existe (premier usage), les clés restent nues ; au
+     premier profil, elles sont adoptées dans son espace. CHANGER de profil ne
+     supprime rien : chaque travailleur retrouve ses données en revenant — même
+     hors ligne. La progression est aussi sauvegardée dans Airtable (dossier de
+     l'employé) pour survivre à un changement d'appareil : voir progPush(). */
+  var P_KEYS = /^(pq_|attest_hist_|attest_sent_|attest_pending_|ck_|pt_read_|pt_quiz_|prog_)/;
+  function profName() { try { return localStorage.getItem('prof_name') || ''; } catch (e) { return ''; } }
+  function profSlug(name) { return norm(name).replace(/\s+/g, ' ').trim(); }
+  function pkeyFor(slug, base) { return slug ? 'u:' + slug + ':' + base : base; }
+  function pkey(base) { return pkeyFor(profSlug(profName()), base); }
+  function profSet(name) {
+    name = String(name || '').replace(/\s+/g, ' ').trim();
+    if (!name) return;
+    if (!profName()) migrateToProfile(profSlug(name));
+    try { localStorage.setItem('prof_name', name); localStorage.setItem('suivi_name', name); } catch (e) {}
+  }
+  /* Premier profil de l'appareil : les données déjà présentes (clés nues)
+     appartiennent à cette personne — on les déplace dans son espace. */
+  function migrateToProfile(slug) {
+    if (!slug) return;
+    try {
+      var move = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (P_KEYS.test(k) || k === 'last_proc') move.push(k);
+      }
+      move.forEach(function (k) {
+        localStorage.setItem('u:' + slug + ':' + k, localStorage.getItem(k));
+        localStorage.removeItem(k);
+      });
+    } catch (e) {}
+  }
+  /* Attestation sous un AUTRE nom (appareil partagé) : le quiz qui vient d'être
+     réussi appartient au nouveau nom — les données de CETTE fiche déménagent
+     dans son espace, le reste de l'ancien profil ne bouge pas. */
+  function profAdopt(pid, name) {
+    var cur = profName();
+    if (!cur || profSlug(cur) === profSlug(name)) { profSet(name); return; }
+    var to = profSlug(name);
+    ['pq_' + pid, 'pq_fail_' + pid, 'pt_read_' + pid, 'pt_quiz_' + pid].forEach(function (base) {
+      try {
+        var v = localStorage.getItem(pkey(base));
+        if (v != null) { localStorage.setItem(pkeyFor(to, base), v); localStorage.removeItem(pkey(base)); }
+      } catch (e) {}
+    });
+    profSet(name);
+  }
   // NOTE : shuffle (mélange sur COPIE) est déclarée une seule fois, plus bas
   // avec les utilitaires du quiz éclair — une 2e déclaration ici créait deux
   // sémantiques concurrentes (en place vs copie) départagées par le hoisting.
@@ -100,14 +151,14 @@
   }
   function ptFlush() {
     if (!PT.pid) return;
-    if (PT.page) ptSet('pt_read_' + PT.pid, PT.page.ms());
-    if (PT.quiz) ptSet('pt_quiz_' + PT.pid, PT.quiz.ms());
+    if (PT.page) ptSet(pkey('pt_read_' + PT.pid), PT.page.ms());
+    if (PT.quiz) ptSet(pkey('pt_quiz_' + PT.pid), PT.quiz.ms());
   }
   function ptStartPage(id) {
     ptFlush();
     PT.pid = id; PT.quizOpen = false;
-    PT.page = mkClock(ptGet('pt_read_' + id));
-    PT.quiz = mkClock(ptGet('pt_quiz_' + id));
+    PT.page = mkClock(ptGet(pkey('pt_read_' + id)));
+    PT.quiz = mkClock(ptGet(pkey('pt_quiz_' + id)));
     if (!document.hidden) PT.page.start();      // le quiz démarre à l'ouverture du quiz
   }
   function ptLeavePage() { ptFlush(); if (PT.page) PT.page.pause(); if (PT.quiz) PT.quiz.pause(); PT.pid = null; PT.quizOpen = false; }
@@ -126,7 +177,7 @@
   // Instantané (ms) sans arrêter les chronos — utilisé au moment d'attester.
   function ptSnapshot(id) {
     if (PT.pid === id) ptFlush();
-    return { read: ptGet('pt_read_' + id), quiz: ptGet('pt_quiz_' + id) };
+    return { read: ptGet(pkey('pt_read_' + id)), quiz: ptGet(pkey('pt_quiz_' + id)) };
   }
   // « 3 min 42 s », « 45 s », « 1 h 05 min ».
   function fmtDuration(ms) {
@@ -615,7 +666,7 @@
     var rr = $('#resumeRow');
     if (rr) {
       var lp = '';
-      try { lp = localStorage.getItem('last_proc') || ''; } catch (e) {}
+      try { lp = localStorage.getItem(pkey('last_proc')) || ''; } catch (e) {}
       var p0 = lp ? DATA.filter(function (x) { return x.id === lp; })[0] : null;
       rr.innerHTML = (p0 && inSection(p0, state.fam))
         ? '<a class="resume-l" href="#/p/' + esc(p0.id) + '"><span>Reprendre</span><b>' + esc(p0.titre) + '</b>' + ICON.arrow + '</a>'
@@ -884,7 +935,7 @@
     h += '</div>';
     view.innerHTML = h;
     ptStartPage(p.id);          // démarre le chrono de consultation (suivi gestionnaire)
-    try { localStorage.setItem('last_proc', p.id); } catch (e) {}
+    try { localStorage.setItem(pkey('last_proc'), p.id); } catch (e) {}
     initChecklistState();
     initGallery(figs, p.id);
     initDocViewer();
@@ -953,11 +1004,11 @@
     var endpoint = attestEndpoint(); if (!endpoint) return;
     // Une attestation attend déjà son envoi pour cette fiche : pas de re-saisie.
     var pending = '';
-    try { pending = localStorage.getItem('attest_pending_' + p.id) || ''; } catch (e) {}
-    if (pending && !aqGet().some(function (it) { return it.pid === p.id; })) {
+    try { pending = localStorage.getItem(pkey('attest_pending_' + p.id)) || ''; } catch (e) {}
+    if (pending && !aqGet().some(function (it) { return it.pid === p.id && (it.u == null || it.u === profSlug(profName())); })) {
       // Marqueur orphelin (file corrompue ou écriture échouée) : on rouvre le
       // formulaire plutôt que d'afficher pour toujours « sera envoyée ».
-      try { localStorage.removeItem('attest_pending_' + p.id); } catch (e) {}
+      try { localStorage.removeItem(pkey('attest_pending_' + p.id)); } catch (e) {}
       pending = '';
     }
     if (pending) { attestQueued(sec, suiviName(), null); return; }
@@ -968,7 +1019,7 @@
     var msg = form.querySelector('.attest-msg');
     var pickedId = '', pickedName = '';
     var HINT0 = 'Commence à taper, puis choisis ton nom dans la liste.';
-    try { input.value = localStorage.getItem('attest_name') || ''; } catch (e) {}
+    try { input.value = profName() || localStorage.getItem('attest_name') || ''; } catch (e) {}
 
     function db(s) { try { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { return s; } }
     function setHint(t, ok) { hint.textContent = t; hint.className = 'attest-hint' + (ok ? ' ok' : ''); }
@@ -1025,6 +1076,9 @@
     sendBtn.onclick = function () {
       var name = (input.value || '').trim();
       if (!name) { input.focus(); setHint('Entre ton nom avant d\'attester.', false); return; }
+      // Appareil partagé : ce nom devient le profil actif de l'appareil (le
+      // quiz de cette fiche le suit si le nom diffère de l'ancien profil).
+      profAdopt(p.id, name);
       var best = pqBestPct(p.id);
       var t = ptSnapshot(p.id);      // temps de consultation + temps de quiz (suivi gestionnaire)
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
@@ -1035,7 +1089,7 @@
         readSeconds: Math.round(t.read / 1000), quizSeconds: Math.round(t.quiz / 1000) };
       var sig = attestSig(p.id, name);
       var done = '';
-      try { done = localStorage.getItem('attest_sent_' + p.id) || ''; } catch (e) {}
+      try { done = localStorage.getItem(pkey('attest_sent_' + p.id)) || ''; } catch (e) {}
       if (done === sig) { attestSuccess(sec, name, true, payload, ''); return; }
       try { localStorage.setItem('attest_name', name); } catch (e) {}
       // Hors-ligne (cas normal sous terre) : on met en file d'attente locale,
@@ -1047,8 +1101,9 @@
         .then(function (res) {
           sendBtn.disabled = false;
           if (res && res.ok && res.j && res.j.ok) {
-            try { localStorage.setItem('attest_sent_' + p.id, sig); } catch (e) {}
+            try { localStorage.setItem(pkey('attest_sent_' + p.id), sig); } catch (e) {}
             attestSuccess(sec, name, res.j.linked, payload, res.j.id || '');
+            progPushSoon();
           } else {
             msg.className = 'attest-msg no';
             msg.textContent = 'Enregistrement impossible pour le moment. Réessaie dans un instant.';
@@ -1072,9 +1127,9 @@
   function aqSet(q) { try { localStorage.setItem('attest_queue', JSON.stringify(q)); } catch (e) {} }
   function aqAdd(pid, sig, payload) {
     var q = aqGet().filter(function (it) { return it.sig !== sig; });
-    q.push({ pid: pid, sig: sig, payload: payload });
+    q.push({ pid: pid, sig: sig, payload: payload, u: profSlug(profName()) });
     aqSet(q);
-    try { localStorage.setItem('attest_pending_' + pid, payload.date || ''); } catch (e) {}
+    try { localStorage.setItem(pkey('attest_pending_' + pid), payload.date || ''); } catch (e) {}
   }
   var aqBusy = false;
   function aqFlush() {
@@ -1092,12 +1147,14 @@
         aqBusy = false;
         if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {          // envoyé
           aqDrop();
+          var uSlug = (it.u != null) ? it.u : profSlug(profName());
           try {
-            localStorage.removeItem('attest_pending_' + it.pid);
-            localStorage.setItem('attest_sent_' + it.pid, it.sig);
+            localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
+            localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
           } catch (e) {}
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
-          aqRefreshView(it.pid);
+          aqRefreshView(it.pid, uSlug);
+          progPushSoon();
           aqFlush();                                   // suivante, s'il y en a
           return;
         }
@@ -1106,7 +1163,7 @@
           // pour ne pas bloquer les attestations suivantes, et on rouvre la
           // possibilité d'attester cette fiche.
           aqDrop();
-          try { localStorage.removeItem('attest_pending_' + it.pid); } catch (e) {}
+          try { localStorage.removeItem(pkeyFor((it.u != null) ? it.u : profSlug(profName()), 'attest_pending_' + it.pid)); } catch (e) {}
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » refusée — refais-la depuis la fiche.');
           aqFlush();
           return;
@@ -1125,7 +1182,8 @@
     aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(); }, 60000);
   }
   // Si la fiche ou le suivi de cette attestation est à l'écran, refléter l'envoi.
-  function aqRefreshView(pid) {
+  function aqRefreshView(pid, uSlug) {
+    if (uSlug != null && uSlug !== profSlug(profName())) return;   // autre profil : rien à rafraîchir
     var h = location.hash || '';
     if (h === '#/p/' + pid) {
       var sec = document.querySelector('.attest-sec[data-proc="' + pid + '"]');
@@ -1136,6 +1194,95 @@
     }
   }
   window.addEventListener('online', aqFlush);
+
+  /* ---------- sauvegarde serveur de la progression ----------
+     À chaque quiz complété ou amélioré, les meilleurs scores du profil actif
+     partent dans Airtable (dossier de l'employé, champ « Progression
+     procédures (web) ») quand le réseau est là — sinon marqué « à pousser »
+     et envoyé au retour du réseau. À l'ouverture (au plus toutes les 6 h), la
+     progression serveur est relue et fusionnée : un nouvel appareil retrouve
+     tout dès que le travailleur s'est identifié une fois. */
+  function progCollect() {
+    var pq = {};
+    DATA.forEach(function (p) {
+      var b = pqGetBest(p.id);
+      if (b) pq[p.id] = { s: b.s, n: b.n };
+    });
+    return { v: 1, pq: pq };
+  }
+  /* Fusion local/serveur : le total ACTUEL du quiz fait foi ; à total égal, le
+     meilleur score gagne. Écrit directement (sans re-déclencher un envoi). */
+  function progMerge(remote) {
+    if (!remote || !remote.pq) return 0;
+    var applied = 0;
+    Object.keys(remote.pq).forEach(function (id) {
+      if (!DATA.some(function (p) { return p.id === id; })) return;
+      var r = remote.pq[id];
+      if (!r || typeof r.s !== 'number' || typeof r.n !== 'number') return;
+      var total = (window.QUIZ_PROC && window.QUIZ_PROC[id] || []).length;
+      var b = pqGetBest(id);
+      var take = !b || (total && r.n === total && b.n !== total) || (b.n === r.n && r.s > b.s);
+      if (take) {
+        try { localStorage.setItem(pkey('pq_' + id), JSON.stringify({ s: r.s, n: r.n })); applied++; } catch (e) {}
+      }
+    });
+    return applied;
+  }
+  var progT = null;
+  function progPushSoon() { if (progT) clearTimeout(progT); progT = setTimeout(progPush, 4000); }
+  function progPush() {
+    var name = profName();
+    if (!name || !attestEndpoint()) return;
+    if (!navigator.onLine) { try { localStorage.setItem(pkey('prog_dirty'), '1'); } catch (e) {} return; }
+    var data = progCollect();
+    if (!Object.keys(data.pq).length) return;
+    fetch(attestEndpoint(), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'progress', name: name, data: data }) })
+      .then(function (r) { if (r && r.ok) { try { localStorage.removeItem(pkey('prog_dirty')); } catch (e) {} } })
+      .catch(function () { try { localStorage.setItem(pkey('prog_dirty'), '1'); } catch (e) {} });
+  }
+  /* Applique l'historique d'attestations du serveur au profil actif.
+     Renvoie le nombre de procédures retrouvées. */
+  function applyHist(list) {
+    var seen = {}, found = 0;
+    (list || []).forEach(function (r) {
+      var pid = CODE_TO_ID[String(r.proc || '').toUpperCase()] ||
+        (DATA.some(function (p) { return p.id === r.proc; }) ? r.proc : '');
+      if (!pid) return;
+      if (!seen[pid]) { seen[pid] = 1; found++; }
+      try {
+        var prev = JSON.parse(localStorage.getItem(pkey('attest_hist_' + pid)) || 'null');
+        if (!prev || String(r.date) > String(prev.date)) {
+          localStorage.setItem(pkey('attest_hist_' + pid), JSON.stringify({ date: r.date || '', score: r.score || '' }));
+        }
+      } catch (e) {}
+    });
+    return found;
+  }
+  /* Relecture silencieuse de la progression serveur (profil actif). */
+  function progPullAuto() {
+    var name = profName();
+    if (!name || !attestEndpoint() || !navigator.onLine) return;
+    var last = 0;
+    try { last = parseInt(localStorage.getItem(pkey('prog_pull_t')), 10) || 0; } catch (e) {}
+    if (Date.now() - last < 6 * 3600 * 1000) return;
+    fetch(attestEndpoint() + '?hist=' + encodeURIComponent(name))
+      .then(function (r) { return r && r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || !d.ok) return;
+        try { localStorage.setItem(pkey('prog_pull_t'), String(Date.now())); } catch (e) {}
+        var a = applyHist(d.results || []);
+        var m = progMerge(d.progress);
+        if ((a || m) && (location.hash || '').indexOf('#/suivi') === 0) renderSuivi($('#view'));
+      })
+      .catch(function () {});
+  }
+  function progDirtyFlush() {
+    var dirty = false;
+    try { dirty = localStorage.getItem(pkey('prog_dirty')) === '1'; } catch (e) {}
+    if (dirty) progPush();
+  }
+  window.addEventListener('online', function () { progDirtyFlush(); progPullAuto(); });
   // État « enregistrée sur l'appareil, envoi au retour du réseau ».
   function attestQueued(sec, name, payload) {
     sec.innerHTML = '<h2>Attestation de lecture</h2>' +
@@ -1280,8 +1427,8 @@
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
   // Questions ratées (mode révision) : indices d'origine, persistés par fiche.
-  function pqGetFails(id) { try { var v = JSON.parse(localStorage.getItem('pq_fail_' + id)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
-  function pqSetFails(id, arr) { try { localStorage.setItem('pq_fail_' + id, JSON.stringify(arr)); } catch (e) {} }
+  function pqGetFails(id) { try { var v = JSON.parse(localStorage.getItem(pkey('pq_fail_' + id))); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function pqSetFails(id, arr) { try { localStorage.setItem(pkey('pq_fail_' + id), JSON.stringify(arr)); } catch (e) {} }
   // Re-rend la section attestation (déblocage en direct quand le quiz est réussi).
   function updateAttestGate(id) {
     var sec = document.querySelector('.attest-sec[data-proc="' + id + '"]'); if (!sec) return;
@@ -1292,13 +1439,13 @@
     sec.parentNode.replaceChild(d.firstElementChild, sec);
     initAttestation(p);       // câble l'autocomplétion + l'envoi sur la section fraîchement débloquée
   }
-  function pqGetBest(id) { try { var v = JSON.parse(localStorage.getItem('pq_' + id)); return (v && typeof v.s === 'number') ? v : null; } catch (e) { return null; } }
+  function pqGetBest(id) { try { var v = JSON.parse(localStorage.getItem(pkey('pq_' + id))); return (v && typeof v.s === 'number') ? v : null; } catch (e) { return null; } }
   function pqSetBest(id, s, n) {
     var b = pqGetBest(id);
     // Écrase aussi quand le NOMBRE de questions a changé (quiz mis à jour) :
     // sinon un ancien record 9/10 rend un nouveau 8/8 imbattable et
     // l'attestation reste verrouillée pour toujours.
-    if (!b || b.n !== n || s > b.s) { try { localStorage.setItem('pq_' + id, JSON.stringify({ s: s, n: n })); } catch (e) {} }
+    if (!b || b.n !== n || s > b.s) { try { localStorage.setItem(pkey('pq_' + id), JSON.stringify({ s: s, n: n })); } catch (e) {} progPushSoon(); }
   }
   // Rend une question selon son type. it.t : absent = choix de réponse ;
   // 'vf' = vrai ou faux ; 'multi' = cocher les affirmations vraies ;
@@ -1684,8 +1831,8 @@
   var lbKeys = { bound: false, show: null, close: null, cur: function () { return 0; } };
 
   /* ---------- liste de vérification (checklist) ---------- */
-  function ckGet(id) { try { return JSON.parse(localStorage.getItem('ck_' + id) || '[]'); } catch (e) { return []; } }
-  function ckSet(id, a) { try { localStorage.setItem('ck_' + id, JSON.stringify(a)); } catch (e) {} }
+  function ckGet(id) { try { return JSON.parse(localStorage.getItem(pkey('ck_' + id)) || '[]'); } catch (e) { return []; } }
+  function ckSet(id, a) { try { localStorage.setItem(pkey('ck_' + id), JSON.stringify(a)); } catch (e) {} }
   function ckUpdate(box) {
     var cbs = box.querySelectorAll('input[type=checkbox]');
     var n = cbs.length, c = [].filter.call(cbs, function (x) { return x.checked; }).length;
@@ -1944,20 +2091,20 @@
      de passe. Les temps de consultation ne sont JAMAIS montrés ici : ils sont
      réservés aux gestionnaires (Airtable). */
   function suiviName() {
-    try { return localStorage.getItem('suivi_name') || localStorage.getItem('attest_name') || ''; } catch (e) { return ''; }
+    try { return localStorage.getItem('prof_name') || localStorage.getItem('suivi_name') || localStorage.getItem('attest_name') || ''; } catch (e) { return ''; }
   }
   // Attestation connue pour cette fiche : envoyée depuis CET appareil
   // (attest_sent_) ou retrouvée dans l'historique Airtable (attest_hist_).
   function attestInfo(id) {
     var raw = '';
-    try { raw = localStorage.getItem('attest_sent_' + id) || ''; } catch (e) {}
+    try { raw = localStorage.getItem(pkey('attest_sent_' + id)) || ''; } catch (e) {}
     if (raw) { var parts = raw.split('|'); return { date: parts[2] || '', score: '', src: 'local' }; }
     try {
-      var pd = localStorage.getItem('attest_pending_' + id);
+      var pd = localStorage.getItem(pkey('attest_pending_' + id));
       if (pd) return { date: pd, score: '', src: 'pending' };
     } catch (e) {}
     try {
-      var h = JSON.parse(localStorage.getItem('attest_hist_' + id));
+      var h = JSON.parse(localStorage.getItem(pkey('attest_hist_' + id)));
       if (h && h.date) return { date: h.date, score: h.score || '', src: 'hist' };
     } catch (e) {}
     return null;
@@ -1966,7 +2113,7 @@
     var total = (window.QUIZ_PROC && window.QUIZ_PROC[p.id] || []).length;
     var best = pqGetBest(p.id);
     var att = attestInfo(p.id);
-    var read = ptGet('pt_read_' + p.id) > 0;
+    var read = ptGet(pkey('pt_read_' + p.id)) > 0;
     var quizDone = !!(best && total && best.n === total);
     var pct = (best && best.n) ? Math.round(best.s / best.n * 100) : null;
     var toReview = quizDone ? pqGetFails(p.id).filter(function (i) { return i < total; }).length : 0;
@@ -2025,7 +2172,7 @@
         '<span class="eyebrow">Suivi de formation</span>' +
         '<h1>Mon <span class="hl">suivi</span></h1>' +
         '<p class="lead">Ta progression sur les procédures : quiz complétés, attestations envoyées et résultats détaillés.' +
-        (name ? ' Résultats enregistrés sur cet appareil' + (name ? ' — <b>' + esc(name) + '</b>' : '') + '.' : '') + '</p>' +
+        (name ? ' Travailleur actif : <b>' + esc(name) + '</b>.' : '') + '</p>' +
         '<div class="stats">' +
           '<div class="stat"><b>' + attested.length + ' / ' + DATA.length + '</b><span>Attestations</span></div>' +
           '<div class="stat"><b>' + quizDone.length + ' / ' + withQuiz.length + '</b><span>Quiz complétés</span></div>' +
@@ -2045,11 +2192,11 @@
   function suiviSyncHTML() {
     if (!attestEndpoint()) return '';
     return '<div class="sv-sync">' +
-      '<b>Changer d\'appareil ?</b>' +
-      '<p>Tes attestations sont enregistrées pour le suivi officiel même si tu changes de téléphone. Pour les revoir ici, entre ton nom exact (le même que sur tes attestations) :</p>' +
+      '<b>Nouveau téléphone ou appareil partagé ?</b>' +
+      '<p>Ta progression (quiz et attestations) est sauvegardée avec ton nom. Entre ton nom exact pour la retrouver ici — sur un appareil partagé, chaque travailleur retrouve ses propres résultats en entrant le sien.</p>' +
       '<div class="sv-form">' +
         '<input type="text" class="sv-name" placeholder="Prénom Nom" autocomplete="off" value="' + esc(suiviName()) + '">' +
-        '<button type="button" class="btn sv-fetch">Récupérer mon historique</button>' +
+        '<button type="button" class="btn sv-fetch">Récupérer ma progression</button>' +
       '</div><div class="sv-msg" aria-live="polite"></div></div>';
   }
   function initSuiviSync(view) {
@@ -2058,35 +2205,40 @@
     var btn = box.querySelector('.sv-fetch');
     var msg = box.querySelector('.sv-msg');
     btn.onclick = function () {
-      var name = (input.value || '').trim();
+      var name = (input.value || '').replace(/\s+/g, ' ').trim();
       if (name.length < 2) { msg.className = 'sv-msg no'; msg.textContent = 'Entre ton nom complet.'; input.focus(); return; }
-      if (!navigator.onLine) { msg.className = 'sv-msg no'; msg.textContent = 'Hors ligne : reconnecte-toi au réseau pour récupérer ton historique.'; return; }
+      // Ce nom devient le profil actif de l'appareil : ses données locales
+      // (appareil partagé) reviennent tout de suite, même hors ligne.
+      var switched = profSlug(name) !== profSlug(profName());
+      profSet(name);
+      function setMsg2(cls, txt) {           // le rendu recrée la boîte → viser la nouvelle
+        var m2 = document.querySelector('.sv-msg');
+        if (m2) { m2.className = 'sv-msg' + (cls ? ' ' + cls : ''); m2.textContent = txt; }
+      }
+      if (!navigator.onLine) {
+        renderSuivi($('#view'));
+        setMsg2('no', (switched ? 'Profil actif : ' + name + '. ' : '') +
+          'Hors ligne — la progression enregistrée avec ce nom sera récupérée au retour du réseau.');
+        return;
+      }
       btn.disabled = true; msg.className = 'sv-msg'; msg.textContent = 'Recherche…';
       fetch(attestEndpoint() + '?hist=' + encodeURIComponent(name))
         .then(function (r) { return r && r.ok ? r.json() : null; })
         .then(function (d) {
           btn.disabled = false;
-          var list = (d && d.ok && d.results) || null;
-          if (!list) { msg.className = 'sv-msg no'; msg.textContent = 'Service injoignable pour le moment. Réessaie plus tard.'; return; }
-          var seen = {};
-          var found = 0;
-          list.forEach(function (r) {
-            var pid = CODE_TO_ID[String(r.proc || '').toUpperCase()] ||
-              (DATA.some(function (p) { return p.id === r.proc; }) ? r.proc : '');
-            if (!pid) return;
-            if (!seen[pid]) { seen[pid] = 1; found++; }
-            // On garde la plus récente si plusieurs attestations existent.
-            try {
-              var prev = JSON.parse(localStorage.getItem('attest_hist_' + pid) || 'null');
-              if (!prev || String(r.date) > String(prev.date)) {
-                localStorage.setItem('attest_hist_' + pid, JSON.stringify({ date: r.date || '', score: r.score || '' }));
-              }
-            } catch (e) {}
-          });
-          try { localStorage.setItem('suivi_name', name); } catch (e) {}
-          if (!found) { msg.className = 'sv-msg no'; msg.textContent = 'Aucune attestation trouvée à ce nom. Vérifie l\'orthographe exacte (Prénom Nom).'; return; }
+          if (!d || !d.ok) { msg.className = 'sv-msg no'; msg.textContent = 'Service injoignable pour le moment. Réessaie plus tard.'; return; }
+          var found = applyHist(d.results || []);
+          var merged = progMerge(d.progress);
+          try { localStorage.setItem(pkey('prog_pull_t'), String(Date.now())); } catch (e) {}
           renderSuivi($('#view'));
-          toast(found + ' attestation' + (found > 1 ? 's' : '') + ' retrouvée' + (found > 1 ? 's' : '') + '.');
+          if (found || merged) {
+            setMsg2('', 'Profil actif : ' + name + ' — ' + found + ' attestation' + (found > 1 ? 's' : '') +
+              (merged ? ' et ' + merged + ' quiz' : '') + ' retrouvé' + (found + merged > 1 ? 's' : '') + '.');
+            toast('Progression de ' + name + ' restaurée.');
+          } else {
+            setMsg2('no', 'Profil actif : ' + name + ' — aucune donnée enregistrée à ce nom. ' +
+              'Nouveau départ, ou vérifie l\'orthographe exacte (Prénom Nom).');
+          }
         })
         .catch(function () {
           btn.disabled = false;
@@ -2202,5 +2354,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     route(); initInstall(); initChecklistEvents(); initTheme();
     aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
+    progDirtyFlush();   // progression marquée « à pousser » pendant une panne
+    progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
   });
 })();
