@@ -961,7 +961,7 @@ footer b{color:var(--muted)}
 .resume-l svg{flex:none;color:var(--accent-l)}
 .resume-l:hover{border-color:rgba(210,35,37,.4)}
 /* bascule de classement : Par code / Par tâche / Par machine */
-.lrow{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin:.2rem 0 .45rem}
+.lrow{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;margin:.2rem 0 .5rem}  /* compte et bascule sur deux lignes */
 .lrow .count{margin:0}
 .lmodes{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .lmode{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}

@@ -93,7 +93,11 @@
     doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
     fwd: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
     close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
-    tool: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>'
+    tool: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>',
+    // pictogrammes de la bascule de classement (code / tâche / machine)
+    hash: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>',
+    clip: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>',
+    gear: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>'
   };
   // pictogrammes par type de point de la checklist
   var TYPE_ICON = {
@@ -698,15 +702,16 @@
   function renderListMode() {
     var box = $('#lmode'); if (!box) return;
     var m = listMode();
-    var mb = function (val, on, label) {
+    var mb = function (val, on, label, aria) {
       return '<button type="button" class="lmode-b' + (on ? ' on' : '') + '" data-m="' + val + '"' +
-        ' aria-pressed="' + (on ? 'true' : 'false') + '">' + label + '</button>';
+        ' aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + aria + '" title="' + aria + '">' +
+        label + '</button>';
     };
     box.innerHTML =
       '<div class="lmode" role="group" aria-label="Classement">' +
-        mb('code', m === 'code', 'Par code') +
-        mb('cat', m === 'cat', 'Par tâche') +
-        mb('mach', m === 'mach', 'Par machine') +
+        mb('code', m === 'code', ICON.hash + ' Code', 'Classer par code') +
+        mb('cat', m === 'cat', ICON.clip + ' Tâche', 'Classer par tâche') +
+        mb('mach', m === 'mach', ICON.gear + ' Machine', 'Classer par machine') +
       '</div>';
     [].forEach.call(box.querySelectorAll('.lmode-b'), function (b) {
       b.onclick = function () {
