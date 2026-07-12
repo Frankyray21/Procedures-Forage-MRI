@@ -868,6 +868,67 @@
       '</div>' +
       '<span class="parrow">' + ICON.arrow + '</span></a>';
   }
+  /* ---------- aperçu au survol d'une rangée (souris seulement) ----------
+     Après un court délai, une infobulle montre le résumé, les machines, les
+     valeurs clés et le document officiel (1re page + nombre de pages). Les
+     écrans tactiles ne sont pas concernés (le toucher ouvre la fiche). */
+  var hoverTimer = null;
+  function hoverHTML(p) {
+    var pages = (!DEMO && window.PAGES && window.PAGES[p.id]) || [];
+    var img = pages.length
+      ? '<img class="hc-img" src="' + esc(withRev(pages[0], p.id)) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+      : '';
+    var machines = (p.machines || []).join(', ');
+    var meta = [];
+    if (pages.length) meta.push('PDF officiel : ' + pages.length + ' page' + (pages.length > 1 ? 's' : ''));
+    if (p.date_revision) meta.push('Rév. ' + p.date_revision);
+    else if (p.date_creation) meta.push(p.date_creation);
+    var vals = (p.valeurs_cles || []).slice(0, 3).map(function (v) {
+      return '<span class="hc-val"><b>' + esc(v.libelle) + '</b>' + esc(v.valeur) + '</span>';
+    }).join('');
+    var nAv = (p.avertissements || []).length;
+    return '<div class="hc-head">' + (p.code ? esc(p.code) + ' · ' : '') + esc(p.categorie) + '</div>' +
+      '<div class="hc-body">' + img + '<div class="hc-txt">' +
+        (p.resume ? '<p>' + esc(p.resume) + '</p>' : '') +
+        (machines ? '<div class="hc-meta"><b>Machines :</b> ' + esc(machines) + '</div>' : '') +
+        (meta.length ? '<div class="hc-meta">' + esc(meta.join(' · ')) + '</div>' : '') +
+        (nAv ? '<div class="hc-meta hc-warn">' + ICON.warn + ' ' + nAv + ' avertissement' + (nAv > 1 ? 's' : '') + '</div>' : '') +
+      '</div></div>' +
+      (vals ? '<div class="hc-vals">' + vals + '</div>' : '');
+  }
+  function initHoverCard() {
+    // seulement les appareils avec un vrai curseur (pas les téléphones)
+    if (!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches)) return;
+    var el = document.createElement('div');
+    el.className = 'hovercard';
+    el.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(el);
+    function hide() { clearTimeout(hoverTimer); el.classList.remove('on'); }
+    document.addEventListener('mouseover', function (e) {
+      var row = e.target && e.target.closest && e.target.closest('.prow');
+      if (!row) { hide(); return; }
+      var href = row.getAttribute('href') || '';
+      if (href.indexOf('#/p/') !== 0) { hide(); return; }
+      var pid = href.slice(4);
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(function () {
+        var p = DATA.filter(function (x) { return x.id === pid; })[0];
+        if (!p || !document.body.contains(row)) return;
+        el.innerHTML = hoverHTML(p);
+        el.style.borderTopColor = catColor(p.categorie);
+        var r = row.getBoundingClientRect();
+        el.style.left = Math.max(8, Math.min(r.left, window.innerWidth - el.offsetWidth - 12)) + 'px';
+        // sous la rangée si la place le permet, sinon au-dessus
+        var h = el.offsetHeight;
+        el.style.top = (r.bottom + 8 + h <= window.innerHeight ? r.bottom + 8 : Math.max(8, r.top - h - 8)) + 'px';
+        el.classList.add('on');
+      }, 250);
+    });
+    window.addEventListener('scroll', hide, true);
+    window.addEventListener('hashchange', hide);
+    document.addEventListener('click', hide, true);
+  }
+
   // État de formation en toutes lettres (mêmes données locales que Mon suivi) :
   // vert = attestée ; ambre = quiz complété, il ne manque que l'attestation ;
   // gris = quiz commencé mais pas terminé. Rien = pas commencé.
@@ -2410,7 +2471,7 @@
     });
   }
   document.addEventListener('DOMContentLoaded', function () {
-    route(); initInstall(); initChecklistEvents(); initTheme();
+    route(); initInstall(); initChecklistEvents(); initTheme(); initHoverCard();
     aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
     progDirtyFlush();   // progression marquée « à pousser » pendant une panne
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
