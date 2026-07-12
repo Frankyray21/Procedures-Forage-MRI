@@ -968,4 +968,6 @@ footer b{color:var(--muted)}
 .lmode-b{font:inherit;font-size:.8rem;font-weight:700;padding:.4rem .75rem;background:var(--card);
   color:var(--muted);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}
 .lmode-b + .lmode-b{border-left:1px solid var(--border)}
-.lmode-b.on{background:rgba(210,35,37,.16);color:var(--strong)}
+.lmode-b:hover{color:var(--strong)}
+/* choix actif bien en évidence : bouton plein rouge M.R.I. */
+.lmode-b.on{background:var(--g-red);color:#fff;font-weight:800}
