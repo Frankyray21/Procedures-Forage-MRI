@@ -964,6 +964,7 @@ footer b{color:var(--muted)}
 .lrow{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;margin:.2rem 0 .5rem}  /* compte et bascule sur deux lignes */
 .lrow .count{margin:0}
 .lmodes{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.lmode-t{font-size:.78rem;font-weight:700;color:var(--dim)}  /* explique la bascule */
 .lmode{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .lmode-b{font:inherit;font-size:.8rem;font-weight:700;padding:.4rem .75rem;background:var(--card);
   color:var(--muted);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}
@@ -996,39 +997,45 @@ footer b{color:var(--muted)}
 
 /* ===== mise en page mobile (téléphones) : tout plus dense, rien de retiré ===== */
 @media (max-width:640px){
+  .wrap{padding:0 .8rem}
   /* héro : la liste doit apparaître dès le premier écran */
-  .hero{padding:.9rem 0 .6rem}
-  .eyebrow{font-size:.68rem;padding:.22rem .6rem}
-  .hero h1{margin:.5rem 0 .35rem}
-  .hero p.lead{font-size:.9rem;line-height:1.55}
+  .hero{padding:.7rem 0 .45rem}
+  .eyebrow{font-size:.64rem;padding:.18rem .55rem}
+  .hero h1{font-size:1.6rem;margin:.4rem 0 .3rem}
+  .hero p.lead{font-size:.88rem;line-height:1.5}
   /* stats en ligne : « 25 procédures · 10 catégories… » sur 1-2 rangées */
-  .stats{gap:.35rem .95rem;margin-top:.7rem}
-  .stat b{display:inline;font-size:1.1rem;margin-right:.3rem}
-  .stat span{font-size:.66rem}
+  .stats{gap:.25rem .85rem;margin-top:.55rem}
+  .stat b{display:inline;font-size:1.05rem;margin-right:.28rem}
+  .stat span{font-size:.64rem}
   /* bandeau hors-ligne aminci */
-  .offcard{padding:.6rem .75rem;gap:.7rem;margin-top:.8rem;font-size:.85rem}
-  .offic{width:32px;height:32px}
-  .offtxt{min-width:140px}
-  .offtxt b{font-size:.9rem}
-  .offtxt > span{font-size:.78rem}
-  .offcard .btn{padding:.55rem 1rem;font-size:.9rem}
-  /* recherche */
-  .search input{padding:.68rem .9rem .68rem 2.6rem;font-size:.95rem}
-  .search svg{left:.85rem}
+  .offcard{padding:.5rem .65rem;gap:.5rem .6rem;margin-top:.6rem;font-size:.82rem}
+  .offic{width:28px;height:28px;border-radius:8px}
+  .offic svg{width:17px;height:17px}
+  .offtxt{flex:1 1 220px;min-width:0;gap:0}
+  .offtxt b{font-size:.86rem}
+  .offtxt > span{font-size:.74rem}
+  .offcard .btn{padding:.5rem .9rem;font-size:.86rem}
+  .offmore{margin:0}
+  /* recherche + filtres */
+  .toolbar{padding:.5rem 0 .3rem}
+  .search input{padding:.6rem .85rem .6rem 2.5rem;font-size:.93rem}
+  .search svg{left:.8rem}
+  .chips{gap:.4rem;padding:.45rem 0 .2rem}
   /* rangée en texte fluide : code, titre, tâche et état coulent sur
      2 lignes au lieu d'empiler 4 blocs ; la flèche décorative disparaît */
-  .prow{padding:.45rem .6rem .45rem .65rem;gap:.4rem}
-  .prow .prow-main{display:block;line-height:1.5}
+  .prow{padding:.4rem .55rem .4rem .6rem;gap:.4rem}
+  .prow .prow-main{display:block;line-height:1.42}
   .prow .pcode{font-size:.62rem;padding:.08rem .3rem;margin-right:.45rem}
   .prow .ptitle{font-size:.86rem;margin-right:.45rem}
   .prow .pcat{margin-right:.45rem}
   .prow .parrow{display:none}
-  .lgrp-rows{gap:.3rem}
+  .lgrp-rows{gap:.28rem}
   /* sections */
-  .lgrp{margin-bottom:.7rem}
-  .lgrp-h{font-size:.86rem;margin:.25rem 0 .35rem}
+  .lgrp{margin-bottom:.6rem}
+  .lgrp-h{font-size:.84rem;margin:.2rem 0 .3rem}
   .lgrp-sub{font-size:.72rem}
   /* bascule de classement : cibles tactiles confortables */
-  .lrow{margin:.15rem 0 .4rem;gap:.5rem}
-  .lmode-b{font-size:.76rem;padding:.5rem .6rem}
+  .lrow{margin:.1rem 0 .35rem;gap:.3rem}
+  .lmode-b{font-size:.76rem;padding:.48rem .6rem}
+  .lmode-t{font-size:.72rem}
 }

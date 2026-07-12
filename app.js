@@ -708,7 +708,8 @@
         label + '</button>';
     };
     box.innerHTML =
-      '<div class="lmode" role="group" aria-label="Classement">' +
+      '<span class="lmode-t" id="lmodeT">Classer par&nbsp;:</span>' +
+      '<div class="lmode" role="group" aria-labelledby="lmodeT">' +
         mb('code', m === 'code', ICON.hash + ' Code', 'Classer par code') +
         mb('cat', m === 'cat', ICON.clip + ' Tâche', 'Classer par tâche') +
         mb('mach', m === 'mach', ICON.gear + ' Machine', 'Classer par machine') +
