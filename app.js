@@ -680,7 +680,9 @@
     var groups = buildGroups(list);
     grid.innerHTML = groups.map(function (g) {
       return '<div class="lgrp' + (g.code ? ' bycode' : '') + '">' +
-        '<h3 class="lgrp-h">' + esc(g.label) + ' <span class="ct">' + g.items.length + '</span></h3>' +
+        '<h3 class="lgrp-h">' + esc(g.label) +
+          (g.sub ? '<span class="lgrp-sub">' + esc(g.sub) + '</span>' : '') +
+          ' <span class="ct">' + g.items.length + '</span></h3>' +
         '<div class="lgrp-rows">' + g.items.map(card).join('') + '</div></div>';
     }).join('');
   }
@@ -713,6 +715,27 @@
       };
     });
   }
+  // Signification des familles de codes — affichée à côté du préfixe dans
+  // l'annuaire « Par code ». Ajouter ici toute nouvelle famille de codes.
+  var CODE_FAMILY = {
+    'PRO-DD-ST': 'Procédure de forage au diamant sous terre',
+    'PRO-OP-DD': 'Procédure d\'opération — foreuse au diamant',
+    'PRO-OP-ITH': 'Procédure d\'opération — foreuse ITH / CUBEX',
+    'PRO-OP-SM': 'Procédure d\'opération — STOPEMASTER',
+    'PRO-OP-BT3': 'Procédure d\'opération — camion-flèche BT-3',
+    'PRO-OP-BU': 'Procédure d\'opération — foreuse VKING',
+    'PRO-OP-CAT': 'Procédure d\'opération — tracteur Caterpillar',
+    'PRO-OP-CIM': 'Procédure d\'opération — cimentation',
+    'PRO-OP': 'Procédure d\'opération',
+    'PRO-ITH': 'Procédure — foreuse ITH',
+    'PRO-MEC': 'Procédure mécanique',
+    'PRO-PT': 'Procédure — PIPETUB',
+    'PRO-SEC': 'Procédure de sécurité',
+    'SAN-SEC': 'Santé-sécurité',
+    'SS-DD-ST': 'Santé-sécurité — forage au diamant sous terre',
+    'STD-DD': 'Standard — forage au diamant',
+    'DR-600-OP': 'Opération de la foreuse DR-600'
+  };
   function buildGroups(list) {
     if (listMode() === 'code') {
       // Par code : annuaire par FAMILLE de codes (PRO-OP-ITH, PRO-DD-ST…) —
@@ -726,7 +749,9 @@
         if (!byPre[pre]) { byPre[pre] = []; order.push(pre); }
         byPre[pre].push(p);
       });
-      var groups = order.map(function (pre) { return { label: pre, items: byPre[pre], code: true }; });
+      var groups = order.map(function (pre) {
+        return { label: pre, sub: CODE_FAMILY[pre] || '', items: byPre[pre], code: true };
+      });
       if (sans.length) groups.push({ label: 'Sans code', items: sans, code: true });
       return groups;
     }
