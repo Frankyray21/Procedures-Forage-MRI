@@ -70,24 +70,24 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--brand)}
 
 /* ===== hero (home) ===== */
-.hero{padding:clamp(2.2rem,6vw,4rem) 0 1.6rem}
-.hero h1{font-family:var(--font-display);font-size:clamp(2.3rem,6.5vw,4rem);font-weight:800;line-height:1;
-  text-transform:uppercase;letter-spacing:.01em;margin:.9rem 0 .6rem;text-wrap:balance}
+.hero{padding:clamp(1.3rem,3.5vw,2.2rem) 0 1rem}
+.hero h1{font-family:var(--font-display);font-size:clamp(1.9rem,5vw,2.9rem);font-weight:800;line-height:1;
+  text-transform:uppercase;letter-spacing:.01em;margin:.65rem 0 .45rem;text-wrap:balance}
 .hero h1 .hl{color:var(--accent-l)}
-.hero p.lead{color:var(--lead);font-size:clamp(1.02rem,2vw,1.18rem);max-width:640px}
-.stats{display:flex;flex-wrap:wrap;gap:1.4rem;margin-top:1.4rem}
-.stat b{font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--strong);display:block;line-height:1}
-.stat span{font-size:.78rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.hero p.lead{color:var(--lead);font-size:clamp(.95rem,1.8vw,1.06rem);max-width:640px}
+.stats{display:flex;flex-wrap:wrap;gap:1.1rem 1.4rem;margin-top:1rem}
+.stat b{font-family:var(--font-display);font-size:1.45rem;font-weight:800;color:var(--strong);display:block;line-height:1}
+.stat span{font-size:.74rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
 
 /* ===== search + filters ===== */
-.toolbar{padding:1rem 0 .6rem}
+.toolbar{padding:.7rem 0 .4rem}
 .search{position:relative;display:flex;align-items:center}
 .search svg{position:absolute;left:1rem;color:var(--dim);pointer-events:none}
-.search input{width:100%;padding:.95rem 1rem .95rem 2.9rem;font-size:1.02rem;color:var(--text);
+.search input{width:100%;padding:.78rem 1rem .78rem 2.9rem;font-size:1rem;color:var(--text);
   background:var(--card);border:1px solid var(--border);border-radius:13px;transition:.2s}
 .search input::placeholder{color:var(--dim)}
 .search input:focus{border-color:var(--brand);background:var(--card-2);box-shadow:0 0 0 4px rgba(210,35,37,.12)}
-.chips{display:flex;flex-wrap:wrap;gap:.5rem;padding:.8rem 0 .3rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;padding:.6rem 0 .25rem}
 .chip{flex:none;display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border-radius:50px;
   font-size:.85rem;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);
   transition:.18s;white-space:nowrap;cursor:pointer}
@@ -501,16 +501,18 @@ footer b{color:var(--muted)}
   border-radius:8px;color:var(--accent-l);font-weight:700;font-size:.78rem;padding:.3rem .6rem;cursor:pointer}
 .srmore-b:hover{border-color:var(--accent-l)}
 .srhint{display:block;margin-top:.5rem;font-size:.85rem}
-.prow{display:flex;align-items:center;gap:.7rem;background:var(--card);border:1px solid var(--border);
-  border-left:3px solid var(--border);border-radius:11px;padding:.65rem .85rem;
+/* Rangée compacte : code · titre · tâche · état sur UNE ligne (passe à la
+   ligne si étroit — rien n'est tronqué) ; liséré gauche = couleur de tâche. */
+.prow{display:flex;align-items:center;gap:.55rem;background:var(--card);border:1px solid var(--border);
+  border-left:3px solid var(--cat,var(--border));border-radius:10px;padding:.42rem .6rem .42rem .7rem;
   transition:transform .15s,border-color .15s,background .15s}
-.prow:hover{border-color:rgba(210,35,37,.4);background:var(--card-2);transform:translateX(3px)}
-.prow .pcode{flex:none;font-family:var(--font-display);font-size:.72rem;font-weight:700;letter-spacing:.04em;
-  color:var(--dim);background:var(--bg-2);border:1px solid var(--border);border-radius:6px;padding:.16rem .4rem}
-.prow .prow-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:.35rem}
-.prow .ptitle{font-weight:700;font-size:.95rem;line-height:1.25}
-.prow .prow-tags{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
-.prow .pcat{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:700;
+.prow:hover{border-color:rgba(210,35,37,.4);border-left-color:var(--cat,rgba(210,35,37,.4));
+  background:var(--card-2);transform:translateX(3px)}
+.prow .pcode{flex:none;font-family:var(--font-display);font-size:.7rem;font-weight:700;letter-spacing:.04em;
+  color:var(--dim);background:var(--bg-2);border:1px solid var(--border);border-radius:6px;padding:.12rem .38rem}
+.prow .prow-main{flex:1;min-width:0;display:flex;align-items:center;gap:.25rem .55rem;flex-wrap:wrap}
+.prow .ptitle{font-weight:700;font-size:.9rem;line-height:1.3}
+.prow .pcat{display:inline-flex;align-items:center;gap:.35rem;font-size:.68rem;font-weight:700;
   text-transform:uppercase;letter-spacing:.04em;color:var(--dim)}
 .prow .pcat i{width:7px;height:7px;border-radius:50%;flex:none}
 .prow .parrow{flex:none;color:var(--accent-l);opacity:.7;display:flex}
@@ -911,12 +913,12 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .pdfview>summary:hover{background:rgba(0,0,0,.04)}
 :root[data-theme="light"] .gfig{border-color:var(--border)}
 /* liste des procédures : sections par tâche + pastille d'état */
-.lgrp{margin-bottom:1.1rem}
-.lgrp-h{display:flex;align-items:center;gap:.5rem;font-family:var(--font-display);font-size:1.05rem;
-  font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin:.4rem 0 .55rem}
-.lgrp-h::before{content:'';width:4px;height:1rem;background:var(--brand);border-radius:3px}
-.lgrp-h .ct{font-size:.78rem;color:var(--dim);font-weight:700}
-.lgrp-rows{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))}
+.lgrp{margin-bottom:.85rem}
+.lgrp-h{display:flex;align-items:center;gap:.45rem;font-family:var(--font-display);font-size:.94rem;
+  font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:.3rem 0 .4rem}
+.lgrp-h::before{content:'';width:4px;height:.9rem;background:var(--brand);border-radius:3px}
+.lgrp-h .ct{font-size:.74rem;color:var(--dim);font-weight:700}
+.lgrp-rows{display:grid;gap:.35rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr))}
 .pstate2{display:inline-flex;align-items:center;gap:.28rem;font-size:.72rem;font-weight:800;
   letter-spacing:.02em;padding:.14rem .5rem;border-radius:999px;white-space:nowrap}
 .pstate2 svg{width:11px;height:11px}
@@ -954,59 +956,12 @@ footer b{color:var(--muted)}
 .resume-l b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 .resume-l svg{flex:none;color:var(--accent-l)}
 .resume-l:hover{border-color:rgba(210,35,37,.4)}
-/* bascules Fiches / Liste + Par tâche / Par machine */
-.lrow{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin:.2rem 0 .5rem}
+/* bascule de classement : Par code / Par tâche / Par machine */
+.lrow{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin:.2rem 0 .45rem}
 .lrow .count{margin:0}
 .lmodes{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .lmode{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .lmode-b{font:inherit;font-size:.8rem;font-weight:700;padding:.4rem .75rem;background:var(--card);
   color:var(--muted);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}
-.lmode-b svg{opacity:.75}
 .lmode-b + .lmode-b{border-left:1px solid var(--border)}
 .lmode-b.on{background:rgba(210,35,37,.16);color:var(--strong)}
-.lmode-b.on svg{opacity:1}
-
-/* ===== vue « Fiches » : cartes avec couverture du document officiel =====
-   (.ptile et non .pcard : cette classe appartient déjà aux cartes de
-   l'accueil et à admin.html — pas de fuite de styles entre les deux.) */
-/* Grille extérieure : chaque section occupe toute la largeur, SAUF les
-   petites familles de codes (.lgrp.small : 1-2 fiches) qui se placent côte
-   à côte — l'annuaire « Par code » reste dense malgré ses familles courtes. */
-.plist2.cards{display:grid;gap:.9rem .8rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr))}
-.plist2.cards .lgrp{grid-column:1/-1;margin-bottom:.2rem}
-.plist2.cards .lgrp.small{grid-column:auto}
-.plist2.cards .lgrp-rows{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr))}
-.ptile{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);
-  border-top:3px solid var(--cat,var(--brand));border-radius:14px;overflow:hidden;
-  box-shadow:var(--shadow-card);transition:transform .18s,border-color .18s,background .18s}
-.ptile:hover{transform:translateY(-3px);border-color:rgba(210,35,37,.45);background:var(--card-2)}
-/* couverture : pictogramme de document dessous, image du PDF par-dessus —
-   si l'image n'est pas encore en cache (hors-ligne), la carte reste propre */
-.pcv{position:relative;display:block;aspect-ratio:5/3;overflow:hidden;border-bottom:1px solid var(--border)}
-.pcv img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;object-position:top;
-  display:block;background:#fff}
-.pcv-ph{display:flex;align-items:center;justify-content:center;height:100%;color:var(--dim);background:var(--card-2)}
-.pcv-ph svg{width:34px;height:34px;opacity:.5}
-.pcv-n{position:absolute;right:.5rem;bottom:.5rem;font-family:var(--font-display);font-size:.68rem;
-  font-weight:800;letter-spacing:.05em;color:#fff;background:rgba(10,14,23,.72);padding:.14rem .45rem;border-radius:6px}
-.ptile-b{display:flex;flex-direction:column;gap:.4rem;padding:.75rem .85rem .85rem;flex:1}
-.ptile .pcode{font-family:var(--font-display);font-size:.7rem;font-weight:700;letter-spacing:.05em;color:var(--dim)}
-.ptile .ptitle{font-weight:700;font-size:.93rem;line-height:1.3;color:var(--strong)}
-.ptile .presume{font-size:.8rem;line-height:1.45;color:var(--muted);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ptile-tags{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:auto;padding-top:.15rem}
-.ptile .pmach{font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);
-  background:var(--card-2);border:1px solid var(--border);padding:.14rem .5rem;border-radius:6px}
-.ptile .pcat{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:700;color:var(--muted)}
-.ptile .pcat i{width:7px;height:7px;border-radius:50%;flex:none}
-.lgrp .ptile .pcat{display:inline-flex}  /* par machine : la carte rappelle la tâche */
-@media (max-width:640px){
-  .plist2.cards,
-  .plist2.cards .lgrp-rows{grid-template-columns:repeat(auto-fill,minmax(min(100%,135px),1fr));gap:.6rem}
-  .pcv{aspect-ratio:4/3}
-  .ptile-b{padding:.55rem .65rem .65rem;gap:.3rem}
-  .ptile .ptitle{font-size:.85rem}
-  .ptile .presume{display:none}   /* téléphone : cartes compactes, 2 colonnes */
-}
-:root[data-theme="light"] .ptile:hover{background:var(--card)}
-:root[data-theme="light"] .ptile .pmach{color:var(--muted)}  /* contraste AA sur --card-2 */

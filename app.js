@@ -93,9 +93,7 @@
     doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
     fwd: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
     close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
-    tool: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>',
-    grid: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
-    rows: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>'
+    tool: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>'
   };
   // pictogrammes par type de point de la checklist
   var TYPE_ICON = {
@@ -661,9 +659,8 @@
     // bulle de conversation (chatbot.js) — synonymes, radicaux, tolérance aux
     // fautes, score par passage — et on affiche les passages cités.
     var S = window.MRI_SEARCH;
-    if (qStr.length >= 2 && S && S.ready()) { grid.classList.remove('cards'); grid.classList.add('srmode'); drawSearch(qStr, S, grid, count); return; }
+    if (qStr.length >= 2 && S && S.ready()) { grid.classList.add('srmode'); drawSearch(qStr, S, grid, count); return; }
     grid.classList.remove('srmode');
-    grid.classList.toggle('cards', viewMode() === 'cards');
     renderListMode();
     // « Reprendre » : dernière fiche consultée de cette section (navigation seulement)
     var rr = $('#resumeRow');
@@ -681,13 +678,10 @@
     // Sections par TÂCHE (ordre du flux de travail) ou par MACHINE, au choix ;
     // à l'intérieur de chaque section, l'ordre reste celui des codes.
     var groups = buildGroups(list);
-    var render = viewMode() === 'cards' ? cardTile : card;
     grid.innerHTML = groups.map(function (g) {
-      // .small (familles de 1-2 codes) : en vue Fiches, ces sections se
-      // placent côte à côte au lieu d'occuper chacune toute la largeur.
-      return '<div class="lgrp' + (g.code ? ' bycode' : '') + (g.code && g.items.length < 3 ? ' small' : '') + '">' +
+      return '<div class="lgrp' + (g.code ? ' bycode' : '') + '">' +
         '<h3 class="lgrp-h">' + esc(g.label) + ' <span class="ct">' + g.items.length + '</span></h3>' +
-        '<div class="lgrp-rows">' + g.items.map(render).join('') + '</div></div>';
+        '<div class="lgrp-rows">' + g.items.map(card).join('') + '</div></div>';
     }).join('');
   }
   // Classement : 'code' (DÉFAUT) = annuaire par famille de codes,
@@ -699,32 +693,22 @@
       return (v === 'mach' || v === 'cat') ? v : 'code';
     } catch (e) { return 'code'; }
   }
-  // Présentation : « Fiches » (cartes avec couverture du document) par défaut,
-  // « Liste » (rangées compactes) au choix — mémorisé sur l'appareil.
-  function viewMode() { try { return localStorage.getItem('view_mode') === 'list' ? 'list' : 'cards'; } catch (e) { return 'cards'; } }
   function renderListMode() {
     var box = $('#lmode'); if (!box) return;
-    var m = listMode(), v = viewMode();
-    var mb = function (attr, val, on, label) {
-      return '<button type="button" class="lmode-b' + (on ? ' on' : '') + '" ' + attr + '="' + val + '"' +
+    var m = listMode();
+    var mb = function (val, on, label) {
+      return '<button type="button" class="lmode-b' + (on ? ' on' : '') + '" data-m="' + val + '"' +
         ' aria-pressed="' + (on ? 'true' : 'false') + '">' + label + '</button>';
     };
     box.innerHTML =
-      '<div class="lmode" role="group" aria-label="Présentation">' +
-        mb('data-v', 'cards', v === 'cards', ICON.grid + ' Fiches') +
-        mb('data-v', 'list', v === 'list', ICON.rows + ' Liste') +
-      '</div>' +
       '<div class="lmode" role="group" aria-label="Classement">' +
-        mb('data-m', 'code', m === 'code', 'Par code') +
-        mb('data-m', 'cat', m === 'cat', 'Par tâche') +
-        mb('data-m', 'mach', m === 'mach', 'Par machine') +
+        mb('code', m === 'code', 'Par code') +
+        mb('cat', m === 'cat', 'Par tâche') +
+        mb('mach', m === 'mach', 'Par machine') +
       '</div>';
     [].forEach.call(box.querySelectorAll('.lmode-b'), function (b) {
       b.onclick = function () {
-        try {
-          if (b.hasAttribute('data-v')) localStorage.setItem('view_mode', b.getAttribute('data-v'));
-          else localStorage.setItem('list_mode', b.getAttribute('data-m'));
-        } catch (e) {}
+        try { localStorage.setItem('list_mode', b.getAttribute('data-m')); } catch (e) {}
         drawList();
       };
     });
@@ -847,46 +831,17 @@
   }
   function card(p) {
     var col = catColor(p.categorie);
+    // Rangée compacte : tout tient sur une ligne quand la place le permet
+    // (code, titre, tâche, état) et passe à la ligne sinon — rien n'est
+    // tronqué. Le liséré gauche porte la couleur de la tâche.
     return '<a class="prow" href="#/p/' + esc(p.id) + '" style="--cat:' + col + '">' +
       '<div class="prow-main">' +
-        '<span class="ptitle">' + esc(p.titre) + '</span>' +
-        '<div class="prow-tags">' +
-          '<span class="pcat"><i style="background:var(--dim)"></i>' + esc(p.categorie) + '</span>' +
-          (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
-          procState(p) +
-        '</div>' +
-      '</div>' +
-      '<span class="parrow">' + ICON.arrow + '</span></a>';
-  }
-  /* Vue « Fiches » : carte visuelle — couverture = première page du PDF
-     officiel (même URL ?r= que la fiche : une seule copie dans le cache
-     hors-ligne), résumé, équipements et état de formation. En regroupement
-     « Par machine », la carte rappelle plutôt la tâche (couleur + nom).
-     (.ptile, pas .pcard : ce nom est déjà pris — accueil + admin.html.)
-     Le pictogramme de document reste sous l'image : si la couverture n'est
-     pas encore en cache hors-ligne, la carte reste propre (pas d'icône
-     d'image cassée). */
-  function cardTile(p) {
-    var col = catColor(p.categorie);
-    var pages = (!DEMO && window.PAGES && window.PAGES[p.id]) || [];
-    var cover = '<span class="pcv-ph">' + ICON.doc + '</span>' + (pages.length
-      ? '<img src="' + esc(withRev(pages[0], p.id)) + '" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">'
-      : '');
-    // Par tâche : la section nomme déjà la tâche → la carte montre les
-    // machines. Par machine ou par code : la carte rappelle la tâche.
-    var tags = listMode() === 'cat'
-      ? machinesOf(p).slice(0, 3).map(function (m) { return '<span class="pmach">' + esc(m) + '</span>'; }).join('')
-      : '<span class="pcat"><i style="background:' + col + '"></i>' + esc(p.categorie) + '</span>';
-    return '<a class="ptile" href="#/p/' + esc(p.id) + '" style="--cat:' + col + '">' +
-      '<span class="pcv">' + cover +
-        (pages.length ? '<span class="pcv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + '</span>' : '') +
-      '</span>' +
-      '<span class="ptile-b">' +
         (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
         '<span class="ptitle">' + esc(p.titre) + '</span>' +
-        (p.resume ? '<span class="presume">' + esc(p.resume) + '</span>' : '') +
-        '<span class="ptile-tags">' + tags + procState(p) + '</span>' +
-      '</span></a>';
+        '<span class="pcat"><i style="background:' + col + '"></i>' + esc(p.categorie) + '</span>' +
+        procState(p) +
+      '</div>' +
+      '<span class="parrow">' + ICON.arrow + '</span></a>';
   }
   // État de formation en toutes lettres (mêmes données locales que Mon suivi) :
   // vert = attestée ; ambre = quiz complété, il ne manque que l'attestation ;
