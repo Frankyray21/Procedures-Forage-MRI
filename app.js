@@ -683,18 +683,21 @@
     var groups = buildGroups(list);
     var render = viewMode() === 'cards' ? cardTile : card;
     grid.innerHTML = groups.map(function (g) {
-      return '<div class="lgrp' + (g.label ? '' : ' flat') + '">' +
-        (g.label ? '<h3 class="lgrp-h">' + esc(g.label) + ' <span class="ct">' + g.items.length + '</span></h3>' : '') +
+      // .small (familles de 1-2 codes) : en vue Fiches, ces sections se
+      // placent côte à côte au lieu d'occuper chacune toute la largeur.
+      return '<div class="lgrp' + (g.code ? ' bycode' : '') + (g.code && g.items.length < 3 ? ' small' : '') + '">' +
+        '<h3 class="lgrp-h">' + esc(g.label) + ' <span class="ct">' + g.items.length + '</span></h3>' +
         '<div class="lgrp-rows">' + g.items.map(render).join('') + '</div></div>';
     }).join('');
   }
-  // Classement : 'cat' = sections par tâche, 'mach' = sections par machine,
-  // 'code' = liste plate triée par code de procédure (PRO-OP-ITH-002 → 004…).
+  // Classement : 'code' (DÉFAUT) = annuaire par famille de codes,
+  // 'cat' = sections par tâche, 'mach' = sections par machine — au choix,
+  // mémorisé sur l'appareil.
   function listMode() {
     try {
       var v = localStorage.getItem('list_mode');
-      return (v === 'mach' || v === 'code') ? v : 'cat';
-    } catch (e) { return 'cat'; }
+      return (v === 'mach' || v === 'cat') ? v : 'code';
+    } catch (e) { return 'code'; }
   }
   // Présentation : « Fiches » (cartes avec couverture du document) par défaut,
   // « Liste » (rangées compactes) au choix — mémorisé sur l'appareil.
@@ -712,9 +715,9 @@
         mb('data-v', 'list', v === 'list', ICON.rows + ' Liste') +
       '</div>' +
       '<div class="lmode" role="group" aria-label="Classement">' +
+        mb('data-m', 'code', m === 'code', 'Par code') +
         mb('data-m', 'cat', m === 'cat', 'Par tâche') +
         mb('data-m', 'mach', m === 'mach', 'Par machine') +
-        mb('data-m', 'code', m === 'code', 'Par code') +
       '</div>';
     [].forEach.call(box.querySelectorAll('.lmode-b'), function (b) {
       b.onclick = function () {
@@ -728,10 +731,20 @@
   }
   function buildGroups(list) {
     if (listMode() === 'code') {
-      // Par code : liste plate, déjà triée par cmpCode dans drawList — pour
-      // retrouver une procédure dont on connaît le numéro. Les fiches sans
-      // code sont à la fin. Chaque entrée rappelle sa tâche (pas de section).
-      return [{ label: '', items: list }];
+      // Par code : annuaire par FAMILLE de codes (PRO-OP-ITH, PRO-DD-ST…) —
+      // le préfixe sans les numéros de fin. La liste étant déjà triée par
+      // cmpCode, les familles et leurs fiches sortent en ordre. La section
+      // nomme la famille, chaque entrée rappelle donc sa tâche (g.code).
+      var byPre = {}, order = [], sans = [];
+      list.forEach(function (p) {
+        if (!p.code) { sans.push(p); return; }
+        var pre = String(p.code).toUpperCase().replace(/(-\d+[A-Z]?)+$/, '');
+        if (!byPre[pre]) { byPre[pre] = []; order.push(pre); }
+        byPre[pre].push(p);
+      });
+      var groups = order.map(function (pre) { return { label: pre, items: byPre[pre], code: true }; });
+      if (sans.length) groups.push({ label: 'Sans code', items: sans, code: true });
+      return groups;
     }
     if (listMode() === 'mach') {
       // Par machine : une procédure utilisée avec plusieurs machines apparaît

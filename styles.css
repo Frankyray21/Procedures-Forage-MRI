@@ -926,8 +926,7 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .pstate2.ok{color:#047857}
 :root[data-theme="light"] .pstate2.todo{color:#92400e;border-color:rgba(180,83,9,.45);background:rgba(180,83,9,.07)}
 .lgrp .pcat{display:none}  /* la section porte déjà le nom de la tâche */
-.lgrp.flat .pcat{display:inline-flex}  /* par code : pas de section, la rangée rappelle la tâche */
-.lgrp.flat{grid-column:1/-1}  /* le groupe plat occupe toute la largeur de la grille */
+.lgrp.bycode .pcat{display:inline-flex}  /* par code : la section nomme la famille, la fiche rappelle sa tâche */
 /* bandeau hors ligne compact (en haut de la liste) */
 .offcard.slim{margin-top:1rem;padding:.65rem .9rem;gap:.8rem}
 .offcard.slim .offic{width:34px;height:34px}
@@ -970,7 +969,12 @@ footer b{color:var(--muted)}
 /* ===== vue « Fiches » : cartes avec couverture du document officiel =====
    (.ptile et non .pcard : cette classe appartient déjà aux cartes de
    l'accueil et à admin.html — pas de fuite de styles entre les deux.) */
-.plist2.cards{display:block}
+/* Grille extérieure : chaque section occupe toute la largeur, SAUF les
+   petites familles de codes (.lgrp.small : 1-2 fiches) qui se placent côte
+   à côte — l'annuaire « Par code » reste dense malgré ses familles courtes. */
+.plist2.cards{display:grid;gap:.9rem .8rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr))}
+.plist2.cards .lgrp{grid-column:1/-1;margin-bottom:.2rem}
+.plist2.cards .lgrp.small{grid-column:auto}
 .plist2.cards .lgrp-rows{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr))}
 .ptile{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);
   border-top:3px solid var(--cat,var(--brand));border-radius:14px;overflow:hidden;
@@ -997,6 +1001,7 @@ footer b{color:var(--muted)}
 .ptile .pcat i{width:7px;height:7px;border-radius:50%;flex:none}
 .lgrp .ptile .pcat{display:inline-flex}  /* par machine : la carte rappelle la tâche */
 @media (max-width:640px){
+  .plist2.cards,
   .plist2.cards .lgrp-rows{grid-template-columns:repeat(auto-fill,minmax(min(100%,135px),1fr));gap:.6rem}
   .pcv{aspect-ratio:4/3}
   .ptile-b{padding:.55rem .65rem .65rem;gap:.3rem}
