@@ -953,11 +953,53 @@ footer b{color:var(--muted)}
 .resume-l b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 .resume-l svg{flex:none;color:var(--accent-l)}
 .resume-l:hover{border-color:rgba(210,35,37,.4)}
-/* bascule Par tâche / Par machine */
+/* bascules Fiches / Liste + Par tâche / Par machine */
 .lrow{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin:.2rem 0 .5rem}
 .lrow .count{margin:0}
+.lmodes{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .lmode{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .lmode-b{font:inherit;font-size:.8rem;font-weight:700;padding:.4rem .75rem;background:var(--card);
-  color:var(--muted);border:none;cursor:pointer}
+  color:var(--muted);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}
+.lmode-b svg{opacity:.75}
 .lmode-b + .lmode-b{border-left:1px solid var(--border)}
 .lmode-b.on{background:rgba(210,35,37,.16);color:var(--strong)}
+.lmode-b.on svg{opacity:1}
+
+/* ===== vue « Fiches » : cartes avec couverture du document officiel =====
+   (.ptile et non .pcard : cette classe appartient déjà aux cartes de
+   l'accueil et à admin.html — pas de fuite de styles entre les deux.) */
+.plist2.cards{display:block}
+.plist2.cards .lgrp-rows{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr))}
+.ptile{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);
+  border-top:3px solid var(--cat,var(--brand));border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-card);transition:transform .18s,border-color .18s,background .18s}
+.ptile:hover{transform:translateY(-3px);border-color:rgba(210,35,37,.45);background:var(--card-2)}
+/* couverture : pictogramme de document dessous, image du PDF par-dessus —
+   si l'image n'est pas encore en cache (hors-ligne), la carte reste propre */
+.pcv{position:relative;display:block;aspect-ratio:5/3;overflow:hidden;border-bottom:1px solid var(--border)}
+.pcv img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;object-position:top;
+  display:block;background:#fff}
+.pcv-ph{display:flex;align-items:center;justify-content:center;height:100%;color:var(--dim);background:var(--card-2)}
+.pcv-ph svg{width:34px;height:34px;opacity:.5}
+.pcv-n{position:absolute;right:.5rem;bottom:.5rem;font-family:var(--font-display);font-size:.68rem;
+  font-weight:800;letter-spacing:.05em;color:#fff;background:rgba(10,14,23,.72);padding:.14rem .45rem;border-radius:6px}
+.ptile-b{display:flex;flex-direction:column;gap:.4rem;padding:.75rem .85rem .85rem;flex:1}
+.ptile .pcode{font-family:var(--font-display);font-size:.7rem;font-weight:700;letter-spacing:.05em;color:var(--dim)}
+.ptile .ptitle{font-weight:700;font-size:.93rem;line-height:1.3;color:var(--strong)}
+.ptile .presume{font-size:.8rem;line-height:1.45;color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ptile-tags{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:auto;padding-top:.15rem}
+.ptile .pmach{font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);
+  background:var(--card-2);border:1px solid var(--border);padding:.14rem .5rem;border-radius:6px}
+.ptile .pcat{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:700;color:var(--muted)}
+.ptile .pcat i{width:7px;height:7px;border-radius:50%;flex:none}
+.lgrp .ptile .pcat{display:inline-flex}  /* par machine : la carte rappelle la tâche */
+@media (max-width:640px){
+  .plist2.cards .lgrp-rows{grid-template-columns:repeat(auto-fill,minmax(min(100%,135px),1fr));gap:.6rem}
+  .pcv{aspect-ratio:4/3}
+  .ptile-b{padding:.55rem .65rem .65rem;gap:.3rem}
+  .ptile .ptitle{font-size:.85rem}
+  .ptile .presume{display:none}   /* téléphone : cartes compactes, 2 colonnes */
+}
+:root[data-theme="light"] .ptile:hover{background:var(--card)}
+:root[data-theme="light"] .ptile .pmach{color:var(--muted)}  /* contraste AA sur --card-2 */
