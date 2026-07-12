@@ -479,7 +479,7 @@ footer b{color:var(--muted)}
 }
 
 /* ===== liste dense des procédures ===== */
-.plist2{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))}
+.plist2{display:grid;gap:.5rem;grid-template-columns:1fr}  /* une seule colonne, même sur grand écran */
 /* ===== recherche : passages cités (même moteur que l'assistant) ===== */
 .plist2.srmode{grid-template-columns:1fr}
 .srgrp{display:flex;flex-direction:column;gap:.3rem}
@@ -918,7 +918,7 @@ footer b{color:var(--muted)}
   font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:.3rem 0 .4rem}
 .lgrp-h::before{content:'';width:4px;height:.9rem;background:var(--brand);border-radius:3px}
 .lgrp-h .ct{font-size:.74rem;color:var(--dim);font-weight:700}
-.lgrp-rows{display:grid;gap:.35rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr))}
+.lgrp-rows{display:grid;gap:.35rem;grid-template-columns:1fr}
 .pstate2{display:inline-flex;align-items:center;gap:.28rem;font-size:.72rem;font-weight:800;
   letter-spacing:.02em;padding:.14rem .5rem;border-radius:999px;white-space:nowrap}
 .pstate2 svg{width:11px;height:11px}
