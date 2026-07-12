@@ -926,6 +926,8 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .pstate2.ok{color:#047857}
 :root[data-theme="light"] .pstate2.todo{color:#92400e;border-color:rgba(180,83,9,.45);background:rgba(180,83,9,.07)}
 .lgrp .pcat{display:none}  /* la section porte déjà le nom de la tâche */
+.lgrp.flat .pcat{display:inline-flex}  /* par code : pas de section, la rangée rappelle la tâche */
+.lgrp.flat{grid-column:1/-1}  /* le groupe plat occupe toute la largeur de la grille */
 /* bandeau hors ligne compact (en haut de la liste) */
 .offcard.slim{margin-top:1rem;padding:.65rem .9rem;gap:.8rem}
 .offcard.slim .offic{width:34px;height:34px}

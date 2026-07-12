@@ -683,12 +683,19 @@
     var groups = buildGroups(list);
     var render = viewMode() === 'cards' ? cardTile : card;
     grid.innerHTML = groups.map(function (g) {
-      return '<div class="lgrp"><h3 class="lgrp-h">' + esc(g.label) +
-        ' <span class="ct">' + g.items.length + '</span></h3>' +
+      return '<div class="lgrp' + (g.label ? '' : ' flat') + '">' +
+        (g.label ? '<h3 class="lgrp-h">' + esc(g.label) + ' <span class="ct">' + g.items.length + '</span></h3>' : '') +
         '<div class="lgrp-rows">' + g.items.map(render).join('') + '</div></div>';
     }).join('');
   }
-  function listMode() { try { return localStorage.getItem('list_mode') === 'mach' ? 'mach' : 'cat'; } catch (e) { return 'cat'; } }
+  // Classement : 'cat' = sections par tâche, 'mach' = sections par machine,
+  // 'code' = liste plate triée par code de procédure (PRO-OP-ITH-002 → 004…).
+  function listMode() {
+    try {
+      var v = localStorage.getItem('list_mode');
+      return (v === 'mach' || v === 'code') ? v : 'cat';
+    } catch (e) { return 'cat'; }
+  }
   // Présentation : « Fiches » (cartes avec couverture du document) par défaut,
   // « Liste » (rangées compactes) au choix — mémorisé sur l'appareil.
   function viewMode() { try { return localStorage.getItem('view_mode') === 'list' ? 'list' : 'cards'; } catch (e) { return 'cards'; } }
@@ -704,9 +711,10 @@
         mb('data-v', 'cards', v === 'cards', ICON.grid + ' Fiches') +
         mb('data-v', 'list', v === 'list', ICON.rows + ' Liste') +
       '</div>' +
-      '<div class="lmode" role="group" aria-label="Regroupement">' +
+      '<div class="lmode" role="group" aria-label="Classement">' +
         mb('data-m', 'cat', m === 'cat', 'Par tâche') +
         mb('data-m', 'mach', m === 'mach', 'Par machine') +
+        mb('data-m', 'code', m === 'code', 'Par code') +
       '</div>';
     [].forEach.call(box.querySelectorAll('.lmode-b'), function (b) {
       b.onclick = function () {
@@ -719,6 +727,12 @@
     });
   }
   function buildGroups(list) {
+    if (listMode() === 'code') {
+      // Par code : liste plate, déjà triée par cmpCode dans drawList — pour
+      // retrouver une procédure dont on connaît le numéro. Les fiches sans
+      // code sont à la fin. Chaque entrée rappelle sa tâche (pas de section).
+      return [{ label: '', items: list }];
+    }
     if (listMode() === 'mach') {
       // Par machine : une procédure utilisée avec plusieurs machines apparaît
       // sous chacune (c'est comme ça qu'on la cherche sur le terrain).
@@ -845,9 +859,11 @@
     var cover = '<span class="pcv-ph">' + ICON.doc + '</span>' + (pages.length
       ? '<img src="' + esc(withRev(pages[0], p.id)) + '" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">'
       : '');
-    var tags = listMode() === 'mach'
-      ? '<span class="pcat"><i style="background:' + col + '"></i>' + esc(p.categorie) + '</span>'
-      : machinesOf(p).slice(0, 3).map(function (m) { return '<span class="pmach">' + esc(m) + '</span>'; }).join('');
+    // Par tâche : la section nomme déjà la tâche → la carte montre les
+    // machines. Par machine ou par code : la carte rappelle la tâche.
+    var tags = listMode() === 'cat'
+      ? machinesOf(p).slice(0, 3).map(function (m) { return '<span class="pmach">' + esc(m) + '</span>'; }).join('')
+      : '<span class="pcat"><i style="background:' + col + '"></i>' + esc(p.categorie) + '</span>';
     return '<a class="ptile" href="#/p/' + esc(p.id) + '" style="--cat:' + col + '">' +
       '<span class="pcv">' + cover +
         (pages.length ? '<span class="pcv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + '</span>' : '') +
