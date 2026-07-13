@@ -239,9 +239,7 @@
     ],
     "pro-op-ith-002": [
     ],
-    "pro-op-ith-002a": [
-    ],
-    "pro-op-ith-003": [
+  "pro-op-ith-003": [
       { "t": "vf", "q": "La manille qui relie la foreuse à la chargeuse-navette fait 3/4 de pouce.", "vrai": false,
         "e": "« Manille raccord chargeuse-navette : 1 1/4'' » — le 3/4'' correspond aux manilles de la barre de tir." },
       { "t": "vf", "q": "Le compresseur doit être tenu par 2 chaînes de sécurité.", "vrai": true,

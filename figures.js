@@ -126,57 +126,7 @@ window.FIGURES = {
    "h": 531
   }
  ],
- "pro-op-ith-002a": [
-  {
-   "src": "images/figures/pro-op-ith-002a-1.jpg",
-   "page": "1",
-   "w": 476,
-   "h": 474
-  },
-  {
-   "src": "images/figures/pro-op-ith-002a-2.jpg",
-   "page": "2",
-   "w": 447,
-   "h": 335
-  },
-  {
-   "src": "images/figures/pro-op-ith-002a-3.jpg",
-   "page": "3",
-   "w": 860,
-   "h": 645
-  },
-  {
-   "src": "images/figures/pro-op-ith-002a-4.jpg",
-   "page": "3",
-   "w": 1009,
-   "h": 817
-  },
-  {
-   "src": "images/figures/pro-op-ith-002a-5.jpg",
-   "page": "4",
-   "w": 465,
-   "h": 619
-  },
-  {
-   "src": "images/figures/pro-op-ith-002a-6.jpg",
-   "page": "4",
-   "w": 465,
-   "h": 619
-  },
-  {
-   "src": "images/figures/pro-op-ith-002a-7.jpg",
-   "page": "5",
-   "w": 465,
-   "h": 619
-  },
-  {
-   "src": "images/figures/pro-op-ith-002a-8.jpg",
-   "page": "5",
-   "w": 426,
-   "h": 531
-  }
- ],
- "pro-op-ith-003": [
+  "pro-op-ith-003": [
   {
    "src": "images/figures/pro-op-ith-003-1.jpg",
    "page": "4",

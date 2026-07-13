@@ -74,29 +74,6 @@ window.QUIZ_PROC = {
     { "q": "Combien de manilles faut-il, et de quelle taille ?",
       "o": ["1 manille 1/2", "2 manilles 3/4", "4 manilles 3/4", "2 manilles 1''"], "a": 1,
       "e": "« Manilles requises : 2 manilles 3/4. »" }  ],
-  "pro-op-ith-002a": [
-    { "q": "Quel outil de mise en tension est utilisé dans cette procédure ?",
-      "o": ["Un tire-fort", "Un palan à levier (come along)", "Un treuil électrique", "Un vérin"], "a": 1,
-      "e": "Titre de la procédure : « Utilisation de la clé pour dévisser des tiges de forage avec un palan à levier (come along). »" },
-    { "q": "On utilise combien de palans à levier (come along) ?",
-      "o": ["Un seul", "Deux", "Trois", "Ça dépend du besoin"], "a": 0,
-      "e": "« Nombre de palans à levier (come along) : 1. »" },
-    { "q": "L'ancrage doit tenir quelle charge ?",
-      "o": ["1500 kg", "2000 kg", "2500 kg", "3000 kg"], "a": 2,
-      "e": "« Utiliser uniquement un ancrage certifié pour une charge de 2500 kg. »" },
-    { "q": "Dans quelle position on met la flèche (boom) ?",
-      "o": ["Debout (verticale)", "À plat (horizontale)", "Penchée à 60°", "Peu importe"], "a": 1,
-      "e": "« Mettre la flèche (boom) en position horizontale pour éviter que la clé à saver sub ne tombe. »" },
-    { "q": "Combien de manilles et de quelle taille ?",
-      "o": ["1 manille 3/4", "2 manilles 3/4", "2 manilles 1 pouce", "4 manilles 1/2"], "a": 1,
-      "e": "« Manilles : 2 manilles 3/4. »" },
-    { "q": "Quand tu frappes avec la masse, que dois-tu vérifier ?",
-      "o": ["Gants et lunettes", "Tes pieds sur un sol solide ET personne sous la masse", "Casque et bottes", "Radio et lampe"], "a": 1,
-      "e": "« S'assurer que vos pieds reposent sur une surface solide et que personne ne se trouve dans l'axe si la masse tombe. »" },
-    { "q": "Où mets-tu le réducteur (gearbox) pour poser la clé ?",
-      "o": ["Près des tables", "Loin des tables", "Par terre", "Sur la console"], "a": 1,
-      "e": "« Éloigner le réducteur (gearbox) le plus possible des tables pour disposer d'assez d'espace afin d'installer la clé. »" }
-  ],
   "pro-op-ith-003": [
     { "q": "Pour relier le traîneau au véhicule, il faut combien d'élingues et de quelle taille ?",
       "o": ["1 élingue de 1/2 pouce", "2 élingues de 1 pouce sur 8 pieds", "2 élingues de 4 pieds", "3 élingues de 1 pouce"], "a": 1,
@@ -308,8 +285,6 @@ window.QUIZ_PROC = {
     ],
     "pro-op-ith-002": [
     ],
-    "pro-op-ith-002a": [
-    ],
     "pro-op-ith-003": [
       { "q": "On déplace la foreuse sans remorque. Quand est-ce permis ?", "d": "difficile",
         "o": ["Partout, même dans la rampe", "Sur du plat, sur une courte distance, à basse vitesse - jamais dans la rampe", "Seulement en descendant la rampe", "Jamais"], "a": 1,
@@ -361,8 +336,6 @@ window.QUIZ_PROC = {
         "e": "« Lors du retrait de la pompe, la retenir avec les mains sur les boyaux car elle n'est plus tenue que par les boyaux hydrauliques et la sangle. »" }    ],
     "pro-op-ith-002": [
 ],
-    "pro-op-ith-002a": [
-    ],
     "pro-op-ith-003": [
       { "q": "Pendant l'embarquement de la foreuse, où doit se placer l'opérateur ?", "d": "difficile",
         "o": ["À côté de la remorque", "Dans le panier, avec la chaîne garde-corps en place", "Au sol, pour guider", "Dans le véhicule"], "a": 1,

@@ -147,14 +147,7 @@ window.PAGES = {
   "images/pages/pro-op-ith-002-5.jpg",
   "images/pages/pro-op-ith-002-6.jpg"
  ],
- "pro-op-ith-002a": [
-  "images/pages/pro-op-ith-002a-1.jpg",
-  "images/pages/pro-op-ith-002a-2.jpg",
-  "images/pages/pro-op-ith-002a-3.jpg",
-  "images/pages/pro-op-ith-002a-4.jpg",
-  "images/pages/pro-op-ith-002a-5.jpg"
- ],
- "pro-op-ith-003": [
+  "pro-op-ith-003": [
   "images/pages/pro-op-ith-003-1.jpg",
   "images/pages/pro-op-ith-003-2.jpg",
   "images/pages/pro-op-ith-003-3.jpg",

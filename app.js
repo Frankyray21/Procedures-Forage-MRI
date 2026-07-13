@@ -124,6 +124,7 @@
     var view = $('#view');
     view.removeAttribute('data-boot');   // le contenu réel remplace l'état « Chargement… »
     if (prevHash.indexOf('#/diamant') === 0) listScroll.diamant = window.scrollY;
+    else if (prevHash.indexOf('#/english-dd') === 0) listScroll['english-dd'] = window.scrollY;
     else if (prevHash.indexOf('#/english') === 0) listScroll.english = window.scrollY;
     else if (prevHash.indexOf('#/procedures') === 0) listScroll[''] = window.scrollY;
     var fromFiche = prevHash.indexOf('#/p/') === 0;
@@ -136,6 +137,7 @@
     // Code de sécurité : retiré du site (non publié) — anciens liens redirigés.
     else if (h.indexOf('#/code') === 0) { location.replace('#/procedures'); return; }
     else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); if (fromFiche) window.scrollTo(0, listScroll.diamant || 0); }
+    else if (h.indexOf('#/english-dd') === 0) { if (state.fam !== 'english-dd') { state.fam = 'english-dd'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('english'); if (fromFiche) window.scrollTo(0, listScroll['english-dd'] || 0); }
     else if (h.indexOf('#/english') === 0) { if (state.fam !== 'english') { state.fam = 'english'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('english'); if (fromFiche) window.scrollTo(0, listScroll.english || 0); }
     else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); if (fromFiche) window.scrollTo(0, listScroll[''] || 0); }
     else { renderPortail(view); setNav(''); }
@@ -204,10 +206,14 @@
   /* ---------- vue : accueil ---------- */
   var state = { q: '', cat: '', mach: '', fam: '' };
   // fam '' = foreuses ITH/CUBEX/V-30 (par défaut) ; 'diamant' = forage au diamant ;
-  // 'english' = procédures en anglais (section à part, jamais mêlée aux deux autres).
+  // 'english' / 'english-dd' = procédures en anglais, séparées comme les
+  // sections françaises (long-trou ITH vs forage au diamant), jamais mêlées.
+  // Le secteur anglais est dérivé du code (segment « DD » : PRO-DD-ST, SS-DD…).
+  function enDD(p) { return String(p.code || '').toUpperCase().split('-').indexOf('DD') >= 0; }
   // Appartenance d'une procédure à une section. famille 'commun' = ITH + diamant.
   function inSection(p, fam) {
-    if (fam === 'english') return p.famille === 'english';
+    if (fam === 'english') return p.famille === 'english' && !enDD(p);
+    if (fam === 'english-dd') return p.famille === 'english' && enDD(p);
     if (p.famille === 'english') return false;
     if (p.famille === 'commun') return true;
     return fam === 'diamant' ? p.famille === 'diamant' : p.famille !== 'diamant';
@@ -266,6 +272,7 @@
     var D = famData();
     var diamant = state.fam === 'diamant';
     var english = state.fam === 'english';
+    var englishDD = state.fam === 'english-dd';
     var cats = {}, machs = {};
     D.forEach(function (p) {
       cats[p.categorie] = (cats[p.categorie] || 0) + 1;
@@ -281,10 +288,14 @@
 
     view.innerHTML =
       '<section class="hero"><div class="wrap">' +
-        '<span class="eyebrow">' + (english ? 'Health &amp; Safety · Drilling' : diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
-        '<h1>' + (english ? 'English <span class="hl">procedures</span>' : diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de <span class="hl">forage</span>') + '</h1>' +
+        '<span class="eyebrow">' + ((english || englishDD) ? 'Health &amp; Safety · Drilling' : diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
+        '<h1>' + (english ? 'English — <span class="hl">ITH / CUBEX</span>'
+          : englishDD ? 'English — <span class="hl">Diamond drilling</span>'
+          : diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de <span class="hl">forage</span>') + '</h1>' +
         '<p class="lead">' + (english
-          ? 'English-language work procedures of Machines Roger International: ITH/CUBEX, Stopemaster and diamond drilling. Each card contains the official PDF, available offline.'
+          ? 'English-language procedures for ITH/CUBEX long-hole drilling, V-30 boring, Stopemaster and general safety. Each card contains the official PDF, available offline.'
+          : englishDD
+          ? 'English-language procedures for diamond drilling: core barrel, set-up, remote drilling and safety systems. Each card contains the official PDF, available offline.'
           : diamant
           ? 'Procédures de forage au diamant de Machines Roger International : carottage, planchers, déplacements, sécurité. Chaque fiche contient le PDF officiel de la procédure, consultable même sans réseau.'
           : 'Toutes les procédures de travail de Machines Roger International, sur ton téléphone, même sans réseau. Chaque fiche contient le PDF officiel de la procédure.') + '</p>' +
@@ -293,6 +304,10 @@
           '<div class="stat"><b>' + Object.keys(cats).length + '</b><span>Catégories</span></div>' +
           (diamant
             ? '<div class="stat"><b><a href="#/procedures" style="color:var(--accent-l)">ITH&nbsp;»</a></b><span>Foreuses ITH/CUBEX</span></div>'
+            : english
+            ? '<div class="stat"><b><a href="#/english-dd" style="color:var(--accent-l)">DD&nbsp;»</a></b><span>Diamond drilling</span></div>'
+            : englishDD
+            ? '<div class="stat"><b><a href="#/english" style="color:var(--accent-l)">ITH&nbsp;»</a></b><span>ITH / CUBEX</span></div>'
             : '') +
           '<div class="stat"><b><a href="#/suivi" style="color:var(--accent-l)">Suivi&nbsp;»</a></b><span>de mes formations</span></div>' +
         '</div>' +
@@ -702,21 +717,6 @@
           '<div class="lgrp-rows">' + g.items.map(card).join('') + '</div></div>';
       }).join('');
     };
-    // Section English : séparée en deux SECTEURS (long-trou ITH / forage au
-    // diamant), comme les onglets français — le secteur est dérivé du code
-    // (segment « DD » : PRO-DD-ST, PRO-OP-DD, SS-DD…).
-    if (state.fam === 'english') {
-      var isDD = function (p) { return String(p.code || '').toUpperCase().split('-').indexOf('DD') >= 0; };
-      var ddList = list.filter(isDD), ithList = list.filter(function (p) { return !isDD(p); });
-      var secs = [];
-      if (ithList.length) secs.push({ t: 'ITH / CUBEX / Stopemaster', items: ithList });
-      if (ddList.length) secs.push({ t: 'Diamond drilling', items: ddList });
-      grid.innerHTML = secs.map(function (s) {
-        return '<div class="lsec"><h2 class="lsec-h"><span>' + esc(s.t) + '</span>' +
-          '<span class="ct">' + s.items.length + '</span></h2>' + groupsHTML(s.items) + '</div>';
-      }).join('');
-      return;
-    }
     grid.innerHTML = groupsHTML(list);
   }
   // Classement : 'code' (DÉFAUT) = annuaire par famille de codes,
@@ -792,7 +792,7 @@
       var groups = order.map(function (pre) {
         return { label: pre, sub: CODE_FAMILY[pre] || '', items: byPre[pre], code: true };
       });
-      if (sans.length) groups.push({ label: state.fam === 'english' ? 'No code' : 'Sans code', items: sans, code: true });
+      if (sans.length) groups.push({ label: state.fam.indexOf('english') === 0 ? 'No code' : 'Sans code', items: sans, code: true });
       return groups;
     }
     if (listMode() === 'mach') {
@@ -811,7 +811,7 @@
       Object.keys(by).forEach(function (m) {
         if (MACH_ORDER.indexOf(m) < 0) groups.push({ label: m, items: by[m] });
       });
-      if (autres.length) groups.push({ label: state.fam === 'english' ? 'Others' : 'Autres', items: autres });
+      if (autres.length) groups.push({ label: state.fam.indexOf('english') === 0 ? 'Others' : 'Autres', items: autres });
       return groups;
     }
     var byCat = {};
@@ -967,8 +967,8 @@
     // Pour une procédure 'commun', le retour suit la section d'où l'on vient.
     var viaDiamant = (p.famille === 'commun') ? (state.fam === 'diamant') : (p.famille === 'diamant');
     var viaEnglish = p.famille === 'english';
-    var backHref = viaEnglish ? '#/english' : viaDiamant ? '#/diamant' : '#/procedures';
-    var backLbl = viaEnglish ? ' English procedures' : viaDiamant ? ' Forage au diamant' : ' Toutes les procédures';
+    var backHref = viaEnglish ? (enDD(p) ? '#/english-dd' : '#/english') : viaDiamant ? '#/diamant' : '#/procedures';
+    var backLbl = viaEnglish ? (enDD(p) ? ' English — Diamond drilling' : ' English — ITH / CUBEX') : viaDiamant ? ' Forage au diamant' : ' Toutes les procédures';
     var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
     var h = '<div class="wrap"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
       '<div class="phead">' +
@@ -2395,7 +2395,8 @@
     function svCmp(a, b) { return svRank(a) - svRank(b) || cmpCode(a, b); }
     var ith = DATA.filter(function (p) { return p.famille !== 'diamant' && p.famille !== 'english'; }).sort(svCmp);
     var diam = DATA.filter(function (p) { return p.famille === 'diamant'; }).sort(svCmp);
-    var eng = DATA.filter(function (p) { return p.famille === 'english'; }).sort(svCmp);
+    var eng = DATA.filter(function (p) { return p.famille === 'english' && !enDD(p); }).sort(svCmp);
+    var engDD = DATA.filter(function (p) { return p.famille === 'english' && enDD(p); }).sort(svCmp);
 
     view.innerHTML =
       '<section class="hero herosm"><div class="wrap">' +
@@ -2414,7 +2415,8 @@
         '<div class="secwrap"><h2 class="sv-h2">Résultats détaillés</h2>' +
           suiviGroupHTML('Foreuses ITH / CUBEX', ith) +
           suiviGroupHTML('Forage au diamant', diam) +
-          (eng.length ? suiviGroupHTML('English procedures', eng) : '') +
+          (eng.length ? suiviGroupHTML('English — ITH / CUBEX', eng) : '') +
+          (engDD.length ? suiviGroupHTML('English — Diamond drilling', engDD) : '') +
         '</div>' +
         '<p class="sv-note">Les résultats affichés ici restent sur ton appareil. Les gestionnaires font le suivi officiel à partir des attestations envoyées.</p>' +
       '</div>';
@@ -2482,7 +2484,8 @@
   function renderPortail(view) {
     var nProd = DATA.filter(function (p) { return p.famille !== 'diamant' && p.famille !== 'english'; }).length;
     var nDiam = DATA.filter(function (p) { return p.famille === 'diamant'; }).length;
-    var nEng = DATA.filter(function (p) { return p.famille === 'english'; }).length;
+    var nEng = DATA.filter(function (p) { return p.famille === 'english' && !enDD(p); }).length;
+    var nEngDD = DATA.filter(function (p) { return p.famille === 'english' && enDD(p); }).length;
     view.innerHTML = '<section class="portal"><div class="wrap">' +
       '<div class="phead2"><div><h1>Sécurité du forage</h1><p>Machines Roger International</p></div></div>' +
       '<p class="plead">Choisis ton secteur.</p>' +
@@ -2496,8 +2499,12 @@
           '<div class="pc-meta">' + nDiam + ' procédures · disponible hors ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
         (nEng ? '<a class="portal-card kb" href="#/english"><div class="pc-ic">' + ICON.doc + '</div>' +
-          '<h2>English procedures</h2><p>English-language work procedures: ITH/CUBEX, Stopemaster and diamond drilling. Official PDF viewable offline, with quizzes.</p>' +
+          '<h2>English — ITH / CUBEX</h2><p>English-language procedures: ITH/CUBEX long-hole drilling, V-30 boring, Stopemaster and general safety. Official PDF viewable offline, with quizzes.</p>' +
           '<div class="pc-meta">' + nEng + ' procedures · available offline</div>' +
+          '<span class="go">Enter ' + ICON.arrow + '</span></a>' : '') +
+        (nEngDD ? '<a class="portal-card diam" href="#/english-dd"><div class="pc-ic">' + ICON.doc + '</div>' +
+          '<h2>English — Diamond drilling</h2><p>English-language procedures for diamond drilling: core barrel, set-up, remote drilling and safety systems. Official PDF viewable offline, with quizzes.</p>' +
+          '<div class="pc-meta">' + nEngDD + ' procedures · available offline</div>' +
           '<span class="go">Enter ' + ICON.arrow + '</span></a>' : '') +
       '</div>' +
       '<a class="portal-suivi" href="#/suivi">' + ICON.check +
