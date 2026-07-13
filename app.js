@@ -322,9 +322,13 @@
         '</div>' +
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
-      '<div class="wrap"><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
+      '<div class="wrap"><div id="prgRow"></div><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
       // Installation après le contenu ; le hors ligne est en haut (compact).
       '<div class="wrap"><div class="install" id="install"></div></div>';
+
+    // ---- Ma progression dans la section : barre + palier sobre. Toujours
+    // visible (0 % donne l'objectif) ; se met à jour au retour d'une fiche. ----
+    renderSectionProgress(D, english || englishDD);
 
     var q = $('#q');
     q.value = state.q;
@@ -894,6 +898,46 @@
       return '<div class="srgrp">' + h + '</div>';
     }).join('');
   }
+  /* ---------- progression de section (engagement, ton sobre) ----------
+     Barre d'attestations + quiz complétés restants, et une phrase de palier
+     factuelle. Aucune animation, aucun badge — le sentiment d'avancement
+     vient du remplissage de la barre et des états sur les rangées. */
+  function renderSectionProgress(P, inEnglish) {
+    var box = $('#prgRow'); if (!box) return;
+    var att = 0, quizOk = 0;
+    P.forEach(function (p) {
+      if (attestInfo(p.id)) { att++; return; }
+      var t = (window.QUIZ_PROC && window.QUIZ_PROC[p.id] || []).length;
+      var b = pqGetBest(p.id);
+      if (b && t && b.n === t) quizOk++;
+    });
+    var pct = P.length ? Math.round(att / P.length * 100) : 0;
+    var left = P.length - att;
+    var msg;
+    if (inEnglish) {
+      msg = pct === 100 ? 'Section complete — every procedure is certified.'
+        : pct >= 75 ? 'Almost there — ' + left + ' left to certify.'
+        : pct >= 50 ? 'Good progress — more than half certified.'
+        : pct >= 25 ? 'Well underway.'
+        : att > 0 ? 'Good start — keep going one card at a time.'
+        : 'Start with one card — read, take the quiz, certify.';
+    } else {
+      msg = pct === 100 ? 'Section complète — toutes les procédures sont attestées.'
+        : pct >= 75 ? 'Presque au bout — encore ' + left + ' à attester.'
+        : pct >= 50 ? 'Bonne progression — plus de la moitié est attestée.'
+        : pct >= 25 ? 'En bonne voie.'
+        : att > 0 ? 'Départ pris — une fiche à la fois.'
+        : 'Commence par une fiche : lecture, quiz, attestation.';
+    }
+    box.innerHTML = '<div class="secprg' + (pct === 100 ? ' done' : '') + '">' +
+      '<div class="sp-top"><b>' + (inEnglish ? 'My progress' : 'Ma progression') + '</b>' +
+      '<span>' + att + ' / ' + P.length + (inEnglish ? ' certified' : ' attestées') +
+      (quizOk ? ' · ' + quizOk + (inEnglish ? ' quiz done, to certify' : ' quiz à attester') : '') + '</span>' +
+      '<span class="sp-pct">' + pct + ' %</span></div>' +
+      '<div class="sp-bar"><i style="width:' + pct + '%"></i></div>' +
+      '<p class="sp-msg">' + msg + '</p></div>';
+  }
+
   function card(p) {
     var col = catColor(p.categorie);
     // Rangée compacte : tout tient sur une ligne quand la place le permet
@@ -2343,7 +2387,8 @@
   function suiviGroupHTML(titre, procs) {
     var att = procs.filter(function (p) { return !!attestInfo(p.id); }).length;
     var pctA = procs.length ? Math.round(att / procs.length * 100) : 0;
-    return '<div class="sec sv-group"><h2>' + esc(titre) + '</h2>' +
+    return '<div class="sec sv-group"><h2>' + esc(titre) +
+      (pctA === 100 ? '<span class="sv-master">' + ICON.check + ' Section maîtrisée</span>' : '') + '</h2>' +
       '<div class="sv-gbar"><div class="sv-gfill" style="width:' + pctA + '%"></div></div>' +
       '<p class="sv-gtxt">' + att + ' / ' + procs.length + ' procédures attestées</p>' +
       '<div class="sv-rows">' + procs.map(suiviRowHTML).join('') + '</div></div>';
@@ -2357,6 +2402,14 @@
     var attested = DATA.filter(function (p) { return !!attestInfo(p.id); });
     var played = withQuiz.map(function (p) { return pqBestPct(p.id); }).filter(Boolean);
     var avg = played.length ? Math.round(played.reduce(function (a, b) { return a + b.pct; }, 0) / played.length) : null;
+    // Points de quiz cumulés (meilleurs essais) sur le total possible de
+    // toutes les fiches — le « score de carrière » du travailleur.
+    var ptsEarned = 0, ptsMax = 0;
+    withQuiz.forEach(function (p) {
+      (window.QUIZ_PROC[p.id] || []).forEach(function (q) { ptsMax += pqPoints(q); });
+      var bp = pqGetBestPts(p.id);
+      if (bp) ptsEarned += Math.min(bp.pts, bp.max);
+    });
     var name = suiviName();
 
     // Ordre utile : d'abord « quiz fait, pas complétée » (il ne manque qu'un
@@ -2385,6 +2438,7 @@
           '<div class="stat"><b>' + attested.length + ' / ' + DATA.length + '</b><span>Attestations</span></div>' +
           '<div class="stat"><b>' + quizDone.length + ' / ' + withQuiz.length + '</b><span>Quiz complétés</span></div>' +
           '<div class="stat"><b>' + (avg == null ? '—' : avg + ' %') + '</b><span>Score moyen</span></div>' +
+          '<div class="stat"><b>' + ptsEarned + ' / ' + ptsMax + '</b><span>Points de quiz</span></div>' +
         '</div>' +
       '</div></section>' +
       '<div class="wrap">' +

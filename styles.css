@@ -939,6 +939,28 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .pdfbox{background:var(--card)}
 :root[data-theme="light"] .pdfview>summary:hover{background:rgba(0,0,0,.04)}
 :root[data-theme="light"] .gfig{border-color:var(--border)}
+/* Ma progression (haut des listes de section) : barre + palier sobre. */
+.secprg{margin:1.1rem 0 .3rem;padding:.7rem .9rem;background:var(--card-2);
+  border:1px solid var(--border);border-radius:12px}
+.sp-top{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.sp-top b{font-family:var(--font-display);font-size:.86rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;color:var(--strong)}
+.sp-top>span:not(.sp-pct){font-size:.8rem;color:var(--muted);font-weight:600}
+.sp-pct{margin-left:auto;font-family:var(--font-display);font-size:.92rem;font-weight:800;color:var(--strong)}
+.sp-bar{height:8px;border-radius:999px;background:var(--card);border:1px solid var(--border);
+  overflow:hidden;margin:.5rem 0 .4rem}
+.sp-bar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .4s ease}
+.secprg.done .sp-bar i{background:#10b981}
+.secprg.done .sp-pct{color:#34d399}
+:root[data-theme="light"] .secprg.done .sp-pct{color:#047857}
+.sp-msg{font-size:.78rem;color:var(--dim);margin:0}
+@media (prefers-reduced-motion: reduce){.sp-bar i{transition:none}}
+/* Palier « Section maîtrisée » (Mon suivi) */
+.sv-master{display:inline-flex;align-items:center;gap:.3rem;margin-left:.6rem;font-size:.72rem;
+  font-weight:800;letter-spacing:.02em;color:#34d399;background:rgba(16,185,129,.13);
+  border:1px solid rgba(16,185,129,.4);border-radius:999px;padding:.14rem .55rem;vertical-align:middle}
+.sv-master svg{width:11px;height:11px}
+:root[data-theme="light"] .sv-master{color:#047857}
 /* Secteurs de la section English (ITH / Diamond drilling) : un cran
    au-dessus des familles de codes — titre plus grand, filet appuyé. */
 .lsec + .lsec{margin-top:2.6rem}
