@@ -1028,10 +1028,14 @@
         '<details class="pquiz" data-proc="' + esc(p.id) + '">' +
           '<summary><span class="pqs-t">' + pqList.length + ' questions · réponse corrigée immédiatement</span>' +
           '<span class="pqs-b">' + (best ? 'Meilleur : ' + best.s + '/' + best.n : 'Commencer') + '</span></summary>' +
-          '<div class="pqbody">' + pqitems +
+          '<div class="pqbody">' +
+            '<div class="pq-prog" aria-hidden="true"><i></i></div>' +
+            '<div class="pq-mid" aria-live="polite"></div>' +
+            pqitems +
             '<div class="pq-actions"><button type="button" class="btn ghost pq-reset">Recommencer</button>' +
             (pqGetFails(p.id).length ? '<button type="button" class="btn ghost pq-review">Réviser mes erreurs (' + pqGetFails(p.id).length + ')</button>' : '') +
             '<span class="pq-score" aria-live="polite"></span></div>' +
+            '<div class="pq-summary" aria-live="polite"></div>' +
           '</div>' +
         '</details></div>';
     }
@@ -1560,6 +1564,22 @@
     // l'attestation reste verrouillée pour toujours.
     if (!b || b.n !== n || s > b.s) { try { localStorage.setItem(pkey('pq_' + id), JSON.stringify({ s: s, n: n })); } catch (e) {} progPushSoon(); }
   }
+  // Pondération des questions : les types qui demandent plusieurs réponses
+  // ('multi', 'ordre', 'assoc') valent 2 points ; les autres (choix de
+  // réponse, vrai/faux, texte à trous, chasse à l'erreur) valent 1 point.
+  function pqPoints(it) { return (it.t === 'multi' || it.t === 'ordre' || it.t === 'assoc') ? 2 : 1; }
+  // Petit indicateur de points affiché AVANT de répondre (transparence du barème).
+  function pqPtsHTML(it) { var w = pqPoints(it); return '<span class="pq-pts">' + w + ' pt' + (w > 1 ? 's' : '') + '</span>'; }
+  // Meilleur score en POINTS (pondéré) — clé localStorage SÉPARÉE et additive
+  // (pq_pts_<id> = {pts, max}) : ne touche jamais au schéma pq_<id> = {s, n}
+  // utilisé par pqGetBest/pqSetBest/pqCompleted pour débloquer l'attestation.
+  function pqGetBestPts(id) { try { var v = JSON.parse(localStorage.getItem(pkey('pq_pts_' + id))); return (v && typeof v.pts === 'number' && typeof v.max === 'number') ? v : null; } catch (e) { return null; } }
+  function pqSetBestPts(id, pts, max) {
+    var b = pqGetBestPts(id);
+    // Même logique que pqSetBest : on écrase aussi quand le MAXIMUM de points
+    // a changé (quiz mis à jour), sinon l'ancien record devient imbattable.
+    if (!b || b.max !== max || pts > b.pts) { try { localStorage.setItem(pkey('pq_pts_' + id), JSON.stringify({ pts: pts, max: max })); } catch (e) {} }
+  }
   // Rend une question selon son type. it.t : absent = choix de réponse ;
   // 'vf' = vrai ou faux ; 'multi' = cocher les affirmations vraies ;
   // 'ordre' = remettre les étapes en ordre (it.o est DANS l'ordre correct,
@@ -1568,7 +1588,7 @@
     var qhead = '<p class="pq-q"><b>' + num + '.</b> ';
     if (it.t === 'vf') {
       return '<div class="pq pq-vf" data-i="' + oi + '">' +
-        qhead + '<span class="pq-type">Vrai ou faux</span>' + esc(it.q) + '</p>' +
+        qhead + '<span class="pq-type">Vrai ou faux</span>' + pqPtsHTML(it) + esc(it.q) + '</p>' +
         '<div class="pq-opts pq-opts-vf">' + ['Vrai', 'Faux'].map(function (opt, j) {
           return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + opt + '</span></label>';
         }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div></div>';
@@ -1577,7 +1597,7 @@
       // options mélangées à l'affichage ; value = index d'origine
       var mperm = shuffle(it.o.map(function (_, j) { return j; }));
       return '<div class="pq pq-multi" data-i="' + oi + '">' +
-        qhead + '<span class="pq-type">Plusieurs réponses</span>' + esc(it.q) +
+        qhead + '<span class="pq-type">Plusieurs réponses</span>' + pqPtsHTML(it) + esc(it.q) +
         ' <span class="pq-hint">Coche TOUTES les affirmations vraies, puis valide.</span></p>' +
         '<div class="pq-opts">' + mperm.map(function (j) {
           return '<label class="pq-opt"><input type="checkbox" value="' + j + '"><span class="pq-mark pq-sq"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
@@ -1590,7 +1610,7 @@
       var identity = ord.every(function (v, j) { return v === j; });
       if (identity) ord.push(ord.shift());     // jamais présenté déjà en ordre
       return '<div class="pq pq-ordre" data-i="' + oi + '">' +
-        qhead + '<span class="pq-type">Remettre en ordre</span>' + esc(it.q) +
+        qhead + '<span class="pq-type">Remettre en ordre</span>' + pqPtsHTML(it) + esc(it.q) +
         ' <span class="pq-hint">Touche les étapes dans l\'ordre (1, 2, 3…), puis valide.</span></p>' +
         '<div class="pq-steps">' + ord.map(function (k) {
           return '<button type="button" class="pq-step" data-k="' + k + '"><span class="pq-num"></span><span class="pq-txt">' + esc(it.o[k]) + '</span></button>';
@@ -1606,7 +1626,7 @@
         return '<option value="' + j + '">' + esc(it.pairs[j].r) + '</option>';
       }).join('');
       return '<div class="pq pq-assoc" data-i="' + oi + '">' +
-        qhead + '<span class="pq-type">Association</span>' + esc(it.q) +
+        qhead + '<span class="pq-type">Association</span>' + pqPtsHTML(it) + esc(it.q) +
         ' <span class="pq-hint">Choisis la valeur officielle de chaque paramètre, puis valide.</span></p>' +
         '<div class="pq-pairs">' + it.pairs.map(function (pr, k) {
           return '<div class="pq-pair" data-k="' + k + '"><span class="pq-pl">' + esc(pr.l) + '</span>' +
@@ -1622,7 +1642,7 @@
     // position ») ; value = index d'origine, la correction est inchangée.
     var perm = shuffle(it.o.map(function (_, j) { return j; }));
     return '<div class="pq" data-i="' + oi + '">' + qhead +
-      (badge ? '<span class="pq-type">' + badge + '</span>' : '') + esc(it.q) + '</p>' +
+      (badge ? '<span class="pq-type">' + badge + '</span>' : '') + pqPtsHTML(it) + esc(it.q) + '</p>' +
       '<div class="pq-opts">' + perm.map(function (j) {
         return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
       }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div></div>';
@@ -1637,22 +1657,84 @@
     var resetBtn = box.querySelector('.pq-reset');
     var reviewBtn = box.querySelector('.pq-review');
     var scoreEl = box.querySelector('.pq-score');
+    var progEl = box.querySelector('.pq-prog i');    // barre de progression (questions répondues)
+    var midEl = box.querySelector('.pq-mid');        // message discret de mi-parcours
+    var sumEl = box.querySelector('.pq-summary');    // résumé de fin de quiz
     var fails = pqGetFails(id).filter(function (i) { return i < list.length; });
     var reviewMode = false;
+    var midShown = false;                            // le message de mi-parcours n'apparaît qu'UNE fois par tentative
+    // Meilleurs scores AVANT la tentative en cours (pour la ligne de
+    // comparaison factuelle du résumé de fin) ; rafraîchis à chaque « Recommencer ».
+    var prevBest = pqGetBest(id);
+    var prevPts = pqGetBestPts(id);
+
+    // Message de fin selon le taux de bonnes réponses (en %, pas en points).
+    function pqEndMsg(pct) {
+      if (pct === 100) return 'Maîtrise complète de la procédure. Toutes les réponses sont bonnes.';
+      if (pct >= 80) return 'Bonne maîtrise de la procédure. Quelques éléments restent à revoir — consulte les références sous les questions manquées.';
+      if (pct >= 50) return 'Compréhension partielle. Prends le temps de revoir les questions manquées avant d\'attester ta lecture.';
+      return 'Plusieurs notions restent à consolider. Relis la procédure, puis refais le quiz avant de continuer.';
+    }
+    // Ligne de comparaison avec le meilleur score antérieur — factuelle, en
+    // points (repli sur les bonnes réponses si aucun record en points n'existe).
+    function pqCompareLine(pts, maxPts, correct, n) {
+      if (prevPts && prevPts.max === maxPts) {
+        var d = pts - prevPts.pts;
+        if (d > 0) return 'Progression : +' + d + ' point' + (d > 1 ? 's' : '') + ' par rapport à ton meilleur résultat.';
+        if (d === 0) return 'Résultat égal à ton meilleur score.';
+        return 'Résultat sous ton meilleur score (' + prevPts.pts + ' pt' + (prevPts.pts > 1 ? 's' : '') + ') — tu peux réessayer.';
+      }
+      if (prevBest && prevBest.n === n) {
+        var ds = correct - prevBest.s;
+        if (ds > 0) return 'Progression : +' + ds + ' bonne' + (ds > 1 ? 's' : '') + ' réponse' + (ds > 1 ? 's' : '') + ' par rapport à ton meilleur résultat.';
+        if (ds === 0) return 'Résultat égal à ton meilleur score.';
+        return 'Résultat sous ton meilleur score (' + prevBest.s + '/' + prevBest.n + ') — tu peux réessayer.';
+      }
+      return '';
+    }
 
     function updateScore() {
       var cards = box.querySelectorAll('.pq:not(.pq-hidden)');
-      var n = cards.length, answered = 0, correct = 0;
+      var n = cards.length, answered = 0, correct = 0, pts = 0, maxPts = 0;
       [].forEach.call(cards, function (c) {
+        var q = list[parseInt(c.getAttribute('data-i'), 10)];
+        var w = q ? pqPoints(q) : 1;
+        maxPts += w;
         if (c.classList.contains('answered')) answered++;
-        if (c.classList.contains('correct')) correct++;
+        if (c.classList.contains('correct')) { correct++; pts += w; }
       });
-      if (!answered) { scoreEl.textContent = ''; scoreEl.className = 'pq-score'; return; }
-      scoreEl.textContent = correct + ' bonne' + (correct > 1 ? 's' : '') + ' / ' + answered + ' répondue' + (answered > 1 ? 's' : '') + ' (sur ' + n + ')';
+      // Barre de progression : remplissage = part des questions répondues.
+      if (progEl) progEl.style.width = (n ? Math.round(answered / n * 100) : 0) + '%';
+      if (!answered) {
+        scoreEl.textContent = ''; scoreEl.className = 'pq-score';
+        if (midEl) { midEl.textContent = ''; midEl.classList.remove('on'); }
+        if (sumEl) { sumEl.innerHTML = ''; sumEl.className = 'pq-summary'; }
+        return;
+      }
+      scoreEl.textContent = correct + ' bonne' + (correct > 1 ? 's' : '') + ' / ' + answered + ' répondue' + (answered > 1 ? 's' : '') + ' (sur ' + n + ')' +
+        ' · ' + pts + ' pt' + (pts > 1 ? 's' : '') + ' sur ' + maxPts + ' possibles';
+      // Encouragement sobre, affiché UNE seule fois à mi-parcours (quiz complet seulement).
+      if (midEl && !reviewMode && !midShown && n >= 4 && answered >= n / 2 && answered < n) {
+        midShown = true;
+        midEl.textContent = 'La moitié des questions est complétée — continue à ton rythme.';
+        midEl.classList.add('on');
+      }
+      if (midEl && answered === n) { midEl.textContent = ''; midEl.classList.remove('on'); }
       if (answered === n) {
         scoreEl.className = 'pq-score ' + (correct === n ? 'perfect' : correct >= Math.ceil(n * 0.8) ? 'pass' : 'fail');
         if (!reviewMode) {                       // la note de passage porte sur le quiz COMPLET
+          // Résumé de fin : niveau de maîtrise (en %) + comparaison factuelle
+          // avec le meilleur score ANTÉRIEUR (capturé avant cette tentative).
+          if (sumEl) {
+            var pct = Math.round(correct / n * 100);
+            var cmp = pqCompareLine(pts, maxPts, correct, n);
+            sumEl.innerHTML = '<b>Quiz terminé : ' + correct + '/' + n + ' (' + pct + ' %) · ' +
+              pts + ' pt' + (pts > 1 ? 's' : '') + ' sur ' + maxPts + '.</b> ' + pqEndMsg(pct) +
+              (cmp ? '<span class="pq-sum-cmp">' + cmp + '</span>' : '');
+            sumEl.className = 'pq-summary on ' + (pct >= 80 ? 's-ok' : pct >= 50 ? 's-mid' : 's-low');
+          }
           pqSetBest(id, correct, n);
+          pqSetBestPts(id, pts, maxPts);
           var sb = box.querySelector('.pqs-b'); var nb = pqGetBest(id);
           if (sb && nb) sb.textContent = 'Meilleur : ' + nb.s + '/' + nb.n;
           updateAttestGate(id);
@@ -1831,6 +1913,13 @@
       [].forEach.call(box.querySelectorAll('.pq-fb'), function (f) { f.className = 'pq-fb'; f.innerHTML = ''; });
       [].forEach.call(box.querySelectorAll('.pq-exp'), function (ex) { ex.classList.remove('on'); ex.innerHTML = ''; });
       scoreEl.textContent = ''; scoreEl.className = 'pq-score';
+      if (progEl) progEl.style.width = '0%';
+      if (midEl) { midEl.textContent = ''; midEl.classList.remove('on'); }
+      if (sumEl) { sumEl.innerHTML = ''; sumEl.className = 'pq-summary'; }
+      midShown = false;
+      // Nouvelle tentative : les records à battre incluent la tentative qui vient de se terminer.
+      prevBest = pqGetBest(id);
+      prevPts = pqGetBestPts(id);
     }
     resetBtn.onclick = resetAll;
 

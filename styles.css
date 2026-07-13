@@ -610,6 +610,9 @@ footer b{color:var(--muted)}
 /* ===== nouveaux types de questions ===== */
 .pq-type{display:inline-block;font-size:.75rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
   background:var(--card-2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:.12rem .45rem;margin-right:.45rem;vertical-align:.1em}
+/* pondération affichée AVANT de répondre (barème transparent : 1 pt / 2 pts) */
+.pq-pts{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--dim);border:1px dashed var(--border);border-radius:6px;padding:.12rem .4rem;margin-right:.45rem;vertical-align:.1em;white-space:nowrap}
 .pq-hint{display:block;margin-top:.25rem;font-size:.82rem;font-weight:500;color:var(--dim)}
 /* vrai / faux : deux options côte à côte */
 .pq-opts-vf{flex-direction:row}
@@ -680,6 +683,25 @@ footer b{color:var(--muted)}
 .pq-score{font-weight:800;font-family:var(--font-display);letter-spacing:.02em}
 .pq-score.perfect,.pq-score.pass{color:#4ade80}
 .pq-score.fail{color:var(--accent-l)}
+/* barre de progression du quiz de fiche (part des questions répondues) */
+.pq-prog{height:6px;background:var(--card-2);border:1px solid var(--border);border-radius:50px;overflow:hidden;margin-bottom:.9rem}
+.pq-prog i{display:block;height:100%;width:0;background:var(--accent);border-radius:50px;transition:width .25s ease}
+/* message discret de mi-parcours (une seule fois par tentative) */
+.pq-mid{display:none;font-size:.85rem;color:var(--muted);margin:-.4rem 0 .8rem}
+.pq-mid.on{display:block}
+/* résumé de fin de quiz : niveau de maîtrise + comparaison factuelle */
+.pq-summary{display:none;margin-top:1rem;padding:.75rem .9rem;background:var(--card-2);
+  border:1px solid var(--border);border-left:3px solid var(--dim);border-radius:10px;
+  font-size:.95rem;line-height:1.55}
+.pq-summary.on{display:block}
+.pq-summary b{font-family:var(--font-display);letter-spacing:.02em}
+.pq-summary.s-ok{border-left-color:#16a34a}
+.pq-summary.s-ok b{color:#4ade80}
+.pq-summary.s-mid{border-left-color:#fbbf24}
+.pq-summary.s-mid b{color:#fbbf24}
+.pq-summary.s-low{border-left-color:var(--accent)}
+.pq-summary.s-low b{color:var(--accent-l)}
+.pq-sum-cmp{display:block;margin-top:.35rem;font-size:.85rem;color:var(--muted)}
 
 /* ===== Assistant procédures (chatbot hors-ligne) ===== */
 .cbbtn{position:fixed;right:18px;bottom:18px;z-index:1100;width:56px;height:56px;border-radius:50%;
@@ -906,6 +928,11 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .offcard{background:linear-gradient(160deg,rgba(210,35,37,.05),rgba(255,255,255,.6))}
 :root[data-theme="light"] .offcard.ok{background:linear-gradient(160deg,rgba(16,185,129,.10),rgba(255,255,255,.6))}
 :root[data-theme="light"] .pq-score.fail{color:#b81b1d}
+:root[data-theme="light"] .pq-summary.s-ok{border-left-color:#0e8a63}
+:root[data-theme="light"] .pq-summary.s-ok b{color:#047857}
+:root[data-theme="light"] .pq-summary.s-mid{border-left-color:#b45309}
+:root[data-theme="light"] .pq-summary.s-mid b{color:#b45309}
+:root[data-theme="light"] .pq-summary.s-low b{color:#b81b1d}
 :root[data-theme="light"] .qfb.ok{color:#047857}
 :root[data-theme="light"] .qfb.no{color:#b91c1c}
 :root[data-theme="light"] ::selection{color:#111827}
