@@ -424,5 +424,157 @@ window.PAGES = {
   "images/pages/pro-mec-010-3.jpg",
   "images/pages/pro-mec-010-4.jpg",
   "images/pages/pro-mec-010-5.jpg"
- ]
+ ],
+ "atelier-mec-001": [
+  "images/pages/atelier-mec-001-1.jpg",
+  "images/pages/atelier-mec-001-2.jpg"
+ ],
+ "atelier-mec-002": [
+  "images/pages/atelier-mec-002-1.jpg",
+  "images/pages/atelier-mec-002-2.jpg",
+  "images/pages/atelier-mec-002-3.jpg",
+  "images/pages/atelier-mec-002-4.jpg"
+ ],
+ "atelier-mec-003": [
+  "images/pages/atelier-mec-003-1.jpg",
+  "images/pages/atelier-mec-003-2.jpg",
+  "images/pages/atelier-mec-003-3.jpg",
+  "images/pages/atelier-mec-003-4.jpg",
+  "images/pages/atelier-mec-003-5.jpg",
+  "images/pages/atelier-mec-003-6.jpg",
+  "images/pages/atelier-mec-003-7.jpg",
+  "images/pages/atelier-mec-003-8.jpg"
+ ],
+ "atelier-transport-001": [
+  "images/pages/atelier-transport-001-1.jpg",
+  "images/pages/atelier-transport-001-2.jpg"
+ ],
+ "pro-sec-010": [
+  "images/pages/pro-sec-010-1.jpg",
+  "images/pages/pro-sec-010-2.jpg"
+ ],
+ "ges-san-sec-001": [
+  "images/pages/ges-san-sec-001-1.jpg",
+  "images/pages/ges-san-sec-001-2.jpg",
+  "images/pages/ges-san-sec-001-3.jpg",
+  "images/pages/ges-san-sec-001-4.jpg",
+  "images/pages/ges-san-sec-001-5.jpg"
+ ],
+ "procedure-serrage-marteau": [
+  "images/pages/procedure-serrage-marteau-1.jpg",
+  "images/pages/procedure-serrage-marteau-2.jpg",
+  "images/pages/procedure-serrage-marteau-3.jpg",
+  "images/pages/procedure-serrage-marteau-4.jpg"
+ ],
+  "cadenassage-cat-416": [
+    "images/pages/cadenassage-cat-416-1.jpg",
+    "images/pages/cadenassage-cat-416-2.jpg",
+    "images/pages/cadenassage-cat-416-3.jpg",
+    "images/pages/cadenassage-cat-416-4.jpg",
+    "images/pages/cadenassage-cat-416-5.jpg"
+  ],
+  "cadenassage-cubex": [
+    "images/pages/cadenassage-cubex-1.jpg",
+    "images/pages/cadenassage-cubex-2.jpg",
+    "images/pages/cadenassage-cubex-3.jpg",
+    "images/pages/cadenassage-cubex-4.jpg",
+    "images/pages/cadenassage-cubex-5.jpg",
+    "images/pages/cadenassage-cubex-6.jpg",
+    "images/pages/cadenassage-cubex-7.jpg",
+    "images/pages/cadenassage-cubex-8.jpg",
+    "images/pages/cadenassage-cubex-9.jpg",
+    "images/pages/cadenassage-cubex-10.jpg",
+    "images/pages/cadenassage-cubex-11.jpg"
+  ],
+  "cadenassage-toyota-landcruiser": [
+    "images/pages/cadenassage-toyota-landcruiser-1.jpg",
+    "images/pages/cadenassage-toyota-landcruiser-2.jpg",
+    "images/pages/cadenassage-toyota-landcruiser-3.jpg",
+    "images/pages/cadenassage-toyota-landcruiser-4.jpg"
+  ],
+  "cadenassage-pegasus-du311": [
+    "images/pages/cadenassage-pegasus-du311-1.jpg",
+    "images/pages/cadenassage-pegasus-du311-2.jpg",
+    "images/pages/cadenassage-pegasus-du311-3.jpg",
+    "images/pages/cadenassage-pegasus-du311-4.jpg",
+    "images/pages/cadenassage-pegasus-du311-5.jpg",
+    "images/pages/cadenassage-pegasus-du311-6.jpg",
+    "images/pages/cadenassage-pegasus-du311-7.jpg",
+    "images/pages/cadenassage-pegasus-du311-8.jpg",
+    "images/pages/cadenassage-pegasus-du311-9.jpg",
+    "images/pages/cadenassage-pegasus-du311-10.jpg",
+    "images/pages/cadenassage-pegasus-du311-11.jpg"
+  ],
+  "cadenassage-kovatera-kt200": [
+    "images/pages/cadenassage-kovatera-kt200-1.jpg",
+    "images/pages/cadenassage-kovatera-kt200-2.jpg",
+    "images/pages/cadenassage-kovatera-kt200-3.jpg",
+    "images/pages/cadenassage-kovatera-kt200-4.jpg"
+  ],
+  "cadenassage-stopemaster": [
+    "images/pages/cadenassage-stopemaster-1.jpg",
+    "images/pages/cadenassage-stopemaster-2.jpg",
+    "images/pages/cadenassage-stopemaster-3.jpg",
+    "images/pages/cadenassage-stopemaster-4.jpg",
+    "images/pages/cadenassage-stopemaster-5.jpg",
+    "images/pages/cadenassage-stopemaster-6.jpg"
+  ],
+  "cadenassage-u6-epiroc": [
+    "images/pages/cadenassage-u6-epiroc-1.jpg",
+    "images/pages/cadenassage-u6-epiroc-2.jpg",
+    "images/pages/cadenassage-u6-epiroc-3.jpg",
+    "images/pages/cadenassage-u6-epiroc-4.jpg",
+    "images/pages/cadenassage-u6-epiroc-5.jpg",
+    "images/pages/cadenassage-u6-epiroc-6.jpg",
+    "images/pages/cadenassage-u6-epiroc-7.jpg"
+  ],
+  "cadenassage-dr600mu-btidr": [
+    "images/pages/cadenassage-dr600mu-btidr-1.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-2.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-3.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-4.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-5.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-6.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-7.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-8.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-9.jpg",
+    "images/pages/cadenassage-dr600mu-btidr-10.jpg"
+  ],
+  "cadenassage-manitou": [
+    "images/pages/cadenassage-manitou-1.jpg",
+    "images/pages/cadenassage-manitou-2.jpg",
+    "images/pages/cadenassage-manitou-3.jpg",
+    "images/pages/cadenassage-manitou-4.jpg"
+  ],
+  "cadenassage-dd-stm1500": [
+    "images/pages/cadenassage-dd-stm1500-1.jpg",
+    "images/pages/cadenassage-dd-stm1500-2.jpg",
+    "images/pages/cadenassage-dd-stm1500-3.jpg",
+    "images/pages/cadenassage-dd-stm1500-4.jpg",
+    "images/pages/cadenassage-dd-stm1500-5.jpg",
+    "images/pages/cadenassage-dd-stm1500-6.jpg",
+    "images/pages/cadenassage-dd-stm1500-7.jpg"
+  ],
+  "cadenassage-dd-dr900-dr1500": [
+    "images/pages/cadenassage-dd-dr900-dr1500-1.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-2.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-3.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-4.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-5.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-6.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-7.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-8.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-9.jpg",
+    "images/pages/cadenassage-dd-dr900-dr1500-10.jpg"
+  ],
+  "programme-maitrise-energies-dangereuses": [
+    "images/pages/programme-maitrise-energies-dangereuses-1.jpg",
+    "images/pages/programme-maitrise-energies-dangereuses-2.jpg",
+    "images/pages/programme-maitrise-energies-dangereuses-3.jpg",
+    "images/pages/programme-maitrise-energies-dangereuses-4.jpg",
+    "images/pages/programme-maitrise-energies-dangereuses-5.jpg",
+    "images/pages/programme-maitrise-energies-dangereuses-6.jpg",
+    "images/pages/programme-maitrise-energies-dangereuses-7.jpg",
+    "images/pages/programme-maitrise-energies-dangereuses-8.jpg"
+  ]
 };

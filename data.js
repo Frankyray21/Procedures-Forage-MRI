@@ -3316,6 +3316,1637 @@ window.PROCEDURES = [
     "source_pdf": "PRO-MEC-010 Procédure de travail pour le changement, l'entretien ou la réparation d'un actuateur.pdf",
     "langue_source": "fr",
     "notes": "Vérifié contre le PDF source (5 pages) ; le diagramme de séquence de boulonnage (même image réutilisée 4 fois dans le PDF) a été extrait une seule fois et confirmé visuellement."
+  },
+  {
+    "id": "atelier-mec-001",
+    "code": "ATELIER-MEC-001",
+    "titre": "Procédure pour le contrôle des entrées, des sorties et des déplacements d'équipements dans l'atelier",
+    "categorie": "Sécurité",
+    "machines": [],
+    "resume": "Procédure définissant les méthodes sécuritaires pour les entrées, les sorties et les déplacements d'équipements roulants dans l'atelier : signaleur désigné, klaxon, vitesse lente et frein de stationnement.",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour les entrées, les sorties et les déplacements d'équipements dans l'atelier.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Les travailleurs de l'atelier et les opérateurs des équipements doivent respecter la procédure et le superviseur doit s'assurer qu'elle est respectée en tout temps. Les opérateurs des différents équipements doivent être aptes à les opérer. INTERPRÉTATION : le directeur de l'entretien a l'autorité pour l'interprétation de ce document.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Une lumière stroboscopique s'allume lors de l'ouverture ou la fermeture de la porte pour avertir toutes les personnes présentes dans l'atelier.",
+      "Pour tout équipement sur tractions entrant, sortant ou se déplaçant dans l'atelier, des lanières de caoutchouc doivent être déposées sur le plancher du garage, sous les tractions.",
+      "Le signaleur doit s'assurer d'être visible en tout temps pour l'opérateur et utiliser des signaux clairs."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "L'opérateur de la chargeuse à fourche doit attendre qu'un travailleur de l'intérieur vienne le guider pour déposer ou ramasser le matériel.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Le signaleur doit s'assurer que l'espace est suffisant pour déposer ou sortir le matériel, et rester visible en tout temps par l'opérateur.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "L'opérateur doit appuyer sur le klaxon de la chargeuse à deux reprises avant d'entrer.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Après avoir déposé ou ramassé le matériel, s'assurer que la voie est libre derrière le véhicule, avec l'aide du signaleur si nécessaire.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Pour tout équipement roulant entrant/sortant, le superviseur de l'atelier doit être averti et un travailleur désigné pour ouvrir la porte et diriger l'opérateur.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 2"
+      },
+      {
+        "regle": "Pour tout équipement sur tractions, déposer des lanières de caoutchouc sur le plancher du garage sous les tractions avant l'entrée, la sortie ou le déplacement.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étapes 2 et 3"
+      },
+      {
+        "regle": "L'entrée, la sortie ou le déplacement de l'équipement doit se faire à vitesse très lente.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étapes 2 et 3"
+      },
+      {
+        "regle": "Le frein de stationnement doit être appliqué quand les manœuvres sont terminées.",
+        "theme": "Inspection & vérification",
+        "source": "Étapes 2 et 3"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Signal sonore avant d'entrer",
+        "valeur": "2 coups de klaxon"
+      }
+    ],
+    "figures": [],
+    "historique": [],
+    "date_creation": "",
+    "date_revision": "",
+    "source_pdf": "ATELIER-MEC-001 Procédure d'entrée, sortie, déplacement d'équipement dans l'atelier.pdf",
+    "langue_source": "fr",
+    "notes": "Aucune date de création/révision figurant sur le document."
+  },
+  {
+    "id": "atelier-mec-002",
+    "code": "ATELIER-MEC-002",
+    "titre": "Procédure de fabrication des boyaux hydrauliques",
+    "categorie": "Maintenance",
+    "machines": [],
+    "resume": "Procédure décrivant les méthodes sécuritaires et efficaces pour fabriquer des boyaux hydrauliques : mesure et coupe du boyau, sertissage des adapteurs selon le nombre de brins et la grosseur.",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires et efficaces pour fabriquer des boyaux hydrauliques.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur est responsable de respecter cette procédure. Le superviseur de l'atelier est responsable de la faire respecter. INTERPRÉTATION : le directeur de l'entretien a l'autorité pour l'interprétation de ce document.",
+    "epi": [],
+    "equipements": [
+      "Coupe-boyau",
+      "Sertisseuse"
+    ],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "En tout temps, appuyer sur le bouton d'arrêt d'urgence arrête le coupe-boyau ou la sertisseuse.",
+      "Fermer le garde du coupe-boyau et de la sertisseuse avant de les actionner.",
+      "Lors du relâchement du sélecteur « CRIMP », les mâchoires de la sertisseuse se rétractent."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Fermer le garde et mettre la clé en position « ON » avant d'utiliser le coupe-boyau.",
+        "theme": "Outils & clés",
+        "source": "Étape (coupe-boyau)"
+      },
+      {
+        "regle": "Tenir les deux bouts du boyau et appuyer sur la pédale pour le pousser dans le coupe-boyau ; relâcher la pédale dès que le boyau est coupé.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape (coupe-boyau)"
+      },
+      {
+        "regle": "Remettre la clé à OFF quand le travail au coupe-boyau est terminé.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape (coupe-boyau)"
+      },
+      {
+        "regle": "Choisir les mâchoires appropriées à l'adapteur et fermer le garde de la sertisseuse avant de l'insérer.",
+        "theme": "Outils & clés",
+        "source": "Étape (sertisseuse)"
+      },
+      {
+        "regle": "Aligner la ligne de l'adapteur avec le bord des mâchoires de la sertisseuse avant de sélectionner l'option de sertissage.",
+        "theme": "Inspection & vérification",
+        "source": "Étape (sertisseuse)"
+      },
+      {
+        "regle": "Sélectionner l'option de sertissage correspondant à la grosseur du boyau et au nombre de brins avant d'appuyer sur « CRIMP ».",
+        "theme": "Inspection & vérification",
+        "source": "Étape (sertisseuse)"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Options de sertissage disponibles",
+        "valeur": "8, selon grosseur et nombre de brins"
+      },
+      {
+        "libelle": "Repère de brins sur l'adapteur",
+        "valeur": "2 lignes dans le bas = 2 brins"
+      }
+    ],
+    "figures": [
+      {
+        "page": "2",
+        "description": "Photo du coupe-boyau annotée : arrêt d'urgence, garde, pédale et clé de mise sous tension."
+      }
+    ],
+    "historique": [],
+    "date_creation": "Avril 2020",
+    "date_revision": "",
+    "source_pdf": "ATELIER-MEC-002 Procédure de fabrication de boyaux hydrauliques.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "atelier-mec-003",
+    "code": "ATELIER-MEC-003",
+    "titre": "Procédure d'utilisation de la presse hydraulique ENERPAC 50 tonnes",
+    "categorie": "Maintenance",
+    "machines": [],
+    "resume": "Procédure définissant les méthodes sécuritaires pour l'utilisation de la presse hydraulique ENERPAC IPR 5075 (50 tonnes métriques, 10 000 psi) : ajustement, opération avec interverrouillage des portes et mesures de sécurité.",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour l'utilisation de la presse hydraulique ENERPAC.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL qui ont à utiliser la presse ENERPAC 50 tonnes.",
+    "responsabilites": "Les travailleurs de l'atelier qui utilisent la presse doivent respecter la procédure ; les travailleurs autour doivent être attentifs. Le superviseur de l'atelier doit la faire respecter et s'assurer que tout changement de méthode fasse l'objet d'une analyse de risques. INTERPRÉTATION : le directeur de l'entretien a l'autorité pour l'interprétation de ce document.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "La presse est conçue pour opérer seulement quand les grillages sont refermés : dès que le système d'interverrouillage est déclenché, la presse doit s'arrêter.",
+      "Il est interdit de laisser la pression sur la pièce quand les portes sont ouvertes.",
+      "Si la presse ne réagit pas comme prévu au déclenchement de l'interverrouillage, avertir le superviseur immédiatement.",
+      "Ne pas fermer l'alimentation de la presse à l'aide de l'interverrouillage — utiliser l'interrupteur.",
+      "Toujours se tenir de côté et non face aux pièces à presser."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Pour tous travaux nécessitant l'opération ou la mise sous pression de pièces avec les portes ouvertes, une analyse de risque doit être effectuée avec le surintendant SST, le superviseur de l'atelier et les travailleurs concernés.",
+        "theme": "Inspection & vérification",
+        "source": "Application"
+      },
+      {
+        "regle": "Resserrer les 4 boulons de barrure et la release valve avant de pomper le cric pour ajuster la tête de la presse.",
+        "theme": "Outils & clés",
+        "source": "Étapes 4-5"
+      },
+      {
+        "regle": "Fermer les deux portes et mettre l'interverrouillage en place avant d'appuyer sur l'interrupteur de la manette.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 2-5 (utilisation)"
+      },
+      {
+        "regle": "Dès que la barre de l'interverrouillage est tournée vers le haut, le moteur cesse de fonctionner mais la pression sur la pièce continue d'être exercée.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Mesures de sécurité"
+      },
+      {
+        "regle": "Avant de réenclencher la barre de l'interverrouillage, attendre que le message d'arrêt s'éteigne complètement sur l'écran de contrôle.",
+        "theme": "Inspection & vérification",
+        "source": "Mesures de sécurité"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Modèle de presse",
+        "valeur": "ENERPAC IPR 5075"
+      },
+      {
+        "libelle": "Pression maximum",
+        "valeur": "10 000 psi"
+      },
+      {
+        "libelle": "Poussée générée",
+        "valeur": "50 tonnes métriques"
+      }
+    ],
+    "figures": [
+      {
+        "page": "2",
+        "description": "Photos des 4 boulons de barrure (2 en avant, 2 en arrière) et de la release valve du cylindre du cric."
+      },
+      {
+        "page": "3",
+        "description": "Photos de la tête de la presse en position avant maximum et arrière maximum."
+      },
+      {
+        "page": "5",
+        "description": "Photo de la manette de commande avec l'interrupteur et les flèches monter/descendre."
+      },
+      {
+        "page": "8",
+        "description": "Formulaire d'analyse de risque en annexe, à utiliser pour tout travail avec les portes ouvertes."
+      }
+    ],
+    "historique": [],
+    "date_creation": "",
+    "date_revision": "",
+    "source_pdf": "ATELIER-MEC-003 Procédure d'utilisation de la presse hydraulique ENERPAC 50 tonnes.pdf",
+    "langue_source": "fr",
+    "notes": "Aucune date de création/révision figurant sur le document."
+  },
+  {
+    "id": "atelier-transport-001",
+    "code": "ATELIER-TRANSPORT-001",
+    "titre": "Procédure pour les transports à la mine Éléonore",
+    "categorie": "Déplacement",
+    "machines": [],
+    "resume": "Procédure définissant les méthodes sécuritaires pour les transports d'équipements et de matériel à la mine Éléonore : préavis au contremaître-général, passage à la guérite, réunion de sécurité et supervision du chargement-déchargement.",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour les transports d'équipements et de matériel à la mine Éléonore.",
+    "application": "Cette procédure s'applique à tous ceux qui participent à l'organisation des transports et à ceux qui exécutent leurs chargements-déchargements.",
+    "responsabilites": "Le chauffeur doit respecter cette procédure en tout temps. Le contremaître-général doit la faire respecter au site. Le superviseur de l'atelier doit la respecter dans l'organisation du transport. INTERPRÉTATION : le directeur de l'entretien a l'autorité pour l'interprétation de ce document.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [
+      "Passeport vaccinal obligatoire pour le chauffeur"
+    ],
+    "etapes": [],
+    "avertissements": [],
+    "consignes_securite": [
+      {
+        "regle": "Le contremaître-général au site doit être averti du moment du départ du transport 48 heures à l'avance par le superviseur de l'atelier.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 2"
+      },
+      {
+        "regle": "12 heures à l'avance, le chauffeur doit avertir le contremaître-général de l'heure prévue d'arrivée.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 3"
+      },
+      {
+        "regle": "Le chauffeur doit avertir le contremaître-général dès son arrivée à la guérite et respecter les consignes des agents de la guérite.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 5"
+      },
+      {
+        "regle": "Pour les transports autres que MRI, le contremaître-général escorte le transport jusqu'au 53 pieds de SYNEE et jusqu'à la guérite au départ.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étapes 5 et 9"
+      },
+      {
+        "regle": "Le stationnement du transport ne doit pas nuire à la circulation.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 5"
+      },
+      {
+        "regle": "Une réunion de sécurité à partir du tableau des risques mortels doit être tenue avec le chauffeur, avec signature d'un formulaire.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 6"
+      },
+      {
+        "regle": "Un A-3 (analyse des tâches) doit être fait pour tout déchargement autre que des conteneurs de matériel rouge-MRI, des palettes, ou qui ne se décharge pas avec la chargeuse à fourches.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 6"
+      },
+      {
+        "regle": "Un contremaître-général ou un superviseur doit être sur place durant toutes les opérations de déchargement-chargement.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 8"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Préavis du départ du transport",
+        "valeur": "48 heures à l'avance"
+      },
+      {
+        "libelle": "Préavis de l'heure d'arrivée",
+        "valeur": "12 heures à l'avance"
+      }
+    ],
+    "figures": [],
+    "historique": [],
+    "date_creation": "",
+    "date_revision": "",
+    "source_pdf": "ATELIER-TRANSPORT-001 Procédure pour les transports à Éléonore.pdf",
+    "langue_source": "fr",
+    "notes": "Aucune date de création/révision figurant sur le document. Mine et sous-traitant (SYNEE) nommément mentionnés dans le PDF source."
+  },
+  {
+    "id": "pro-sec-010",
+    "code": "PRO-SEC-010",
+    "titre": "Procédure pour affûtage de trépan sous terre",
+    "categorie": "Sécurité",
+    "machines": [],
+    "resume": "Procédure définissant les méthodes sécuritaires pour le façonnage et l'affûtage des boutons au carbure d'un trépan sous terre, avec l'équipement de protection obligatoire pour chaque étape.",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour effectuer l'affûtage et le façonnage d'un trépan.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur est responsable de son travail et doit s'assurer d'appliquer cette procédure et de respecter ces consignes. Il doit également inspecter ses EPI afin d'en garantir la bonne condition. INTERPRÉTATION : le surintendant Santé-Sécurité a l'autorité pour l'interprétation de ce document.",
+    "epi": [
+      "Gant de caoutchouc",
+      "Salopette imperméable",
+      "Visière (façonnage)",
+      "Protection auditive",
+      "Goggle (affûtage)"
+    ],
+    "equipements": [
+      "Trépied",
+      "Meuleuse à disque",
+      "Ponceuse pneumatique"
+    ],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Positionner le trépied à l'écart de la foreuse en considérant la projection d'étincelles.",
+      "Les raccords électriques doivent être accrochés pour ne pas être en contact avec l'eau.",
+      "Le port complet de tous les EPI, incluant la visière, est obligatoire lors du façonnage.",
+      "Le port des goggles et de tous les autres EPI est obligatoire lors du ponçage."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Avant le façonnage, vérifier l'état de la meuleuse à disque : elle doit être munie d'un système de freinage automatique.",
+        "theme": "Inspection & vérification",
+        "source": "Façonnage"
+      },
+      {
+        "regle": "La poignée et le garde du disque de la meuleuse doivent obligatoirement être présents ; vérifier le bon fonctionnement de l'interrupteur.",
+        "theme": "Outils & clés",
+        "source": "Façonnage"
+      },
+      {
+        "regle": "S'assurer que les boyaux d'alimentation d'eau et d'air sont bien fixés à l'outil et que la poignée de la valve à air est en place et fonctionnelle avant d'ouvrir l'air lentement.",
+        "theme": "Inspection & vérification",
+        "source": "Affûtage, étapes 1-3"
+      },
+      {
+        "regle": "Vérifier le bon fonctionnement de la ponceuse pneumatique et que le système de lubrification est rempli avant l'affûtage.",
+        "theme": "Inspection & vérification",
+        "source": "Affûtage, étapes 4-5"
+      },
+      {
+        "regle": "Choisir la bonne meule de ponçage en fonction du diamètre du bouton à affûter.",
+        "theme": "Outils & clés",
+        "source": "Affûtage, étape 6"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "23 juin 2016",
+    "date_revision": "16 octobre 2019",
+    "source_pdf": "PRO-SEC-010 Procédures pour affûtage de trépan 10-2019.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "ges-san-sec-001",
+    "code": "GES-SAN-SEC-001",
+    "titre": "Procédure de gestion des changements et des modifications",
+    "categorie": "Sécurité",
+    "machines": [],
+    "resume": "Procédure de gestion des changements (MOC) définissant la marche à suivre lorsque des modifications sont souhaitées sur un système ou un équipement : analyse de risque, liste de vérification et responsables d'autorisation selon le type d'équipement.",
+    "objectif": "L'objectif de cette procédure est de définir la marche à suivre quand des modifications sont souhaitées sur un système ou équipement.",
+    "application": "Cette procédure s'applique à tous les employés de FORAGE SYNEE. Elle s'applique à tout changement aux paramètres de conception existants ou aux spécifications des équipements, systèmes ou processus utilisés dans nos opérations, quelle que soit la taille du changement. Elle ne s'applique pas aux travaux d'entretien ou de réparation normaux où les paramètres ou spécifications d'origine ne sont pas modifiés.",
+    "responsabilites": "Le responsable d'autoriser la modification varie selon l'équipement visé (ex. directeur entretien pour l'équipement mobile et les foreuses CUBEX, surintendant électrique pour la programmation et le circuit électrique, surintendant SST pour le concept ergonomique). INTERPRÉTATION : le directeur des opérations, le surintendant SST et le directeur entretien ont l'autorité pour l'interprétation de ce document.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [],
+    "consignes_securite": [
+      {
+        "regle": "Avant toute modification, une analyse de risque doit être effectuée en considérant les impacts de chacun des changements sur les opérations de l'équipement.",
+        "theme": "Inspection & vérification",
+        "source": "Page 2"
+      },
+      {
+        "regle": "Pour toute modification, la liste de vérification avant modification doit être utilisée pour faire la demande ; la personne responsable d'autoriser prend en compte l'ensemble des informations avant sa décision finale.",
+        "theme": "Inspection & vérification",
+        "source": "Page 2"
+      },
+      {
+        "regle": "La liste de vérification couvre les consultations requises (santé-sécurité, CSS du site, supervision, travailleurs, manufacturier) et les signatures d'approbation nécessaires.",
+        "theme": "Inspection & vérification",
+        "source": "Page 3"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [
+      {
+        "page": "3",
+        "description": "Formulaire « Liste de vérification avant modification » : documentation, consultations et approbations requises avant une modification."
+      }
+    ],
+    "historique": [
+      {
+        "date": "6 décembre 2021",
+        "description": "Ajout d'une feuille de commentaires des intervenants et d'une place pour expliquer la modification.",
+        "par": "S. Tremblay"
+      },
+      {
+        "date": "22 mars 2022",
+        "description": "Déplacement des signatures des approbateurs pour éviter la confusion.",
+        "par": "S. Tremblay"
+      },
+      {
+        "date": "20 avril 2023",
+        "description": "Ajout de signatures sur le formulaire.",
+        "par": "S. Tremblay"
+      }
+    ],
+    "date_creation": "Janvier 2021",
+    "date_revision": "Avril 2023",
+    "source_pdf": "GES-SAN-SEC-Procédure de gestion des changements et modifications version SYNEE version mars 2022.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "procedure-serrage-marteau",
+    "code": "",
+    "titre": "Procédure de serrage du marteau",
+    "categorie": "Maintenance",
+    "machines": [
+      "Marteau (ITH)",
+      "V-30"
+    ],
+    "resume": "Dessin technique donnant la séquence et le couple de serrage des boulons de raccordement du marteau, selon qu'il est neuf ou usé, ainsi que la procédure d'inspection et de planage d'un marteau usé à la meuleuse (V-30).",
+    "objectif": "Définir la séquence et le couple de serrage des boulons du marteau de forage, ainsi que la vérification et le planage requis sur un marteau usé avant le remontage.",
+    "application": "S'applique à tout travailleur devant serrer ou resserrer les boulons de raccordement d'un marteau ITH, neuf ou usé.",
+    "responsabilites": "",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Marteau usé : ne jamais meuler (« grinder ») la V-30 elle-même — seulement planer la surface du marteau au besoin.",
+      "Ne pas utiliser d'anti-seize sur les boulons servant à serrer les rondelles (washer) — seulement sur les boulons (bolt) prévus."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Marteau neuf : serrer les boulons #3-4-9-10-1-6-2-5-7-12-8-11, puis torquer à 250 pi-lbs sur l'écrou (nut) #3-4-5-2-1-6, puis torquer à 1200 pi-lbs sur le boulon (bolt) #9-10-8-11-7-12.",
+        "theme": "Outils & clés",
+        "source": "Marteau neuf, étapes 1-3"
+      },
+      {
+        "regle": "Marteau usé, avant remontage : retirer le marteau de la V-30, nettoyer la boue de forage et/ou la rouille, vérifier l'usure et, au besoin, planer la surface au « grinder » sans jamais meuler la V-30.",
+        "theme": "Inspection & vérification",
+        "source": "Marteau usé, étapes 1-3"
+      },
+      {
+        "regle": "Marteau usé, serrage : desserrer #1-2 ; serrer #7-8, #1-2, #3-4-5-9-12-11-10 ; torquer à 250 pi-lbs sur l'écrou #3-4-1-6-2-5-9-12-11-10 ; torquer à 1200 pi-lbs sur le boulon #9-10-7-12-8-11 ; toujours mettre la rondelle sur le boulon, jamais sur l'écrou.",
+        "theme": "Outils & clés",
+        "source": "Marteau usé, étapes 4.1 à 4.7"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Torque sur les écrous (nut)",
+        "valeur": "250 pi-lbs"
+      },
+      {
+        "libelle": "Torque sur les boulons (bolt)",
+        "valeur": "1200 pi-lbs"
+      }
+    ],
+    "figures": [
+      {
+        "page": "1",
+        "description": "Dessin d'assemblage 3D du marteau monté sur son chariot de transport à roulettes."
+      },
+      {
+        "page": "2",
+        "description": "Marteau neuf : vue de face numérotant les 6 boulons et vue de côté numérotant les 6 boulons opposés (1 à 12), avec les 3 étapes de serrage."
+      },
+      {
+        "page": "3",
+        "description": "Marteau usé : photo du trépan encrassé et vue rapprochée de la meule à main utilisée pour planer la surface (jamais la V-30 elle-même)."
+      },
+      {
+        "page": "4",
+        "description": "Marteau usé : mêmes vues numérotées 1 à 12 que la page 2, avec les 7 étapes de desserrage/serrage/torque et la mise en garde sur la rondelle et l'anti-seize."
+      }
+    ],
+    "historique": [],
+    "date_creation": "6 juin 2013",
+    "date_revision": "",
+    "source_pdf": "Procédure de Serrage Marteau Présentation1-4 (1).pdf (4 planches fusionnées en un seul document)",
+    "langue_source": "fr",
+    "notes": "Dessin technique sans texte extractible (planches images) — contenu retranscrit à partir de la lecture visuelle des 4 pages. Fusion de 4 fichiers distincts en un seul PDF pour l'affichage."
+  },
+  {
+    "id": "cadenassage-cat-416",
+    "code": "",
+    "titre": "Cadenassage — Caterpillar 416",
+    "categorie": "Cadenassage",
+    "machines": [
+      "Caterpillar 416"
+    ],
+    "famille": "commun",
+    "resume": "Fiche de cadenassage de la chargeuse-pelle Caterpillar 416F : cales de roues pour l'énergie gravitationnelle, cadenassage simple de l'interrupteur principal (ou de la poignée du panneau si celui-ci ne peut être cadenassé), essai de démarrage et décadenassage.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage de la Caterpillar 416F.",
+    "application": "S'applique aux travaux sur le système hydraulique, sur le système électrique et aux travaux mécaniques (filtres, courroie d'alternateur, refroidisseur, tout travail sous le capot du véhicule). Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage et de cadenassage; toutes les sections doivent être lues. Fiche validée par Frédérick Croteau et approuvée par Christian St-Amour.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince de verrouillage",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Scellés",
+      "Étiquettes de contrôle",
+      "Ruban jaune"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "À la mine Odyssey, seules les pinces avec crochet intégré sont conformes aux exigences.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois.",
+      "Si l'interrupteur principal ne peut être cadenassé, cadenasser la poignée du panneau."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Les cales de roues doivent être en place en tout temps lorsque la fiche de cadenassage est appliquée, pour éviter les déplacements inattendus du véhicule.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étape 1 — énergie gravitationnelle"
+      },
+      {
+        "regle": "Fermer le contact ; toujours fermer le moteur de l'équipement par l'interrupteur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 2 — cadenassage simple"
+      },
+      {
+        "regle": "Mettre l'interrupteur principal en position OFF, poser la pince de verrouillage sur l'interrupteur et appliquer son cadenas personnel dans un des trous de la pince, en laissant toujours un trou libre pour l'ajout d'une autre pince.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 3"
+      },
+      {
+        "regle": "Si l'interrupteur principal ne peut être cadenassé, cadenasser plutôt la poignée du panneau et y apposer son cadenas personnel ; s'assurer que l'interrupteur principal est en position OFF.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 4"
+      },
+      {
+        "regle": "Faire le test de démarrage sur le moteur diesel en tournant la clé de contact, pour s'assurer qu'aucun démarrage accidentel n'est possible, notamment en cas de cadenassage inadéquat.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 5"
+      },
+      {
+        "regle": "Pour des travaux inachevés, retirer les cadenas personnels et poser un scellé avec étiquette de contrôle sur la pince ou la boîte ; inscrire le numéro du scellé sur l'étiquette, détacher la partie amovible et la remettre au superviseur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 6-7"
+      },
+      {
+        "regle": "Les travailleurs du quart suivant peuvent apposer leur propre pince de verrouillage et y apposer leur cadenas personnel.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 8"
+      },
+      {
+        "regle": "Pour le décadenassage, appliquer le processus inverse.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "20 mai 2025",
+    "date_revision": "",
+    "source_pdf": "Fiche de cadenassage - Caterpillar 416.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-cubex",
+    "code": "",
+    "titre": "Cadenassage — foreuse CUBEX",
+    "categorie": "Cadenassage",
+    "machines": [
+      "CUBEX",
+      "Foreuse CUBEX"
+    ],
+    "resume": "Fiche de cadenassage de la foreuse CUBEX sous terre : cadenassage simple sur le disjoncteur (pompe rock drill, système hydraulique, courroie, glissières, slip plate, JAW, solénoïde, système électrique), cadenassage multiple eau-air-disjoncteur, et cadenassage multiple eau-air-disjoncteur-énergie gravitationnelle pour les travaux sur le mât ou la boîte d'engrenage.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des foreuses CUBEX sous terre.",
+    "application": "Travaux nécessitant un cadenassage simple sur le disjoncteur : changer la pompe à huile rock drill, travaux sur le système hydraulique, changer la courroie du surcompresseur, ajustements sur les glissières, changer la slip plate et son cylindre, changer le JAW, changer le solénoïde, tout travail sur le système électrique. Travaux nécessitant un cadenassage multiple sur le disjoncteur, l'eau et l'air : tout travail impliquant l'eau et l'air (filtre, refroidisseur, valves, swivel). Travaux nécessitant un cadenassage multiple eau-air-disjoncteur-énergie gravitationnelle : travaux impliquant l'énergie gravitationnelle, où le mât et/ou la boîte d'engrenage (gear box) doivent être bloqués ou mis en position pour ne pas se déplacer. Si un travail de réparation ou d'entretien qui ne nécessite pas de cadenassage n'est pas sur cette liste, une procédure l'encadre ou cette fiche s'applique.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage; toutes les sections doivent être lues. Fiche validée par Martin Cyr et approuvée par Christian St-Amour.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince multi-lock",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Barrure mécanique",
+      "Scellé",
+      "Étiquette de contrôle"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Si un travail de réparation ou d'entretien qui ne nécessite pas de cadenassage n'est pas sur cette liste, une procédure l'encadre ou cette fiche s'applique.",
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois.",
+      "S'assurer que toutes les lignes d'eau et d'air sont bien purgées (boyaux kinkés) avant de les cadenasser.",
+      "Une valve d'air qui fuit peut provoquer une accumulation d'air dans les conduits.",
+      "Pour l'énergie gravitationnelle, ne pas se placer dans la ligne de déplacement de la boîte d'engrenage (gear box)."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Cadenassage simple : appuyer sur le bouton d'arrêt de la console, puis sur l'arrêt d'urgence, puis fermer et cadenasser le disjoncteur à l'aide d'une pince de verrouillage et du cadenas personnel ; faire l'essai de démarrage sur la console et sur le panneau de la CUBEX.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage simple, étapes 1-3"
+      },
+      {
+        "regle": "Cadenassage multiple eau-air-disjoncteur : fermer et cadenasser l'eau et l'air avec des cadenas de série, purger les lignes sur la console, ouvrir et cadenasser ouvertes les valves du receiver et du filtre à air avec des cadenas de série.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple eau-air-disjoncteur, étapes 1-2"
+      },
+      {
+        "regle": "Appuyer sur le bouton d'arrêt de la console, puis sur l'arrêt d'urgence, fermer et cadenasser le disjoncteur avec un cadenas de série, puis déposer la clé des cadenas de série dans la boîte de cadenassage avec une pince de verrouillage pour les cadenas personnels.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple eau-air-disjoncteur, étapes 3-6"
+      },
+      {
+        "regle": "Cadenassage multiple eau-air-disjoncteur-énergie gravitationnelle : si possible, enlever la pression du système hydraulique et appuyer les tiges ou la tête de forage et le boom au sol ; sinon, mettre le boom à 90 degrés et cadenasser la barrure mécanique sur les cylindres de dump (sauf si des tiges sont dans le trou ou que la tête V-30 est en place).",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Cadenassage multiple gravitationnel, étapes 3-4"
+      },
+      {
+        "regle": "Si un bris empêche de bouger l'équipement, purger l'hydraulique du cylindre pour que la boîte d'engrenage (gear box) descende sur les tables ; contrôler et récupérer l'huile et ne pas se placer dans la ligne de déplacement du gear box.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Cadenassage multiple gravitationnel, étape 5"
+      },
+      {
+        "regle": "Fermer et cadenasser le disjoncteur 600 volts de la CUBEX avec un cadenas de série, déposer la clé dans la boîte de cadenassage et mettre le cadenas personnel avec la pince de verrouillage ; faire l'essai de démarrage sur la console et sur le panneau.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple gravitationnel, étapes 8-10"
+      },
+      {
+        "regle": "Dans le cas de travaux inachevés, enlever les cadenas personnels sur la boîte de cadenassage et appliquer un scellé avec étiquette de contrôle sur la boîte ; inscrire le numéro du scellé sur l'étiquette de cadenassage, détacher la partie détachable et la remettre au superviseur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple gravitationnel, étape 9"
+      },
+      {
+        "regle": "Pour le décadenassage, faire le processus inverse en se positionnant toujours à droite du panneau et en se servant de la main gauche pour remettre le disjoncteur à ON.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [
+      {
+        "date": "19 juillet 2023",
+        "description": "Ajout de l'étiquette de contrôle pour le cadenassage à la mine Odyssey.",
+        "par": "S. Tremblay, F. Croteau"
+      }
+    ],
+    "date_creation": "11 juin 2018",
+    "date_revision": "Juillet 2023",
+    "source_pdf": "Fiche de cadenassage - foreuse CUBEX.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-toyota-landcruiser",
+    "code": "",
+    "titre": "Cadenassage — Toyota Land Cruiser",
+    "categorie": "Cadenassage",
+    "machines": [
+      "Toyota Land Cruiser"
+    ],
+    "famille": "commun",
+    "resume": "Fiche de cadenassage du véhicule Toyota Land Cruiser : cales de roues pour l'énergie gravitationnelle, cadenassage simple de l'interrupteur principal, essai de démarrage et décadenassage.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage du Toyota Land Cruiser.",
+    "application": "S'applique aux travaux sur le système électrique et aux travaux mécaniques (filtres, courroie d'alternateur, refroidisseur, tout travail sous le capot du véhicule). Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage et de cadenassage; toutes les sections doivent être lues. Fiche validée par Frédérick Croteau et approuvée par Christian St-Amour.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince de verrouillage",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Scellés",
+      "Étiquettes de contrôle",
+      "Ruban jaune"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "À la mine Odyssey, seules les pinces avec crochet intégré sont conformes aux exigences.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Les cales de roues doivent être en place en tout temps lorsque la fiche de cadenassage est appliquée, pour éviter les déplacements inattendus du véhicule.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étape 1 — énergie gravitationnelle"
+      },
+      {
+        "regle": "Fermer le contact ; toujours fermer le moteur de l'équipement par l'interrupteur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 2 — cadenassage simple"
+      },
+      {
+        "regle": "Mettre l'interrupteur principal en position OFF, poser la pince de verrouillage sur l'interrupteur et appliquer son cadenas personnel sur un des trous de la pince, en laissant toujours un trou libre pour l'ajout d'une autre pince.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 3"
+      },
+      {
+        "regle": "Faire le test de démarrage sur le moteur diesel en tournant la clé de contact.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 4"
+      },
+      {
+        "regle": "Pour des travaux inachevés, retirer les cadenas personnels et poser un scellé avec étiquette de contrôle sur la pince ou la boîte ; inscrire le numéro du scellé sur l'étiquette, détacher la partie amovible et la remettre au superviseur, en assurant une communication efficace entre les superviseurs des différents quarts de travail.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 5-6"
+      },
+      {
+        "regle": "Les travailleurs du quart suivant peuvent apposer leur propre pince de verrouillage et y apposer leur cadenas personnel.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 7"
+      },
+      {
+        "regle": "Pour le décadenassage, appliquer le processus inverse.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "20 mai 2025",
+    "date_revision": "",
+    "source_pdf": "Fiche de cadenassage - Toyota Land Cruiser.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-kovatera-kt200",
+    "code": "",
+    "titre": "Cadenassage — Kovatera KT-200",
+    "categorie": "Cadenassage",
+    "machines": [
+      "Kovatera KT-200"
+    ],
+    "famille": "commun",
+    "resume": "Fiche de cadenassage du Kovatera KT-200 : cales de roues pour l'énergie gravitationnelle, cadenassage simple de l'interrupteur principal, essai de démarrage et décadenassage.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage du Kovatera KT-200.",
+    "application": "S'applique aux travaux sur le système hydraulique, sur le système électrique et aux travaux mécaniques (filtres, courroie d'alternateur, refroidisseur, tout travail sous le capot du véhicule). Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage et de cadenassage; toutes les sections doivent être lues. Fiche validée par Frédérick Croteau et approuvée par Christian St-Amour.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince de verrouillage",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Scellés",
+      "Étiquettes de contrôle",
+      "Ruban jaune"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "À la mine Odyssey, seules les pinces avec crochet intégré sont conformes aux exigences.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Les cales de roues doivent être en place en tout temps lorsque la fiche de cadenassage est appliquée, pour éviter les déplacements inattendus du véhicule.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étape 1 — énergie gravitationnelle"
+      },
+      {
+        "regle": "Fermer le contact ; toujours fermer le moteur de l'équipement par l'interrupteur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 2 — cadenassage simple"
+      },
+      {
+        "regle": "Mettre l'interrupteur principal en position OFF, poser la pince de verrouillage sur l'interrupteur et appliquer son cadenas personnel sur un des trous de la pince, en laissant toujours un trou libre pour l'ajout d'une autre pince.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 3"
+      },
+      {
+        "regle": "Faire le test de démarrage du moteur diesel en tournant le bouton de démarrage OFF/START.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 3 (suite)"
+      },
+      {
+        "regle": "Pour des travaux inachevés, retirer les cadenas personnels et poser un scellé avec étiquette de contrôle sur la pince ou la boîte ; inscrire le numéro du scellé sur l'étiquette, détacher la partie amovible et la remettre au superviseur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 4-5"
+      },
+      {
+        "regle": "Les travailleurs du quart suivant peuvent apposer leur propre pince de verrouillage et y apposer leur cadenas personnel.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 6"
+      },
+      {
+        "regle": "Pour le décadenassage, appliquer le processus inverse.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "20 mai 2025",
+    "date_revision": "",
+    "source_pdf": "Fiche de cadenassage - Kovatera KT-200.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-manitou",
+    "code": "",
+    "titre": "Cadenassage — Manitou",
+    "categorie": "Cadenassage",
+    "machines": [
+      "Manitou"
+    ],
+    "famille": "commun",
+    "resume": "Fiche de cadenassage des tracteurs Manitou : cales de roues pour l'énergie gravitationnelle, cadenassage simple de l'interrupteur principal, essai de démarrage et décadenassage.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des tracteurs Manitou.",
+    "application": "S'applique aux travaux sur le système hydraulique, sur le système électrique et aux travaux mécaniques (filtres, courroie d'alternateur, refroidisseur, tout travail sous le capot du véhicule). Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage et de cadenassage; toutes les sections doivent être lues. Fiche validée par Frédérick Croteau et approuvée par Christian St-Amour.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince de verrouillage",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Scellés",
+      "Étiquettes de contrôle",
+      "Ruban jaune"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Si une tâche n'apparaît pas dans cette fiche, une analyse de risque doit être faite.",
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "À la mine Odyssey, seules les pinces avec crochet intégré sont conformes aux exigences.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Les cales de roues doivent être en place en tout temps lorsque la fiche de cadenassage est appliquée, pour éviter les déplacements inattendus du véhicule.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étape 1 — énergie gravitationnelle"
+      },
+      {
+        "regle": "Fermer le contact ; toujours fermer le moteur de l'équipement par l'interrupteur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 2 — cadenassage simple"
+      },
+      {
+        "regle": "Mettre l'interrupteur principal en position OFF, poser la pince de verrouillage sur l'interrupteur et appliquer son cadenas personnel sur un des trous de la pince, en laissant toujours un trou libre pour l'ajout d'une autre pince.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 3"
+      },
+      {
+        "regle": "Faire le test de démarrage sur le moteur diesel en tournant la clé de contact.",
+        "theme": "Inspection & vérification",
+        "source": "Étape suivante"
+      },
+      {
+        "regle": "Pour des travaux inachevés, retirer les cadenas personnels et poser un scellé avec étiquette de contrôle sur la pince ou la boîte ; inscrire le numéro du scellé sur l'étiquette, détacher la partie amovible et la remettre au superviseur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 4-5"
+      },
+      {
+        "regle": "Les travailleurs du quart suivant peuvent apposer leur propre pince de verrouillage et y apposer leur cadenas personnel.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 6"
+      },
+      {
+        "regle": "Pour le décadenassage, faire le processus inverse.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "20 mai 2025",
+    "date_revision": "",
+    "source_pdf": "Fiche de cadenassage - Manitou.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-pegasus-du311",
+    "code": "",
+    "titre": "Cadenassage — PEGASUS/DU-311",
+    "categorie": "Cadenassage",
+    "machines": [
+      "Pegasus/DU-311"
+    ],
+    "resume": "Fiche de cadenassage de la foreuse de forage long-trou PEGASUS/DU-311 sous terre : cadenassage multiple sur la master switch et le disjoncteur, cadenassage multiple eau-air-disjoncteur, et cadenassage multiple eau-air-master switch-disjoncteur-énergie gravitationnelle pour les travaux sur le mât et/ou la boîte d'engrenage.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage de la foreuse DU-311 sous terre.",
+    "application": "Travaux nécessitant un cadenassage multiple sur la master switch et sur le disjoncteur : système hydraulique, changer la courroie du surcompresseur, ajustements sur les glissières, changer la slip plate et son cylindre, changer le JAW, changer le solénoïde, système électrique, travaux mécaniques sur le transporteur. Travaux nécessitant un cadenassage multiple sur le disjoncteur, l'eau et l'air : tout travail impliquant l'eau et l'air (filtre, refroidisseur, valves, swivel). Travaux nécessitant le cadenassage multiple sur l'eau, l'air, le disjoncteur et l'énergie gravitationnelle : le mât et/ou la boîte d'engrenage (gear box) doivent être bloqués ou mis en position pour ne pas se déplacer. Si un travail de réparation ou d'entretien qui ne nécessite pas de cadenassage n'est pas sur cette liste, une procédure l'encadre ou cette fiche s'applique.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage; toutes les sections doivent être lues. Fiche validée par Sylvain Desrosiers et approuvée par Christian St-Amour.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince multi-lock",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Barrure mécanique",
+      "Scellé",
+      "Étiquette de contrôle"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Si un travail de réparation ou d'entretien qui ne nécessite pas de cadenassage n'est pas sur cette liste, une procédure l'encadre ou cette fiche s'applique.",
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois.",
+      "S'assurer que toutes les lignes d'eau et d'air sont bien purgées (boyaux kinkés) avant de les cadenasser.",
+      "Une valve d'air qui fuit peut provoquer une accumulation d'air dans les conduits.",
+      "Ne pas se placer dans la ligne de déplacement de la boîte d'engrenage (gear box).",
+      "Pour les travaux qui nécessitent d'appuyer les stabilisateurs au sol, une chandelle doit être installée sous l'équipement comme protection supplémentaire."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Cadenassage de la master switch et du disjoncteur : arrêter le moteur, fermer la master switch et y mettre un cadenas de série, faire un essai de démarrage avec la clé du transporteur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 1-2"
+      },
+      {
+        "regle": "Sur l'écran des contrôles à distance, sélectionner le menu SYSTEM et appuyer sur les boutons du compresseur et de la pompe hydraulique jusqu'à ce qu'ils s'affichent en bleu (arrêt), puis appuyer sur l'arrêt d'urgence.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 3-4"
+      },
+      {
+        "regle": "Fermer et cadenasser le disjoncteur à l'aide d'un cadenas de série, puis faire l'essai de démarrage sur la console et sur le panneau 600 volts.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 5"
+      },
+      {
+        "regle": "Cadenassage multiple eau-air-disjoncteur : fermer et cadenasser l'eau et l'air avec des cadenas de série, purger les lignes sur la console, ouvrir et cadenasser ouvertes les valves du receiver et du filtre à air.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple eau-air-disjoncteur, étapes 1-2"
+      },
+      {
+        "regle": "Mettre la clé des cadenas de série dans la boîte de cadenassage et une pince de verrouillage avec le ou les cadenas personnels, puis faire l'essai de démarrage sur la console et sur le panneau de la PEGASUS.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple eau-air-disjoncteur, étapes 6-7"
+      },
+      {
+        "regle": "Cadenassage multiple eau-air-master switch-disjoncteur-énergie gravitationnelle : si possible, enlever la pression du système hydraulique et appuyer les tiges ou la tête de forage et le boom au sol ; sinon, mettre le boom à 90 degrés et cadenasser la barrure mécanique sur les cylindres de dump, sauf s'il y a des tiges dans le trou de forage ou que la tête V-30 est en place.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Cadenassage multiple gravitationnel, étapes 3-4"
+      },
+      {
+        "regle": "Si un bris empêche de bouger l'équipement, purger l'hydraulique du cylindre pour que la boîte d'engrenage descende sur les tables ; contrôler et récupérer l'huile et ne pas se placer dans la ligne de déplacement du gear box.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Cadenassage multiple gravitationnel, étape 5"
+      },
+      {
+        "regle": "Fermer et cadenasser le disjoncteur 600 volts avec un cadenas de série, déposer la clé dans la boîte de cadenassage attitrée à l'équipement et mettre le cadenas personnel avec la pince de verrouillage.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple gravitationnel, étapes 8-9"
+      },
+      {
+        "regle": "Dans le cas de travaux inachevés, enlever les cadenas personnels sur la boîte de cadenassage et appliquer un scellé avec étiquette de contrôle, inscrire le numéro du scellé sur l'étiquette, détacher la partie détachable et la remettre au superviseur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple gravitationnel, étape 9"
+      },
+      {
+        "regle": "Pour le décadenassage, faire le processus inverse en se positionnant toujours à droite du panneau et en se servant de la main gauche pour remettre le disjoncteur à ON.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "10 décembre 2021",
+    "date_revision": "",
+    "source_pdf": "Cadenassage PEGASUS-DU-311.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-stopemaster",
+    "code": "",
+    "titre": "Cadenassage — foreuse STOPEMASTER HX",
+    "categorie": "Cadenassage",
+    "machines": [
+      "Stopemaster HX"
+    ],
+    "resume": "Fiche de cadenassage des foreuses STOPEMASTER HX : cadenassage multiple sur le disjoncteur du panneau principal et l'interrupteur (master switch) du moteur diesel, avec purge des lignes d'eau et d'air si nécessaire, et gestion de l'énergie gravitationnelle (tige/bit au plancher, mât à 90 degrés ou chandelles certifiées).",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des foreuses STOPEMASTER HX.",
+    "application": "Travaux nécessitant un cadenassage multiple sur le disjoncteur du panneau principal et l'interrupteur (master switch) du moteur diesel : système hydraulique, ajustement de la slide, changer les JAWS ou le cylindre, changer le solénoïde, système électrique, travaux impliquant l'eau et l'air (filtres, refroidisseur, valves, boyaux à air ou à l'eau, pompe à eau), travaux sur la tête de la foreuse (drifter) comme changer le mandrin ou le seal du nez. Tâches nécessitant du cadenassage multiple sur les deux master switch et l'énergie gravitationnelle.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage; toutes les sections doivent être lues. Fiche validée par Stéphane Tremblay et approuvée par Christian St-Amour.",
+    "epi": [
+      "EPI obligatoires du site"
+    ],
+    "equipements": [
+      "Pinces de verrouillage",
+      "Scellé",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage",
+      "Barrures mécaniques",
+      "Étiquette de contrôle"
+    ],
+    "prerequis": [
+      "Permis d'explosifs (Québec)",
+      "Common core (Ontario) ou FMTM (Québec)",
+      "Formation cadenassage (site ou MRI), si applicable"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "Une petite fuite peut provoquer une accumulation de pression dans les boyaux d'eau et d'air.",
+      "Ne pas se positionner dans la ligne de déplacement de la tête de forage lors de la purge du cylindre de feed.",
+      "Si du travail sous le transporteur est nécessaire, il doit être appuyé sur des chandelles certifiées et non seulement sur les jacks hydrauliques."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Pour les travaux impliquant l'eau et l'air, fermer les valves et purger les lignes sur la console, puis déconnecter l'air et l'eau sur les headers.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple, étape 1A"
+      },
+      {
+        "regle": "Appuyer sur le bouton STOP de la console, puis sur l'arrêt d'urgence.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 1-2"
+      },
+      {
+        "regle": "Mettre l'interrupteur du panneau principal en position OFF et y apposer un cadenas de série, en utilisant toujours la main gauche pour ouvrir et fermer l'interrupteur et en se plaçant à droite du panneau.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 3"
+      },
+      {
+        "regle": "Mettre la master switch du moteur diesel en position OFF et y apposer un cadenas de série.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 4"
+      },
+      {
+        "regle": "Mettre la clé des cadenas de série dans la boîte de cadenassage et cadenasser la boîte avec une pince de verrouillage, puis faire l'essai de démarrage avec la console et le panneau principal, et sur le moteur diesel.",
+        "theme": "Inspection & vérification",
+        "source": "Étapes 5-7"
+      },
+      {
+        "regle": "Énergie gravitationnelle : si possible, relâcher le système hydraulique et appuyer la tige ou la bit sur le plancher, ou positionner le mât à 90 degrés avec le cylindre de dump complètement extensionné pour ne pas avoir de pression sur les boyaux.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Énergie gravitationnelle, étapes 2-3"
+      },
+      {
+        "regle": "Si l'équipement ne peut être bougé, purger l'huile hydraulique du feed cylindre pour abaisser la tête de forage au bas ou au haut du mât selon le forage, et drainer le cylindre de dump pour qu'il soit complètement extensionné, en contrôlant et récupérant l'huile.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Énergie gravitationnelle, étape 4"
+      },
+      {
+        "regle": "Pour le décadenassage, appliquer le processus inverse.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "Juin 2021",
+    "date_revision": "",
+    "source_pdf": "Fiche de cadenassage STOPEMASTER.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-u6-epiroc",
+    "code": "",
+    "titre": "Cadenassage — foreuse au diamant U-6 EPIROC",
+    "categorie": "Cadenassage",
+    "machines": [
+      "U-6 Epiroc"
+    ],
+    "famille": "diamant",
+    "resume": "Fiche de cadenassage de la foreuse au diamant U-6 EPIROC : cadenassage simple du câble 600V (arrêts écran et power unit, essais de démarrage écran et panneau 600V, cadenassage du connecteur du câble) et cadenassage multiple eau-air-câble 600V.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des foreuses au diamant U-6 EPIROC. Le cadenassage simple doit se faire sur le câble 600V ; pour certains travaux, les valves à eau et à l'air devront être cadenassées ; pour l'énergie gravitationnelle, s'assurer de bien lire la section s'y rapportant.",
+    "application": "S'applique aux foreuses au diamant U-6 EPIROC en secteur de forage au diamant.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage; toutes les sections doivent être lues. Fiche validée par Frédérick Croteau et approuvée par Marc Rossignol.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince multi-lock",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Barrure mécanique",
+      "Scellé",
+      "Étiquette de contrôle"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois.",
+      "Il n'y a pas d'étape pour relâcher l'énergie résiduelle des boyaux hydrauliques : au moment de l'arrêt de la foreuse, toute pression résiduelle à l'intérieur des boyaux est relâchée par une action d'ouverture automatique des valves.",
+      "Appuyer sur l'arrêt d'urgence avant de fermer le disjoncteur évite de créer un arc électrique et d'endommager le disjoncteur principal.",
+      "Si la foreuse redémarre lors d'un essai de démarrage, arrêter les travaux et appeler le superviseur.",
+      "S'assurer que toutes les lignes d'eau et d'air sont bien purgées (boyaux kinkés) avant de les cadenasser."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Cadenassage simple du câble 600V : à l'arrêt écran, presser simultanément à l'écran F1 et sur le bouton d'arrêt, puis presser l'arrêt d'urgence.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Arrêt power unit : appuyer sur l'arrêt d'urgence du panneau 600V et fermer le disjoncteur ; tirer l'arrêt d'urgence du panneau 600V pour avoir de l'alimentation sur les prises 120V et à l'écran afin d'effectuer le test de démarrage.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 2-3"
+      },
+      {
+        "regle": "Essai de démarrage écran : alimenter l'écran, puis presser simultanément F1 et le bouton d'arrêt ; la foreuse ne doit pas démarrer. Essai de démarrage panneau 600V : tourner le sélecteur vers l'icône power unit et appuyer sur les boutons marqués ; la foreuse ne doit pas démarrer.",
+        "theme": "Inspection & vérification",
+        "source": "Étapes 5-6"
+      },
+      {
+        "regle": "Appuyer de nouveau sur l'arrêt d'urgence du panneau 600V pour couper l'alimentation avant de débrancher le câble 600V.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 7"
+      },
+      {
+        "regle": "Débrancher le câble 600V et installer le dispositif de cadenassage sur les 2 leviers du câble ; utiliser une pince multi-lock au besoin pour ajouter plus de 3 cadenas.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 8"
+      },
+      {
+        "regle": "Cadenassage multiple eau-air-câble 600V : fermer et cadenasser l'eau et l'air avec des cadenas de série, puis effectuer les étapes du cadenassage simple en apposant un cadenas de série sur le câble 600V.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple, étapes 1-2"
+      },
+      {
+        "regle": "Mettre la clé des cadenas de série dans la boîte de cadenassage et une pince de verrouillage avec le ou les cadenas personnels, en laissant toujours un trou libre sur la pince pour en remettre une autre au besoin ; faire tous les essais de démarrage.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple, étapes 3-4"
+      },
+      {
+        "regle": "Pour le décadenassage, faire le processus inverse en se positionnant toujours à droite du panneau et en se servant de la main gauche.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [],
+    "date_creation": "Novembre 2023",
+    "date_revision": "Février 2025",
+    "source_pdf": "Fiche de cadenassage U-6 EPIROC.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-dr600mu-btidr",
+    "code": "",
+    "titre": "Cadenassage — foreuses mobiles DR-600 MU et BTI-DR #4845",
+    "categorie": "Cadenassage",
+    "machines": [
+      "DR-600 MU",
+      "BTI-DR #4845"
+    ],
+    "famille": "diamant",
+    "resume": "Fiche de cadenassage des foreuses au diamant mobiles DR-600 MU et BTI-DR #4845 sous terre : cadenassage multiple (arrêt du power pack, ouverture des valves 24V pour relâcher l'énergie résiduelle hydraulique, arrêt d'urgence, disjoncteur et master switch), rallongement des conduites d'eau et d'air, et gestion de l'énergie gravitationnelle.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des foreuses au diamant mobiles DR-600 MU et de la mobile BTI-DR #4845 sous terre. Le cadenassage simple doit se faire sur le disjoncteur principal ; pour certains travaux, les valves à eau et à l'air devront être cadenassées ; pour l'énergie gravitationnelle, s'assurer de bien lire la section s'y rapportant.",
+    "application": "S'applique aux foreuses au diamant mobiles DR-600 MU et BTI-DR #4845 en secteur de forage au diamant.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage et de cadenassage; toutes les sections doivent être lues. Fiche validée par Frédérick Croteau et approuvée par Marc Rossignol.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince de verrouillage",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Scellés",
+      "Étiquettes de contrôle"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois.",
+      "Les panneaux ne sont pas tous construits de la même manière : s'assurer d'appuyer sur le bon bouton d'arrêt.",
+      "Un arrêt d'urgence enclenché rompt la communication entre le remote et le récepteur scanreco ; les valves 24V ne peuvent alors plus être actionnées.",
+      "Si un mouvement ou un démarrage se produit lors des essais de démarrage, les travaux doivent être suspendus et une analyse de risque doit être effectuée.",
+      "Pour tout travail où les mesures sur l'énergie gravitationnelle ne peuvent être appliquées, une analyse de risque doit être effectuée avant de procéder.",
+      "Si l'équipement s'arrête, qu'il est impossible de le redémarrer et que des pièces peuvent bouger durant les travaux nécessaires, une analyse de risque doit être effectuée."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Appuyer sur l'arrêt du power pack (étape commune aux deux foreuses).",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Sélectionner chaque mode (drilling, handling, positionning) et actionner les fonctions de la manette pour ouvrir les valves 24V, ce qui retourne l'huile vers le réservoir et enlève la pression résiduelle du système, seulement une fois que toutes les valves ont été actionnées.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 2-3"
+      },
+      {
+        "regle": "Actionner l'arrêt d'urgence des panneaux 600V, puis (sur la DR-600 MU seulement) l'arrêt d'urgence du moteur diesel.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 4-5"
+      },
+      {
+        "regle": "Fermer et cadenasser le disjoncteur avec un cadenas de série, puis fermer et cadenasser la master switch avec un cadenas de série.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 6-7"
+      },
+      {
+        "regle": "Faire l'essai de démarrage (bouton réarmement power pack, interrupteur moteur diesel, bouton démarrage sur console) : rien ne doit se produire, sinon suspendre les travaux et effectuer une analyse de risque.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 8"
+      },
+      {
+        "regle": "Mettre la clé des cadenas de série dans la boîte de cadenassage et une pince de verrouillage avec le ou les cadenas personnels, en laissant toujours un trou libre.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 9"
+      },
+      {
+        "regle": "Pour le rallongement des conduites d'eau et d'air, fermer et cadenasser l'eau et l'air sur la ligne principale, le plus près possible de la fin de la ligne, avec des cadenas de série, en s'assurant que les lignes sont bien purgées avant de débrancher les boyaux.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Rallongement conduites, étapes 1-2"
+      },
+      {
+        "regle": "Énergie gravitationnelle : pour tout travail nécessitant du cadenassage, descendre la tête à son plus bas sur la tour, soit par l'énergie de la machine, soit en enlevant le boyau hydraulique du cylindre de feed et en récupérant l'huile ; une élingue doit retenir le mât et la tête si nécessaire.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Énergie gravitationnelle"
+      },
+      {
+        "regle": "Pour le décadenassage, faire le processus inverse en se positionnant toujours à droite du panneau et en se servant de la main gauche pour remettre le disjoncteur à ON.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [
+      {
+        "date": "19 juillet 2023",
+        "description": "Ajout de la foreuse mobile DR-600 MU dans la procédure à l'étape 2 du cadenassage multiple.",
+        "par": "S. Tremblay, F. Croteau"
+      },
+      {
+        "date": "19 juillet 2023",
+        "description": "Ajout de l'étape d'actionner les commandes pour enlever la pression dans le système hydraulique.",
+        "par": "S. Tremblay, F. Croteau"
+      },
+      {
+        "date": "19 juillet 2023",
+        "description": "Éclaircissement des façons de contrôler l'énergie gravitationnelle.",
+        "par": "S. Tremblay, F. Croteau"
+      },
+      {
+        "date": "18 octobre 2023",
+        "description": "Ajout des photos du panneau 600V et de la master switch de la BTI-DR #4845.",
+        "par": "S. Tremblay"
+      }
+    ],
+    "date_creation": "5 avril 2021",
+    "date_revision": "Octobre 2023",
+    "source_pdf": "Fiche de cadenassage foreuses mobiles DR-600 MU et BTI-DR #4845.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-dd-stm1500",
+    "code": "",
+    "titre": "Cadenassage — foreuse au diamant STM-1500",
+    "categorie": "Cadenassage",
+    "machines": [
+      "STM-1500"
+    ],
+    "famille": "diamant",
+    "resume": "Fiche de cadenassage de la foreuse au diamant STM-1500 sous terre : cadenassage simple sur le disjoncteur principal, cadenassage multiple eau-air-disjoncteur, rallongement des conduites d'eau et d'air, et gestion de l'énergie gravitationnelle.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des foreuses au diamant sous terre. Le cadenassage simple doit se faire sur le disjoncteur principal ; pour les travaux de rallongement des conduites d'eau et d'air, les valves devront être cadenassées ; pour l'énergie gravitationnelle, s'assurer de bien lire la section s'y rapportant.",
+    "application": "S'applique à la foreuse au diamant STM-1500 en secteur de forage au diamant.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage et de cadenassage; toutes les sections doivent être lues. Fiche validée par Kevin Godard-Bolduc et approuvée par Marc Rossignol.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince de verrouillage",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Scellés",
+      "Étiquettes de contrôle"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois.",
+      "La fiche de cadenassage doit être disponible en tout temps dans la boîte de cadenassage.",
+      "Les équipements de cadenassage ne doivent pas être enlevés de la boîte de cadenassage autrement que pour être utilisés pour l'application de la mise à énergie zéro.",
+      "S'assurer que toutes les lignes d'eau et d'air sont bien purgées (boyaux kinkés) avant de les cadenasser.",
+      "Une valve qui fuit peut provoquer une accumulation d'air dans les conduits."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Cadenassage simple : appuyer sur le bouton d'arrêt de la console, puis sur l'arrêt d'urgence, puis actionner chaque fonction manuellement pour libérer l'énergie résiduelle hydraulique.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage simple, étapes 1-3"
+      },
+      {
+        "regle": "Fermer et cadenasser le disjoncteur à l'aide d'une pince de verrouillage et du cadenas personnel, puis faire l'essai de démarrage sur la console et sur le panneau.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage simple, étapes 4-5"
+      },
+      {
+        "regle": "Cadenassage multiple eau-air-disjoncteur : fermer et cadenasser l'eau et l'air avec des cadenas de série, purger les lignes, puis appuyer sur le bouton d'arrêt de la console et actionner chaque fonction manuellement pour libérer l'énergie résiduelle hydraulique.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple, étapes 1-3"
+      },
+      {
+        "regle": "Appuyer sur l'arrêt d'urgence, fermer et cadenasser le disjoncteur avec un cadenas de série, mettre la clé des cadenas de série dans la boîte de cadenassage avec une pince de verrouillage, puis faire l'essai de démarrage.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple, étapes 4-7"
+      },
+      {
+        "regle": "Pour le rallongement des conduites d'eau et d'air, fermer et cadenasser l'eau et l'air sur la ligne principale, le plus près possible de la fin de la ligne, avec des cadenas de série.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Rallongement conduites, étape 1"
+      },
+      {
+        "regle": "Dans le cas de travaux inachevés, enlever les cadenas personnels sur la boîte de cadenassage ou de la pince de verrouillage et appliquer un scellé avec étiquette de contrôle ; inscrire le numéro du scellé sur l'étiquette et la remettre au superviseur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Rallongement conduites, étape 2"
+      },
+      {
+        "regle": "Énergie gravitationnelle : pour les travaux le nécessitant, la tête doit être descendue en bas de la tour, soit par l'énergie de la machine, soit en enlevant le boyau hydraulique du cylindre de feed et en récupérant l'huile ; la procédure de cadenassage simple ou multiple doit être appliquée après que la tête soit descendue.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Énergie gravitationnelle"
+      },
+      {
+        "regle": "Pour le décadenassage, faire le processus inverse en se positionnant toujours à droite du panneau et en se servant de la main gauche pour remettre le disjoncteur à ON.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [
+      {
+        "date": "24 juin 2021",
+        "description": "Identification du type de foreuse (STM-1500).",
+        "par": "S. Tremblay"
+      },
+      {
+        "date": "24 juin 2021",
+        "description": "Ajout des bonnes pratiques page 2.",
+        "par": "S. Tremblay"
+      },
+      {
+        "date": "20 juillet 2023",
+        "description": "Ajout de l'étape d'actionner les manettes avant de fermer sur le contrôle.",
+        "par": "S. Tremblay"
+      }
+    ],
+    "date_creation": "24 juin 2021",
+    "date_revision": "Juillet 2023",
+    "source_pdf": "Fiche de cadenassage STM-1500.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "cadenassage-dd-dr900-dr1500",
+    "code": "",
+    "titre": "Cadenassage — foreuses au diamant DR-900 et DR-1500",
+    "categorie": "Cadenassage",
+    "machines": [
+      "DR-900",
+      "DR-1500"
+    ],
+    "famille": "diamant",
+    "resume": "Fiche de cadenassage des foreuses au diamant DR-900 et DR-1500 : cadenassage simple sur le panneau 600V (avec libération de l'énergie résiduelle hydraulique par les valves 24V), cadenassage multiple eau-air-disjoncteur, rallongement des conduites d'eau et d'air, et gestion de l'énergie gravitationnelle sur le mât.",
+    "objectif": "Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des foreuses au diamant DR-900 et DR-1500. Le cadenassage simple doit se faire sur le disjoncteur principal ; pour certains travaux, les valves à eau et à l'air devront être cadenassées ; pour l'énergie gravitationnelle, s'assurer de bien lire la section s'y rapportant.",
+    "application": "S'applique aux foreuses au diamant DR-900 et DR-1500 en secteur de forage au diamant.",
+    "responsabilites": "Cette instruction de travail s'adresse à tout le personnel se trouvant dans la zone de forage et de cadenassage; toutes les sections doivent être lues. Fiche validée par Frédérick Croteau et approuvée par Marc Rossignol.",
+    "epi": [
+      "Équipements de protection de base sur le site minier"
+    ],
+    "equipements": [
+      "Pince de verrouillage",
+      "Cadenas personnel",
+      "Cadenas de série",
+      "Boîte de cadenassage (à la foreuse)",
+      "Scellés",
+      "Étiquettes de contrôle"
+    ],
+    "prerequis": [
+      "Permis général d'explosifs",
+      "Formation FMTM modules 1, 2, 3, 4, 5 et 7",
+      "Formation Cadenassage (site ou MRI)"
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Aucun travailleur ne peut passer au-delà du ruban jaune pendant les travaux de cadenassage s'il n'appose pas son cadenas sur la pince de verrouillage.",
+      "Pour le cadenassage à la mine Odyssey, l'étiquette de contrôle des énergies doit être remplie, accrochée à la pince de verrouillage et remise au superviseur, qui doit la conserver 3 mois.",
+      "L'ouverture des valves 24V doit se faire seulement lorsque toutes les valves ont été actionnées : un arrêt d'urgence enclenché rompt la communication entre le remote et le récepteur scanreco, et les valves 24V ne peuvent alors plus être actionnées.",
+      "Une valve qui fuit peut provoquer une accumulation d'air dans les conduits.",
+      "Pour tout travail où les mesures sur l'énergie gravitationnelle ne peuvent être appliquées, une analyse de risque doit être effectuée avant de procéder."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Cadenassage simple : appuyer sur le bouton d'arrêt du panneau 600V, puis sélectionner chaque mode (drilling, handling, positionning) et actionner les fonctions de la manette pour ouvrir les valves 24V et relâcher l'énergie résiduelle hydraulique (l'huile retourne au réservoir).",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage simple, étapes 1-2"
+      },
+      {
+        "regle": "Appuyer sur le bouton d'arrêt de la console, puis sur l'arrêt d'urgence du panneau 600V, puis fermer et cadenasser le disjoncteur à l'aide d'une pince de verrouillage et du cadenas personnel.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage simple, étapes 3-5"
+      },
+      {
+        "regle": "Faire l'essai de démarrage sur la console et sur le panneau 600V.",
+        "theme": "Inspection & vérification",
+        "source": "Cadenassage simple, étape 6"
+      },
+      {
+        "regle": "Cadenassage multiple eau-air-disjoncteur : fermer et cadenasser l'eau et l'air avec des cadenas de série, purger les lignes, appuyer sur le bouton d'arrêt du panneau 600V et sélectionner chaque mode pour ouvrir les valves 24V.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple, étapes 1-4"
+      },
+      {
+        "regle": "Appuyer sur le bouton d'arrêt de la console, puis sur l'arrêt d'urgence du panneau 600V, fermer et cadenasser le disjoncteur avec un cadenas de série, mettre la clé dans la boîte de cadenassage avec une pince de verrouillage, puis faire l'essai de démarrage.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Cadenassage multiple, étapes 5-9"
+      },
+      {
+        "regle": "Pour le rallongement des conduites d'eau et d'air, fermer et cadenasser l'eau et l'air sur la ligne principale, le plus près possible de la fin de la ligne, avec des cadenas de série, en s'assurant que les lignes sont bien purgées avant de débrancher les boyaux.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Rallongement conduites, étapes 1-2"
+      },
+      {
+        "regle": "Dans le cas de travaux inachevés, enlever les cadenas personnels sur la boîte de cadenassage ou de la pince de verrouillage et appliquer un scellé avec étiquette de contrôle ; inscrire le numéro du scellé sur l'étiquette et la remettre au superviseur.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Rallongement conduites"
+      },
+      {
+        "regle": "Énergie gravitationnelle : descendre la tête à son plus bas sur la tour (par l'énergie de la machine ou en enlevant le boyau hydraulique du cylindre de feed et en récupérant l'huile) ; pour tout travail sur le mât, forer une tige de forage, ou déployer le mât au complet et l'appuyer au sol sans qu'il puisse bouger, ou retenir le mât et la tête avec une élingue si nécessaire.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Énergie gravitationnelle"
+      },
+      {
+        "regle": "Pour le décadenassage, faire le processus inverse en se positionnant toujours à droite du panneau et en se servant de la main gauche pour remettre le disjoncteur à ON.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [],
+    "historique": [
+      {
+        "date": "19 juillet 2023",
+        "description": "Ajout à l'étape d'actionner les commandes pour enlever la pression dans le système hydraulique.",
+        "par": "S. Tremblay, F. Croteau"
+      },
+      {
+        "date": "19 juillet 2023",
+        "description": "Éclaircissement des façons de contrôler l'énergie gravitationnelle.",
+        "par": "S. Tremblay, F. Croteau"
+      }
+    ],
+    "date_creation": "5 avril 2021",
+    "date_revision": "Juillet 2023",
+    "source_pdf": "Fiche de cadenassage foreuse au diamant DR-900 et DR-1500.pdf",
+    "langue_source": "fr",
+    "notes": ""
+  },
+  {
+    "id": "programme-maitrise-energies-dangereuses",
+    "code": "",
+    "titre": "Programme de maîtrise des énergies dangereuses",
+    "categorie": "Sécurité",
+    "machines": [],
+    "famille": "commun",
+    "resume": "Programme-cadre de Machines Roger International répondant aux exigences réglementaires du cadenassage (article 188.2 du Règlement sur la santé et la sécurité au travail) : rôles et responsabilités, définitions des sources d'énergie et de leur contrôle, fermeture des lieux de cadenassage, cadenassage des équipements haut voltage, décadenassage et formulaire de coupe de cadenas.",
+    "objectif": "L'objectif de ce programme est de déterminer une méthode de travail fiable et sécuritaire pour effectuer la mise à énergie zéro de toute source d'énergie pour chaque équipement et zone dangereuse d'une machine à laquelle un travailleur peut être exposé lors de travaux.",
+    "application": "Ce programme s'applique à tous les employés de Machines Roger International, à un sous-traitant sous notre supervision ou au client qui a à intervenir sur nos équipements. Il s'applique si le maître d'œuvre du site où nous évoluons n'oblige pas l'utilisation de sa propre procédure et de son programme de mise à énergie zéro.",
+    "responsabilites": "Surintendant santé-sécurité : s'assure de l'application des procédures, qu'elles sont à jour et que tout changement est diffusé sur les sites concernés. Superviseur : s'assure que son équipe connaît et applique la procédure, valide l'exécution adéquate et le respect de la fiche de cadenassage via la carte de travail du travailleur. Travailleur : responsable de respecter et d'appliquer chaque étape de la procédure. Directeur entretien : seul avec son remplaçant à avoir l'autorité d'approuver des modifications sur les équipements ; toute modification autorisée doit faire l'objet d'une analyse pour valider si elle interfère avec la fiche de cadenassage de l'équipement. INTERPRÉTATION : le directeur des opérations a l'autorité pour l'interprétation de ce document.",
+    "epi": [],
+    "equipements": [
+      "Cadenas personnel",
+      "Pince de verrouillage",
+      "Boîte de cadenassage",
+      "Scellé",
+      "Étiquette de contrôle"
+    ],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "La pose du ruban jaune lors du cadenassage des équipements de forage est obligatoire.",
+      "Aucune pièce d'équipement ne peut être mise à énergie zéro sans que le secteur où les travaux seront effectués n'ait été informé ; le responsable du secteur autorisera l'arrêt de la pièce d'équipement.",
+      "Le personnel venant de l'extérieur doit suivre la procédure de mise à énergie zéro.",
+      "Avant de procéder au cadenassage, s'informer des procédures spécifiques reliées à certains équipements ou secteurs (ex. équipement mobile, source radioactive, pont roulant).",
+      "Tout employé devant s'absenter doit enlever son cadenas.",
+      "Lors d'un changement de quart, si le remplaçant n'a pas apposé son cadenas personnel, l'équipement doit être cadenassé par un cadenas de département ou un scellé accompagné d'une étiquette de contrôle, et le responsable du secteur doit en être avisé.",
+      "La coupe d'un cadenas oublié doit s'effectuer avec une grande précaution et un bon jugement, seulement après avoir rejoint l'employé concerné ou s'être assuré hors de tout doute qu'il n'est plus sur les lieux ou qu'il est sécuritaire de décadenasser l'équipement ; la fiche « coupe de cadenas » doit être dûment remplie avant de couper le cadenas."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Avant d'entreprendre dans la zone dangereuse d'une machine tout travail de montage, d'ajustement, d'inspection, de décoinçage, de réglage, de mise hors d'usage, d'entretien, de désassemblage, de nettoyage, de maintenance, de remise à neuf, de réparation, de modification ou de déblocage, le cadenassage ou, à défaut, toute autre méthode assurant une sécurité équivalente doit être appliquée (article 188.2 du Règlement sur la santé et la sécurité au travail).",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Page 1"
+      },
+      {
+        "regle": "Neutraliser ou contrôler les énergies secondaires ou résiduelles avant d'exécuter les travaux : purger les conduits, réservoirs et accumulateurs (hydraulique, pneumatique, eau, vapeur) ; attendre la dissipation de la chaleur (thermique) ; attendre l'arrêt total de l'appareil et détendre les ressorts (mouvement mécanique) ; stabiliser les pièces et ne pas se placer dans leur ligne de tir (force gravitationnelle) ; ventiler et/ou nettoyer, avec permis de travail en espace clos si requis (gaz, produit chimique).",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Page 4 — définitions des sources d'énergie"
+      },
+      {
+        "regle": "L'installation d'un ruban jaune est obligatoire lorsque du cadenassage est effectué sur un équipement.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Page 5 — fermeture des lieux de cadenassage"
+      },
+      {
+        "regle": "Mettre les clés dans la boîte de cadenassage en s'assurant que les numéros d'identification des cadenas sont visibles ; cadenasser la boîte à l'aide d'une barrure multiple et de son cadenas personnel. Tout autre travailleur ayant à travailler sur ces équipements doit apposer son cadenas sur la boîte de cadenassage.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Page 6"
+      },
+      {
+        "regle": "Cadenassage des équipements haut voltage (plus de 750 volts) à interrupteurs à couteaux : seules les personnes autorisées peuvent couper et remettre l'alimentation ; elles doivent vérifier qu'il n'y a plus d'alimentation avant d'appliquer la procédure de cadenassage simple ou multiple.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Page 6"
+      },
+      {
+        "regle": "À la fin des travaux, les équipements doivent être décadenassés afin de vérifier le bon fonctionnement, puis le responsable du secteur doit être avisé que les réparations sont terminées et que l'équipement est fonctionnel.",
+        "theme": "Inspection & vérification",
+        "source": "Page 7 — décadenassage"
+      }
+    ],
+    "valeurs_cles": [],
+    "figures": [
+      {
+        "page": "8",
+        "description": "Formulaire « Coupe de cadenas » : nom sur le cadenas, date, raison de la coupe, type de cadenas, responsable du cadenassage."
+      }
+    ],
+    "historique": [],
+    "date_creation": "Mars 2018",
+    "date_revision": "Avril 2022",
+    "source_pdf": "Programme de maîtrise des énergies dangereuses.pdf",
+    "langue_source": "fr",
+    "notes": "Document-cadre transversal à toutes les fiches de cadenassage par équipement (catégorie Cadenassage)."
   }
 ];
 

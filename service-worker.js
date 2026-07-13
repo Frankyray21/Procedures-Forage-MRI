@@ -16,7 +16,7 @@
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
      retarder l'installation. Le bouton « Tout télécharger » de l'accueil
      affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v110';
+const VERSION = 'mri-proc-v111';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -41,6 +41,8 @@ const CORE = [
   './quiz-dd-equip.js',
   './quiz-securite.js',
   './quiz-ith-new.js',
+  './quiz-atelier-sec.js',
+  './quiz-cadenassage.js',
   './quiz-types.js',
   './app.js',
   './sizes.js',

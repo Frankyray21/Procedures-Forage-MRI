@@ -14,7 +14,7 @@
     'Intervention': '#ef4444',
     'Carottage & tube': '#06b6d4', 'Installation & plancher': '#10b981',
     'Déplacement': '#ec4899', 'Cimentation': '#a16207', 'Sécurité': '#ef4444',
-    'Équipements & véhicules': '#0d9488'
+    'Équipements & véhicules': '#0d9488', 'Cadenassage': '#eab308'
   };
   function catColor(c) { return CAT_COLORS[c] || '#d22325'; }
   // teinte translucide de la couleur de tâche (fond du filtre sélectionné)
@@ -231,7 +231,7 @@
   }
   // Classement des filtres : catégories par flux de travail, machines regroupées
   var CAT_ORDER = ['Forage', 'Alésage', 'Carottage & tube', 'Cimentation', 'Installation', 'Installation & plancher',
-    'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Équipements & véhicules', 'Démobilisation', 'Sécurité'];
+    'Manutention', 'Maintenance', 'Intervention', 'Déplacement', 'Équipements & véhicules', 'Démobilisation', 'Sécurité', 'Cadenassage'];
   // 'Foreuse au diamant' est volontairement absent : il équivaut à toute la
   // section Diamant (redondant comme filtre). On le regroupe quand même (pour
   // ne pas le confondre avec ITH), mais il ne s'affiche pas comme chip.
@@ -368,7 +368,7 @@
   var APP_FILES = ['index.html', 'styles.css', 'manifest.webmanifest', 'config.js', 'data.js',
     'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'quiz.js', 'essentiel.js',
     'figures.js', 'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
-    'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-types.js',
+    'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-atelier-sec.js', 'quiz-cadenassage.js', 'quiz-types.js',
     'pdftext.js', 'llm.js', 'chatbot.js', 'app.js', 'sizes.js'];
   var BRAND_FILES = ['images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
@@ -746,7 +746,10 @@
     'SAN-SEC': 'Santé-sécurité',
     'SS-DD-ST': 'Santé-sécurité — forage au diamant sous terre',
     'STD-DD': 'Standard — forage au diamant',
-    'DR-600-OP': 'Opération de la foreuse DR-600'
+    'DR-600-OP': 'Opération de la foreuse DR-600',
+    'ATELIER-MEC': 'Procédure — atelier mécanique',
+    'ATELIER-TRANSPORT': 'Procédure — transport atelier',
+    'GES-SAN-SEC': 'Gestion santé-sécurité'
   };
   function buildGroups(list) {
     if (listMode() === 'code') {
