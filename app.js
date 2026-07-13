@@ -1434,7 +1434,7 @@
       '<span>' + (name ? 'Merci ' + esc(name) + '. ' : '') + 'Pas de réseau pour le moment : ton attestation sera envoyée ' +
       'automatiquement dès que la connexion revient. Rien d\'autre à faire.</span></div></div>';
   }
-  /* ---------- PDF (attestation travailleur + fiche gestionnaire) ----------
+  /* ---------- PDF (attestation travailleur) ----------
      Générés dans le navigateur (jsPDF, chargé à la demande seulement) à partir
      des mêmes données que l'envoi Airtable — aucun appel serveur de plus. */
   var JSPDF_SRC = 'vendor/jspdf.umd.min.js';
@@ -1516,26 +1516,9 @@
     pdfFooter(doc);
     return doc;
   }
-  function buildManagerPdf(payload, linked, recordId, logo) {
-    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
-    var y = pdfHeader(doc, logo, 'Fiche de suivi — gestionnaire');
-    doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5); doc.setTextColor(130);
-    doc.text('Usage interne — gestion des formations. Ne pas remettre au travailleur.', 20, y - 8);
-    y = pdfField(doc, y, 'Nom', payload.name);
-    y = pdfField(doc, y, 'Procédure', (payload.proc || '') + (payload.titre ? ' — ' + payload.titre : ''));
-    y = pdfField(doc, y, 'Date', fmtDateFR(payload.date));
-    if (payload.revision) y = pdfField(doc, y, 'Révision de la procédure', payload.revision);
-    if (payload.score) y = pdfField(doc, y, 'Résultat au quiz', payload.score);
-    y = pdfField(doc, y, 'Relié au registre employé', linked ? 'Oui' : 'Non — à relier manuellement');
-    y = pdfField(doc, y, 'Temps sur la fiche', (payload.readTime || '—') +
-      (payload.readSeconds != null ? ' (' + payload.readSeconds + ' s)' : ''));
-    y = pdfField(doc, y, 'Temps sur le quiz', (payload.quizTime || '—') +
-      (payload.quizSeconds != null ? ' (' + payload.quizSeconds + ' s)' : ''));
-    y = pdfField(doc, y, 'Source', 'Site procédures (web)');
-    if (recordId) y = pdfField(doc, y, 'Référence Airtable', recordId);
-    pdfFooter(doc);
-    return doc;
-  }
+  // (La « fiche gestionnaire » PDF a été retirée : les détails de suivi —
+  // temps de lecture, temps de quiz, statut — sont envoyés à Airtable avec
+  // l'attestation ; les gestionnaires les consultent là-bas.)
   function attestSuccess(sec, name, linked, payload, recordId) {
     sec.innerHTML = '<h2>Attestation de lecture</h2>' +
       '<div class="attest-done"><span class="attest-done-ic">✓</span>' +
@@ -1545,8 +1528,6 @@
       (payload ?
         '<div class="attest-pdfs">' +
           '<button type="button" class="attest-pdf-btn attest-pdf-w">' + ICON.doc + ' Mon attestation (PDF)</button>' +
-          '<button type="button" class="attest-pdf-btn attest-pdf-m">' + ICON.doc + ' Fiche gestionnaire (PDF)</button>' +
-          '<p class="attest-pdf-hint">La fiche gestionnaire contient les détails de suivi (temps, statut) — à remettre à ton superviseur.</p>' +
           '<div class="attest-pdf-msg" aria-live="polite"></div>' +
         '</div>' : '') +
       '<p class="attest-next"><a href="#/suivi">Voir mon suivi de formation ' + ICON.arrow + '</a></p>' +
@@ -1560,12 +1541,8 @@
         buildWorkerPdf(payload, r[1]).save(pdfSlug(payload.proc) + '-' + pdfSlug(name) + '-attestation.pdf');
       }).catch(fail);
     };
-    sec.querySelector('.attest-pdf-m').onclick = function () {
-      msgEl.textContent = '';
-      Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
-        buildManagerPdf(payload, linked, recordId, r[1]).save(pdfSlug(payload.proc) + '-' + pdfSlug(name) + '-gestionnaire.pdf');
-      }).catch(fail);
-    };
+    // (Fiche gestionnaire retirée de l'interface travailleur : les détails de
+    // suivi restent envoyés à Airtable, où les gestionnaires les consultent.)
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
