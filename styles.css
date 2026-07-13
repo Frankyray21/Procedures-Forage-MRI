@@ -939,6 +939,8 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .pdfbox{background:var(--card)}
 :root[data-theme="light"] .pdfview>summary:hover{background:rgba(0,0,0,.04)}
 :root[data-theme="light"] .gfig{border-color:var(--border)}
+/* Lien croisé de secteur en fin de texte d'intro (les stats sont sur Mon suivi) */
+.lead-x{color:var(--accent-l);font-weight:700;white-space:nowrap}
 /* Ma progression (haut des listes de section) : barre + palier sobre. */
 .secprg{margin:1.1rem 0 .3rem;padding:.7rem .9rem;background:var(--card-2);
   border:1px solid var(--border);border-radius:12px}

@@ -298,19 +298,13 @@
           ? 'English-language procedures for diamond drilling: core barrel, set-up, remote drilling and safety systems. Each card contains the official PDF, available offline.'
           : diamant
           ? 'Procédures de forage au diamant de Machines Roger International : carottage, planchers, déplacements, sécurité. Chaque fiche contient le PDF officiel de la procédure, consultable même sans réseau.'
-          : 'Toutes les procédures de travail de Machines Roger International, sur ton téléphone, même sans réseau. Chaque fiche contient le PDF officiel de la procédure.') + '</p>' +
-        '<div class="stats">' +
-          '<div class="stat"><b>' + D.length + '</b><span>Procédures</span></div>' +
-          '<div class="stat"><b>' + Object.keys(cats).length + '</b><span>Catégories</span></div>' +
-          (diamant
-            ? '<div class="stat"><b><a href="#/procedures" style="color:var(--accent-l)">ITH&nbsp;»</a></b><span>Foreuses ITH/CUBEX</span></div>'
-            : english
-            ? '<div class="stat"><b><a href="#/english-dd" style="color:var(--accent-l)">DD&nbsp;»</a></b><span>Diamond drilling</span></div>'
-            : englishDD
-            ? '<div class="stat"><b><a href="#/english" style="color:var(--accent-l)">ITH&nbsp;»</a></b><span>ITH / CUBEX</span></div>'
-            : '') +
-          '<div class="stat"><b><a href="#/suivi" style="color:var(--accent-l)">Suivi&nbsp;»</a></b><span>de mes formations</span></div>' +
-        '</div>' +
+          : 'Toutes les procédures de travail de Machines Roger International, sur ton téléphone, même sans réseau. Chaque fiche contient le PDF officiel de la procédure.') +
+        // Les statistiques détaillées vivent sur « Mon suivi » ; ici, seul le
+        // lien croisé de secteur subsiste, en fin de texte.
+        (diamant ? ' <a class="lead-x" href="#/procedures">Foreuses ITH / CUBEX »</a>'
+          : english ? ' <a class="lead-x" href="#/english-dd">Diamond drilling »</a>'
+          : englishDD ? ' <a class="lead-x" href="#/english">ITH / CUBEX »</a>' : '') +
+        '</p>' +
       '</div></section>' +
       '<div class="wrap"><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
@@ -2402,13 +2396,12 @@
     var attested = DATA.filter(function (p) { return !!attestInfo(p.id); });
     var played = withQuiz.map(function (p) { return pqBestPct(p.id); }).filter(Boolean);
     var avg = played.length ? Math.round(played.reduce(function (a, b) { return a + b.pct; }, 0) / played.length) : null;
-    // Points de quiz cumulés (meilleurs essais) sur le total possible de
-    // toutes les fiches — le « score de carrière » du travailleur.
+    // Points de quiz cumulés (meilleurs essais), calculés UNIQUEMENT sur les
+    // quiz complétés : le rapport mesure la maîtrise, pas la couverture.
     var ptsEarned = 0, ptsMax = 0;
     withQuiz.forEach(function (p) {
-      (window.QUIZ_PROC[p.id] || []).forEach(function (q) { ptsMax += pqPoints(q); });
       var bp = pqGetBestPts(p.id);
-      if (bp) ptsEarned += Math.min(bp.pts, bp.max);
+      if (bp) { ptsEarned += Math.min(bp.pts, bp.max); ptsMax += bp.max; }
     });
     var name = suiviName();
 
@@ -2438,7 +2431,7 @@
           '<div class="stat"><b>' + attested.length + ' / ' + DATA.length + '</b><span>Attestations</span></div>' +
           '<div class="stat"><b>' + quizDone.length + ' / ' + withQuiz.length + '</b><span>Quiz complétés</span></div>' +
           '<div class="stat"><b>' + (avg == null ? '—' : avg + ' %') + '</b><span>Score moyen</span></div>' +
-          '<div class="stat"><b>' + ptsEarned + ' / ' + ptsMax + '</b><span>Points de quiz</span></div>' +
+          '<div class="stat"><b>' + (ptsMax ? ptsEarned + ' / ' + ptsMax : '—') + '</b><span>Points de quiz</span></div>' +
         '</div>' +
       '</div></section>' +
       '<div class="wrap">' +
