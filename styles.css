@@ -947,14 +947,15 @@ footer b{color:var(--muted)}
   margin:.4rem 0 1rem;padding-bottom:.55rem;border-bottom:2px solid var(--brand)}
 .lsec-h .ct{font-size:.8rem;color:var(--dim);font-weight:700}
 /* liste des procédures : sections par tâche + pastille d'état.
-   Séparation des sections : FILET PLEINE LARGEUR entre deux sections,
-   espace contenu — la coupure se voit sans grand trou vertical. */
+   En-tête de section = BANDEAU pleine largeur (fond léger, liseré rouge à
+   gauche, compte à droite) : la section est délimitée sans grand vide. */
 .lgrp{margin-bottom:0}
-.lgrp + .lgrp{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--border)}
-.lgrp-h{display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap;font-family:var(--font-display);font-size:.94rem;
-  font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:.3rem 0 .55rem}
-.lgrp-h::before{content:'';width:4px;height:.9rem;background:var(--brand);border-radius:3px;align-self:center}
-.lgrp-h .ct{font-size:.74rem;color:var(--dim);font-weight:700}
+.lgrp + .lgrp{margin-top:1.15rem}
+.lgrp-h{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;font-family:var(--font-display);font-size:.92rem;
+  font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:.3rem 0 .5rem;
+  background:var(--card-2);border:1px solid var(--border);border-left:4px solid var(--brand);
+  border-radius:10px;padding:.42rem .75rem}
+.lgrp-h .ct{font-size:.74rem;color:var(--dim);font-weight:700;margin-left:auto}
 /* signification de la famille de codes (« PRO-DD-ST = procédure de forage
    au diamant sous terre ») — casse naturelle, ton discret */
 .lgrp-sub{font-family:var(--font-body);font-size:.8rem;font-weight:600;color:var(--muted);
@@ -1060,8 +1061,8 @@ footer b{color:var(--muted)}
   .lgrp-rows{gap:.28rem}
   /* sections */
   .lgrp{margin-bottom:0}
-  .lgrp + .lgrp{margin-top:.75rem;padding-top:.7rem}
-  .lgrp-h{font-size:.84rem;margin:.2rem 0 .4rem}
+  .lgrp + .lgrp{margin-top:.8rem}
+  .lgrp-h{font-size:.8rem;margin:.2rem 0 .35rem;padding:.34rem .6rem}
   .lgrp-sub{font-size:.72rem}
   .lsec + .lsec{margin-top:2rem}
   .lsec-h{font-size:1.02rem;margin:.3rem 0 .75rem;padding-bottom:.45rem}

@@ -271,8 +271,6 @@
       cats[p.categorie] = (cats[p.categorie] || 0) + 1;
       machinesOf(p).forEach(function (m) { machs[m] = (machs[m] || 0) + 1; });
     });
-    var nbConsignes = D.reduce(function (a, p) { return a + ((p.consignes_securite || []).length); }, 0);
-
     var catChips = CAT_ORDER.filter(function (c) { return cats[c]; }).map(function (c) {
       return '<button class="chip" data-cat="' + esc(c) + '" style="--c:' + catColor(c) + ';--ct:' + catTint(c) + '">' +
         esc(c) + ' <span class="ct">' + cats[c] + '</span></button>';
@@ -295,7 +293,7 @@
           '<div class="stat"><b>' + Object.keys(cats).length + '</b><span>Catégories</span></div>' +
           (diamant
             ? '<div class="stat"><b><a href="#/procedures" style="color:var(--accent-l)">ITH&nbsp;»</a></b><span>Foreuses ITH/CUBEX</span></div>'
-            : '<div class="stat"><b>' + nbConsignes + '</b><span>Consignes</span></div>') +
+            : '') +
           '<div class="stat"><b><a href="#/suivi" style="color:var(--accent-l)">Suivi&nbsp;»</a></b><span>de mes formations</span></div>' +
         '</div>' +
       '</div></section>' +
