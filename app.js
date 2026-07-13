@@ -875,32 +875,11 @@
       '<span class="parrow">' + ICON.arrow + '</span></a>';
   }
   /* ---------- aperçu au survol d'une rangée (souris seulement) ----------
-     Après un court délai, une infobulle montre le résumé, les machines, les
-     valeurs clés et le document officiel (1re page + nombre de pages). Les
-     écrans tactiles ne sont pas concernés (le toucher ouvre la fiche). */
+     Après un court délai, une infobulle montre le RÉSUMÉ de la procédure —
+     rien d'autre. Les écrans tactiles ne sont pas concernés. */
   var hoverTimer = null;
   function hoverHTML(p) {
-    var pages = (!DEMO && window.PAGES && window.PAGES[p.id]) || [];
-    var img = pages.length
-      ? '<img class="hc-img" src="' + esc(withRev(pages[0], p.id)) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
-      : '';
-    var machines = (p.machines || []).join(', ');
-    var meta = [];
-    if (pages.length) meta.push('PDF officiel : ' + pages.length + ' page' + (pages.length > 1 ? 's' : ''));
-    if (p.date_revision) meta.push('Rév. ' + p.date_revision);
-    else if (p.date_creation) meta.push(p.date_creation);
-    var vals = (p.valeurs_cles || []).slice(0, 3).map(function (v) {
-      return '<span class="hc-val"><b>' + esc(v.libelle) + '</b>' + esc(v.valeur) + '</span>';
-    }).join('');
-    var nAv = (p.avertissements || []).length;
-    return '<div class="hc-head">' + (p.code ? esc(p.code) + ' · ' : '') + esc(p.categorie) + '</div>' +
-      '<div class="hc-body">' + img + '<div class="hc-txt">' +
-        (p.resume ? '<p>' + esc(p.resume) + '</p>' : '') +
-        (machines ? '<div class="hc-meta"><b>Machines :</b> ' + esc(machines) + '</div>' : '') +
-        (meta.length ? '<div class="hc-meta">' + esc(meta.join(' · ')) + '</div>' : '') +
-        (nAv ? '<div class="hc-meta hc-warn">' + ICON.warn + ' ' + nAv + ' avertissement' + (nAv > 1 ? 's' : '') + '</div>' : '') +
-      '</div></div>' +
-      (vals ? '<div class="hc-vals">' + vals + '</div>' : '');
+    return '<p>' + esc(p.resume) + '</p>';
   }
   function initHoverCard() {
     // seulement les appareils avec un vrai curseur (pas les téléphones)
@@ -919,7 +898,7 @@
       clearTimeout(hoverTimer);
       hoverTimer = setTimeout(function () {
         var p = DATA.filter(function (x) { return x.id === pid; })[0];
-        if (!p || !document.body.contains(row)) return;
+        if (!p || !p.resume || !document.body.contains(row)) return;
         el.innerHTML = hoverHTML(p);
         el.style.borderTopColor = catColor(p.categorie);
         var r = row.getBoundingClientRect();
