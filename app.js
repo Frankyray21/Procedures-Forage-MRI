@@ -291,7 +291,7 @@
         '<span class="eyebrow">' + ((english || englishDD) ? 'Health &amp; Safety · Drilling' : diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
         '<h1>' + (english ? 'English — <span class="hl">ITH / CUBEX</span>'
           : englishDD ? 'English — <span class="hl">Diamond drilling</span>'
-          : diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de <span class="hl">forage</span>') + '</h1>' +
+          : diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de forage <span class="hl">ITH / CUBEX</span>') + '</h1>' +
         '<p class="lead">' + (english
           ? 'English-language procedures for ITH/CUBEX long-hole drilling, V-30 boring, Stopemaster and general safety. Each card contains the official PDF, available offline.'
           : englishDD
@@ -962,13 +962,13 @@
   /* ---------- vue : procédure ---------- */
   function renderProcedure(view, id) {
     var p = DATA.filter(function (x) { return x.id === id; })[0];
-    if (!p) { view.innerHTML = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Procédures</a><div class="empty">Procédure introuvable.</div></div>'; return; }
+    if (!p) { view.innerHTML = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Procédures de forage ITH / CUBEX</a><div class="empty">Procédure introuvable.</div></div>'; return; }
     var col = catColor(p.categorie);
     // Pour une procédure 'commun', le retour suit la section d'où l'on vient.
     var viaDiamant = (p.famille === 'commun') ? (state.fam === 'diamant') : (p.famille === 'diamant');
     var viaEnglish = p.famille === 'english';
     var backHref = viaEnglish ? (enDD(p) ? '#/english-dd' : '#/english') : viaDiamant ? '#/diamant' : '#/procedures';
-    var backLbl = viaEnglish ? (enDD(p) ? ' English — Diamond drilling' : ' English — ITH / CUBEX') : viaDiamant ? ' Forage au diamant' : ' Toutes les procédures';
+    var backLbl = viaEnglish ? (enDD(p) ? ' English — Diamond drilling' : ' English — ITH / CUBEX') : viaDiamant ? ' Forage au diamant' : ' Procédures de forage ITH / CUBEX';
     var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
     var h = '<div class="wrap"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
       '<div class="phead">' +
@@ -2307,7 +2307,7 @@
       '<div class="qring" style="--p:' + pct + '"><span>' + pct + '%</span></div>' +
       '<h2>' + s.score + ' / ' + s.pool.length + '</h2><p class="lead">' + esc(msg) + '</p>' +
       '<div class="qacts"><button class="btn" id="qAgain">Recommencer</button>' +
-        '<a class="btn ghost" href="#/procedures">Retour aux procédures</a></div></div></div>';
+        '<a class="btn ghost" href="#/procedures">Procédures de forage ITH / CUBEX</a></div></div></div>';
     $('#qAgain').onclick = function () { renderQuiz(view); };
   }
 
@@ -2491,7 +2491,7 @@
       '<p class="plead">Choisis ton secteur.</p>' +
       '<div class="portal-cards">' +
         '<a class="portal-card kb" href="#/procedures"><div class="pc-ic">' + ICON.doc + '</div>' +
-          '<h2>Foreuses ITH / CUBEX</h2><p>Procédures de forage et d\'alésage (ITH, CUBEX, V-30) : consignes, valeurs-clés, PDF officiel et quiz.</p>' +
+          '<h2>Procédures de forage ITH / CUBEX</h2><p>Procédures de forage et d\'alésage (ITH, CUBEX, V-30) : consignes, valeurs-clés, PDF officiel et quiz.</p>' +
           '<div class="pc-meta">' + nProd + ' procédures · disponible hors ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
         '<a class="portal-card diam" href="#/diamant"><div class="pc-ic">' + ICON.doc + '</div>' +
