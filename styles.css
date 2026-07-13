@@ -1030,3 +1030,10 @@ footer b{color:var(--muted)}
   .lmode-b{font-size:.76rem;padding:.48rem .6rem}
   .lmode-t{font-size:.72rem}
 }
+
+/* filtre de tâche SÉLECTIONNÉ : le mot, la pastille, la bordure et le fond
+   prennent la couleur de la tâche (au repos, le filtre reste neutre) */
+.chip[data-cat]:not([data-cat=""]).on{color:var(--c);background:var(--ct);border-color:var(--c)}
+.chip[data-cat]:not([data-cat=""]).on::before{background:var(--c)}
+.chip[data-cat]:not([data-cat=""]).on .ct{color:var(--c);opacity:.8}
+:root[data-theme="light"] .chip[data-cat]:not([data-cat=""]).on::before{background:var(--c)}

@@ -17,6 +17,12 @@
     'Équipements & véhicules': '#0d9488'
   };
   function catColor(c) { return CAT_COLORS[c] || '#d22325'; }
+  // teinte translucide de la couleur de tâche (fond du filtre sélectionné)
+  function catTint(c) {
+    var h = catColor(c).replace('#', '');
+    return 'rgba(' + parseInt(h.slice(0, 2), 16) + ',' + parseInt(h.slice(2, 4), 16) + ',' +
+      parseInt(h.slice(4, 6), 16) + ',.14)';
+  }
 
   // index code -> procedure id (pour les liens du Code de sécurité)
   var CODE_TO_ID = {};
@@ -262,7 +268,7 @@
     var nbConsignes = D.reduce(function (a, p) { return a + ((p.consignes_securite || []).length); }, 0);
 
     var catChips = CAT_ORDER.filter(function (c) { return cats[c]; }).map(function (c) {
-      return '<button class="chip" data-cat="' + esc(c) + '" style="--c:' + catColor(c) + '">' +
+      return '<button class="chip" data-cat="' + esc(c) + '" style="--c:' + catColor(c) + ';--ct:' + catTint(c) + '">' +
         esc(c) + ' <span class="ct">' + cats[c] + '</span></button>';
     }).join('');
     var machChips = MACH_ORDER.filter(function (m) { return machs[m]; }).map(function (m) {
