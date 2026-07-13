@@ -998,11 +998,13 @@ footer b{color:var(--muted)}
 /* ===== mise en page mobile (téléphones) : tout plus dense, rien de retiré ===== */
 @media (max-width:640px){
   .wrap{padding:0 .8rem}
-  /* héro : la liste doit apparaître dès le premier écran */
+  /* héro allégé : sur téléphone on garde le titre et les chiffres ; le badge
+     décoratif et le paragraphe d'intro (redondant avec le bandeau hors-ligne)
+     sont masqués — ils restent visibles sur grand écran */
   .hero{padding:.7rem 0 .45rem}
-  .eyebrow{font-size:.64rem;padding:.18rem .55rem}
-  .hero h1{font-size:1.6rem;margin:.4rem 0 .3rem}
-  .hero p.lead{font-size:.88rem;line-height:1.5}
+  .hero .eyebrow{display:none}
+  .hero h1{font-size:1.6rem;margin:.1rem 0 .3rem}
+  .hero p.lead{display:none}
   /* stats en ligne : « 25 procédures · 10 catégories… » sur 1-2 rangées */
   .stats{gap:.25rem .85rem;margin-top:.55rem}
   .stat b{display:inline;font-size:1.05rem;margin-right:.28rem}
@@ -1016,6 +1018,8 @@ footer b{color:var(--muted)}
   .offtxt > span{font-size:.74rem}
   .offcard .btn{padding:.5rem .9rem;font-size:.86rem}
   .offmore{margin:0}
+  /* moins de rouge : seuls le bouton et l'essentiel ressortent */
+  .offcard summary{color:var(--muted)}
   /* recherche + filtres */
   .toolbar{padding:.5rem 0 .3rem}
   .search input{padding:.6rem .85rem .6rem 2.5rem;font-size:.93rem}
@@ -1027,7 +1031,7 @@ footer b{color:var(--muted)}
   .prow .prow-main{display:block;line-height:1.42}
   .prow .pcode{font-size:.62rem;padding:.08rem .3rem;margin-right:.45rem}
   .prow .ptitle{font-size:.86rem;margin-right:.45rem}
-  .prow .pcat{margin-right:.45rem}
+  .prow .pcat{margin-right:.45rem;text-transform:none;letter-spacing:0;font-weight:600}
   .prow .parrow{display:none}
   .lgrp-rows{gap:.28rem}
   /* sections */
