@@ -83,7 +83,7 @@
     "ss-dd-st-001": [
       { "q": "À côté de quoi place-t-on le dead man ?",
         "o": ["La porte", "Le rack à rod", "Le treuil", "La pompe à eau"], "a": 1,
-        "e": "« Le dead man doit être positionné à un minimum de 1,5 mètre de la tour de la foreuse, à côté du rack à rod. »" }
+        "e": "« Le dead man doit être positionné […] à côté du rack à rod. »" }
     ],
     "dr600-op-002": [
       { "q": "La foreuse va se déplacer seule. Qu'est-ce qui lève les roues du sol ?",

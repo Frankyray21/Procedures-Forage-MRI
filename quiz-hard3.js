@@ -21,11 +21,6 @@
         "o": ["Pour ne pas bosser le tube", "Pour ne pas se coincer les doigts entre le core knocker et le tube", "Pour économiser de l'effort", "Pour ne pas user la carotte"], "a": 1,
         "e": "« Ne jamais effectuer de mouvement de va-et-vient avec le core knocker pour ne pas se coincer les doigts entre le core knocker et le tube. »" }
     ],
-    "pro-dd-st-006": [
-      { "q": "Quel outil est interdit pour dévisser la water swivel ?",
-        "o": ["La clé à molette", "Le pipe wrench", "La clé dynamométrique", "La clé à tube"], "a": 1,
-        "e": "« En aucun cas le pipe wrench ne doit être utilisé pour dévisser la water swivel. »" }
-    ],
     "pro-dd-st-007": [
       { "q": "Après le pompage, on plie le boyau en deux avec 2 ty-rap. Combien de temps doit-il rester plié ?",
         "o": ["6 heures", "12 heures", "24 heures", "48 heures"], "a": 2,

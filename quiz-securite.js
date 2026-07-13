@@ -7,10 +7,7 @@
     "san-sec-006": [
       { "q": "Avant que le contremaître-général s'occupe de lui, qu'est-ce que le nouveau travailleur doit avoir fait ?",
         "o": ["Rien", "L'accueil en ligne de MRI, puis l'accueil du client", "Une semaine d'essai", "Un examen médical"], "a": 1,
-        "e": "« Le travailleur doit d'abord avoir fait l'accueil en ligne de MACHINES ROGER INTERNATIONAL; le travailleur doit effectuer le processus d'accueil du client. »" },
-      { "q": "Qui garde les papiers d'accueil signés du travailleur ?",
-        "o": ["Le travailleur", "Le contremaître-général", "Le client", "Le foreur"], "a": 1,
-        "e": "« Le contremaître-général doit garder en filière les documents d'accueil signés du travailleur. »" }
+        "e": "« Le travailleur doit d'abord avoir fait l'accueil en ligne de MACHINES ROGER INTERNATIONAL; le travailleur doit effectuer le processus d'accueil du client. »" }
     ],
     "san-sec-005": [
       { "q": "Où commence le site de forage ?",
@@ -38,9 +35,9 @@
       { "q": "Avant de percer de l'autre côté, à quelle distance faut-il déjà avoir choisi A ou B ?",
         "o": ["2 mètres", "5 mètres (15 pieds)", "10 mètres", "1 mètre"], "a": 1,
         "e": "« Il doit appliquer son choix au moins 5 mètres (15 pieds) avant de défoncer. »" },
-      { "q": "Le trou débouche dans une galerie où personne ne passe. Quel périmètre mets-tu autour ?",
-        "o": ["2 m avec un cône", "5 mètres, barrière orange et affiche « Ouverture dangereuse »", "10 m sans affiche", "Aucun"], "a": 1,
-        "e": "« Un périmètre de 5 mètres (15 pieds) autour du trou devra être délimité avec une barrière orange et une affiche « Ouverture dangereuse ». »" },
+      { "q": "Le trou débouche dans une galerie où personne ne passe. Comment délimites-tu le périmètre autour du trou ?",
+        "o": ["Un cône orange posé sur le trou", "Une barrière orange et une affiche « Ouverture dangereuse »", "Un ruban jaune seulement", "Aucune délimitation requise"], "a": 1,
+        "e": "« Un périmètre de […] autour du trou devra être délimité avec une barrière orange et une affiche « Ouverture dangereuse ». »" },
       { "q": "Que mets-tu sur le départ du trou foré pour que rien ne tombe dedans ?",
         "o": ["Un couvercle de bois", "Un cône rouge", "Un ruban jaune", "Rien"], "a": 1,
         "e": "« Un cône rouge doit être placé sur le départ du trou foré, afin d'éviter toutes chutes d'objets à l'intérieur de ce trou. »" },

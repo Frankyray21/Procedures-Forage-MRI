@@ -103,7 +103,7 @@
     "ss-dd-st-001": [
       { "q": "À quelle distance de la tour place-t-on le dead man, au minimum ?",
         "o": ["0,5 m", "1,5 m", "3 m", "5 m"], "a": 1,
-        "e": "« Le dead man doit être positionné à un minimum de 1,5 mètre de la tour de la foreuse, à côté du rack à rod… »" },
+        "e": "« Le dead man doit être positionné à un minimum de 1,5 mètre de la tour de la foreuse […] »" },
       { "q": "Le système FORTRESS a combien de pièces ?",
         "o": ["Une", "Deux : coulisse et serrure", "Trois", "Quatre"], "a": 1,
         "e": "« Le système d'interverrouillage « FORTRESS » comprend 2 pièces : la coulisse et la serrure. »" }
