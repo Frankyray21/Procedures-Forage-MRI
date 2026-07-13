@@ -6,9 +6,9 @@ const path = require('path');
 const root = __dirname;
 const out = {};
 const rootFiles = ['index.html', 'styles.css', 'manifest.webmanifest', 'config.js', 'data.js',
-  'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'quiz.js',
+  'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'data-english.js', 'quiz.js',
   'essentiel.js', 'figures.js', 'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
-  'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-atelier-sec.js', 'quiz-cadenassage.js', 'quiz-types.js', 'pdftext.js',
+  'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-atelier-sec.js', 'quiz-cadenassage.js', 'quiz-english.js', 'quiz-types.js', 'pdftext.js',
   'llm.js', 'chatbot.js', 'app.js', 'sizes.js'];
 function add(rel) {
   try { out[rel] = fs.statSync(path.join(root, rel)).size; } catch (e) {}

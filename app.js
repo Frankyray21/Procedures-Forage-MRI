@@ -124,17 +124,19 @@
     var view = $('#view');
     view.removeAttribute('data-boot');   // le contenu réel remplace l'état « Chargement… »
     if (prevHash.indexOf('#/diamant') === 0) listScroll.diamant = window.scrollY;
+    else if (prevHash.indexOf('#/english') === 0) listScroll.english = window.scrollY;
     else if (prevHash.indexOf('#/procedures') === 0) listScroll[''] = window.scrollY;
     var fromFiche = prevHash.indexOf('#/p/') === 0;
     prevHash = h;
     window.scrollTo(0, 0);
     if (h.indexOf('#/p/') !== 0) ptLeavePage();      // quitte une fiche → fige le temps de consultation
-    if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : 'procedures'); }
+    if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : (pp && pp.famille === 'english' ? 'english' : 'procedures')); }
     else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
     else if (h.indexOf('#/suivi') === 0) { renderSuivi(view); setNav('suivi'); }
     // Code de sécurité : retiré du site (non publié) — anciens liens redirigés.
     else if (h.indexOf('#/code') === 0) { location.replace('#/procedures'); return; }
     else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); if (fromFiche) window.scrollTo(0, listScroll.diamant || 0); }
+    else if (h.indexOf('#/english') === 0) { if (state.fam !== 'english') { state.fam = 'english'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('english'); if (fromFiche) window.scrollTo(0, listScroll.english || 0); }
     else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); if (fromFiche) window.scrollTo(0, listScroll[''] || 0); }
     else { renderPortail(view); setNav(''); }
   }
@@ -201,9 +203,12 @@
 
   /* ---------- vue : accueil ---------- */
   var state = { q: '', cat: '', mach: '', fam: '' };
-  // fam '' = foreuses ITH/CUBEX/V-30 (par défaut) ; 'diamant' = forage au diamant
-  // Appartenance d'une procédure à une section. famille 'commun' = les deux.
+  // fam '' = foreuses ITH/CUBEX/V-30 (par défaut) ; 'diamant' = forage au diamant ;
+  // 'english' = procédures en anglais (section à part, jamais mêlée aux deux autres).
+  // Appartenance d'une procédure à une section. famille 'commun' = ITH + diamant.
   function inSection(p, fam) {
+    if (fam === 'english') return p.famille === 'english';
+    if (p.famille === 'english') return false;
     if (p.famille === 'commun') return true;
     return fam === 'diamant' ? p.famille === 'diamant' : p.famille !== 'diamant';
   }
@@ -260,6 +265,7 @@
   function renderHome(view) {
     var D = famData();
     var diamant = state.fam === 'diamant';
+    var english = state.fam === 'english';
     var cats = {}, machs = {};
     D.forEach(function (p) {
       cats[p.categorie] = (cats[p.categorie] || 0) + 1;
@@ -277,9 +283,11 @@
 
     view.innerHTML =
       '<section class="hero"><div class="wrap">' +
-        '<span class="eyebrow">' + (diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
-        '<h1>' + (diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de <span class="hl">forage</span>') + '</h1>' +
-        '<p class="lead">' + (diamant
+        '<span class="eyebrow">' + (english ? 'Health &amp; Safety · Drilling' : diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
+        '<h1>' + (english ? 'English <span class="hl">procedures</span>' : diamant ? 'Forage au <span class="hl">diamant</span>' : 'Procédures de <span class="hl">forage</span>') + '</h1>' +
+        '<p class="lead">' + (english
+          ? 'English-language work procedures of Machines Roger International: ITH/CUBEX, Stopemaster and diamond drilling. Each card contains the official PDF, available offline.'
+          : diamant
           ? 'Procédures de forage au diamant de Machines Roger International : carottage, planchers, déplacements, sécurité. Chaque fiche contient le PDF officiel de la procédure, consultable même sans réseau.'
           : 'Toutes les procédures de travail de Machines Roger International, sur ton téléphone, même sans réseau. Chaque fiche contient le PDF officiel de la procédure.') + '</p>' +
         '<div class="stats">' +
@@ -366,9 +374,9 @@
   // Fichiers de l'application — doit refléter les <script> d'index.html.
   // (La liste CORE du service-worker.js doit rester synchronisée.)
   var APP_FILES = ['index.html', 'styles.css', 'manifest.webmanifest', 'config.js', 'data.js',
-    'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'quiz.js', 'essentiel.js',
+    'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'data-english.js', 'quiz.js', 'essentiel.js',
     'figures.js', 'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
-    'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-atelier-sec.js', 'quiz-cadenassage.js', 'quiz-types.js',
+    'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-atelier-sec.js', 'quiz-cadenassage.js', 'quiz-english.js', 'quiz-types.js',
     'pdftext.js', 'llm.js', 'chatbot.js', 'app.js', 'sizes.js'];
   var BRAND_FILES = ['images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
@@ -749,7 +757,9 @@
     'DR-600-OP': 'Opération de la foreuse DR-600',
     'ATELIER-MEC': 'Procédure — atelier mécanique',
     'ATELIER-TRANSPORT': 'Procédure — transport atelier',
-    'GES-SAN-SEC': 'Gestion santé-sécurité'
+    'GES-SAN-SEC': 'Gestion santé-sécurité',
+    'PRO-MEC-SM': 'Mechanical procedure — Stopemaster',
+    'SS-DD': 'Health & safety — diamond drilling'
   };
   function buildGroups(list) {
     if (listMode() === 'code') {
@@ -941,8 +951,9 @@
     var col = catColor(p.categorie);
     // Pour une procédure 'commun', le retour suit la section d'où l'on vient.
     var viaDiamant = (p.famille === 'commun') ? (state.fam === 'diamant') : (p.famille === 'diamant');
-    var backHref = viaDiamant ? '#/diamant' : '#/procedures';
-    var backLbl = viaDiamant ? ' Forage au diamant' : ' Toutes les procédures';
+    var viaEnglish = p.famille === 'english';
+    var backHref = viaEnglish ? '#/english' : viaDiamant ? '#/diamant' : '#/procedures';
+    var backLbl = viaEnglish ? ' English procedures' : viaDiamant ? ' Forage au diamant' : ' Toutes les procédures';
     var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
     var h = '<div class="wrap"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
       '<div class="phead">' +
@@ -2110,6 +2121,7 @@
     DATA.forEach(function (p) { byId[p.id] = p; });
     Object.keys(QP).forEach(function (pid) {
       var p = byId[pid]; if (!p) return;
+      if (p.famille === 'english') return;   // quiz global en français — les questions anglaises restent sur leurs fiches
       QP[pid].forEach(function (q) {
         if (!q.t || q.t === 'assoc') return;
         var item = { type: q.t, question: q.q, explication: q.e, sourceId: pid,
@@ -2366,8 +2378,9 @@
       return 2;
     }
     function svCmp(a, b) { return svRank(a) - svRank(b) || cmpCode(a, b); }
-    var ith = DATA.filter(function (p) { return p.famille !== 'diamant'; }).sort(svCmp);
+    var ith = DATA.filter(function (p) { return p.famille !== 'diamant' && p.famille !== 'english'; }).sort(svCmp);
     var diam = DATA.filter(function (p) { return p.famille === 'diamant'; }).sort(svCmp);
+    var eng = DATA.filter(function (p) { return p.famille === 'english'; }).sort(svCmp);
 
     view.innerHTML =
       '<section class="hero herosm"><div class="wrap">' +
@@ -2386,6 +2399,7 @@
         '<div class="secwrap"><h2 class="sv-h2">Résultats détaillés</h2>' +
           suiviGroupHTML('Foreuses ITH / CUBEX', ith) +
           suiviGroupHTML('Forage au diamant', diam) +
+          (eng.length ? suiviGroupHTML('English procedures', eng) : '') +
         '</div>' +
         '<p class="sv-note">Les résultats affichés ici restent sur ton appareil. Les gestionnaires font le suivi officiel à partir des attestations envoyées.</p>' +
       '</div>';
@@ -2451,8 +2465,9 @@
 
   /* ---------- portail ---------- */
   function renderPortail(view) {
-    var nProd = DATA.filter(function (p) { return p.famille !== 'diamant'; }).length;
+    var nProd = DATA.filter(function (p) { return p.famille !== 'diamant' && p.famille !== 'english'; }).length;
     var nDiam = DATA.filter(function (p) { return p.famille === 'diamant'; }).length;
+    var nEng = DATA.filter(function (p) { return p.famille === 'english'; }).length;
     view.innerHTML = '<section class="portal"><div class="wrap">' +
       '<div class="phead2"><div><h1>Sécurité du forage</h1><p>Machines Roger International</p></div></div>' +
       '<p class="plead">Choisis ton secteur.</p>' +
@@ -2465,6 +2480,10 @@
           '<h2>Forage au diamant</h2><p>Procédures de forage au diamant : carottage, planchers, déplacements (DR-600, STM-1500), sécurité. PDF officiel visionnable et recherchable.</p>' +
           '<div class="pc-meta">' + nDiam + ' procédures · disponible hors ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
+        (nEng ? '<a class="portal-card kb" href="#/english"><div class="pc-ic">' + ICON.doc + '</div>' +
+          '<h2>English procedures</h2><p>English-language work procedures: ITH/CUBEX, Stopemaster and diamond drilling. Official PDF viewable offline, with quizzes.</p>' +
+          '<div class="pc-meta">' + nEng + ' procedures · available offline</div>' +
+          '<span class="go">Enter ' + ICON.arrow + '</span></a>' : '') +
       '</div>' +
       '<a class="portal-suivi" href="#/suivi">' + ICON.check +
         ' <b>Mon suivi de formation</b><span>Quiz complétés, attestations, résultats détaillés</span>' + ICON.arrow + '</a>' +

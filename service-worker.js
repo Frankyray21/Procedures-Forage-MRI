@@ -27,6 +27,7 @@ const CORE = [
   './data-diamant.js',
   './data-securite.js',
   './data-ith-new.js',
+  './data-english.js',
   './pdftext.js',
   './chatbot.js',
   './llm.js',
@@ -43,6 +44,7 @@ const CORE = [
   './quiz-ith-new.js',
   './quiz-atelier-sec.js',
   './quiz-cadenassage.js',
+  './quiz-english.js',
   './quiz-types.js',
   './app.js',
   './sizes.js',
@@ -73,7 +75,7 @@ const CORE = [
 function mediaAssets() {
   try {
     self.window = self;
-    importScripts('./data.js', './data-diamant.js', './data-securite.js', './data-ith-new.js', './figures.js', './pages.js');
+    importScripts('./data.js', './data-diamant.js', './data-securite.js', './data-ith-new.js', './data-english.js', './figures.js', './pages.js');
     // Suffixe ?r=<révision> : un PDF révisé change d'URL → re-téléchargé, et
     // l'ancienne copie est purgée (voir purgeOldRevs). Mêmes URLs que la page.
     const REV = {};
