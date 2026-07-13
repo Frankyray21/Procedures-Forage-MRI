@@ -896,6 +896,6 @@ window.ASSET_SIZES = {
  "quiz-types.js":116034,
  "quiz.js":27801,
  "quiz_proc.js":33744,
- "sizes.js":39990,
- "styles.css":74849
+ "sizes.js":39995,
+ "styles.css":75193
 };

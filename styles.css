@@ -939,11 +939,15 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .pdfbox{background:var(--card)}
 :root[data-theme="light"] .pdfview>summary:hover{background:rgba(0,0,0,.04)}
 :root[data-theme="light"] .gfig{border-color:var(--border)}
-/* liste des procédures : sections par tâche + pastille d'état */
-.lgrp{margin-bottom:.85rem}
+/* liste des procédures : sections par tâche + pastille d'état.
+   Séparation des sections : espace + FILET qui prolonge le titre jusqu'au
+   bord droit — la section se voit d'un coup d'œil, sans boîte ni fond. */
+.lgrp{margin-bottom:1rem}
+.lgrp + .lgrp{margin-top:1.7rem}
 .lgrp-h{display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap;font-family:var(--font-display);font-size:.94rem;
-  font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:.3rem 0 .4rem}
+  font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:.3rem 0 .55rem}
 .lgrp-h::before{content:'';width:4px;height:.9rem;background:var(--brand);border-radius:3px;align-self:center}
+.lgrp-h::after{content:'';flex:1;min-width:2.5rem;height:1px;background:var(--border);align-self:center;margin-left:.3rem}
 .lgrp-h .ct{font-size:.74rem;color:var(--dim);font-weight:700}
 /* signification de la famille de codes (« PRO-DD-ST = procédure de forage
    au diamant sous terre ») — casse naturelle, ton discret */
@@ -1049,8 +1053,9 @@ footer b{color:var(--muted)}
   .prow .parrow{display:none}
   .lgrp-rows{gap:.28rem}
   /* sections */
-  .lgrp{margin-bottom:.6rem}
-  .lgrp-h{font-size:.84rem;margin:.2rem 0 .3rem}
+  .lgrp{margin-bottom:.7rem}
+  .lgrp + .lgrp{margin-top:1.25rem}
+  .lgrp-h{font-size:.84rem;margin:.2rem 0 .4rem}
   .lgrp-sub{font-size:.72rem}
   /* bascule de classement : cibles tactiles confortables */
   .lrow{margin:.1rem 0 .35rem;gap:.3rem}
