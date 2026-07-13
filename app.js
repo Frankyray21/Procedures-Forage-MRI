@@ -2498,15 +2498,11 @@
           '<h2>Forage au diamant</h2><p>Procédures de forage au diamant : carottage, planchers, déplacements (DR-600, STM-1500), sécurité. PDF officiel visionnable et recherchable.</p>' +
           '<div class="pc-meta">' + nDiam + ' procédures · disponible hors ligne</div>' +
           '<span class="go">Entrer ' + ICON.arrow + '</span></a>' +
-        (nEng ? '<a class="portal-card kb" href="#/english"><div class="pc-ic">' + ICON.doc + '</div>' +
-          '<h2>English — ITH / CUBEX</h2><p>English-language procedures: ITH/CUBEX long-hole drilling, V-30 boring, Stopemaster and general safety. Official PDF viewable offline, with quizzes.</p>' +
-          '<div class="pc-meta">' + nEng + ' procedures · available offline</div>' +
-          '<span class="go">Enter ' + ICON.arrow + '</span></a>' : '') +
-        (nEngDD ? '<a class="portal-card diam" href="#/english-dd"><div class="pc-ic">' + ICON.doc + '</div>' +
-          '<h2>English — Diamond drilling</h2><p>English-language procedures for diamond drilling: core barrel, set-up, remote drilling and safety systems. Official PDF viewable offline, with quizzes.</p>' +
-          '<div class="pc-meta">' + nEngDD + ' procedures · available offline</div>' +
-          '<span class="go">Enter ' + ICON.arrow + '</span></a>' : '') +
       '</div>' +
+      // Accès anglais : un bouton discret sous les cartes (pas de cartes
+      // dédiées) — la version anglaise a aussi son onglet dans la barre.
+      ((nEng + nEngDD) ? '<a class="portal-suivi" href="#/english">' + ICON.doc +
+        ' <b>English procedures</b><span>ITH / CUBEX and diamond drilling — ' + (nEng + nEngDD) + ' procedures, official PDFs and quizzes</span>' + ICON.arrow + '</a>' : '') +
       '<a class="portal-suivi" href="#/suivi">' + ICON.check +
         ' <b>Mon suivi de formation</b><span>Quiz complétés, attestations, résultats détaillés</span>' + ICON.arrow + '</a>' +
     '</div></section>';
