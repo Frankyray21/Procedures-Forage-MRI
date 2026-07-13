@@ -1,10 +1,10 @@
 /* ===========================================================================
-   QUIZ — Nouvelles procédures secteur ITH (PRO-ITH-017, bits CUBEX, PIPE-TUB,
+   QUIZ — Nouvelles procédures secteur ITH (PRO-OP-ITH-017, bits CUBEX, PIPE-TUB,
    STOPEMASTER 001/002/003/004, foreuse V-KING). Citations fidèles des PDF.
    =========================================================================== */
 (function () {
   var Q = {
-    "pro-ith-017": [
+    "pro-op-ith-017": [
       { "q": "Quand on déplace les tiges, à quelle distance doivent rester le soudeur et les travailleurs du haut ?",
         "o": ["1 mètre", "2 mètres", "3 mètres", "5 mètres"], "a": 2,
         "e": "« …doivent obligatoirement se tenir à une distance minimum de 3 mètres. »" },
@@ -21,7 +21,7 @@
         "o": ["500 kg", "Une tonne", "2 tonnes", "5 tonnes"], "a": 1,
         "e": "« L'élingue servant au levage de la charge doit avoir une capacité minimale d'une tonne et elle doit être accrochée à une plaque d'ancrage fixée au toit… »" }
     ],
-    "pro-op-001": [
+    "pro-op-ith-001": [
       { "q": "Tu mets le SHANK dans le marteau. Ensuite, tu visses la bit d'au moins combien de tours ?",
         "o": ["Un demi-tour", "Au moins 2 tours", "5 tours", "Juste jusqu'au blocage"], "a": 1,
         "e": "« Aligner le SHANK dans le bout du marteau, l'insérer le plus loin possible et visser la bit un minimum de 2 tours. »" },

@@ -191,7 +191,7 @@
         "o": ["Tu vois que le tube n'est pas latché", "Tous les travailleurs sortent de la porte interverrouillée", "Tu descends le bout des tiges le plus près possible du plancher", "Tu fais sortir le tube en bougeant les tiges d'avant en arrière avec la tête"],
         "e": "Section « Quand on se rend compte que le tube n'est pas latché » (page 3) : « Tous les travailleurs doivent être en-dehors de la porte interverrouillée ; Descendre le bout des tiges le plus proche du plancher possible; Effectuer les manoeuvres nécessaires pour faire sortir le tube en faisant des mouvements de va-et-vient avec les tiges de forage à l'aide de la tête »." }
     ],
-    "pro-ith-017": [
+    "pro-op-ith-017": [
       { "t": "vf", "q": "L'élingue de levage reste attachée au tubage jusqu'à ce que la soudure le tienne bien en place.", "vrai": true,
         "e": "« L'élingue de levage doit demeurer attachée au tubage tant qu'il n'est pas stabilisé avec la soudure »" },
       { "t": "vf", "q": "Pour un forage-alésage vers le haut d'un seul trait, on pose les ancrages du mât après le forage.", "vrai": false,
@@ -341,19 +341,19 @@
                   { "l": "Où commence la procédure pour les marteaux 3 po et 4 po", "r": "à partir du point #8" },
                   { "l": "Dévissage final du marteau", "r": "1 tour seulement" }],
         "e": "« Poids du marteau 3\" : 60 lbs » ; « Poids du marteau 4\" : 89 lbs » ; « Poids du marteau 6\" : 211 lbs » ; « Application de la procédure pour les marteaux 3\" et 4\" : à partir du point #8 » ; « Dévissage final du marteau (étape 29) : 1 tour seulement »" }    ],
-    "pro-op-001": [
+    "pro-op-ith-001": [
       { "t": "vf", "q": "Pour un bit de 3 5/8 à 5 1/8 pouces, ou un bit de 6 pouces pour casing, le spline piston doit être mis.", "vrai": true,
         "e": "Étapes pour les BITS DE 3 5/8 À 5 1/8 ET BIT DE 6 POUCES POUR CASING : « 4- S'assurer que le spline piston EST MIS » (p. 2)" },
       { "t": "vf", "q": "Pour un bit de 6 1/2, 8 ou 10 pouces, le mât peut rester à n'importe quel degré.", "vrai": false,
         "e": "Pour les bits 6 1/2, 8 et 10 pouces, le PDF exige : « 5- Mettre le mât de côté (degré 0) » (p. 7). C'est pour les bits de 3 5/8 à 5 1/8 que « Le mât peut être à n'importe quel degré » (p. 3)." },
       { "t": "vf", "q": "Avant de changer le bit, tu mets le gear box du côté des tables.", "vrai": false,
         "e": "Le PDF dit l'inverse : « 2- Positionner le gear box complètement à l'opposé des tables » (p. 2 et p. 6)" },
-      { "t": "multi", "q": "Coche les phrases VRAIES sur la procédure PRO-OP-001.",
+      { "t": "multi", "q": "Coche les phrases VRAIES sur la procédure PRO-OP-ITH-001.",
         "o": ["Le directeur des opérations décide comment lire ce document.", "Les travailleurs doivent vérifier que les superviseurs suivent la procédure.", "Pour un bit de 6 1/2, 8 ou 10 pouces, on ferme la bit entre les tables.", "Pour un bit de 3 5/8 à 5 1/8 pouces, on ferme la bit entre les tables.", "On ne touche pas aux contrôles quand l'opérateur tient la bit ou les rods."], "a": [0, 2, 4],
         "e": "« Le personnel ayant l'autorité pour l'interprétation de ce document est le directeur des opérations » (p. 1) ; « Les superviseurs doivent s'assurer que les travailleurs connaissent et appliquent cette procédure » (p. 1) ; gros bits : « 14- Fermer les tables sur la bit » (p. 9) ; petits bits : « 15- Fermer les jaws sur la bit » (p. 5) ; « IL EST TINTERDIT DE FAIRE DES MANŒUVRES AVEC LES CONTRÔLES EN MÊME TEMPS QUE L'OPÉRATEUR MANIPULE LA BIT OU LES RODS » (p. 1)" },
       { "t": "ordre", "q": "Mets ces étapes dans le bon ordre. Tu changes un bit de 3 5/8 à 5 1/8 pouces sur une CUBEX.",
         "o": ["Pose le driver sub et les anneaux de retenue sur la bit", "Graisse bien les filets du driver sub", "Mets le SHANK dans le marteau et visse la bit d'au moins 2 tours", "Ouvre les jaws et place la bit entre les jaws", "Ferme les jaws et serre la bit entre 1000 et 2000 psi"],
-        "e": "PRO-OP-001, p. 3 à 5 : « 7- Installer le driver sub et les anneaux de retient (retaining ring) sur la bit 8- Bien graisser les filets du driver sub […] 11- Aligner le SHANK dans le bout du marteau […] 13- Ouvrir les jaws 14- Placer la bit entre les jaw 15- Fermer les jaws sur la bit 16- Serrer la bit avec un minimum de 1000 psi »" },
+        "e": "PRO-OP-ITH-001, p. 3 à 5 : « 7- Installer le driver sub et les anneaux de retient (retaining ring) sur la bit 8- Bien graisser les filets du driver sub […] 11- Aligner le SHANK dans le bout du marteau […] 13- Ouvrir les jaws 14- Placer la bit entre les jaw 15- Fermer les jaws sur la bit 16- Serrer la bit avec un minimum de 1000 psi »" },
       { "t": "trou", "q": "La console doit toujours rester à plus de ______ du mât.",
         "o": ["1 mètre", "1,5 mètre", "2 mètres", "3 mètres"], "a": 1,
         "e": "« LA CONSOLE DOIT TOUJOURS ÊTRE À PLUS DE 1,5 MÈTRE DU MÂT » (p. 1)" },

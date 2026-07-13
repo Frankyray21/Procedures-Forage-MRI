@@ -1,8 +1,8 @@
-/* NOUVELLES PROCEDURES SECTEUR ITH (PRO-ITH-017, bits CUBEX, PIPETUB, STOPEMASTER, VKING). */
+/* NOUVELLES PROCEDURES SECTEUR ITH (PRO-OP-ITH-017, bits CUBEX, PIPETUB, STOPEMASTER, VKING). */
 (window.PROCEDURES = window.PROCEDURES || []).push.apply(window.PROCEDURES, [
  {
-  "id": "pro-ith-017",
-  "code": "PRO-ITH-017",
+  "id": "pro-op-ith-017",
+  "code": "PRO-OP-ITH-017",
   "titre": "Installation de conduites métalliques dans un trou (foreuse au niveau inférieur)",
   "categorie": "Installation",
   "machines": [
@@ -22,13 +22,13 @@
   "historique": [],
   "date_creation": "Mai 2008",
   "date_revision": "Octobre 2022",
-  "source_pdf": "PRO-ITH-017",
+  "source_pdf": "PRO-OP-ITH-017",
   "langue_source": "fr",
   "notes": "Secteur ITH — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
  {
-  "id": "pro-op-001",
-  "code": "PRO-OP-001",
+  "id": "pro-op-ith-001",
+  "code": "PRO-OP-ITH-001",
   "titre": "Changement des bits de forage sur les CUBEX",
   "categorie": "Maintenance",
   "machines": [
@@ -47,7 +47,7 @@
   "historique": [],
   "date_creation": "Février 2025",
   "date_revision": "",
-  "source_pdf": "PRO-OP-001",
+  "source_pdf": "PRO-OP-ITH-001",
   "langue_source": "fr",
   "notes": "Secteur ITH — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
