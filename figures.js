@@ -349,5 +349,219 @@ window.FIGURES = {
    "w": 306,
    "h": 405
   }
+ ],
+ "pro-mec-006": [
+ {
+  "src": "images/figures/pro-mec-006-1.jpg",
+  "page": "2",
+  "w": 564,
+  "h": 315
+ },
+ {
+  "src": "images/figures/pro-mec-006-2.jpg",
+  "page": "3",
+  "w": 433,
+  "h": 326
+ },
+ {
+  "src": "images/figures/pro-mec-006-3.jpg",
+  "page": "4",
+  "w": 747,
+  "h": 560
+ }
+ ],
+ "pro-mec-007": [
+ {
+  "src": "images/figures/pro-mec-007-1.jpg",
+  "page": "2",
+  "w": 320,
+  "h": 320
+ },
+ {
+  "src": "images/figures/pro-mec-007-2.jpg",
+  "page": "3",
+  "w": 1082,
+  "h": 589
+ }
+ ],
+ "pro-mec-008": [
+ {
+  "src": "images/figures/pro-mec-008-1.jpg",
+  "page": "3",
+  "w": 1363,
+  "h": 913
+ }
+ ],
+ "pro-mec-009": [
+ {
+  "src": "images/figures/pro-mec-009-1.jpg",
+  "page": "2",
+  "w": 473,
+  "h": 411
+ },
+ {
+  "src": "images/figures/pro-mec-009-2.jpg",
+  "page": "2",
+  "w": 452,
+  "h": 557
+ },
+ {
+  "src": "images/figures/pro-mec-009-3.jpg",
+  "page": "2",
+  "w": 346,
+  "h": 462
+ },
+ {
+  "src": "images/figures/pro-mec-009-4.jpg",
+  "page": "2",
+  "w": 140,
+  "h": 209
+ },
+ {
+  "src": "images/figures/pro-mec-009-5.jpg",
+  "page": "3",
+  "w": 475,
+  "h": 529
+ },
+ {
+  "src": "images/figures/pro-mec-009-6.jpg",
+  "page": "3",
+  "w": 477,
+  "h": 559
+ },
+ {
+  "src": "images/figures/pro-mec-009-7.jpg",
+  "page": "3",
+  "w": 371,
+  "h": 555
+ },
+ {
+  "src": "images/figures/pro-mec-009-8.jpg",
+  "page": "3",
+  "w": 311,
+  "h": 333
+ },
+ {
+  "src": "images/figures/pro-mec-009-9.jpg",
+  "page": "3",
+  "w": 156,
+  "h": 331
+ },
+ {
+  "src": "images/figures/pro-mec-009-10.jpg",
+  "page": "4",
+  "w": 231,
+  "h": 408
+ },
+ {
+  "src": "images/figures/pro-mec-009-11.jpg",
+  "page": "4",
+  "w": 216,
+  "h": 404
+ },
+ {
+  "src": "images/figures/pro-mec-009-12.jpg",
+  "page": "4",
+  "w": 199,
+  "h": 371
+ },
+ {
+  "src": "images/figures/pro-mec-009-13.jpg",
+  "page": "4",
+  "w": 455,
+  "h": 495
+ },
+ {
+  "src": "images/figures/pro-mec-009-14.jpg",
+  "page": "4",
+  "w": 345,
+  "h": 462
+ },
+ {
+  "src": "images/figures/pro-mec-009-15.jpg",
+  "page": "4",
+  "w": 480,
+  "h": 640
+ },
+ {
+  "src": "images/figures/pro-mec-009-16.jpg",
+  "page": "5",
+  "w": 285,
+  "h": 439
+ },
+ {
+  "src": "images/figures/pro-mec-009-17.jpg",
+  "page": "5",
+  "w": 449,
+  "h": 422
+ },
+ {
+  "src": "images/figures/pro-mec-009-18.jpg",
+  "page": "5",
+  "w": 210,
+  "h": 278
+ },
+ {
+  "src": "images/figures/pro-mec-009-19.jpg",
+  "page": "5",
+  "w": 208,
+  "h": 275
+ },
+ {
+  "src": "images/figures/pro-mec-009-20.jpg",
+  "page": "5",
+  "w": 473,
+  "h": 523
+ },
+ {
+  "src": "images/figures/pro-mec-009-21.jpg",
+  "page": "5",
+  "w": 304,
+  "h": 403
+ },
+ {
+  "src": "images/figures/pro-mec-009-22.jpg",
+  "page": "6",
+  "w": 306,
+  "h": 408
+ },
+ {
+  "src": "images/figures/pro-mec-009-23.jpg",
+  "page": "6",
+  "w": 246,
+  "h": 378
+ },
+ {
+  "src": "images/figures/pro-mec-009-24.jpg",
+  "page": "6",
+  "w": 296,
+  "h": 366
+ },
+ {
+  "src": "images/figures/pro-mec-009-25.jpg",
+  "page": "6",
+  "w": 137,
+  "h": 211
+ },
+ {
+  "src": "images/figures/pro-mec-009-26.jpg",
+  "page": "7",
+  "w": 221,
+  "h": 294
+ },
+ {
+  "src": "images/figures/pro-mec-009-27.jpg",
+  "page": "7",
+  "w": 159,
+  "h": 196
+ }
+ ],
+ "pro-mec-010": [
+ {
+  "src": "images/figures/pro-mec-010-1.jpg",
+  "page": "2",
+  "w": 675,
+  "h": 636
+ }
  ]
 };

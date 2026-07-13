@@ -2483,6 +2483,839 @@ window.PROCEDURES = [
     "source_pdf": "PRO-OP-ITH-016 Procédure pour la manipulation des marteaux de forage et de leurs composantes.pdf",
     "langue_source": "fr",
     "notes": "Vérification effectuée par comparaison intégrale avec le PDF source (7 pages, extraction pdftotext -layout en UTF-8). L'extraction est fidèle et complète : les 34 étapes, les 3 avertissements et toutes les valeurs chiffrées (poids 60/89/211 […]"
+  },
+  {
+    "id": "pro-mec-001",
+    "code": "PRO-MEC-001",
+    "titre": "Démantèlement d'un mât de forage",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Mât"
+    ],
+    "resume": "Procédure définissant une façon sécuritaire de démonter le mât d'une foreuse à l'aide d'un équipement de levage certifié, notamment pour la manutention des élingues, des boulons et le retrait sécuritaire du mât.",
+    "objectif": "L'objectif de cette procédure est de définir une façon sécuritaire pour le démantèlement d'un mât de foreuse avec un équipement de levage approprié. Pour toute autre situation où la méthode pourrait être autre que celle prévue dans cette procédure, une analyse de risque doit être effectuée.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur a la responsabilité d'utiliser cette procédure pour chaque démantèlement d'un mât de foreuse avec un équipement de levage. Les outils nécessaires doivent être inspectés avant de les utiliser. Le superviseur désignera un chef d'équipe (superviseur ou mécanicien) qui prendra en charge l'ensemble des opérations et sera le seul autorisé à communiquer avec l'opérateur de l'équipement de levage pendant l'opération. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien ou le directeur des opérations.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Équipement de levage requis : capacité de 6 000 livres ou plus.",
+      "TRÈS IMPORTANT : ne jamais se placer en-dessous du mât.",
+      "Se tenir dans un endroit sécuritaire, à une distance minimale de douze pieds de la foreuse, et s'assurer d'être vu par l'opérateur de l'équipement de levage en tout temps.",
+      "Personne ne doit retirer la manille tant que le mât n'est pas bien appuyé sur le blocage."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Utiliser un équipement de levage d'une capacité de 6 000 livres ou plus.",
+        "theme": "Manutention & levage",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Positionner la foreuse au niveau afin qu'elle soit stable avant toute manipulation.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 2"
+      },
+      {
+        "regle": "Appliquer la procédure de cadenassage avant de retirer les boyaux hydrauliques.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 6"
+      },
+      {
+        "regle": "Utiliser quatre élingues de longueur égale, certifiées 5 000 livres, reliées entre elles par une manille d'un pouce de diamètre.",
+        "theme": "Manutention & levage",
+        "source": "Étape 8"
+      },
+      {
+        "regle": "Retirer les boulons du mât en gardant trois boulons en triangle jusqu'à la fin, puis revérifier la tension des élingues avant de les enlever.",
+        "theme": "Manutention & levage",
+        "source": "Étapes 10-12"
+      },
+      {
+        "regle": "Se tenir à une distance minimale de douze pieds de la foreuse et rester visible de l'opérateur de l'équipement de levage en tout temps ; ne jamais se placer en-dessous du mât.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 13"
+      },
+      {
+        "regle": "Ne détacher la manille de l'équipement de levage qu'une fois le mât bien appuyé sur les blocs de bois au sol.",
+        "theme": "Manutention & levage",
+        "source": "Étape 15"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Capacité minimale de l'équipement de levage",
+        "valeur": "6 000 livres"
+      },
+      {
+        "libelle": "Capacité certifiée des élingues",
+        "valeur": "5 000 livres (x4)"
+      },
+      {
+        "libelle": "Diamètre de la manille (clavis)",
+        "valeur": "1 pouce"
+      },
+      {
+        "libelle": "Distance sécuritaire minimale de la foreuse",
+        "valeur": "12 pieds"
+      },
+      {
+        "libelle": "Distance de l'arbre d'entraînement (gear box) par rapport à la table",
+        "valeur": "5 pieds"
+      }
+    ],
+    "figures": [],
+    "historique": [],
+    "date_creation": "14 Mai 2003",
+    "date_revision": "Avril 2019",
+    "source_pdf": "PRO-MEC-001 Procédure pour le démantèlement d'un mât de CUBEX 04-2019.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (2 pages). Aucune photo de contenu distincte du gabarit standard (logo/signature) n'a été trouvée dans le PDF ; le document est purement textuel."
+  },
+  {
+    "id": "pro-mec-002",
+    "code": "PRO-MEC-002",
+    "titre": "Installation d'un mât de foreuse CUBEX",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Mât"
+    ],
+    "resume": "Procédure définissant les méthodes sécuritaires pour installer un mât sur une foreuse CUBEX à l'aide d'un équipement de levage, incluant l'élingage, l'alignement sur l'actuateur, le serrage des douze boulons au couple prescrit et la vérification après un quart de travail.",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour effectuer l'installation d'un mât.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur a la responsabilité d'utiliser cette procédure pour chaque installation d'un mât de foreuse. Les outils nécessaires doivent être inspectés avant de les utiliser. Le superviseur désignera un chef d'équipe (superviseur ou mécanicien) qui rencontrera l'opérateur de l'équipement de levage pour lui expliquer la procédure et sera le seul autorisé à communiquer avec lui pendant l'opération. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien ou le directeur des opérations.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Équipement de levage requis : capacité de 6 000 livres ou plus.",
+      "TRÈS IMPORTANT : ne pas s'exposer sous le mât.",
+      "S'assurer d'être vu par l'opérateur de l'équipement de levage en tout temps.",
+      "Ne retirer les élingues que lorsque les boulons sont bien serrés."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Utiliser un équipement de levage d'une capacité de 6 000 livres ou plus, avec la foreuse positionnée au niveau pour qu'elle soit stable.",
+        "theme": "Manutention & levage",
+        "source": "Méthode"
+      },
+      {
+        "regle": "Balancer le point de levage avec des élingues de longueur égale certifiées 5 000 livres, reliées par une manille d'un pouce de diamètre.",
+        "theme": "Manutention & levage",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Diriger le mât au-dessus de la foreuse en restant à une distance minimale de douze pieds ; ne pas s'exposer sous le mât et rester visible de l'opérateur en tout temps.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étapes 5-7"
+      },
+      {
+        "regle": "Serrer les douze boulons du mât à l'aide d'une clé dynamométrique : 110 lbs/pied à sec, 80 lbs/pied avec antigrippant (anti-seize).",
+        "theme": "Outils & clés",
+        "source": "Étape 15"
+      },
+      {
+        "regle": "Ne retirer les élingues qu'une fois les boulons bien serrés.",
+        "theme": "Manutention & levage",
+        "source": "Étape 16"
+      },
+      {
+        "regle": "Vérifier le serrage des boulons du mât après un quart de travail.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 19 (N.B.)"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Capacité minimale de l'équipement de levage",
+        "valeur": "6 000 livres"
+      },
+      {
+        "libelle": "Capacité certifiée des élingues",
+        "valeur": "5 000 livres"
+      },
+      {
+        "libelle": "Diamètre de la manille (clavis)",
+        "valeur": "1 pouce"
+      },
+      {
+        "libelle": "Distance sécuritaire minimale de la foreuse",
+        "valeur": "12 pieds"
+      },
+      {
+        "libelle": "Nombre de boulons du mât",
+        "valeur": "12"
+      },
+      {
+        "libelle": "Couple de serrage — boulons secs",
+        "valeur": "110 lbs/pied"
+      },
+      {
+        "libelle": "Couple de serrage — boulons lubrifiés (anti-seize)",
+        "valeur": "80 lbs/pied"
+      }
+    ],
+    "figures": [],
+    "historique": [],
+    "date_creation": "4 Avril 2005",
+    "date_revision": "31 janvier 2019",
+    "source_pdf": "PRO-MEC-002 Procédure pour le montage du mât 04-2019.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (2 pages). Aucune photo de contenu distincte du gabarit standard (logo/signature) n'a été trouvée dans le PDF."
+  },
+  {
+    "id": "pro-mec-003",
+    "code": "PRO-MEC-003",
+    "titre": "Changer un « gear box » sur une foreuse I.T.H.",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Gear box"
+    ],
+    "resume": "Procédure définissant une façon sécuritaire d'installer (remplacer) le gear box d'une foreuse ITH, incluant le cadenassage, le débranchement des boyaux et le remplacement à l'aide d'un équipement de levage ou de fourches.",
+    "objectif": "L'objectif de cette procédure est de définir une façon sécuritaire pour l'installation du « gearbox ».",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur a la responsabilité d'utiliser cette procédure pour chaque installation d'un gearbox. Le superviseur doit désigner un chef d'équipe et ce dernier devra diriger l'opérateur pour effectuer cette tâche. Les outils nécessaires et équipements de levage doivent être inspectés avant de les utiliser. L'opérateur doit avoir la formation pour opérer l'équipement de levage. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien et le directeur des opérations.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [],
+    "consignes_securite": [
+      {
+        "regle": "Mettre le mât à 90 degrés et appliquer la procédure de cadenassage avant de débrancher les boyaux hydrauliques et pneumatiques.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 2, 5"
+      },
+      {
+        "regle": "Laisser un espace sous le gear box pour y passer les fourches, des élingues ou une chaîne de V-30 avant le retrait.",
+        "theme": "Manutention & levage",
+        "source": "Étape 4"
+      },
+      {
+        "regle": "Mettre une légère tension sur les élingues ou la chaîne avant de retirer les deux derniers boulons du gear box.",
+        "theme": "Manutention & levage",
+        "source": "Étape 8"
+      },
+      {
+        "regle": "Serrer la swivel au couple prescrit de 800 lbs de torque et s'assurer que le gear box tourne dans le bon sens avant la remise en service.",
+        "theme": "Inspection & vérification",
+        "source": "Étapes 13-14"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Couple de serrage de la swivel",
+        "valeur": "800 lbs (torque)"
+      }
+    ],
+    "figures": [],
+    "historique": [],
+    "date_creation": "5 Juillet 2006",
+    "date_revision": "Février 2019",
+    "source_pdf": "PRO-MEC-003 Procédure pour changer un gearbox sur foreuse ITH 04-2019.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (2 pages). Aucune photo de contenu distincte du gabarit standard (logo/signature) n'a été trouvée dans le PDF."
+  },
+  {
+    "id": "pro-mec-004",
+    "code": "PRO-MEC-004",
+    "titre": "Procédures pour changer l'« air swivel » (gear box)",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Air swivel",
+      "Gear box"
+    ],
+    "resume": "Procédure définissant les méthodes sécuritaires pour changer l'air swivel (gear box) d'une foreuse, incluant le cadenassage complet de l'air, le dévissage à l'aide d'une clé et de la rotation, et le remontage sans jamais tenir la swivel à la main pendant la rotation.",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour effectuer le changement d'air swivel (GearBox).",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur doit connaître la procédure et s'assurer de l'appliquer. Le superviseur doit connaître la procédure et la faire respecter. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien et le directeur des opérations.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Ne jamais tenir la swivel avec les mains quand la rotation est actionnée.",
+      "Ne pas dépasser 800 PSI sur le cadran de rotation lors du serrage final.",
+      "S'assurer que personne ne se trouve dans la ligne de tir de la masse si son utilisation est nécessaire pour casser la swivel."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Cadenasser l'air au header (alimentation principale) et purger l'air de la foreuse avant de dévisser les boyaux à air.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 2"
+      },
+      {
+        "regle": "S'assurer que personne n'est dans la ligne de tir de la masse si son utilisation est nécessaire pour casser la swivel.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 5"
+      },
+      {
+        "regle": "Appliquer la procédure de cadenassage complète avant de poursuivre le remplacement.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 6"
+      },
+      {
+        "regle": "Ne jamais tenir la swivel avec les mains pendant que la rotation est actionnée.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Avertissement (après étape 11)"
+      },
+      {
+        "regle": "Finir le serrage avec la rotation de la foreuse sans dépasser 800 PSI sur le cadran de rotation.",
+        "theme": "Outils & clés",
+        "source": "Étape 12"
+      },
+      {
+        "regle": "Vérifier que les deux boulons du support à swivel sont bien appuyés, car des résidus peuvent empêcher un serrage correct.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 14"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Pression maximale au cadran de rotation lors du serrage final",
+        "valeur": "800 PSI"
+      }
+    ],
+    "figures": [],
+    "historique": [
+      {
+        "date": "25-11-2025",
+        "description": "Éclaircissement des responsabilités ; ajout au point 3 de cadenasser l'air au header ; ajout du mot « complète » au point 7 ; retrait du point indiquant que le gearbox arrive de l'atelier avec la swivel déjà installée ; ajout du « O-ring » au point 9 ; ajout de la séquence de décadenassage.",
+        "par": "S. Tremblay, D. Baribeault"
+      }
+    ],
+    "date_creation": "13 Novembre 2008",
+    "date_revision": "Novembre 2025",
+    "source_pdf": "PRO-MEC-004  Procédure pour air swivel 11-2025.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (2 pages). Tableau « Ajouts et modifications » en pied de document daté du 25-11-2025."
+  },
+  {
+    "id": "pro-mec-005",
+    "code": "PRO-MEC-005",
+    "titre": "Démantèlement de la CUBEX pour élingage",
+    "categorie": "Démobilisation",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX"
+    ],
+    "resume": "Procédure définissant les méthodes sécuritaires pour démonter la CUBEX afin de la déplacer et/ou l'élinguer, incluant le cadenassage, la déconnexion du système ANSUL et du moteur électrique, le retrait des composantes et le levage final de la foreuse sur la « skid ».",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour démonter la CUBEX dans le but de la déplacer et/ou l'élinguer.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le superviseur a la responsabilité d'encadrer les travaux et de s'assurer que la procédure est respectée. Les travaux de montage et démontage doivent toujours être effectués par un travailleur compétent (mécanicien ou superviseur). Le travailleur doit respecter la procédure ; si une situation survient et qu'elle n'est pas couverte, une analyse de risque doit être effectuée. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien.",
+    "epi": [],
+    "equipements": [
+      "Manitou ou tout autre équipement à fourches (capacité 7000 lbs)",
+      "Treuil 6 tonnes",
+      "Palan à chaîne 6 tonnes",
+      "Come along",
+      "Élingues 6 tonnes",
+      "Main de levage (plans et devis ingénieur du client)"
+    ],
+    "prerequis": [
+      "La procédure PRO-MEC-001 (démantèlement du mât) doit être appliquée pour enlever le mât.",
+      "Une visite de l'endroit où les travaux seront exécutés doit être faite avant tout démontage ou montage, afin d'évaluer les installations et équipements de levage et d'établir l'ordre d'arrivée et de sortie des pièces."
+    ],
+    "etapes": [],
+    "avertissements": [
+      "Ne jamais se positionner sous une charge pendant les opérations de levage et d'élingage."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Ne jamais se positionner sous une charge pendant les opérations de levage et d'élingage.",
+        "theme": "Manutention & levage",
+        "source": "Avertissement (Procédure)"
+      },
+      {
+        "regle": "Appliquer la procédure PRO-MEC-001 pour enlever le mât avant de poursuivre le démontage.",
+        "theme": "Manutention & levage",
+        "source": "Procédure, point préalable"
+      },
+      {
+        "regle": "Appliquer la procédure de cadenassage de la foreuse avant de déconnecter le système ANSUL et le moteur électrique.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 2"
+      },
+      {
+        "regle": "Faire déconnecter le moteur électrique uniquement par un électricien.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 5"
+      },
+      {
+        "regle": "Équilibrer la charge du réservoir hydraulique et de la pompe avec des élingues en étranglement fixées à l'anneau du moteur et de la pompe.",
+        "theme": "Manutention & levage",
+        "source": "Étape 7"
+      },
+      {
+        "regle": "Les déplacements dans la galerie et l'élingage dans le puits relèvent de la responsabilité de la mine.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Procédure (notes finales)"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Capacité de l'équipement à fourches",
+        "valeur": "7 000 livres"
+      },
+      {
+        "libelle": "Capacité du treuil",
+        "valeur": "6 tonnes"
+      },
+      {
+        "libelle": "Capacité du palan à chaîne",
+        "valeur": "6 tonnes"
+      },
+      {
+        "libelle": "Capacité des élingues",
+        "valeur": "6 tonnes"
+      }
+    ],
+    "figures": [],
+    "historique": [
+      {
+        "date": "Novembre 2023",
+        "description": "Mise à jour complète et retrait de la spécification pour Garson dans le titre, la procédure étant utilisée sur d'autres contrats.",
+        "par": "S. Tremblay, D. Baribeault, K. Béchard"
+      },
+      {
+        "date": "Janvier 2024",
+        "description": "Ajout de la visite de la place de travail avant d'y déplacer le matériel, avant le montage ou démontage.",
+        "par": "S. Tremblay, JF Gagnon"
+      }
+    ],
+    "date_creation": "Novembre 2019",
+    "date_revision": "Janvier 2024",
+    "source_pdf": "PRO-MEC-005 Démantèlement de la CUBEX pour élingage Janvier 2024.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (3 pages)."
+  },
+  {
+    "id": "pro-mec-006",
+    "code": "PRO-MEC-006",
+    "titre": "Procédures pour le changement du « saver sub » (gear box ITH)",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Saver sub",
+      "Gear box"
+    ],
+    "resume": "Procédure définissant deux méthodes sécuritaires (mât à l'horizontale ou à la verticale) pour changer le saver sub d'un gear box ITH, avec mise en garde sur la zone de coincement et rappel des positions neutre des consoles (ancienne et nouvelle).",
+    "objectif": "L'objectif de cette procédure est de définir des méthodes sécuritaires pour effectuer le changement du Saver Sub (Gear Box ITH).",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur est responsable d'appliquer l'une des deux méthodes suivantes lorsqu'il doit changer son saver sub. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien et le directeur des opérations.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Ne pas visser la tige de forage au saver sub lors de son installation dans le gear box (méthode 1).",
+      "En repositionnant la clé, la manipuler par l'extrémité pour ne pas s'exposer à la zone de coincement (méthode 2, cercle jaune).",
+      "Ancienne console : positionner obligatoirement le levier du choix de console au neutre (position centrale) avant d'entretenir, inspecter ou remplacer une composante sur le mât.",
+      "Nouvelle console : enfoncer obligatoirement le bouton d'arrêt pour couper l'alimentation de la console avant d'entretenir, inspecter ou remplacer une composante sur le mât."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Ne pas visser la tige de forage utilisée comme retenue de la clé au saver sub.",
+        "theme": "Outils & clés",
+        "source": "Méthode 1, étape 3"
+      },
+      {
+        "regle": "En repositionnant la clé sur les centralisateurs « jaw », la manipuler par l'extrémité afin de ne pas s'exposer à la zone de coincement.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Méthode 2, étape 3"
+      },
+      {
+        "regle": "Dévisser le saver sub avec la force hydraulique ; quelques coups de masse sur la clé peuvent être nécessaires.",
+        "theme": "Outils & clés",
+        "source": "Méthodes 1 et 2"
+      },
+      {
+        "regle": "Visser le nouveau saver sub complètement avec la force hydraulique ajustée à 2 800 psi jusqu'au contact gear box - saver sub.",
+        "theme": "Outils & clés",
+        "source": "Méthodes 1 et 2"
+      },
+      {
+        "regle": "Positionner obligatoirement le levier de la console (ancienne) au neutre, ou enfoncer le bouton d'arrêt (nouvelle console), avant d'entretenir, inspecter ou remplacer une composante sur le mât.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Avertissements (p.3-4)"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Pression hydraulique de serrage du saver sub",
+        "valeur": "2 800 psi"
+      }
+    ],
+    "figures": [
+      {
+        "page": "3",
+        "description": "Photo montrant la clé descendue sur le gear box avec un repère vert et un cercle jaune identifiant la zone de coincement à éviter en la manipulant (méthode 2, étape 3)."
+      },
+      {
+        "page": "3",
+        "description": "Photo de l'ancienne console de commande (WATER ON/OFF, AIR ON/OFF, sélecteurs DRILL/TRAM/REMOTE) illustrant le levier de choix de console à mettre au neutre."
+      },
+      {
+        "page": "4",
+        "description": "Photo de la nouvelle console de commande Machines Roger International (écran Danfoss, joysticks, bouton d'arrêt d'urgence rouge) illustrant le bouton d'arrêt à enfoncer."
+      }
+    ],
+    "historique": [],
+    "date_creation": "13 Novembre 2008",
+    "date_revision": "15 février 2019",
+    "source_pdf": "PRO-MEC-006 Procédure pour changement saver sub - 2 méthodes 11-2019.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (4 pages) ; 3 photos de contenu extraites et confirmées visuellement (clé/zone de coincement, ancienne console, nouvelle console)."
+  },
+  {
+    "id": "pro-mec-007",
+    "code": "PRO-MEC-007",
+    "titre": "Procédure pour travaux sur chenille de traction",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Chenille de traction"
+    ],
+    "resume": "Procédure définissant une méthode sécuritaire pour stabiliser la foreuse sur un blocage de bois avant d'effectuer des réparations sur les chenilles de traction, en soulevant un seul côté du châssis à la fois.",
+    "objectif": "L'objectif de cette procédure est de définir une méthode sécuritaire pour stabiliser la foreuse lorsque l'on doit effectuer des réparations sur les chenilles de traction.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le foreur est responsable de communiquer avec son superviseur ou mécanicien avant d'appliquer cette méthode de travail. Le superviseur ou le mécanicien doit aller approuver en chantier l'application intégrale de cette procédure pour effectuer les travaux. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien et le directeur des opérations.",
+    "epi": [],
+    "equipements": [
+      "Blocage de bois en bonne condition (le poids d'une CUBEX est de 22 000 lbs)"
+    ],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "La structure du panier n'est pas un point d'appui pour le blocage.",
+      "Il est strictement interdit de soulever l'ensemble de la foreuse d'un seul coup.",
+      "Ne jamais s'exposer sous la foreuse ou les composantes élevées pendant les travaux."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Barricader les accès de la place de travail avant de débuter.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "S'assurer que le blocage de bois sera stable lorsque la foreuse sera surélevée ; la structure du panier n'est pas un point d'appui.",
+        "theme": "Manutention & levage",
+        "source": "Étape 4"
+      },
+      {
+        "regle": "Ne soulever qu'un seul côté de la foreuse à la fois, de 20 cm (8 po) maximum, en gardant le côté opposé appuyé au sol ; il est strictement interdit de soulever l'ensemble de la foreuse d'un seul coup.",
+        "theme": "Manutention & levage",
+        "source": "Étape 5"
+      },
+      {
+        "regle": "Ne jamais s'exposer sous la foreuse ou les composantes élevées durant les travaux.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étape 6"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Poids d'une foreuse CUBEX",
+        "valeur": "22 000 livres"
+      },
+      {
+        "libelle": "Hauteur maximale de levage d'un côté du châssis",
+        "valeur": "20 cm (8 pouces)"
+      }
+    ],
+    "figures": [
+      {
+        "page": "2",
+        "description": "Photo montrant le blocage de bois installé sous un seul côté du châssis de la foreuse (étape 4)."
+      },
+      {
+        "page": "3",
+        "description": "Photo de la foreuse surélevée sur son blocage, avec repère « Hauteur sécuritaire et adéquate » et vue de la chenille dégagée (étape 6)."
+      }
+    ],
+    "historique": [],
+    "date_creation": "13 Mai 2015",
+    "date_revision": "Avril 2019",
+    "source_pdf": "PRO-MEC-007 Procédure travaux sur chenille.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (3 pages) ; 2 photos de contenu extraites et confirmées visuellement."
+  },
+  {
+    "id": "pro-mec-008",
+    "code": "PRO-MEC-008",
+    "titre": "Procédures pour changement de téflon sur feed extension",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Feed extension"
+    ],
+    "resume": "Procédure définissant une méthode sécuritaire pour changer les téflons du système de glissière (feed extension), en chantier ou en atelier, en ne retirant qu'une seule partie et qu'un seul côté à la fois.",
+    "objectif": "L'objectif de cette procédure est de définir une méthode sécuritaire pour effectuer le changement de téflon feed extension.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur est responsable d'appliquer cette procédure lors du changement de téflon sur le feed extension. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien et le directeur des opérations.",
+    "epi": [],
+    "equipements": [
+      "Clé 15/16''",
+      "Ratchet et douille 15/16''",
+      "Clé 3/4''"
+    ],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [],
+    "consignes_securite": [
+      {
+        "regle": "Barricader les accès de la place de travail avant de débuter (procédure en chantier).",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 1 (chantier)"
+      },
+      {
+        "regle": "Forer la longueur du marteau et une tige de 1,8 m dans le roc pour immobiliser la tête de rotation avant de retirer les boulons (procédure en chantier).",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étape 4 (chantier)"
+      },
+      {
+        "regle": "Ne retirer qu'une seule partie et qu'un seul côté du système de glissière à la fois.",
+        "theme": "Manutention & levage",
+        "source": "Étape 5 (chantier) / Étape 4 (atelier)"
+      },
+      {
+        "regle": "En atelier, utiliser le pont roulant avec une élingue d'une capacité de 7 000 livres pour stabiliser le mât.",
+        "theme": "Manutention & levage",
+        "source": "Étapes 1-4 (atelier)"
+      },
+      {
+        "regle": "Vérifier l'état des boulons d'assemblage au remontage et les remplacer au besoin.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 7 (chantier) / Étape 6 (atelier)"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Longueur de tige forée pour immobiliser la tête de rotation",
+        "valeur": "1,8 m"
+      },
+      {
+        "libelle": "Capacité de l'élingue (travaux en atelier)",
+        "valeur": "7 000 livres"
+      }
+    ],
+    "figures": [
+      {
+        "page": "3",
+        "description": "Annexe : dessin technique « Mounting plate et teflon slide » avec nomenclature numérotée des pièces (glissière mounting plate, glissière bloc poussoir, bloc poussoir, protecteur, boulons, écrous, rondelles), conçu par Philippe Fournier, vérifié par Karl Béchard, daté du 21-01-2019."
+      }
+    ],
+    "historique": [],
+    "date_creation": "13 Mai 2015",
+    "date_revision": "Avril 2019",
+    "source_pdf": "PRO-MEC-008 Procédures Changement de teflon feed extension.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (3 pages) ; l'annexe technique (p.3) a été extraite et confirmée visuellement."
+  },
+  {
+    "id": "pro-mec-009",
+    "code": "PRO-MEC-009",
+    "titre": "Changement de cylindre de feed sur ITH-CUBEX",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Cylindre de feed"
+    ],
+    "resume": "Procédure détaillée (30 étapes) pour remplacer un cylindre de feed sur une foreuse ITH-CUBEX à l'aide d'un équipement de levage, incluant le cadenassage répété, le débranchement des boyaux, le retrait à l'élingue en choke et la reconnexion avec attention à la pression accumulée.",
+    "objectif": "L'objectif de cette procédure est de définir une façon sécuritaire pour le changement d'un cylindre de feed avec un équipement de levage.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL.",
+    "responsabilites": "Le travailleur a la responsabilité d'utiliser cette procédure pour chaque changement d'un cylindre de feed avec un équipement de levage. Les outils nécessaires doivent être inspectés avant de les utiliser. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur des opérations et le directeur entretien.",
+    "epi": [],
+    "equipements": [
+      "Clé ou box avec ratchet 3/4 de 1 1/8''",
+      "Clé 7/8''",
+      "4 bouchons mâles et 4 bouchons femelles JIC 1/2''",
+      "Grosse clé rouge",
+      "Élingues de nylon de 4 ou 6 pieds",
+      "HIAB ou palan à chaîne ou boom truck ou tracteur à fourche"
+    ],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "Une seule personne doit donner des indications à l'opérateur de l'équipement de levage à la fois.",
+      "Attention à la pression accumulée en dévissant les bouchons de la grosse canisse et de ses boyaux : dévisser lentement."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Appliquer la procédure de cadenassage en suivant la fiche de cadenassage de la foreuse CUBEX avant de dévisser les boulons de floating box (répétée après chaque décadenassage intermédiaire).",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étapes 3, 7, 28"
+      },
+      {
+        "regle": "Déplacer la foreuse dans un endroit où l'espace est suffisant pour utiliser l'équipement de levage au-dessus du mât et sortir le cylindre au bout du mât.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 1"
+      },
+      {
+        "regle": "Une seule personne doit donner des indications à l'opérateur de l'équipement de levage.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 16"
+      },
+      {
+        "regle": "Installer l'élingue en « choke » autour du cylindre, le plus près possible du gear box, en gardant une tension verticale constante durant le retrait.",
+        "theme": "Manutention & levage",
+        "source": "Étapes 15, 19, 21"
+      },
+      {
+        "regle": "Un seul travailleur doit mettre les mains sur le cylindre pour l'aider à sortir de son emplacement.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Étape 20"
+      },
+      {
+        "regle": "Vérifier le bon alignement des connecteurs hydrauliques avant de boulonner les deux bouts du nouveau cylindre.",
+        "theme": "Inspection & vérification",
+        "source": "Étapes 25-26"
+      },
+      {
+        "regle": "En dévissant les bouchons de la grosse canisse et de ses boyaux, porter une attention particulière à la pression accumulée et dévisser lentement.",
+        "theme": "Inspection & vérification",
+        "source": "Étape 29"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Nombre de boulons de floating box",
+        "valeur": "8"
+      }
+    ],
+    "figures": [
+      {
+        "page": "2",
+        "description": "Photos illustrant le déplacement de la foreuse et le positionnement du mât à l'horizontale devant la foreuse (étapes 1-2)."
+      },
+      {
+        "page": "3",
+        "description": "Photos avant/après du retrait des boulons du protecteur du haut du mât (étape 8)."
+      },
+      {
+        "page": "4",
+        "description": "Photos du retrait des boulons et boyaux au bout du cylindre avec pose des bouchons, et du retrait des boulons du protecteur du bas du cylindre (étapes 9-11)."
+      },
+      {
+        "page": "5",
+        "description": "Photos du dévissage de la plaque carrée (barrure) à la grosse clé rouge et du retrait des boyaux sur la grosse canisse (étapes 12-14)."
+      },
+      {
+        "page": "6",
+        "description": "Photos de l'installation de l'élingue en choke autour du cylindre et du retrait de la barrure du bas (étapes 15-17)."
+      },
+      {
+        "page": "7",
+        "description": "Photos de la mise en tension de l'élingue et du retrait du cylindre de son emplacement (étapes 19-22)."
+      }
+    ],
+    "historique": [],
+    "date_creation": "14 Mai 2003",
+    "date_revision": "16 octobre 2020",
+    "source_pdf": "PRO-MEC-009 Procédure de changement de cylindre de feed.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (8 pages) ; échantillon des 27 photos numérotées confirmé visuellement (vue d'ensemble de la foreuse, outil étoilé sur la bride, élingue autour du cylindre rouge)."
+  },
+  {
+    "id": "pro-mec-010",
+    "code": "PRO-MEC-010",
+    "titre": "Procédure de travail pour le changement ou la réparation d'un actuateur sur une foreuse CUBEX",
+    "categorie": "Maintenance",
+    "machines": [
+      "Foreuse ITH",
+      "CUBEX",
+      "Actuateur"
+    ],
+    "resume": "Procédure couvrant le changement ou la réparation d'un actuateur en atelier (avec pont-roulant ou main de levage) et en chantier, incluant le cadenassage, le retrait du mât ou de l'actuateur à l'élingue, le repositionnement et le serrage séquentiel des douze boulons.",
+    "objectif": "L'objectif de cette procédure est de définir une façon sécuritaire de changer ou faire des réparations d'un actuateur sur une foreuse. La procédure couvre les travaux en atelier, en chantier et en atelier sous-terre non-équipé de pont-roulant.",
+    "application": "Cette procédure s'applique à tous les employés de MACHINES ROGER INTERNATIONAL. Elle s'applique pour un changement, nettoyage ou entretien de l'actuateur, en chantier ou en atelier avec un outil de levage (pont-roulant, main de levage).",
+    "responsabilites": "Le travailleur a la responsabilité d'utiliser cette procédure. Le superviseur a la responsabilité de faire respecter la procédure et de s'assurer que le travailleur a les compétences pour effectuer les travaux ; il doit aussi offrir les ressources nécessaires. INTERPRÉTATION : le personnel ayant l'autorité pour l'interprétation de ce document est le directeur entretien ou le directeur des opérations.",
+    "epi": [],
+    "equipements": [],
+    "prerequis": [],
+    "etapes": [],
+    "avertissements": [
+      "TRÈS IMPORTANT : ne jamais se placer en-dessous du mât ; attention aux lignes de tir des pièces soulevées.",
+      "Attention aux doigts coincés lors du dépinage des cylindres et de la manipulation des demi-lunes.",
+      "Les boulons de l'actuateur devront être resserrés après un quart de travail de forage ; appliquer une étiquette bleue de suivi mécanique sur les contrôles de la foreuse."
+    ],
+    "consignes_securite": [
+      {
+        "regle": "Utiliser un équipement de levage d'une capacité de 6 000 livres ou plus et positionner la foreuse au niveau pour qu'elle soit stable.",
+        "theme": "Manutention & levage",
+        "source": "Étapes 1-2 (atelier)"
+      },
+      {
+        "regle": "Avec une main de levage, centrer le mât sur le point de levage pour éliminer le risque de balancement au détachement de l'actuateur.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étape 3 (atelier)"
+      },
+      {
+        "regle": "Appliquer la procédure de cadenassage avant de retirer les boyaux hydrauliques.",
+        "theme": "Énergie & cadenassage (électrique 600V, E-Stop, hydraulique)",
+        "source": "Étape 7 (atelier) / Étape 5 (chantier)"
+      },
+      {
+        "regle": "Se tenir à une distance minimale de douze pieds de la foreuse, hors de la ligne de déplacement du mât, et rester visible de l'opérateur en tout temps ; ne jamais se placer en-dessous du mât.",
+        "theme": "Zones d'exclusion & positionnement",
+        "source": "Étapes 13-15 (atelier)"
+      },
+      {
+        "regle": "Installer une élingue de nylon en « étrangleur » autour de l'assiette de l'actuateur et enlever le mou sans mettre de tension avant de dépiner les cylindres.",
+        "theme": "Manutention & levage",
+        "source": "Étapes 21-23 (atelier) / 12-16 (chantier)"
+      },
+      {
+        "regle": "Protéger ses doigts lors du dépinage des cylindres et du retrait des demi-lunes ; attention aux lignes de tir des pièces soulevées.",
+        "theme": "Pièces en mouvement & mât",
+        "source": "Avertissements (p.3-4)"
+      },
+      {
+        "regle": "Serrer les boulons de l'actuateur selon la séquence prescrite (3 premiers boulons, puis les 9 autres) et les resserrer après un quart de travail de forage.",
+        "theme": "Outils & clés",
+        "source": "Étapes 33-35 (atelier) / 26-28 (chantier)"
+      }
+    ],
+    "valeurs_cles": [
+      {
+        "libelle": "Capacité minimale de l'équipement de levage",
+        "valeur": "6 000 livres"
+      },
+      {
+        "libelle": "Nombre de boulons de l'actuateur",
+        "valeur": "12"
+      },
+      {
+        "libelle": "Distance sécuritaire minimale de la foreuse",
+        "valeur": "12 pieds"
+      }
+    ],
+    "figures": [
+      {
+        "page": "2",
+        "description": "Diagramme circulaire numéroté (1 à 12) illustrant la séquence de retrait/serrage des boulons de l'actuateur, répété aux quatre occurrences où la séquence est mentionnée dans le texte."
+      }
+    ],
+    "historique": [],
+    "date_creation": "Juillet 2022",
+    "date_revision": "",
+    "source_pdf": "PRO-MEC-010 Procédure de travail pour le changement, l'entretien ou la réparation d'un actuateur.pdf",
+    "langue_source": "fr",
+    "notes": "Vérifié contre le PDF source (5 pages) ; le diagramme de séquence de boulonnage (même image réutilisée 4 fois dans le PDF) a été extrait une seule fois et confirmé visuellement."
   }
 ];
 

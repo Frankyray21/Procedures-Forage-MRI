@@ -370,5 +370,59 @@ window.PAGES = {
   "images/pages/pro-op-bu-001-3.jpg",
   "images/pages/pro-op-bu-001-4.jpg",
   "images/pages/pro-op-bu-001-5.jpg"
+ ],
+ "pro-mec-001": [
+  "images/pages/pro-mec-001-1.jpg",
+  "images/pages/pro-mec-001-2.jpg"
+ ],
+ "pro-mec-002": [
+  "images/pages/pro-mec-002-1.jpg",
+  "images/pages/pro-mec-002-2.jpg"
+ ],
+ "pro-mec-003": [
+  "images/pages/pro-mec-003-1.jpg",
+  "images/pages/pro-mec-003-2.jpg"
+ ],
+ "pro-mec-004": [
+  "images/pages/pro-mec-004-1.jpg",
+  "images/pages/pro-mec-004-2.jpg"
+ ],
+ "pro-mec-005": [
+  "images/pages/pro-mec-005-1.jpg",
+  "images/pages/pro-mec-005-2.jpg",
+  "images/pages/pro-mec-005-3.jpg"
+ ],
+ "pro-mec-006": [
+  "images/pages/pro-mec-006-1.jpg",
+  "images/pages/pro-mec-006-2.jpg",
+  "images/pages/pro-mec-006-3.jpg",
+  "images/pages/pro-mec-006-4.jpg"
+ ],
+ "pro-mec-007": [
+  "images/pages/pro-mec-007-1.jpg",
+  "images/pages/pro-mec-007-2.jpg",
+  "images/pages/pro-mec-007-3.jpg"
+ ],
+ "pro-mec-008": [
+  "images/pages/pro-mec-008-1.jpg",
+  "images/pages/pro-mec-008-2.jpg",
+  "images/pages/pro-mec-008-3.jpg"
+ ],
+ "pro-mec-009": [
+  "images/pages/pro-mec-009-1.jpg",
+  "images/pages/pro-mec-009-2.jpg",
+  "images/pages/pro-mec-009-3.jpg",
+  "images/pages/pro-mec-009-4.jpg",
+  "images/pages/pro-mec-009-5.jpg",
+  "images/pages/pro-mec-009-6.jpg",
+  "images/pages/pro-mec-009-7.jpg",
+  "images/pages/pro-mec-009-8.jpg"
+ ],
+ "pro-mec-010": [
+  "images/pages/pro-mec-010-1.jpg",
+  "images/pages/pro-mec-010-2.jpg",
+  "images/pages/pro-mec-010-3.jpg",
+  "images/pages/pro-mec-010-4.jpg",
+  "images/pages/pro-mec-010-5.jpg"
  ]
 };
