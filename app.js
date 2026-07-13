@@ -695,14 +695,31 @@
     if (!list.length) { grid.innerHTML = '<div class="empty">Aucune procédure ne correspond à votre recherche.</div>'; return; }
     // Sections par TÂCHE (ordre du flux de travail) ou par MACHINE, au choix ;
     // à l'intérieur de chaque section, l'ordre reste celui des codes.
-    var groups = buildGroups(list);
-    grid.innerHTML = groups.map(function (g) {
-      return '<div class="lgrp' + (g.code ? ' bycode' : '') + '">' +
-        '<h3 class="lgrp-h">' + esc(g.label) +
-          (g.sub ? '<span class="lgrp-sub">' + esc(g.sub) + '</span>' : '') +
-          ' <span class="ct">' + g.items.length + '</span></h3>' +
-        '<div class="lgrp-rows">' + g.items.map(card).join('') + '</div></div>';
-    }).join('');
+    var groupsHTML = function (items) {
+      return buildGroups(items).map(function (g) {
+        return '<div class="lgrp' + (g.code ? ' bycode' : '') + '">' +
+          '<h3 class="lgrp-h">' + esc(g.label) +
+            (g.sub ? '<span class="lgrp-sub">' + esc(g.sub) + '</span>' : '') +
+            ' <span class="ct">' + g.items.length + '</span></h3>' +
+          '<div class="lgrp-rows">' + g.items.map(card).join('') + '</div></div>';
+      }).join('');
+    };
+    // Section English : séparée en deux SECTEURS (long-trou ITH / forage au
+    // diamant), comme les onglets français — le secteur est dérivé du code
+    // (segment « DD » : PRO-DD-ST, PRO-OP-DD, SS-DD…).
+    if (state.fam === 'english') {
+      var isDD = function (p) { return String(p.code || '').toUpperCase().split('-').indexOf('DD') >= 0; };
+      var ddList = list.filter(isDD), ithList = list.filter(function (p) { return !isDD(p); });
+      var secs = [];
+      if (ithList.length) secs.push({ t: 'ITH / CUBEX / Stopemaster', items: ithList });
+      if (ddList.length) secs.push({ t: 'Diamond drilling', items: ddList });
+      grid.innerHTML = secs.map(function (s) {
+        return '<div class="lsec"><h2 class="lsec-h"><span>' + esc(s.t) + '</span>' +
+          '<span class="ct">' + s.items.length + '</span></h2>' + groupsHTML(s.items) + '</div>';
+      }).join('');
+      return;
+    }
+    grid.innerHTML = groupsHTML(list);
   }
   // Classement : 'code' (DÉFAUT) = annuaire par famille de codes,
   // 'cat' = sections par tâche, 'mach' = sections par machine — au choix,
@@ -777,7 +794,7 @@
       var groups = order.map(function (pre) {
         return { label: pre, sub: CODE_FAMILY[pre] || '', items: byPre[pre], code: true };
       });
-      if (sans.length) groups.push({ label: 'Sans code', items: sans, code: true });
+      if (sans.length) groups.push({ label: state.fam === 'english' ? 'No code' : 'Sans code', items: sans, code: true });
       return groups;
     }
     if (listMode() === 'mach') {
@@ -796,7 +813,7 @@
       Object.keys(by).forEach(function (m) {
         if (MACH_ORDER.indexOf(m) < 0) groups.push({ label: m, items: by[m] });
       });
-      if (autres.length) groups.push({ label: 'Autres', items: autres });
+      if (autres.length) groups.push({ label: state.fam === 'english' ? 'Others' : 'Autres', items: autres });
       return groups;
     }
     var byCat = {};

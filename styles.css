@@ -939,6 +939,13 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .pdfbox{background:var(--card)}
 :root[data-theme="light"] .pdfview>summary:hover{background:rgba(0,0,0,.04)}
 :root[data-theme="light"] .gfig{border-color:var(--border)}
+/* Secteurs de la section English (ITH / Diamond drilling) : un cran
+   au-dessus des familles de codes — titre plus grand, filet appuyé. */
+.lsec + .lsec{margin-top:2.6rem}
+.lsec-h{display:flex;align-items:baseline;gap:.6rem;font-family:var(--font-display);font-size:1.18rem;
+  font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--strong);
+  margin:.4rem 0 1rem;padding-bottom:.55rem;border-bottom:2px solid var(--brand)}
+.lsec-h .ct{font-size:.8rem;color:var(--dim);font-weight:700}
 /* liste des procédures : sections par tâche + pastille d'état.
    Séparation des sections : espace + FILET qui prolonge le titre jusqu'au
    bord droit — la section se voit d'un coup d'œil, sans boîte ni fond. */
@@ -1057,6 +1064,8 @@ footer b{color:var(--muted)}
   .lgrp + .lgrp{margin-top:1.25rem}
   .lgrp-h{font-size:.84rem;margin:.2rem 0 .4rem}
   .lgrp-sub{font-size:.72rem}
+  .lsec + .lsec{margin-top:2rem}
+  .lsec-h{font-size:1.02rem;margin:.3rem 0 .75rem;padding-bottom:.45rem}
   /* bascule de classement : cibles tactiles confortables */
   .lrow{margin:.1rem 0 .35rem;gap:.3rem}
   .lmode-b{font-size:.76rem;padding:.48rem .6rem}
