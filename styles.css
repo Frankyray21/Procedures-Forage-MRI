@@ -982,9 +982,9 @@ footer b{color:var(--muted)}
 .lgrp-h::before{content:'';width:4px;height:1rem;background:var(--brand);border-radius:3px;align-self:center}
 .lgrp-h .ct{font-size:.76rem;color:var(--dim);font-weight:700;margin-left:auto}
 /* signification de la famille de codes (« PRO-DD-ST = procédure de forage
-   au diamant sous terre ») — casse naturelle, ton discret */
-.lgrp-sub{font-family:var(--font-body);font-size:.8rem;font-weight:600;color:var(--muted);
-  text-transform:none;letter-spacing:0}
+   au diamant sous terre ») — même style que le code : gras, même taille. */
+.lgrp-sub{font-family:inherit;font-size:inherit;font-weight:inherit;color:inherit;
+  text-transform:inherit;letter-spacing:inherit}
 .lgrp-rows{display:grid;gap:.35rem;grid-template-columns:1fr}
 .pstate2{display:inline-flex;align-items:center;gap:.28rem;font-size:.72rem;font-weight:800;
   letter-spacing:.02em;padding:.14rem .5rem;border-radius:999px;white-space:nowrap}
@@ -1088,7 +1088,6 @@ footer b{color:var(--muted)}
   .lgrp{margin-bottom:0}
   .lgrp + .lgrp{margin-top:1rem}
   .lgrp-h{font-size:.94rem;margin:.2rem 0 .4rem;padding-bottom:.3rem}
-  .lgrp-sub{font-size:.72rem}
   .lsec + .lsec{margin-top:2rem}
   .lsec-h{font-size:1.02rem;margin:.3rem 0 .75rem;padding-bottom:.45rem}
   /* bascule de classement : cibles tactiles confortables */
