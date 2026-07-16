@@ -20,6 +20,10 @@
    ENDPOINTS :
    • GET  /?q=<texte>  → recherche d'employés (autocomplétion). Renvoie
                          { ok:true, results:[{ id, name }, ...] }
+   • GET  /?roster=1   → annuaire COMPLET des employés (autocomplétion hors-ligne).
+                         Le site le télécharge quand il a du réseau et le range
+                         sur l'appareil, pour que la recherche de nom fonctionne
+                         SOUS TERRE. Renvoie { ok:true, results:[{ id, name }, ...] }.
    • GET  /?hist=<nom> → historique des attestations de ce nom (correspondance
                          exacte, casse/accents ignorés) pour la page « Mon
                          suivi » du site. Renvoie { ok:true, results:[{ proc,
@@ -80,6 +84,9 @@ export default {
       const url = new URL(request.url);
       if (url.searchParams.has("q")) {
         return searchEmployees(url.searchParams.get("q") || "", env, cors);
+      }
+      if (url.searchParams.has("roster")) {
+        return listRoster(env, cors);
       }
       if (url.searchParams.has("hist")) {
         return listAttestations(url.searchParams.get("hist") || "", env, cors);
@@ -237,6 +244,37 @@ async function searchEmployees(q, env, cors) {
       return sa - sb || a.name.localeCompare(b.name, "fr");
     });
   return json({ ok: true, results }, 200, cors);
+}
+
+/* ── annuaire complet des employés (mis en cache par le site) ───────────────
+   Renvoie tous les noms d'un coup pour que l'autocomplétion fonctionne
+   hors-ligne (sous terre). Paginé côté Airtable, borné à 2000 employés. */
+async function listRoster(env, cors) {
+  if (!env.AIRTABLE_TOKEN) {
+    return json({ ok: false, error: "AIRTABLE_TOKEN non configuré." }, 500, cors);
+  }
+  const results = [];
+  let offset = "";
+  try {
+    do {
+      const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${EMP_TABLE}`
+                + `?pageSize=100&fields%5B%5D=${encodeURIComponent(EMP_NAME_FIELD)}`
+                + (offset ? `&offset=${encodeURIComponent(offset)}` : "");
+      const at = await fetch(url, { headers: { "Authorization": `Bearer ${env.AIRTABLE_TOKEN}` } });
+      if (!at.ok) return json({ ok: false, results: [] }, 200, cors);
+      const data = await at.json();
+      (data.records || []).forEach((r) => {
+        const name = String((r.fields && r.fields[EMP_NAME_FIELD]) || "").trim();
+        if (name) results.push({ id: r.id, name });
+      });
+      offset = data.offset || "";
+    } while (offset && results.length < 2000);
+  } catch (e) {
+    return json({ ok: false, results: [] }, 502, cors);
+  }
+  results.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+  // L'annuaire bouge rarement : court cache navigateur/Cloudflare.
+  return json({ ok: true, results }, 200, { ...cors, "Cache-Control": "public, max-age=3600" });
 }
 
 /* ── historique des attestations d'un nom (page « Mon suivi » du site) ──────

@@ -1147,6 +1147,49 @@
     var b = pqGetBest(p.id);
     return !!(b && b.n === total);
   }
+  /* ---------- annuaire des employés mis en cache (autocomplétion hors-ligne) ----
+     Sous terre, pas de réseau : la recherche de nom au fil de la frappe ne peut
+     pas interroger le serveur. On télécharge donc l'annuaire complet quand il y
+     a du réseau et on le range sur l'appareil (clé « attest_roster », commune à
+     tous les profils). L'autocomplétion fonctionne ensuite hors-ligne, et le nom
+     choisi reste relié au bon dossier employé (son record id est dans le cache). */
+  function rosterGet() {
+    try { var v = JSON.parse(localStorage.getItem('attest_roster')); return (v && Array.isArray(v.list)) ? v : null; } catch (e) { return null; }
+  }
+  function rosterList() { var v = rosterGet(); return v ? v.list : []; }
+  var rosterBusy = false;
+  function rosterEnsure(force) {
+    if (rosterBusy || !navigator.onLine) return;
+    var endpoint = attestEndpoint(); if (!endpoint) return;
+    var v = rosterGet();
+    if (v && !force && Date.now() - (v.t || 0) < 12 * 3600 * 1000) return;   // valable 12 h
+    rosterBusy = true;
+    fetch(endpoint + '?roster=1', { method: 'GET' })
+      .then(function (r) { return r && r.ok ? r.json() : null; })
+      .then(function (d) {
+        rosterBusy = false;
+        if (!d || !d.ok || !Array.isArray(d.results)) return;
+        try { localStorage.setItem('attest_roster', JSON.stringify({ t: Date.now(), list: d.results })); } catch (e) {}
+        // Rafraîchit une liste de suggestions ouverte, le cas échéant.
+        var input = document.querySelector('.attest-name');
+        if (input && document.activeElement === input) input.dispatchEvent(new Event('input'));
+      })
+      .catch(function () { rosterBusy = false; });
+  }
+  /* Recherche locale dans l'annuaire mis en cache (même tri que le serveur : les
+     noms qui COMMENCENT par le terme d'abord, puis alphabétique, max 8). */
+  function rosterSearch(term) {
+    var t = norm(term).trim(); if (t.length < 2) return [];
+    return rosterList()
+      .filter(function (it) { return norm(it.name).indexOf(t) >= 0; })
+      .sort(function (a, b) {
+        var sa = norm(a.name).indexOf(t) === 0 ? 0 : 1;
+        var sb = norm(b.name).indexOf(t) === 0 ? 0 : 1;
+        return sa - sb || a.name.localeCompare(b.name, 'fr');
+      })
+      .slice(0, 8);
+  }
+  window.addEventListener('online', function () { rosterEnsure(); });
   function attestationHTML(p) {
     if (!attestEndpoint()) return '';
     var head = '<div class="sec attest-sec" data-proc="' + esc(p.id) + '"><h2>Attestation de lecture</h2>';
@@ -1193,6 +1236,7 @@
       pending = '';
     }
     if (pending) { attestQueued(sec, suiviName(), null); return; }
+    rosterEnsure();   // rafraîchit l'annuaire local tant qu'on a du réseau
     var input = form.querySelector('.attest-name');
     var sugg = form.querySelector('.attest-sugg');
     var hint = form.querySelector('.attest-hint');
@@ -1240,11 +1284,23 @@
     function doSearch() {
       var v = (input.value || '').trim();
       if (v.length < 2) { hideSugg(); return; }
+      // 1) Résultats immédiats depuis l'annuaire local — fonctionne hors-ligne
+      //    (sous terre). C'est le correctif du « nom absent de la liste ».
+      var local = rosterSearch(v);
+      if (local.length) renderSugg(local, v);
+      // 2) Hors-ligne : on s'en tient au local (message « pas dans la liste »
+      //    seulement si rien trouvé et rien à attendre du serveur).
+      if (!navigator.onLine) { if (!local.length) renderSugg([], v); return; }
+      // 3) Réseau présent : on affine avec le serveur (source de vérité).
       var myReq = ++lastReq;
       fetch(endpoint + '?q=' + encodeURIComponent(v), { method: 'GET' })
         .then(function (r) { return r && r.ok ? r.json() : null; })
-        .then(function (d) { if (myReq === lastReq && document.activeElement === input) renderSugg((d && d.results) || [], v); })
-        .catch(function () {});
+        .then(function (d) {
+          if (myReq !== lastReq || document.activeElement !== input) return;
+          var res = (d && d.results) || [];
+          if (res.length || !local.length) renderSugg(res, v);   // sinon on garde le local
+        })
+        .catch(function () { /* réseau tombé pendant la frappe : on garde le local */ });
     }
     input.addEventListener('input', function () {
       if (pickedId && input.value.toLowerCase() !== pickedName.toLowerCase()) clearPick();
@@ -2619,5 +2675,6 @@
     aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
     progDirtyFlush();   // progression marquée « à pousser » pendant une panne
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
+    rosterEnsure();     // annuaire employés mis en cache pour l'autocomplétion hors-ligne
   });
 })();
