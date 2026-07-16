@@ -1281,6 +1281,14 @@
       sugg.hidden = false; input.setAttribute('aria-expanded', 'true');
     }
     var tmr = null, lastReq = 0;
+    // Registre injoignable ET aucun annuaire en cache : on le dit clairement
+    // au lieu de laisser le champ muet — écrire le nom au complet fonctionne.
+    function suggUnavailable() {
+      hideSugg();
+      hint.innerHTML = '<b>La liste des noms est momentanément indisponible.</b> ' +
+        'Écris ton nom au complet et envoie — le bureau le reliera à ton dossier.';
+      hint.className = 'attest-hint warn';
+    }
     function doSearch() {
       var v = (input.value || '').trim();
       if (v.length < 2) { hideSugg(); return; }
@@ -1288,19 +1296,30 @@
       //    (sous terre). C'est le correctif du « nom absent de la liste ».
       var local = rosterSearch(v);
       if (local.length) renderSugg(local, v);
-      // 2) Hors-ligne : on s'en tient au local (message « pas dans la liste »
-      //    seulement si rien trouvé et rien à attendre du serveur).
-      if (!navigator.onLine) { if (!local.length) renderSugg([], v); return; }
+      // 2) Hors-ligne : on s'en tient au cache local. Rien trouvé → « pas dans
+      //    la liste » si l'annuaire est chargé, sinon « liste indisponible ».
+      if (!navigator.onLine) {
+        if (!local.length) { if (rosterList().length) renderSugg([], v); else suggUnavailable(); }
+        return;
+      }
       // 3) Réseau présent : on affine avec le serveur (source de vérité).
       var myReq = ++lastReq;
       fetch(endpoint + '?q=' + encodeURIComponent(v), { method: 'GET' })
         .then(function (r) { return r && r.ok ? r.json() : null; })
         .then(function (d) {
           if (myReq !== lastReq || document.activeElement !== input) return;
-          var res = (d && d.results) || [];
-          if (res.length || !local.length) renderSugg(res, v);   // sinon on garde le local
+          if (d && d.ok) {
+            var res = d.results || [];
+            if (res.length || !local.length) renderSugg(res, v);   // sinon on garde le local
+          } else if (!local.length) {
+            suggUnavailable();                                     // registre en erreur, aucun cache
+          }
         })
-        .catch(function () { /* réseau tombé pendant la frappe : on garde le local */ });
+        .catch(function () {
+          // Réseau tombé / registre injoignable : on garde le local, sinon on
+          // affiche « liste indisponible » plutôt que de rester muet.
+          if (myReq === lastReq && !local.length) suggUnavailable();
+        });
     }
     input.addEventListener('input', function () {
       if (pickedId && input.value.toLowerCase() !== pickedName.toLowerCase()) clearPick();
@@ -1432,6 +1451,34 @@
   }
   window.addEventListener('online', aqFlush);
 
+  /* Renvoi immédiat, à la demande (bouton « Réessayer l'envoi »), de
+     l'attestation en file pour CETTE fiche. cb(true) si acceptée par le
+     registre (la vue est alors réaffichée en « envoyée »), cb(false) sinon
+     (réseau/registre injoignable). Partage le verrou aqBusy → pas de double envoi. */
+  function aqRetryNow(pid, cb) {
+    var endpoint = attestEndpoint();
+    var it = null, q = aqGet();
+    for (var i = 0; i < q.length; i++) { if (q[i].pid === pid) { it = q[i]; break; } }
+    if (!endpoint || !it || aqBusy) { cb(false); return; }
+    aqBusy = true;
+    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(it.payload) })
+      .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; }); })
+      .then(function (res) {
+        aqBusy = false;
+        if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {
+          aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
+          var uSlug = (it.u != null) ? it.u : profSlug(profName());
+          try {
+            localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
+            localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
+          } catch (e) {}
+          aqRefreshView(it.pid, uSlug); progPushSoon();
+          cb(true);
+        } else { cb(false); }                 // 4xx/5xx : reste en file, repartira tout seul
+      })
+      .catch(function () { aqBusy = false; cb(false); });   // réseau/registre injoignable
+  }
+
   /* ---------- sauvegarde serveur de la progression ----------
      À chaque quiz complété ou amélioré, les meilleurs scores du profil actif
      partent dans Airtable (dossier de l'employé, champ « Progression
@@ -1520,13 +1567,34 @@
     if (dirty) progPush();
   }
   window.addEventListener('online', function () { progDirtyFlush(); progPullAuto(); });
-  // État « enregistrée sur l'appareil, envoi au retour du réseau ».
+  // État « enregistrée sur l'appareil, envoi au retour du réseau ». Le message
+  // dépend de l'état réel : hors-ligne (attente normale) vs. en ligne mais
+  // registre injoignable (on le dit honnêtement + bouton « Réessayer »).
   function attestQueued(sec, name, payload) {
+    var online = navigator.onLine;
+    var pid = sec.getAttribute('data-proc') || '';
     sec.innerHTML = '<h2>Attestation de lecture</h2>' +
       '<div class="attest-done attest-wait"><span class="attest-done-ic">…</span>' +
       '<div><strong>Attestation enregistrée sur l\'appareil</strong>' +
-      '<span>' + (name ? 'Merci ' + esc(name) + '. ' : '') + 'Pas de réseau pour le moment : ton attestation sera envoyée ' +
-      'automatiquement dès que la connexion revient. Rien d\'autre à faire.</span></div></div>';
+      '<span class="aq-msg">' + (name ? 'Merci ' + esc(name) + '. ' : '') +
+        (online
+          ? 'Elle n\'a pas encore pu être transmise au registre. Nouvelle tentative automatique — tu peux aussi la relancer maintenant.'
+          : 'Pas de réseau pour le moment : elle sera envoyée automatiquement dès que la connexion revient. Rien d\'autre à faire.') +
+      '</span>' +
+      (online ? '<button type="button" class="btn attest-retry">Réessayer l\'envoi</button>' : '') +
+      '</div></div>';
+    var retry = sec.querySelector('.attest-retry');
+    var msgEl = sec.querySelector('.aq-msg');
+    if (retry) retry.onclick = function () {
+      retry.disabled = true;
+      var lbl = retry.textContent; retry.textContent = 'Envoi…';
+      aqRetryNow(pid, function (ok) {
+        if (ok) return;                        // succès : aqRefreshView a réaffiché l'état « envoyée »
+        retry.disabled = false; retry.textContent = lbl;
+        if (msgEl) msgEl.innerHTML = 'Le registre ne répond toujours pas. Vérifie la connexion Internet ' +
+          'de ce poste ; si le problème persiste, préviens le bureau. Ton attestation reste enregistrée et repartira toute seule.';
+      });
+    };
   }
   /* ---------- PDF (attestation travailleur) ----------
      Générés dans le navigateur (jsPDF, chargé à la demande seulement) à partir
