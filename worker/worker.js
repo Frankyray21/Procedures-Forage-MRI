@@ -32,14 +32,16 @@
                          public). `progress` = progression sauvegardée (meilleurs
                          scores de quiz), pour restaurer sur un nouvel appareil.
    • GET  /            → page d'état { ok:true, service:"attestations-procedures" }
-   • POST / (type:"feedback") → évaluation d'une question de quiz (pouce ↑/↓ +
-       commentaire), ANONYME. Enregistrée dans « Feedback quiz (web) ». Corps :
+   • POST / (type:"feedback") → retour sur une question de quiz (pouce ↑/↓ +
+       commentaire), ANONYME. Enregistré dans « Retours quiz procédures (web) »
+       (même convention que « Retours quiz TMS/RodBot (web) »). Corps :
        { "type":"feedback", "vote":"up"|"down", "question":"énoncé…",
          "questionId":"centralisateur#3", "quiz":"centralisateur"|"Quiz éclair",
          "titre":"…", "comment":"(optionnel)", "name":"(optionnel)" }
-       Renvoie { ok:true, id:"rec…" }. Pour AJOUTER un commentaire ou CHANGER le
-       pouce d'une évaluation déjà créée, renvoyer le même corps AVEC "id":"rec…"
-       (met à jour la ligne au lieu d'en créer une nouvelle).
+       → "questionId" va dans « Question » (repère), "question" dans « Énoncé »,
+       "vote" dans « Avis ». Renvoie { ok:true, id:"rec…" }. Pour AJOUTER un
+       commentaire ou CHANGER le pouce d'un retour déjà créé, renvoyer le même
+       corps AVEC "id":"rec…" (met à jour la ligne au lieu d'en créer une).
    • POST / (type:"progress") → sauvegarde la progression du travailleur dans
        son dossier « Liste employé (registre formation) », champ « Progression
        procédures (web) ». Corps JSON :
@@ -71,22 +73,23 @@ const EMP_NAME_FIELD = "Name";                // champ principal = nom complet
    de l'employé pour être restaurée sur un nouvel appareil / appareil partagé. */
 const PROG_FIELD     = "Progression procédures (web)";
 
-/* Évaluation des questions de quiz (pouce ↑/↓ + commentaire) — quiz des fiches
-   ET « Quiz éclair ». Table à CRÉER dans la base « Formations ». Référencée par
-   NOM (aucun ID à copier) : crée simplement une table portant EXACTEMENT ce nom.
-   Un enregistrement par question notée. Colonnes utilisées (voir worker/README) :
-     • « Question »          texte long (champ principal recommandé)
-     • « Vote »              sélection unique : « Pouce en haut » / « Pouce en bas »
-     • « Commentaire »       texte long
-     • « Quiz »              texte (id de la procédure, ou « Quiz éclair »)
-     • « ID question »       texte (repère stable de la question)
-     • « Titre procédure »   texte
-     • « Nom »               texte (rempli seulement si un profil est actif)
-     • « Date »              date
-     • « Source »            texte
+/* Retours des questions de quiz (pouce ↑/↓ + commentaire) — quiz des fiches ET
+   « Quiz éclair ». MÊME convention que « Retours quiz TMS (web) » et « Retours
+   quiz RodBot (web) ». Référencée par NOM (aucun ID à copier). Un enregistrement
+   par question notée. Colonnes utilisées (voir worker/README) :
+     • « Question »        repère stable (champ principal), ex. « centralisateur#3 »
+     • « Avis »            sélection unique : « Pouce en haut » / « Pouce en bas »
+     • « Commentaire »     texte long
+     • « Quiz »            texte (id de la procédure, ou « Quiz éclair »)
+     • « Énoncé »          texte long (texte de la question au moment du vote)
+     • « Titre procédure » texte
+     • « Nom »             texte (rempli seulement si un profil est actif)
+     • « Date »            date
+     • « Source »          texte
+     • « Statut »          sélection (triage manuel — non écrit par le Worker)
    Colonnes manquantes : le Worker réessaie sans les colonnes de contexte, le
-   vote + commentaire est enregistré quand même. Même mécanique que TMS/RodBot. */
-const FEEDBACK_TABLE = "Feedback quiz (web)";
+   pouce + commentaire est enregistré quand même. */
+const FEEDBACK_TABLE = "Retours quiz procédures (web)";
 
 /* Origines autorisées à appeler le Worker depuis un navigateur (CORS). */
 const ALLOWED_ORIGINS = [
@@ -276,10 +279,10 @@ async function saveFeedback(body, env, cors) {
   const hasComment = (body.comment != null);              // clé présente = on écrit
   const comment    = clean(body.comment, 2000);
 
-  // Mise à jour d'une évaluation existante (commentaire ajouté, pouce changé).
+  // Mise à jour d'un retour existant (commentaire ajouté, pouce changé).
   if (recId) {
     const upd = {};
-    if (hasVote)    upd["Vote"] = voteLabel(vote);
+    if (hasVote)    upd["Avis"] = avisLabel(vote);
     if (hasComment) upd["Commentaire"] = comment;
     if (!Object.keys(upd).length) return json({ ok: true, id: recId }, 200, cors);
     const r = await patchRecord(FEEDBACK_TABLE, recId, upd, env);
@@ -293,23 +296,23 @@ async function saveFeedback(body, env, cors) {
 
   // Création : le pouce est requis.
   if (!hasVote) return json({ ok: false, error: "Vote manquant (up/down)." }, 400, cors);
-  const question = clean(body.question, 1000);
-  const qid      = clean(body.questionId, 80);
+  const enonce = clean(body.question, 1000);   // texte de la question au moment du vote
+  const repere = clean(body.questionId, 80);   // clé stable (repère) de la question
   const fields = {
-    "Vote": voteLabel(vote),
-    "Question": question || qid || "(question)",
+    "Avis": avisLabel(vote),
+    "Question": repere || enonce || "(question)",   // repère = champ principal
     "Date": isoDate(body.date),
     "Source": "site procédures",
   };
+  if (enonce)  fields["Énoncé"] = enonce;
   if (comment) fields["Commentaire"] = comment;
 
   // Colonnes de contexte : envoyées d'abord ; si Airtable les refuse (colonne
-  // absente), on réessaie SANS elles pour ne jamais perdre le vote + commentaire.
+  // absente), on réessaie SANS elles pour ne jamais perdre le pouce + commentaire.
   const extra = {};
-  if (qid)                     extra["ID question"]   = qid;
-  if (clean(body.quiz, 80))    extra["Quiz"]          = clean(body.quiz, 80);
+  if (clean(body.quiz, 80))    extra["Quiz"]            = clean(body.quiz, 80);
   if (clean(body.titre, 200))  extra["Titre procédure"] = clean(body.titre, 200);
-  if (clean(body.name, 120))   extra["Nom"]           = clean(body.name, 120);
+  if (clean(body.name, 120))   extra["Nom"]             = clean(body.name, 120);
 
   let at = await postRecord({ ...fields, ...extra }, env, FEEDBACK_TABLE);
   if (at && !at.ok && Object.keys(extra).length) {
@@ -324,7 +327,7 @@ async function saveFeedback(body, env, cors) {
   return json({ ok: true, id: rec.id }, 200, cors);
 }
 
-function voteLabel(v) { return v === "up" ? "Pouce en haut" : "Pouce en bas"; }
+function avisLabel(v) { return v === "up" ? "Pouce en haut" : "Pouce en bas"; }
 
 /* ── recherche d'employés (autocomplétion, insensible casse + accents) ────── */
 async function searchEmployees(q, env, cors) {

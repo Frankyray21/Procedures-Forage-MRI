@@ -31,16 +31,17 @@ window.SITE_CONFIG = {
      « Cette question t'a-t-elle été utile ? ». Au clic, un champ commentaire
      (optionnel) apparaît, puis « Envoyer ». Tout part vers le MÊME Worker
      Cloudflare que les attestations (endpoint ci-dessus), qui l'enregistre dans
-     la table Airtable « Feedback quiz (web) » de la base « Formations ».
-     Exactement la même mécanique que les sites Prévention TMS et RodBot.
+     la table Airtable « Retours quiz procédures (web) » de la base « Formations »
+     — même convention que « Retours quiz TMS (web) » et « Retours quiz RodBot
+     (web) ». Exactement la même mécanique que les sites TMS et RodBot.
 
        • enabled  : false pour masquer complètement le pouce partout.
        • endpoint : à renseigner UNIQUEMENT pour viser un AUTRE Worker que celui
                     des attestations ci-dessus (sinon, laisser vide = réutilise
                     le même Worker).
 
-     Rien à déployer de plus : il suffit de créer la table « Feedback quiz (web) »
-     dans la base « Formations » (colonnes détaillées dans worker/README.md).
+     Rien à déployer de plus : la table « Retours quiz procédures (web) » est
+     créée dans la base « Formations » (colonnes détaillées dans worker/README.md).
      Fonctionne hors ligne : un vote/commentaire envoyé sous terre est mis en
      file sur l'appareil et repart tout seul au retour du réseau.
   ------------------------------------------------------------------------- */

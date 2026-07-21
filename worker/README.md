@@ -44,7 +44,7 @@ Prévention TMS. Le fichier à déployer est **[`worker.js`](./worker.js)**.
 | `GET /?hist=<nom>` | Historique des attestations de ce nom — page « Mon suivi » du site. Renvoie **uniquement** `proc, titre, date` + `progress` (meilleurs scores de quiz sauvegardés — endpoint public : pas de statut ni de temps) |
 | `POST /` | Enregistre une attestation dans Airtable |
 | `POST /` avec `type:"progress"` | Sauvegarde la progression du travailleur (meilleurs scores de quiz, JSON borné) dans son dossier « Liste employé (registre formation) », champ « Progression procédures (web) ». `linked:false` si le nom ne correspond à aucun employé (rien n'est stocké) |
-| `POST /` avec `type:"feedback"` | Évaluation d'une question de quiz (pouce 👍/👎 + commentaire), **anonyme**. Enregistrée dans la table **« Feedback quiz (web) »**. Renvoie `{ ok:true, id:"rec…" }`. Renvoyer le corps **avec** `id:"rec…"` met à jour la même ligne (commentaire ajouté / pouce changé) au lieu d'en créer une nouvelle |
+| `POST /` avec `type:"feedback"` | Retour sur une question de quiz (pouce 👍/👎 + commentaire), **anonyme**. Enregistré dans la table **« Retours quiz procédures (web) »**. Renvoie `{ ok:true, id:"rec…" }`. Renvoyer le corps **avec** `id:"rec…"` met à jour la même ligne (commentaire ajouté / pouce changé) au lieu d'en créer une nouvelle |
 
 ### Le jeton Airtable (`AIRTABLE_TOKEN`)
 
@@ -91,7 +91,7 @@ Si tu dois en créer un : **airtable.com/create/tokens**
 
 ---
 
-## Évaluation des questions de quiz (pouce 👍/👎 + commentaire)
+## Retours sur les questions de quiz (pouce 👍/👎 + commentaire)
 
 Après **chaque question** de quiz (quiz des fiches **et** « Quiz éclair »), le
 site affiche un petit pouce **« Cette question t'a-t-elle été utile ? »**. Au
@@ -99,29 +99,31 @@ clic, un champ **commentaire** (optionnel) apparaît, puis **« Envoyer »**. To
 part vers **ce même Worker** (`type:"feedback"`) qui l'écrit dans une table
 Airtable dédiée. **Un enregistrement par question notée** : le pouce crée la
 ligne, le commentaire (ou un changement de pouce) met à jour **la même** ligne.
-Même mécanique que les sites **TMS** et **RodBot**.
+Même convention que **« Retours quiz TMS (web) »** et **« Retours quiz RodBot
+(web) »**.
 
-### À faire une seule fois : créer la table dans la base « Formations »
+### La table dans la base « Formations »
 
-Crée une table nommée **exactement** `Feedback quiz (web)` (le Worker la
-référence **par son nom**, aucun ID à copier). Colonnes :
+Table **`Retours quiz procédures (web)`** (le Worker la référence **par son
+nom**, aucun ID à copier). Colonnes :
 
-| Colonne Airtable  | Type conseillé            | Exemple / notes                                              |
+| Colonne Airtable  | Type                      | Exemple / notes                                              |
 |-------------------|---------------------------|-------------------------------------------------------------|
-| **Question**      | Texte long *(champ principal)* | `Combien pèse chaque pièce du centralisateur ?` — l'énoncé |
-| **Vote**          | Sélection unique          | `Pouce en haut` / `Pouce en bas` *(options créées automatiquement)* |
+| **Question**      | Ligne de texte *(champ principal)* | repère stable : `centralisateur#3`                 |
+| **Avis**          | Sélection unique          | `Pouce en haut` / `Pouce en bas`                            |
 | **Commentaire**   | Texte long                | commentaire libre du travailleur *(optionnel)*              |
 | **Quiz**          | Ligne de texte            | id de la procédure (`centralisateur`) ou `Quiz éclair`      |
-| **ID question**   | Ligne de texte            | repère stable : `centralisateur#3`                          |
+| **Énoncé**        | Texte long                | texte de la question au moment du vote                      |
 | **Titre procédure** | Ligne de texte          | `Procédure d'installation du centralisateur`                |
 | **Nom**           | Ligne de texte            | rempli **seulement** si un profil est actif sur l'appareil  |
 | **Date**          | Date                      | date du jour                                                |
 | **Source**        | Ligne de texte            | `site procédures` *(fixe)*                                   |
+| **Statut**        | Sélection unique          | triage manuel *(non écrit par le Worker)*                   |
 
 > **Colonnes manquantes ?** Le Worker envoie d'abord tout ; si Airtable refuse
-> (colonne absente), il **réessaie sans les colonnes de contexte** (Quiz, ID
-> question, Titre procédure, Nom) — le **vote + commentaire est enregistré quand
-> même**. Le minimum vital, c'est **Question**, **Vote**, **Commentaire**, **Date**.
+> (colonne absente), il **réessaie sans les colonnes de contexte** (Quiz, Titre
+> procédure, Nom) — le **pouce + commentaire est enregistré quand même**. Le
+> minimum vital : **Question**, **Avis**, **Énoncé**, **Commentaire**, **Date**.
 
 Aucun jeton ni déploiement supplémentaire : le Worker réutilise le
 `AIRTABLE_TOKEN` déjà en place (accès à la base « Formations »). Il suffit de
