@@ -32,6 +32,14 @@
                          public). `progress` = progression sauvegardée (meilleurs
                          scores de quiz), pour restaurer sur un nouvel appareil.
    • GET  /            → page d'état { ok:true, service:"attestations-procedures" }
+   • POST / (type:"feedback") → évaluation d'une question de quiz (pouce ↑/↓ +
+       commentaire), ANONYME. Enregistrée dans « Feedback quiz (web) ». Corps :
+       { "type":"feedback", "vote":"up"|"down", "question":"énoncé…",
+         "questionId":"centralisateur#3", "quiz":"centralisateur"|"Quiz éclair",
+         "titre":"…", "comment":"(optionnel)", "name":"(optionnel)" }
+       Renvoie { ok:true, id:"rec…" }. Pour AJOUTER un commentaire ou CHANGER le
+       pouce d'une évaluation déjà créée, renvoyer le même corps AVEC "id":"rec…"
+       (met à jour la ligne au lieu d'en créer une nouvelle).
    • POST / (type:"progress") → sauvegarde la progression du travailleur dans
        son dossier « Liste employé (registre formation) », champ « Progression
        procédures (web) ». Corps JSON :
@@ -62,6 +70,23 @@ const EMP_NAME_FIELD = "Name";                // champ principal = nom complet
 /* Progression du site (meilleurs scores de quiz), sauvegardée sur le dossier
    de l'employé pour être restaurée sur un nouvel appareil / appareil partagé. */
 const PROG_FIELD     = "Progression procédures (web)";
+
+/* Évaluation des questions de quiz (pouce ↑/↓ + commentaire) — quiz des fiches
+   ET « Quiz éclair ». Table à CRÉER dans la base « Formations ». Référencée par
+   NOM (aucun ID à copier) : crée simplement une table portant EXACTEMENT ce nom.
+   Un enregistrement par question notée. Colonnes utilisées (voir worker/README) :
+     • « Question »          texte long (champ principal recommandé)
+     • « Vote »              sélection unique : « Pouce en haut » / « Pouce en bas »
+     • « Commentaire »       texte long
+     • « Quiz »              texte (id de la procédure, ou « Quiz éclair »)
+     • « ID question »       texte (repère stable de la question)
+     • « Titre procédure »   texte
+     • « Nom »               texte (rempli seulement si un profil est actif)
+     • « Date »              date
+     • « Source »            texte
+   Colonnes manquantes : le Worker réessaie sans les colonnes de contexte, le
+   vote + commentaire est enregistré quand même. Même mécanique que TMS/RodBot. */
+const FEEDBACK_TABLE = "Feedback quiz (web)";
 
 /* Origines autorisées à appeler le Worker depuis un navigateur (CORS). */
 const ALLOWED_ORIGINS = [
@@ -104,6 +129,12 @@ export default {
       body = await request.json();
     } catch (_) {
       return json({ ok: false, error: "Corps JSON invalide." }, 400, cors);
+    }
+
+    // Évaluation d'une question de quiz (pouce ↑/↓ + commentaire). ANONYME par
+    // défaut : ne requiert pas de nom — traité AVANT la vérification du nom.
+    if (body && body.type === "feedback") {
+      return saveFeedback(body, env, cors);
     }
 
     const name = clean(body.name, 120);
@@ -188,12 +219,13 @@ export default {
   },
 };
 
-/* POST d'un enregistrement dans la table « Attestations procédures (web) ».
-   Renvoie la Response Airtable, ou null en cas de panne réseau. */
-async function postRecord(fields, env) {
+/* POST d'un enregistrement. Table par défaut = « Attestations procédures (web) »,
+   ou celle passée en 3e argument (nom ou id). Renvoie la Response Airtable, ou
+   null en cas de panne réseau. */
+async function postRecord(fields, env, table) {
   try {
     return await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`,
+      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(table || AIRTABLE_TABLE)}`,
       {
         method: "POST",
         headers: {
@@ -208,6 +240,91 @@ async function postRecord(fields, env) {
     return null;
   }
 }
+
+/* PATCH partiel d'un enregistrement (mise à jour de quelques champs). Renvoie la
+   Response Airtable, ou null en cas de panne réseau. */
+async function patchRecord(table, id, fields, env) {
+  try {
+    return await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(table)}/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Authorization": `Bearer ${env.AIRTABLE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields, typecast: true }),
+      }
+    );
+  } catch (e) {
+    return null;
+  }
+}
+
+/* ── évaluation d'une question de quiz (pouce + commentaire) ─────────────────
+   Un enregistrement par question notée. Le clic sur le pouce CRÉE la ligne
+   (renvoie son id) ; l'ajout d'un commentaire OU le changement de pouce MET À
+   JOUR la même ligne (body.id fourni). Anonyme, sauf si un profil est actif
+   sur le site (body.name). Table « Feedback quiz (web) », base « Formations ». */
+async function saveFeedback(body, env, cors) {
+  if (!env.AIRTABLE_TOKEN) {
+    return json({ ok: false, error: "AIRTABLE_TOKEN non configuré sur le Worker." }, 500, cors);
+  }
+  const recId      = validRecId(body.id);
+  const vote       = clean(body.vote, 8).toLowerCase();   // « up » ou « down »
+  const hasVote    = (vote === "up" || vote === "down");
+  const hasComment = (body.comment != null);              // clé présente = on écrit
+  const comment    = clean(body.comment, 2000);
+
+  // Mise à jour d'une évaluation existante (commentaire ajouté, pouce changé).
+  if (recId) {
+    const upd = {};
+    if (hasVote)    upd["Vote"] = voteLabel(vote);
+    if (hasComment) upd["Commentaire"] = comment;
+    if (!Object.keys(upd).length) return json({ ok: true, id: recId }, 200, cors);
+    const r = await patchRecord(FEEDBACK_TABLE, recId, upd, env);
+    if (!r) return json({ ok: false, error: "Airtable injoignable." }, 502, cors);
+    if (!r.ok) {
+      const detail = await r.text();
+      return json({ ok: false, error: "Airtable a refusé la mise à jour.", detail }, 502, cors);
+    }
+    return json({ ok: true, id: recId }, 200, cors);
+  }
+
+  // Création : le pouce est requis.
+  if (!hasVote) return json({ ok: false, error: "Vote manquant (up/down)." }, 400, cors);
+  const question = clean(body.question, 1000);
+  const qid      = clean(body.questionId, 80);
+  const fields = {
+    "Vote": voteLabel(vote),
+    "Question": question || qid || "(question)",
+    "Date": isoDate(body.date),
+    "Source": "site procédures",
+  };
+  if (comment) fields["Commentaire"] = comment;
+
+  // Colonnes de contexte : envoyées d'abord ; si Airtable les refuse (colonne
+  // absente), on réessaie SANS elles pour ne jamais perdre le vote + commentaire.
+  const extra = {};
+  if (qid)                     extra["ID question"]   = qid;
+  if (clean(body.quiz, 80))    extra["Quiz"]          = clean(body.quiz, 80);
+  if (clean(body.titre, 200))  extra["Titre procédure"] = clean(body.titre, 200);
+  if (clean(body.name, 120))   extra["Nom"]           = clean(body.name, 120);
+
+  let at = await postRecord({ ...fields, ...extra }, env, FEEDBACK_TABLE);
+  if (at && !at.ok && Object.keys(extra).length) {
+    at = await postRecord(fields, env, FEEDBACK_TABLE);   // repli sans les colonnes de contexte
+  }
+  if (!at) return json({ ok: false, error: "Airtable injoignable." }, 502, cors);
+  if (!at.ok) {
+    const detail = await at.text();
+    return json({ ok: false, error: "Airtable a refusé l'enregistrement.", detail }, 502, cors);
+  }
+  const rec = await at.json();
+  return json({ ok: true, id: rec.id }, 200, cors);
+}
+
+function voteLabel(v) { return v === "up" ? "Pouce en haut" : "Pouce en bas"; }
 
 /* ── recherche d'employés (autocomplétion, insensible casse + accents) ────── */
 async function searchEmployees(q, env, cors) {

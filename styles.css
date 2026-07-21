@@ -703,6 +703,32 @@ footer b{color:var(--muted)}
 .pq-summary.s-low b{color:var(--accent-l)}
 .pq-sum-cmp{display:block;margin-top:.35rem;font-size:.85rem;color:var(--muted)}
 
+/* ===== Évaluation des questions de quiz (pouce 👍/👎 + commentaire) =====
+   Les couleurs passent par var(--…) → s'adaptent automatiquement au thème clair. */
+.qrate{margin-top:.9rem;padding:.65rem .8rem;background:var(--card-2);border:1px solid var(--border);border-radius:10px}
+.pq .qrate{display:none}                         /* quiz de fiche : révélé une fois la question répondue */
+.pq.answered .qrate{display:block;animation:qrateIn .25s ease}
+@keyframes qrateIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.qrate-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.qrate-lbl{font-size:.86rem;font-weight:700;color:var(--muted)}
+.qrate-btns{display:inline-flex;gap:.4rem;margin-left:auto}
+.qrate-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:34px;padding:0;
+  border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;transition:.15s}
+.qrate-btn:hover{transform:translateY(-1px);color:var(--text);border-color:var(--dim)}
+.qrate-btn.qr-up.sel{color:var(--success);border-color:var(--success);background:rgba(34,197,94,.14)}
+.qrate-btn.qr-down.sel{color:var(--accent-l);border-color:var(--accent);background:rgba(210,35,37,.12)}
+.qrate-more{margin-top:.6rem}
+.qrate-more[hidden]{display:none}
+.qrate-txt{width:100%;min-height:2.4rem;padding:.55rem .7rem;font-family:var(--font-body);font-size:.95rem;
+  color:var(--text);background:var(--bg-2);border:1px solid var(--border);border-radius:9px;resize:vertical}
+.qrate-txt:focus{border-color:var(--brand);background:var(--card);outline:none;box-shadow:0 0 0 3px rgba(210,35,37,.12)}
+.qrate-act{display:flex;align-items:center;gap:.7rem;margin-top:.5rem;flex-wrap:wrap}
+.qrate .qrate-send{padding:.5rem .95rem;font-size:.85rem}
+.qrate-msg{font-size:.82rem;color:var(--muted)}
+.qrate-thanks{display:flex;align-items:center;gap:.4rem;margin:.15rem 0;font-size:.9rem;font-weight:700;color:var(--success)}
+.qrate-thanks .qrate-defer{font-weight:600;color:var(--muted)}
+.qrate-done{border-color:var(--success);background:rgba(34,197,94,.08)}
+
 /* ===== Assistant procédures (chatbot hors-ligne) ===== */
 .cbbtn{position:fixed;right:18px;bottom:18px;z-index:1100;width:56px;height:56px;border-radius:50%;
   border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;

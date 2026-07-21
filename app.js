@@ -103,7 +103,10 @@
     // pictogrammes de la bascule de classement (code / tâche / machine)
     hash: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>',
     clip: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>',
-    gear: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>'
+    gear: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>',
+    // pouces d'évaluation des questions de quiz
+    thumbUp: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>',
+    thumbDown: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>'
   };
   // pictogrammes par type de point de la checklist
   var TYPE_ICON = {
@@ -1087,7 +1090,8 @@
       var best = pqGetBest(p.id);
       // ordre d'affichage mélangé ; data-i garde l'index d'origine pour la correction
       var pqOrder = shuffle(pqList.map(function (_, j) { return j; }));
-      var pqitems = pqOrder.map(function (oi, disp) { return pqItemHTML(pqList[oi], oi, disp + 1); }).join('');
+      var pqCtx = { proc: p.id, titre: p.titre || p.code || '' };
+      var pqitems = pqOrder.map(function (oi, disp) { return pqItemHTML(pqList[oi], oi, disp + 1, pqCtx); }).join('');
       h += '<div class="sec"><h2>Quiz — valider mes connaissances</h2>' +
         '<details class="pquiz" data-proc="' + esc(p.id) + '">' +
           '<summary><span class="pqs-t">' + pqList.length + ' questions · réponse corrigée immédiatement</span>' +
@@ -1749,14 +1753,21 @@
   // 'vf' = vrai ou faux ; 'multi' = cocher les affirmations vraies ;
   // 'ordre' = remettre les étapes en ordre (it.o est DANS l'ordre correct,
   // l'affichage est mélangé). oi = index d'origine ; num = numéro affiché.
-  function pqItemHTML(it, oi, num) {
+  function pqItemHTML(it, oi, num, ctx) {
     var qhead = '<p class="pq-q"><b>' + num + '.</b> ';
+    // widget d'évaluation de la question (pouce + commentaire), révélé une fois répondu
+    var rate = qrateHTML({
+      qid: (ctx && ctx.proc ? ctx.proc : '') + '#' + oi,
+      quiz: (ctx && ctx.proc) ? ctx.proc : '',
+      titre: (ctx && ctx.titre) ? ctx.titre : '',
+      question: it.q
+    });
     if (it.t === 'vf') {
       return '<div class="pq pq-vf" data-i="' + oi + '">' +
         qhead + '<span class="pq-type">Vrai ou faux</span>' + pqPtsHTML(it) + esc(it.q) + '</p>' +
         '<div class="pq-opts pq-opts-vf">' + ['Vrai', 'Faux'].map(function (opt, j) {
           return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + opt + '</span></label>';
-        }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div></div>';
+        }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div>' + rate + '</div>';
     }
     if (it.t === 'multi') {
       // options mélangées à l'affichage ; value = index d'origine
@@ -1768,7 +1779,7 @@
           return '<label class="pq-opt"><input type="checkbox" value="' + j + '"><span class="pq-mark pq-sq"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
         }).join('') + '</div>' +
         '<div class="pq-actions-q"><button type="button" class="btn pq-check">Valider</button></div>' +
-        '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
+        '<div class="pq-fb"></div><div class="pq-exp"></div>' + rate + '</div>';
     }
     if (it.t === 'ordre') {
       var ord = shuffle(it.o.map(function (_, j) { return j; }));
@@ -1782,7 +1793,7 @@
         }).join('') + '</div>' +
         '<div class="pq-actions-q"><button type="button" class="btn pq-check" disabled>Valider</button>' +
         '<button type="button" class="btn ghost pq-clear">Effacer</button></div>' +
-        '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
+        '<div class="pq-fb"></div><div class="pq-exp"></div>' + rate + '</div>';
     }
     if (it.t === 'assoc') {
       // paires paramètre ↔ valeur : mêmes choix (mélangés) pour chaque rangée
@@ -1798,7 +1809,7 @@
             '<select class="pq-sel">' + selOpts + '</select><span class="pq-cor"></span></div>';
         }).join('') + '</div>' +
         '<div class="pq-actions-q"><button type="button" class="btn pq-check" disabled>Valider</button></div>' +
-        '<div class="pq-fb"></div><div class="pq-exp"></div></div>';
+        '<div class="pq-fb"></div><div class="pq-exp"></div>' + rate + '</div>';
     }
     // choix de réponse (défaut), texte à trous et chasse à l'erreur : même
     // mécanique (une seule bonne option), seul le badge change.
@@ -1810,8 +1821,205 @@
       (badge ? '<span class="pq-type">' + badge + '</span>' : '') + pqPtsHTML(it) + esc(it.q) + '</p>' +
       '<div class="pq-opts">' + perm.map(function (j) {
         return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
-      }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div></div>';
+      }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div>' + rate + '</div>';
   }
+  /* ======================================================================
+     ÉVALUATION DES QUESTIONS DE QUIZ — pouce 👍 / 👎 + commentaire → Airtable
+     ----------------------------------------------------------------------
+     Après chaque question (quiz des fiches ET « Quiz éclair »), un petit
+     pouce « Cette question t'a-t-elle été utile ? ». Au clic, un champ
+     commentaire (optionnel) apparaît. Le pouce CRÉE l'enregistrement ; le
+     commentaire — ou un changement de pouce — MET À JOUR la même ligne.
+     Envoyé au même Worker Cloudflare que les attestations → table Airtable
+     « Feedback quiz (web) ». Fonctionne hors ligne : les envois ratés sont mis
+     en file et repartent tout seuls au retour du réseau (comme les attestations).
+     ====================================================================== */
+  var FB_QK = 'fb_queue_v1';        // file d'attente (globale, pas par-profil)
+  var fbBusy = false, fbSeq = 0;
+
+  // Endpoint du feedback : Worker dédié si configuré, sinon celui des attestations.
+  function fbEndpoint() {
+    var c = (window.SITE_CONFIG && window.SITE_CONFIG.feedback) || null;
+    if (c && c.enabled === false) return '';
+    if (c && typeof c.endpoint === 'string' && c.endpoint) return c.endpoint.replace(/\/+$/, '');
+    return attestEndpoint();
+  }
+
+  // HTML du widget d'évaluation, réutilisé par les deux quiz. '' si désactivé.
+  // ctx = { qid, quiz, titre, question }
+  function qrateHTML(ctx) {
+    if (!fbEndpoint()) return '';
+    ctx = ctx || {};
+    return '<div class="qrate" data-qid="' + esc(ctx.qid || '') + '" data-quiz="' + esc(ctx.quiz || '') +
+      '" data-titre="' + esc(ctx.titre || '') + '" data-q="' + esc(ctx.question || '') + '">' +
+      '<div class="qrate-ask">' +
+        '<span class="qrate-lbl">Cette question t’a-t-elle été utile ?</span>' +
+        '<span class="qrate-btns">' +
+          '<button type="button" class="qrate-btn qr-up" data-vote="up" aria-pressed="false" aria-label="Pouce en haut — question utile" title="Pouce en haut">' + ICON.thumbUp + '</button>' +
+          '<button type="button" class="qrate-btn qr-down" data-vote="down" aria-pressed="false" aria-label="Pouce en bas — question à revoir" title="Pouce en bas">' + ICON.thumbDown + '</button>' +
+        '</span>' +
+      '</div>' +
+      '<div class="qrate-more" hidden>' +
+        '<textarea class="qrate-txt" rows="2" maxlength="2000" placeholder="Un commentaire sur cette question ? (optionnel)"></textarea>' +
+        '<div class="qrate-act"><button type="button" class="btn ghost qrate-send">Envoyer</button>' +
+          '<span class="qrate-msg" role="status" aria-live="polite"></span></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function qrateMsg(w, txt) { var m = w.querySelector('.qrate-msg'); if (m) m.textContent = txt || ''; }
+
+  // Verrouille le widget après un envoi complet (pouce + commentaire).
+  function qrateDone(w, queued) {
+    w.classList.add('qrate-done');
+    var more = w.querySelector('.qrate-more');
+    if (more) {
+      more.innerHTML = '<p class="qrate-thanks">' + ICON.check + ' Merci pour ton retour !' +
+        (queued ? ' <span class="qrate-defer">(sera envoyé au retour du réseau)</span>' : '') + '</p>';
+    }
+  }
+
+  function fbGet() { try { var v = JSON.parse(localStorage.getItem(FB_QK)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function fbSet(q) { try { localStorage.setItem(FB_QK, JSON.stringify(q)); } catch (e) {} }
+
+  // Construit le payload courant d'un widget (+ commentaire éventuel).
+  function qratePayload(w, comment) {
+    return {
+      vote: w.getAttribute('data-vote') || '',
+      quiz: w.getAttribute('data-quiz') || '',
+      questionId: w.getAttribute('data-qid') || '',
+      question: w.getAttribute('data-q') || '',
+      titre: w.getAttribute('data-titre') || '',
+      comment: comment || '',
+      name: profName() || ''
+    };
+  }
+
+  // POST au Worker. cb(res) : res = { ok, id } si réussi, sinon null.
+  function fbPost(payload, cb) {
+    var endpoint = fbEndpoint(); if (!endpoint) { cb(null); return; }
+    var body = {}; for (var k in payload) if (payload.hasOwnProperty(k)) body[k] = payload[k];
+    body.type = 'feedback';
+    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { cb(d && d.ok ? d : null); })
+      .catch(function () { cb(null); });
+  }
+
+  // Met une évaluation en file (fusion par cid : jamais deux lignes pour la même).
+  function fbEnqueue(w, payload) {
+    var cid = w.getAttribute('data-cid');
+    if (!cid) { cid = 'c' + Date.now().toString(36) + (fbSeq++); w.setAttribute('data-cid', cid); }
+    var item = {}; for (var k in payload) if (payload.hasOwnProperty(k)) item[k] = payload[k];
+    item.cid = cid;
+    var rec = w.getAttribute('data-rec'); if (rec) item.id = rec;
+    var q = fbGet(), at = -1;
+    for (var i = 0; i < q.length; i++) { if (q[i].cid === cid) { at = i; break; } }
+    if (at >= 0) {
+      var prev = q[at];
+      if ((!item.comment || item.comment === '') && prev.comment) item.comment = prev.comment;  // ne jamais perdre un commentaire
+      if (!item.id && prev.id) item.id = prev.id;
+      q[at] = item;
+    } else q.push(item);
+    if (q.length > 200) q = q.slice(q.length - 200);
+    fbSet(q);
+  }
+
+  // Vide la file, un envoi à la fois (réessaie au prochain 'online' sinon).
+  function fbFlush() {
+    if (fbBusy || !fbEndpoint()) return;
+    var q = fbGet(); if (!q.length) return;
+    fbBusy = true;
+    var it = q[0];
+    fbPost(it, function (res) {
+      fbBusy = false;
+      if (res && res.ok) {
+        var q2 = fbGet(), kept = [];
+        for (var i = 0; i < q2.length; i++) { if (q2[i].cid !== it.cid) kept.push(q2[i]); }
+        fbSet(kept);
+        if (kept.length) setTimeout(fbFlush, 400);
+      }
+      // échec : on garde la file pour un prochain essai
+    });
+  }
+
+  // Cœur d'envoi : crée l'enregistrement au 1er appel, le met à jour ensuite.
+  // opts = { vote?, comment? (string), final? (bool) }
+  function qrateCommit(w, opts) {
+    var rec = w.getAttribute('data-rec');
+    var vote = opts.vote || w.getAttribute('data-vote') || '';
+    var hasComment = (opts.comment != null);
+    var comment = hasComment ? opts.comment : '';
+
+    if (rec) {                                   // ── mise à jour d'une ligne existante
+      var upd = { id: rec, vote: vote };
+      if (hasComment) upd.comment = comment;
+      if (opts.final) qrateMsg(w, 'Envoi…');
+      fbPost(upd, function (res) {
+        if (res) { if (opts.final) qrateDone(w); else qrateMsg(w, ''); }
+        else { fbEnqueue(w, upd); if (opts.final) qrateDone(w, true); else qrateMsg(w, ''); }
+      });
+      return;
+    }
+    if (w.getAttribute('data-sending') === '1') {  // ── création déjà en vol : on note l'intention
+      w.setAttribute('data-next', JSON.stringify({ vote: vote, comment: hasComment ? comment : null, final: !!opts.final }));
+      if (opts.final) qrateMsg(w, 'Envoi…');
+      return;
+    }
+    var payload = qratePayload(w, comment);        // ── première fois : création
+    payload.vote = vote;
+    w.setAttribute('data-sending', '1');
+    if (opts.final) qrateMsg(w, 'Envoi…');
+    fbPost(payload, function (res) {
+      w.removeAttribute('data-sending');
+      var nx = w.getAttribute('data-next'); if (nx) w.removeAttribute('data-next');
+      if (res && res.id) {
+        w.setAttribute('data-rec', res.id);
+        if (nx) { try { var o = JSON.parse(nx); qrateCommit(w, { vote: o.vote, comment: o.comment == null ? undefined : o.comment, final: o.final }); } catch (e) {} }
+        else if (opts.final) qrateDone(w);
+        else qrateMsg(w, '');
+      } else {                                     // échec réseau → file d'attente
+        var wasFinal = opts.final;
+        if (nx) { try { var o2 = JSON.parse(nx); payload.vote = o2.vote || payload.vote; if (o2.comment != null) payload.comment = o2.comment; if (o2.final) wasFinal = true; } catch (e) {} }
+        fbEnqueue(w, payload);
+        if (wasFinal) qrateDone(w, true); else qrateMsg(w, '');
+      }
+    });
+  }
+
+  // Clic sur un pouce : sélectionne le vote, révèle le commentaire, enregistre.
+  function qratePick(btn) {
+    var w = btn.closest && btn.closest('.qrate'); if (!w || w.classList.contains('qrate-done')) return;
+    var vote = btn.getAttribute('data-vote') === 'down' ? 'down' : 'up';
+    [].forEach.call(w.querySelectorAll('.qrate-btn'), function (b) {
+      var on = b === btn; b.classList.toggle('sel', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    w.setAttribute('data-vote', vote);
+    var more = w.querySelector('.qrate-more'); if (more) more.hidden = false;
+    qrateCommit(w, { vote: vote });               // enregistre / met à jour le vote tout de suite
+  }
+
+  // Clic sur « Envoyer » : ajoute / met à jour le commentaire.
+  function qrateSend(sendBtn) {
+    var w = sendBtn.closest && sendBtn.closest('.qrate'); if (!w || w.classList.contains('qrate-done')) return;
+    if (!w.getAttribute('data-vote')) { qrateMsg(w, 'Choisis d’abord un pouce.'); return; }
+    var txt = w.querySelector('.qrate-txt');
+    var comment = txt ? txt.value.replace(/\s+$/, '').slice(0, 2000) : '';
+    qrateCommit(w, { comment: comment, final: true });
+  }
+
+  // Un seul écouteur délégué (survit aux re-rendus des vues) + reprise hors-ligne.
+  function initQuizFeedback() {
+    document.addEventListener('click', function (e) {
+      var pick = e.target.closest && e.target.closest('.qrate-btn');
+      if (pick) { qratePick(pick); return; }
+      var send = e.target.closest && e.target.closest('.qrate-send');
+      if (send) { qrateSend(send); return; }
+    });
+    window.addEventListener('online', fbFlush);
+    fbFlush();
+  }
+
   function initProcQuiz(id) {
     var list = (window.QUIZ_PROC && window.QUIZ_PROC[id]) || [];
     var box = document.querySelector('.pquiz[data-proc="' + id + '"]');
@@ -2436,6 +2644,7 @@
     $('#qfb').innerHTML = '<div class="qexp ' + (good ? 'good' : 'wrong') + '">' +
       '<b>' + (good ? '✓ Bonne réponse' : '✗ Mauvaise réponse') + '</b>' +
       '<p>' + refsHTML(q.explication) + '</p>' + src +
+      qrateHTML({ qid: q.id || '', quiz: 'Quiz éclair', titre: q.titre || q.code || '', question: q.question }) +
       '<button class="btn" id="qNext">' + (s.idx + 1 < s.pool.length ? 'Question suivante' : 'Voir le résultat') + '</button></div>';
     $('#qNext').onclick = function () { s.idx++; s.answered = false; if (s.idx >= s.pool.length) renderResult(view); else renderQ(view); };
   }
@@ -2740,6 +2949,7 @@
   }
   document.addEventListener('DOMContentLoaded', function () {
     route(); initInstall(); initChecklistEvents(); initTheme(); initHoverCard();
+    initQuizFeedback();   // pouce 👍/👎 + commentaire sous chaque question de quiz
     aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
     progDirtyFlush();   // progression marquée « à pousser » pendant une panne
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
