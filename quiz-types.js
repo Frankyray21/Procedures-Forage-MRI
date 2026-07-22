@@ -460,7 +460,8 @@
     "pro-op-dd-012": [
       { "t": "vf", "q": "Avant de forer à distance, on met la procédure dans un sac étanche sur les clôtures de tous les accès. Le foreur la signe au début de chaque quart.", "vrai": true,
         "e": "« Cette procédure doit être mise dans un sac étanche sur les clôtures de tous les accès et signée par le foreur qui aura visité ces endroits avant le début du forage à distance, au début de chaque quart de travail. »" },
-      { "t": "vf", "q": "La personne qui a le droit d'expliquer cette procédure est le superviseur MRI.", "vrai": false,
+      { "t": "trou", "q": "Le personnel ayant l'autorité pour l'interprétation de ce document est le ______.",
+        "o": ["superviseur MRI", "surintendant SST", "contremaître-général", "directeur des opérations"], "a": 3,
         "e": "« Le personnel ayant l'autorité pour l'interprétation de ce document est le directeur des opérations. Toute demande de modification, révision ou de mise à jour doit être faite auprès de cette personne »" },
       { "t": "vf", "q": "Chaque accès doit avoir une clôture. Un travailleur ne peut jamais remplacer la clôture.", "vrai": false,
         "e": "« Tous les accès aux lieux forage (foreur et la foreuse) doivent être barricadés par une clôture (selon exigences/procédures du client) ou gardés par un travailleur »" },
@@ -475,7 +476,8 @@
         "e": "« 6. Si une visite des lieux de forage est nécessaire, l'opérateur doit être contacté par radio, ou si un contact visuel est possible, le foreur se déplacera pour aller rejoindre la ou les personnes voulant visiter les lieux. »" }
     ],
     "pro-op-dd-013": [
-      { "t": "vf", "q": "Avec le feed extension, tu attaches une chaîne entre un point d'ancrage et le clam de la foreuse. Le point d'ancrage est dans l'alignement de la foreuse.", "vrai": true,
+      { "t": "trou", "q": "Avec le feed extension, tu attaches une chaîne entre le clam de la foreuse et un point d'ancrage situé dans ______ de la foreuse.",
+        "o": ["le prolongement", "l'enlignement", "l'axe latéral", "l'arrière"], "a": 1,
         "e": "« 4- Attacher une chaîne entre un point d'ancrage situé dans l'enlignement de la foreuse et le clam de la foreuse »" },
       { "t": "vf", "q": "Avec la patte de swing, c'est normal que les patins se lèvent un peu du sol quand la tour pousse sur la barre.", "vrai": false,
         "e": "« La foreuse fera le déplacement planifié, orientés par la barre de swing, les patins doivent demeurer au sol »" },
@@ -510,7 +512,8 @@
         "e": "« Si le métal tressé est endommagé, il est interdit de mettre de la pression dans le boyau. Il faut le changer immédiatement » — alors que « Il est permis de travailler quand le caoutchouc d'un boyau est endommagé » ; « Tous les points de graissage doivent être graissés avant de démarrer » ; « Assurez-vous que les câbles de retenu (whipcheck) sont en bon état et en place »" }
     ],
     "pro-op-sm-002": [
-      { "t": "vf", "q": "La première tige est percée jusqu'au fond. Tu arrêtes d'abord la rotation, puis le marteau. Ça casse le joint sur l'accouplement.", "vrai": true,
+      { "t": "trou", "q": "Une fois la première tige percée à la profondeur totale, tu arrêtes d'abord ______, puis le marteau. Cette séquence doit casser le joint sur l'accouplement.",
+        "o": ["la rotation", "le marteau", "l'eau", "le centralisateur"], "a": 0,
         "e": "« Une fois la première tige percée à la profondeur totale, arrêtez d'abord la rotation, puis arrêtez le marteau. Cette séquence doit casser le joint sur l'accouplement »" },
       { "t": "vf", "q": "Pour poser un casing au collet du trou avec un STOPEMASTER, tu suis la procédure PRO-SEC-001.", "vrai": false,
         "e": "« Installer un casing si nécessaire PRO-OP-SM-005 Procédure d'installation de casing au collet des trous avec un STOPEMASTER » (la PRO-SEC-001 est la « Procédure de défonçage de trous forés sous-terre »)" },
@@ -532,7 +535,8 @@
     "pro-op-sm-003": [
       { "t": "vf", "q": "Sur le Stopemaster HX, tu peux faire les tests de freins en mode électrique ou en mode diesel.", "vrai": true,
         "e": "« Les tests de freins peuvent être faits autant en mode électrique que diesel » (p. 6, Effectuer les tests de freins, étape 2)" },
-      { "t": "vf", "q": "Pour démarrer le moteur diesel du Stopemaster HX, le bouton OVERRIDE se trouve à droite de la clé de contact.", "vrai": false,
+      { "t": "trou", "q": "Pour démarrer le moteur diesel du Stopemaster HX, le bouton OVERRIDE (commutateur de neutralisation) se trouve ______ du commutateur à clé de contact.",
+        "o": ["à droite", "à gauche", "au-dessus", "en dessous"], "a": 1,
         "e": "« Tournez la clé de contact pour lancer le moteur tout en appuyant sur le commutateur de neutralisation (OVERRIDE) [...] (Le commutateur de neutralisation se trouve à gauche du commutateur à clé de contact) » (p. 5, étape 6) — il est à GAUCHE, pas à droite." },
       { "t": "vf", "q": "Quand tu gares la foreuse, si tu ne peux pas descendre les stabilisateurs au sol, tu dois appeler le superviseur avant de partir.", "vrai": false,
         "e": "« S'IL EST IMPOSSIBLE DE METTRE LES STABILISATEURS, METTRE LES CALES DE ROUE » (p. 6) — la procédure exige de mettre les cales de roue, pas d'appeler le superviseur." },
@@ -547,7 +551,8 @@
         "e": "« Engager les leviers ''TRAM'' en position ''FORWARD'' pendant 5 secondes, [...] en position ''REVERSE'' pendant 5 secondes » (p. 6, Effectuer les tests de freins, étapes 5-6)" }
     ],
     "pro-op-sm-004": [
-      { "t": "vf", "q": "En Ontario, l'article 136 de la loi (SST) dit qu'on doit souffler le plancher avant de forer.", "vrai": true,
+      { "t": "trou", "q": "En Ontario, le plancher du chantier à forer doit être soufflé selon l'article ______ de la loi sur la SST.",
+        "o": ["136", "112", "150", "98"], "a": 0,
         "e": "« Le plancher du chantier à forer doit être soufflé selon […] l'article 136 de la loi sur la SST en Ontario »" },
       { "t": "vf", "q": "Pour souffler le plancher au trou, tu ouvres l'eau et un peu d'air.", "vrai": false,
         "e": "« Pour souffler le plancher à l'endroit du trou, ouvrez l'air et un peu d'eau »" },
