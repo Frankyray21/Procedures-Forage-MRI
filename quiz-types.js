@@ -636,7 +636,8 @@
         "e": "« Lorsque les visiteurs sont arrivés au ruban jaune, ils doivent faire connaître leur présence aux travailleurs sur le site de forage par un appel de lumière et attendre l'arrivée du foreur ou de l'aide-foreur. »" },
       { "t": "vf", "q": "Après avoir traversé le ruban, le visiteur reste sous la responsabilité du foreur qui l'a accueilli.", "vrai": false,
         "e": "« Les visiteurs peuvent ensuite traverser le ruban et le superviseur est responsable des visiteurs. »" },
-      { "t": "vf", "q": "Pour changer cette procédure, il faut faire la demande au superviseur du site.", "vrai": false,
+      { "t": "trou", "q": "Le personnel ayant l'autorité pour l'interprétation de cette procédure est le ______. Toute demande de modification lui est adressée.",
+        "o": ["superviseur du site", "Surintendant SST", "directeur des opérations", "contremaître"], "a": 1,
         "e": "« Le personnel ayant l'autorité pour l'interprétation de ce document est le Surintendant SST. Toute demande de modification, révision ou de mise à jour doit être faite auprès de cette personne. »" },
       { "t": "multi", "q": "Coche les phrases VRAIES sur l'accueil d'un visiteur :",
         "o": ["La lumière bleue se porte derrière le casque du visiteur.", "Le visiteur doit porter une protection pour les oreilles.", "Au ruban jaune, le visiteur klaxonne pour dire qu'il est là.", "Le foreur se présente avec son nom et le numéro du site.", "Le visiteur traverse le ruban dès que ses ÉPI sont vérifiés, avant les explications."], "a": [0, 1, 3],
@@ -649,7 +650,8 @@
         "e": "« Cadenassage (Si c'est le cas, les visiteurs doivent avoir un cadenas personnel en leur possession et l'apposer pour traverser le ruban) »" }
     ],
     "san-sec-006": [
-      { "t": "vf", "q": "Quand on a besoin de pièces, on les demande aux superviseurs et aux ateliers MRI de Val-d'Or.", "vrai": true,
+      { "t": "trou", "q": "Quand on a besoin de pièces, on les demande aux superviseurs et aux ateliers MRI de ______.",
+        "o": ["Val-d'Or", "Rouyn-Noranda", "Timmins", "Sudbury"], "a": 0,
         "e": "« Besoins en pièces = superviseurs et ateliers MRI de Val-d'Or » (Formulaire d'accueil, jour 1, point 6 — Fonctionnement MRI)" },
       { "t": "vf", "q": "Au jour 2, on reçoit l'accès aux procédures (Google Drive et Airtable) par courriel, sur son téléphone personnel.", "vrai": false,
         "e": "« Accès GOOGLE DRIVE et AIRTABLE par les superviseurs et contremaître-général - Envoi par TEAMS sur téléphone de la mine » (Jour 2, point 2 — l'envoi se fait par TEAMS sur le téléphone de la mine, pas par courriel sur un téléphone personnel)" },
