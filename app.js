@@ -55,6 +55,25 @@
     if (!name) return;
     if (!profName()) migrateToProfile(profSlug(name));
     try { localStorage.setItem('prof_name', name); localStorage.setItem('suivi_name', name); } catch (e) {}
+    updateWorkerChip();
+  }
+  /* Nom du travailleur actif affiché en permanence dans la barre (session) —
+     touche le renvoie au suivi où il peut changer de profil. Vide → « Se
+     connecter ». Rafraîchi au démarrage, à chaque navigation et au changement
+     de profil (profSet / profAdopt via profSet). */
+  function updateWorkerChip() {
+    var chip = $('#workerChip'), lbl = $('#workerChipName');
+    if (!chip || !lbl) return;
+    var name = profName();
+    if (name) {
+      lbl.textContent = name;
+      chip.classList.remove('anon');
+      chip.title = 'Travailleur actif : ' + name + ' — touche pour changer';
+    } else {
+      lbl.textContent = 'Se connecter';
+      chip.classList.add('anon');
+      chip.title = 'Aucun travailleur actif — touche pour t\'identifier';
+    }
   }
   /* Premier profil de l'appareil : les données déjà présentes (clés nues)
      appartiennent à cette personne — on les déplace dans son espace. */
@@ -144,6 +163,7 @@
     else if (h.indexOf('#/english') === 0) { if (state.fam !== 'english') { state.fam = 'english'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('english'); if (fromFiche) window.scrollTo(0, listScroll.english || 0); }
     else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); if (fromFiche) window.scrollTo(0, listScroll[''] || 0); }
     else { renderPortail(view); setNav(''); }
+    updateWorkerChip();
   }
   function setNav(which) {
     document.querySelectorAll('.appbar nav a[data-nav]').forEach(function (a) {
@@ -2862,7 +2882,15 @@
         ' <b>English procedures</b><span>ITH / CUBEX and diamond drilling — ' + (nEng + nEngDD) + ' procedures, official PDFs and quizzes</span>' + ICON.arrow + '</a>' : '') +
       '<a class="portal-suivi" href="#/suivi">' + ICON.check +
         ' <b>Mon suivi de formation</b><span>Quiz complétés, attestations, résultats détaillés</span>' + ICON.arrow + '</a>' +
+      // Télécharger l'application : visible tant qu'elle n'est pas déjà
+      // installée (mode autonome). Déclenche l'invite d'installation, ou
+      // affiche la marche à suivre (iOS / menu du navigateur).
+      (isStandalone() ? '' :
+        '<a class="portal-suivi dl" href="#" id="portalDl">' + INSTALL_ICON +
+        ' <b>Télécharger l\'application</b><span>Installe l\'app sur ton téléphone : accès rapide, même sans réseau</span>' + ICON.arrow + '</a>') +
     '</div></section>';
+    var dl = $('#portalDl');
+    if (dl) dl.addEventListener('click', function (e) { e.preventDefault(); doInstall(); });
   }
 
   /* ---------- installation PWA ---------- */

@@ -57,6 +57,17 @@ img{max-width:100%}
   background:#1a2332;border-radius:10px;color:#9aa7bd;transition:.2s}
 .iconbtn:hover{color:#fff;border-color:var(--brand)}
 #installBtn{display:none}
+/* Travailleur actif dans la barre (session) — nom affiché en permanence,
+   touche pour aller au suivi et changer de profil. */
+.appbar .workerchip{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .7rem;border-radius:9px;
+  font-weight:700;font-size:.85rem;color:var(--text);background:rgba(255,255,255,.05);
+  border:1px solid var(--border);max-width:170px;transition:color .2s,background .2s,border-color .2s}
+.appbar .workerchip:hover{color:#fff;border-color:var(--brand);background:rgba(210,35,37,.14)}
+.appbar .workerchip svg{flex:none;color:var(--accent-l)}
+.appbar .workerchip.anon{color:var(--muted);font-weight:600}
+.appbar .workerchip .wc-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:520px){.appbar .workerchip{max-width:112px;padding:.4rem .55rem;font-size:.78rem}
+  .appbar .workerchip .wc-name{max-width:82px}}
 .appbar .ver{font-family:var(--font-display);font-size:.72rem;font-weight:800;letter-spacing:.04em;color:var(--accent-l);
   background:rgba(210,35,37,.1);border:1px solid rgba(210,35,37,.3);border-radius:50px;padding:.2rem .55rem;white-space:nowrap}
 
@@ -860,6 +871,11 @@ footer b{color:var(--muted)}
 .portal-suivi span{color:var(--muted);flex:1;font-size:.85rem}
 .portal-suivi svg:last-child{color:var(--accent-l)}
 .portal-suivi:hover{border-color:rgba(16,185,129,.4)}
+/* Télécharger l'application : même gabarit que les liens du portail, teinte
+   accent (installation) plutôt que verte, et masqué si déjà installée. */
+.portal-suivi.dl{cursor:pointer}
+.portal-suivi.dl svg:first-child{color:var(--accent-l);width:19px;height:19px}
+.portal-suivi.dl:hover{border-color:rgba(210,35,37,.4)}
 .sv-sync{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin:1.2rem 0}
 .sv-sync b{font-size:.95rem}
 .sv-sync p{color:var(--muted);font-size:.88rem;line-height:1.5;margin:.35rem 0 .7rem;max-width:560px}
@@ -937,6 +953,10 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .chip.on{color:#b81b1d}
 :root[data-theme="light"] .chip[data-cat]:not([data-cat=""]).on::before{background:#b81b1d}
 :root[data-theme="light"] .appbar nav a{color:#c8d0dc}
+/* La barre reste sombre en thème clair : le nom du travailleur garde un texte
+   clair, sinon il disparaîtrait sur fond sombre. */
+:root[data-theme="light"] .appbar .workerchip{color:#e5e9f0;border-color:rgba(255,255,255,.14)}
+:root[data-theme="light"] .appbar .workerchip.anon{color:#c8d0dc}
 :root[data-theme="light"] .qopt.ok,:root[data-theme="light"] .pq.correct .pq-exp{color:#065f46}
 :root[data-theme="light"] .qopt.bad{color:#991b1b}
 :root[data-theme="light"] .pill.epi,:root[data-theme="light"] .done-badge{color:#047857}
