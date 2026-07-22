@@ -6,7 +6,8 @@
   var Q = {
     "en-pro-mec-007a": [
       {
-        "q": "What is the maximum height the drill can be lifted?",
+        "t": "trou",
+        "q": "The drill can be lifted to a maximum of ______ using the hydraulic power of the boom (feed extension).",
         "o": [
           "50 cm (20'')",
           "20 cm (8'')",
@@ -85,7 +86,8 @@
         "e": "« Jacks can only be applied when parking on flat, stable ground. NEVER ON SLOPES »"
       },
       {
-        "q": "What distance must always be kept between vehicles on the ramp?",
+        "t": "trou",
+        "q": "A distance of ______ must always be kept between vehicles on the ramp.",
         "o": [
           "10 meters",
           "20 meters",
@@ -142,7 +144,8 @@
         "e": "« Should a rod failure occur, immediately stop drilling, shut down electrical power and air supply to the drill. »"
       },
       {
-        "q": "What temperature rating applies to the braided compressor hoses needing particular attention on CUBEX and boosters?",
+        "t": "trou",
+        "q": "Particular attention must be paid to the ______ braided hoses of the compressors on CUBEX and boosters.",
         "o": [
           "200 degrees F",
           "400 degrees F",
@@ -166,7 +169,8 @@
         "e": "« THE CENTRALISER MUST ALWAYS BE INSTALLED BY TWO WORKERS »"
       },
       {
-        "q": "How much does each of the two parts of the centraliser weigh?",
+        "t": "trou",
+        "q": "Each of the two parts of the centraliser weighs ______.",
         "o": [
           "20 pounds",
           "30 pounds",
@@ -201,7 +205,8 @@
     ],
     "en-pro-op-sm-002a": [
       {
-        "q": "What minimum distance must all employees keep from operating equipment?",
+        "t": "trou",
+        "q": "All employees must keep ______ back from operating equipment.",
         "o": [
           "4 feet (1.2 meters)",
           "8 feet (2.4 meters)",
@@ -258,7 +263,8 @@
         "e": "« Lifting equipment must have a capacity of 6,000 pounds or more »"
       },
       {
-        "q": "During the mast lift, what is the minimum distance workers must keep from the drill?",
+        "t": "trou",
+        "q": "During the mast lift, workers must stand at a minimum distance of ______ from the drill.",
         "o": [
           "Six feet",
           "Twelve feet",
@@ -315,7 +321,8 @@
         "e": "« he will be the only one authorized to communicate with the lifting equipment operator during the operation »"
       },
       {
-        "q": "How far from the drill must you stand while the boom is being removed?",
+        "t": "trou",
+        "q": "You must stand in a safe place at least ______ from the drill while the boom is being removed.",
         "o": [
           "At least 6 feet",
           "At least 12 feet",
@@ -339,7 +346,8 @@
     ],
     "en-pro-op-ith-007a": [
       {
-        "q": "At what distance from the drilling point must the drilling control be positioned?",
+        "t": "trou",
+        "q": "The drilling control must be positioned ______ from the drilling point to be safe from rock projection.",
         "o": [
           "2 meters",
           "5 meters",
@@ -396,14 +404,9 @@
     ],
     "en-pro-op-ith-003a": [
       {
-        "q": "How must the powered 600 volt cable be moved?",
-        "o": [
-          "With insulated gloves, holding it by hand",
-          "With the plastic hook, never touching it with your hands",
-          "By dragging it with the towing vehicle",
-          "By two workers holding it at each end"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "It is mandatory to use the plastic hook to move the 600 volt cable when it is powered, and to never touch it with your hands.",
+        "vrai": true,
         "e": "« IT IS MANDATORY TO USE THE PLASTIC HOOK TO MOVE THE 600 VOLT CABLE WHEN IT IS POWERED. NEVER TOUCH IT WITH YOUR HANDS. »"
       },
       {
@@ -442,7 +445,8 @@
     ],
     "en-pro-op-ith-001a": [
       {
-        "q": "What is the minimum distance the console must be kept from the mast?",
+        "t": "trou",
+        "q": "The console must always be more than ______ from the mast.",
         "o": [
           "0.5 meter",
           "1 meter",
@@ -488,14 +492,9 @@
     ],
     "en-san-sec-005a": [
       {
-        "q": "Where does the drilling site officially start?",
-        "o": [
-          "At the drill itself",
-          "At the yellow ribbon",
-          "At the site entrance gate",
-          "At the nearest refuge"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "The drilling site starts at the yellow ribbon.",
+        "vrai": true,
         "e": "« The drilling site starts at the yellow ribbon. »"
       },
       {
@@ -556,7 +555,8 @@
         "e": "« 7) Unscrew the bolts leaving the first two from the top (one on the left and one on the right) »"
       },
       {
-        "q": "To what torque must the swivel be tightened at the end of the procedure?",
+        "t": "trou",
+        "q": "At the end of the procedure, you must finish by tightening the swivel to ______.",
         "o": [
           "400 lbs of torque",
           "600 lbs of torque",
@@ -580,7 +580,8 @@
     ],
     "en-pro-sec-001a": [
       {
-        "q": "How far before breaking through must the drill operator apply his chosen alternative (A or B)?",
+        "t": "trou",
+        "q": "The drill operator must apply his choice (A or B) at least ______ before breaking through.",
         "o": [
           "At least 5 meters (15 feet) before breaking through",
           "At least 15 meters (45 feet) before breaking through",
@@ -659,14 +660,9 @@
         "e": "« When shaping the complete wear of all PPE is mandatory including the visor. »"
       },
       {
-        "q": "How should the air be opened when preparing the pneumatic sander?",
-        "o": [
-          "Fully and quickly to test maximum pressure",
-          "Slowly",
-          "Only after removing the air valve handle",
-          "Before attaching the hoses"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "When preparing the pneumatic sander, the air must be opened slowly.",
+        "vrai": true,
         "e": "« Open the air slowly; »"
       }
     ],
@@ -683,7 +679,8 @@
         "e": "« Lifting equipment required, must have a capacity of 6,000 pounds or more. »"
       },
       {
-        "q": "While directing the boom over the drill, what minimum distance must you keep from the drill?",
+        "t": "trou",
+        "q": "While directing the boom over the drill, you must remain in a safe place at least ______ from the drill.",
         "o": [
           "6 feet",
           "12 feet",
@@ -729,7 +726,8 @@
         "e": "« Lock-out the air at the header (main supply) and bleed the air on the drill »"
       },
       {
-        "q": "What is the maximum pressure allowed on the rotating pressure gauge when finishing the tightening with the drill rotation?",
+        "t": "trou",
+        "q": "When finishing the tightening with the drill rotation, do not exceed ______ on the rotating pressure gauge.",
         "o": [
           "400 PSI",
           "600 PSI",
@@ -775,7 +773,8 @@
         "e": "« A wire rope sling or chain must be installed as a second means of protection in case of tow bar failure »"
       },
       {
-        "q": "What minimum distance must you always keep between you and the drill?",
+        "t": "trou",
+        "q": "You must always keep a minimum distance of ______ between you and the drill.",
         "o": [
           "1 meter",
           "2.4 meters",
@@ -810,14 +809,9 @@
     ],
     "en-ges-san-sec-001a": [
       {
-        "q": "What must be carried out before any modification to equipment?",
-        "o": [
-          "A risk analysis considering the impacts of each change on the operations of the equipment",
-          "A full shutdown of the mine site",
-          "A vote by all employees",
-          "A written exam for the operator"
-        ],
-        "a": 0,
+        "t": "vf",
+        "q": "Before any modification, a risk analysis must be carried out considering the impacts of each of the changes on the operations of the equipment.",
+        "vrai": true,
         "e": "« Before any modification, a risk analysis must be carried out considering the impacts of each of the changes on the operations of the equipment. »"
       },
       {
@@ -856,14 +850,9 @@
     ],
     "en-pro-op-ith-002a": [
       {
-        "q": "What must be done before inserting the wrench into the notches in the rods?",
-        "o": [
-          "Apply the lock out tag out procedure",
-          "Grease the rod threads",
-          "Raise the boom to vertical position",
-          "Remove the certified anchor"
-        ],
-        "a": 0,
+        "t": "vf",
+        "q": "The lock out tag out procedure must be applied before inserting the wrench into the notches in the rods.",
+        "vrai": true,
         "e": "« 2. Apply the lock out tag out procedure; 3. Insert the wrench into the notches in the rods. »"
       },
       {
@@ -913,14 +902,9 @@
         "e": "« A JOB SITE INSPECTION has to be performed before entering the site. »"
       },
       {
-        "q": "How should you check for hydraulic leaks?",
-        "o": [
-          "By passing your hand over the hoses",
-          "Never pass your hand over hoses",
-          "By smelling the oil",
-          "By increasing the pressure"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "When checking for hydraulic leaks, you must never pass your hand over hoses.",
+        "vrai": true,
         "e": "« When checking for hydraulic leaks, never pass your hand over hoses »"
       },
       {
@@ -970,7 +954,8 @@
         "e": "« IT IS STRICTLY FORBIDDEN FOR ANYONE TO ENTER THE 30-INCH RAISE TO RECOVER ANYTHING, REGARDLESS TO HIS DEPTH »"
       },
       {
-        "q": "What is the minimum distance between the barricade at the site entrance and the first pieces of equipment?",
+        "t": "trou",
+        "q": "A distance of at least ______ must be left between the barricade at the site entrance and the first pieces of equipment.",
         "o": [
           "1 metre (3 feet)",
           "3 metres (10 feet)",
@@ -1016,7 +1001,8 @@
         "e": "« N.B. only one part at a time and one side at a time. »"
       },
       {
-        "q": "What is the minimum sling capacity required for the in-shop procedure?",
+        "t": "trou",
+        "q": "For the in-shop procedure you must use a sling with a capacity of ______.",
         "o": [
           "1 800 lbs",
           "3 500 lbs",
@@ -1040,14 +1026,9 @@
     ],
     "en-pro-op-sm-004a": [
       {
-        "q": "Why must you never drill dry?",
-        "o": [
-          "It wears out the drill bit faster",
-          "The dust created is breathed by you and your co-workers and is harmful for your health",
-          "It overheats the hammer",
-          "It reduces drilling production"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "You must never drill dry: the dust you create is breathed by you and your co-workers and is harmful for your health.",
+        "vrai": true,
         "e": "« NEVER DRILL DRY THE DUST YOU CREATE IS BREATHED BY YOU AND YOUR CO-WORKERS IT IS HARMFUL FOR YOUR HEALTH »"
       },
       {
@@ -1097,14 +1078,9 @@
         "e": "« NO WORKER CAN OVERPASS THE YELLOW RIBBON DURING THE LOCK-OUT PROCEDURE IF HIS PADLOCK IS NOT ON THE MULTI-LOCK OR THE LOCK-OUT BOX »"
       },
       {
-        "q": "How should you operate the master switch on the panel?",
-        "o": [
-          "With your right hand, standing in front of the panel",
-          "With your left hand, with your body on the right side of the panel",
-          "With both hands for a firm grip",
-          "With an insulated tool, never by hand"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "You must always use your left hand to open or close the master switch and place your body on the right side of the panel.",
+        "vrai": true,
         "e": "« Always use your left hand to open or close the master switch and place your body on the right side of the panel »"
       },
       {
@@ -1154,14 +1130,9 @@
         "e": "« Heavy objects must be moved with help or with appropriate equipment »"
       },
       {
-        "q": "What is the correct technique for lifting a load?",
-        "o": [
-          "Keep the load away from the body and bend the back",
-          "Keep the load near the body and bend the knees to lift or set down the load",
-          "Always lift with a straight-arm technique",
-          "Twist at the waist while lifting"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "To lift a load correctly, keep the load near the body and bend the knees to lift or set down the load.",
+        "vrai": true,
         "e": "« Keep the load near the body ... Bend the knees to lift or set down the load »"
       },
       {
@@ -1189,7 +1160,8 @@
         "e": "« Insert the other end of the drill rod into the gearbox saver sub by moving it without rotation. DO NOT SCREW THE ROD TO THE SAVER SUB »"
       },
       {
-        "q": "To what pressure must the hydraulic force be adjusted to fully screw the new saver sub to the gear box contact?",
+        "t": "trou",
+        "q": "The hydraulic force must be adjusted to ______ to fully screw the new saver sub to the gear box contact.",
         "o": [
           "1500 psi",
           "2000 psi",
@@ -1257,7 +1229,8 @@
         "e": "« it is important to push, WITHOUT ROTATION, 1 rod more than the length of the breakthrough »"
       },
       {
-        "q": "How far must signs or barricades be installed from the first pieces of equipment or material?",
+        "t": "trou",
+        "q": "Signs or barricades must be installed at least ______ from the first pieces of equipment or material.",
         "o": [
           "At least 1.5 metres (5 feet)",
           "At least 3 metres (10 feet)",
@@ -1270,7 +1243,8 @@
     ],
     "en-pro-op-ith-012a": [
       {
-        "q": "What is the minimum distance between the driller and the hole to be drilled during remote drilling?",
+        "t": "trou",
+        "q": "During remote drilling, the system must be installed at a distance between the driller and the hole to be drilled of a minimum of ______.",
         "o": [
           "25 feet (7.5 meters)",
           "50 feet (15 meters)",
@@ -1316,7 +1290,8 @@
     ],
     "en-pro-op-ith-014a": [
       {
-        "q": "What minimum distance must be respected between the mast and the console?",
+        "t": "trou",
+        "q": "A minimum distance of ______ between the mast and the console must be respected.",
         "o": [
           "0.5 meter",
           "1 meter",
@@ -1373,14 +1348,9 @@
         "e": "« IF THE GROMMETS ARE MISSING OR WORN OUT, THE CYLINDER COULD FALL OUT ONCE THE CARRIAGE PLATE IS REMOVED. »"
       },
       {
-        "q": "Who must be present when the feed cylinder is being changed?",
-        "o": [
-          "The Maintenance Manager only",
-          "A safety officer",
-          "The supervisor or a mechanic",
-          "No one — the worker can do it alone"
-        ],
-        "a": 2,
+        "t": "vf",
+        "q": "The supervisor or a mechanic must be there when the feed cylinder is being changed.",
+        "vrai": true,
         "e": "« The supervisor or a mechanic, must be there when this job is done. »"
       },
       {
@@ -1419,14 +1389,9 @@
         "e": "« it is strictly forbidden for anyone, at all times, to go down to the bottom of the raise to clear or recover metal parts, tools, bits or any other equipment »"
       },
       {
-        "q": "What must the worker wear before removing the cover?",
-        "o": [
-          "Rubber gloves only",
-          "A harness attached to an anchor or a lifeline",
-          "A face shield",
-          "Nothing in particular"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "Before removing the cover, the worker must wear a harness and be attached to an anchor or a lifeline.",
+        "vrai": true,
         "e": "« Before removing the cover, the worker must wear a harness and be attached to an anchor or a lifeline »"
       },
       {
@@ -1454,14 +1419,9 @@
     ],
     "en-pro-mec-005a": [
       {
-        "q": "During lifting and slinging operations, where must you never position yourself?",
-        "o": [
-          "Behind the Manitou",
-          "Under a load",
-          "Beside the electrical panel",
-          "On the skid"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "You must never position yourself under a load during lifting and slinging operations.",
+        "vrai": true,
         "e": "« NEVER POSITION YOURSELF UNDER A LOAD DURING LIFTING AND SLINGING OPERATIONS »"
       },
       {
@@ -1522,7 +1482,8 @@
         "e": "« EVERY TIME YOU HAVE TO EXPOSE YOUR HANDS UNDER THE HAMMER, IT MUST BE VALIDATED THAT THE HAMMER IS TIGHTENED INTO THE GEAR BOX »"
       },
       {
-        "q": "What is the weight of a 6-inch hammer according to supplier specifications?",
+        "t": "trou",
+        "q": "According to supplier specifications (Sandvik and Epiroc), a 6-inch hammer weighs ______.",
         "o": [
           "60 lbs",
           "89 lbs",
@@ -1568,14 +1529,9 @@
         "e": "« AVOID GETTING YOUR HANDS UNDER THE PUMP, AND PROTECT YOUR FINGERS FROM GETTING TRAPPED. »"
       },
       {
-        "q": "What tool should be used to tap the bell housing if it sticks to the electric motor?",
-        "o": [
-          "A steel sledgehammer",
-          "A rubber hammer",
-          "A pry bar",
-          "A flat-blade screwdriver"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "If the bell housing sticks to the electric motor, a rubber hammer must be used to tap it.",
+        "vrai": true,
         "e": "« If the bell housing sticks to the electric motor, use a rubber hammer to tap it. THE BELL HOUSING IS MADE OF ALUMINIUM »"
       },
       {
@@ -1592,14 +1548,9 @@
     ],
     "en-pro-dd-st-004a": [
       {
-        "q": "Which tool is it forbidden to use to unscrew the water swivel?",
-        "o": [
-          "An adjustable wrench",
-          "A pipe wrench",
-          "The head of the drill",
-          "A long adapter"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "It is forbidden to use a pipe wrench to unscrew the water swivel.",
+        "vrai": true,
         "e": "« IT IS FORBIDDEN TO USE A PIPE WRENCH TO UNSCREW THE WATER SWIVELL »"
       },
       {
@@ -1649,7 +1600,8 @@
         "e": "« If the bar slip, be ready to ▪ Let the bar go ▪ Not hold back the bar ▪ Move back quickly »"
       },
       {
-        "q": "For drills with a winch at the rear, how far must the drill winch be out of between the skates?",
+        "t": "trou",
+        "q": "For drills with a winch at the rear, the drill winch must be out of between the skates by at least ______.",
         "o": [
           "By at least 6 inches",
           "By at least 12 inches",
@@ -1684,7 +1636,8 @@
     ],
     "en-pro-op-dd-012a": [
       {
-        "q": "What is the minimum distance required between the driller and the hole to be drilled during remote drilling?",
+        "t": "trou",
+        "q": "The system must be installed at a distance between the driller and the hole to be drilled of a minimum of ______ during remote drilling.",
         "o": [
           "25' (7.5 meters)",
           "50' (15 meters)",
@@ -1730,14 +1683,9 @@
     ],
     "en-pro-dd-st-002a": [
       {
-        "q": "Why must you never expose your hands in front of the core tube while emptying it?",
-        "o": [
-          "The tube surface may be hot",
-          "The rock coming out could cause serious injury",
-          "It could contaminate the core sample",
-          "The core spring could eject grease"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "Putting your hands in front of the tube when the rock comes out could cause serious injury.",
+        "vrai": true,
         "e": "« Putting your hands in front of the tube when the rock comes out could cause serious injury. »"
       },
       {
@@ -1809,7 +1757,8 @@
         "e": "« Remove the three half inch bolts with a ¾ key with the bushing on the cone and put them back without the bushing to prevent the cone projection. »"
       },
       {
-        "q": "What torque must be applied to the 9 bolts at reassembly?",
+        "t": "trou",
+        "q": "At reassembly, the 9 bolts must be tightened with the torque wrench to ______.",
         "o": [
           "75 lbs/foot",
           "90 lbs/foot",
@@ -1844,7 +1793,8 @@
         "e": "« The slider has to be installed on the door at all times »"
       },
       {
-        "q": "At what minimum distance from the drill tower must the dead man be positioned?",
+        "t": "trou",
+        "q": "The dead man must be positioned at least ______ from the drill tower, next to the rod rack.",
         "o": [
           "1 meter",
           "2 meters",
@@ -1879,14 +1829,9 @@
         "e": "« It is important to check the reaming shell with the shell gauge to check for wear and replace if necessary. »"
       },
       {
-        "q": "What is very important to do when putting the 3 meters drill rod with the water swivel?",
-        "o": [
-          "Torque it with a hydraulic wrench",
-          "Thoroughly grease the thread",
-          "Cool it with water before assembly",
-          "Paint the joint for identification"
-        ],
-        "a": 1,
+        "t": "vf",
+        "q": "When putting the 3 meters drill rod with the water swivel, it is very important to thoroughly grease the thread.",
+        "vrai": true,
         "e": "« Put the 3 meters drill rod with the water swivel. It is very important to thoroughly grease the tread »"
       },
       {
@@ -1925,7 +1870,8 @@
         "e": "« ALWAYS CARRY LARGE PIECES OF WOOD WITH TWO WORKER AND HAVING A GOOD COMMUNICATION IS VERY IMPORTANT »"
       },
       {
-        "q": "At what floor height do guardrails become mandatory?",
+        "t": "trou",
+        "q": "If the floor is higher than ______, guardrails must be installed.",
         "o": [
           "Higher than 24 inches",
           "Higher than 12 inches",
