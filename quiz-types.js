@@ -572,7 +572,8 @@
         "e": "« Nettoyez le trou en alésant le trou de haut en bas avec de l'air et de l'eau jusqu'à ce que le collier du trou du boîtier soit visible » — et l'avertissement : « NE JAMAIS FORER À SEC »" }
     ],
     "pro-pt-001": [
-      { "t": "vf", "q": "Le pipe-tub a 4 arrêts d'urgence. Ils doivent tous marcher avant de travailler.", "vrai": true,
+      { "t": "trou", "q": "Il y a ______ arrêts d'urgence sur le pipe-tub. Ils doivent tous être fonctionnels avant d'opérer.",
+        "o": ["2", "3", "4", "6"], "a": 2,
         "e": "« Il y a 4 arrêts d'urgence sur le pipe-tub. Ils doivent tous être fonctionnels avant d'opérer »" },
       { "t": "vf", "q": "Pour déplacer et ranger le PIPE-TUB (mobilisation et démobilisation), on suit la procédure PRO-OP-ITH-004.", "vrai": false,
         "e": "« Pour la mobilisation et la démobilisation du PIPE-TUB, la PRO-OP-ITH-003 Procédure de démobilisation de la foreuse ITH et du compresseur doit être mise en application. »" },
@@ -594,7 +595,8 @@
     "pro-sec-001": [
       { "t": "vf", "q": "Quand tu appliques la procédure, tu la mets dans un sac et tu l'accroches à la barrière, à l'endroit où on perce.", "vrai": true,
         "e": "« Quand cette procédure est appliquée, elle doit être mise dans un sac et accrochée à la barricade à l'endroit de défonçage. » (PRO-SEC-001, p. 1, APPLICATION)" },
-      { "t": "vf", "q": "Une autre personne que le foreur ou l'aide-foreur fait l'inspection. Elle doit appeler le surintendant Santé-Sécurité pour vérifier que la procédure est bien faite et signée.", "vrai": false,
+      { "t": "trou", "q": "Si ce n'est pas le foreur ou l'aide-foreur qui vient faire l'inspection, la personne désignée doit communiquer avec ______ pour confirmer que la procédure est bien appliquée et signée.",
+        "o": ["le surintendant SST", "le superviseur", "le foreur", "le contremaître"], "a": 2,
         "e": "« Si ce n'est pas le foreur ou l'aide-foreur qui vient faire l'inspection, la personne désignée doit communiquer avec le foreur pour confirmer que la procédure est bien appliquée et qu'elle a été signée. » (PRO-SEC-001, p. 1) — c'est avec le foreur, pas le surintendant, qu'elle doit communiquer." },
       { "t": "vf", "q": "Après le perçage, on peut libérer la zone de sécurité dès que la foreuse s'arrête.", "vrai": false,
         "e": "« Après le défoncement, il faut attendre que les aciers soient complètement sortis du trou pour libérer la zone de sécurité […] » — il faut attendre la sortie complète des aciers, pas seulement l'arrêt de la foreuse." },
@@ -611,7 +613,8 @@
     "pro-sec-015": [
       { "t": "vf", "q": "La foreuse a un détecteur de gaz fixe qui l'arrête toute seule. Malgré ça, chaque travailleur doit aussi porter son détecteur de gaz LEL portatif.", "vrai": true,
         "e": "« Si un gaz est détecté, la foreuse sera arrêtée immédiatement par le système de détection; d. Les travailleurs doivent quand même avoir un détecteur de gaz LEL portatif en leur possession »" },
-      { "t": "vf", "q": "On calibre le détecteur fixe de la foreuse une fois par semaine.", "vrai": false,
+      { "t": "trou", "q": "Le détecteur fixe de la foreuse doit être calibré ______ selon les spécifications du fabricant et du client.",
+        "o": ["une fois par semaine", "tous les jours", "une fois par mois", "à chaque quart"], "a": 1,
         "e": "« Le détecteur doit être calibré tous les jours selon les spécifications du fabricant et du client »" },
       { "t": "vf", "q": "C'est aux travailleurs de vérifier que les détecteurs sont calibrés et testés.", "vrai": false,
         "e": "« Les superviseurs doivent s'assurer que la procédure est respectée rigoureusement. Ils doivent aussi s'assurer que les détecteurs sont calibrés et testés. »" },
