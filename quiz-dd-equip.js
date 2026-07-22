@@ -5,14 +5,14 @@
 (function () {
   var Q = {
     "pro-op-cat-416-001": [
-      { "q": "Dans la rampe, quelle distance dois-tu garder entre les véhicules ?",
+      { "t": "trou", "q": "Dans la rampe, tu dois garder une distance de ______ entre les véhicules.",
         "o": ["10 mètres", "20 mètres", "30 mètres", "50 mètres"], "a": 2,
         "e": "« Toujours garder une distance de 30 mètres entre les véhicules dans la rampe. »" },
       { "q": "Combien les fourches peuvent-elles lever au maximum ?",
         "o": ["1 100 kg", "2 964 kg / 6 535 lb", "3 300 kg", "4 600 kg"], "a": 1,
         "e": "« La capacité de charge de matériel avec les fourches est de 2964 KG / 6535 LBS. »" },
-      { "q": "Quand peux-tu sortir les vérins (stabilisateurs) ?",
-        "o": ["En tout temps", "Sur sol plat et solide, jamais en pente", "Seulement en pente", "Seulement quand le moteur est arrêté"], "a": 1,
+      { "t": "vf", "q": "Les vérins peuvent être appliqués seulement lors du stationnement sur un terrain plat et stable, jamais en pente.",
+        "vrai": true,
         "e": "« Les vérins peuvent être appliqués seulement lors du stationnement sur un terrain plat et stable. JAMAIS EN PENTE. »" },
       { "q": "Une personne est dans le panier avant. À quelle vitesse peux-tu rouler ?",
         "o": ["À la vitesse d'un homme qui marche", "5 km/h", "10 km/h", "Sans limite"], "a": 0,
@@ -21,7 +21,7 @@
         "o": ["Le poids du compresseur R-55", "Le poids d'une V-30 (3 300 lb)", "6 535 lb", "Aucune charge"], "a": 1,
         "e": "« Avec le compresseur en remorque, le maximum de poids que l'on peut transporter avec les fourches est l'équivalent d'une V-30 (3300 lbs). »" }    ],
     "pro-op-bt3-001": [
-      { "q": "Le travailleur en formation doit faire combien d'heures avec un formateur ?",
+      { "t": "trou", "q": "Le travailleur en formation doit faire ______ d'opération supervisées par le formateur de MRI.",
         "o": ["10 heures", "20 heures", "40 heures", "80 heures"], "a": 2,
         "e": "« Le travailleur en formation doit faire 40 heures d'opération supervisées par le formateur de MRI. »" },
       { "q": "Quel poids maximum peut-on mettre sur la plate-forme (avec le remorquage) ?",
@@ -35,14 +35,14 @@
       { "q": "Jusqu'à quand dois-tu porter tes ÉPI ?",
         "o": ["Jusqu'à la fin du pompage", "Jusqu'à ce que la machine à ciment soit bien nettoyée", "Pendant 10 minutes", "Tant qu'il y a de la poussière"], "a": 1,
         "e": "« Le port des EPI est obligatoire à partir du moment où l'on commence à manipuler les sacs de ciment jusqu'à ce que le nettoyage complet de la machine à ciment soit terminé. »" },
-      { "q": "Trou vers le bas : la pression monte. À quelle pression remontes-tu le tube d'environ 10 pieds ?",
+      { "t": "trou", "q": "Trou vers le bas : si la pression monte à plus de ______, remonte le tube vers le collet du trou d'une dizaine de pieds.",
         "o": ["10 psi", "30 psi", "60 psi", "100 psi"], "a": 1,
         "e": "« Si la pression commence à monter à plus de 30 psi, remonter le tube vers le collet du trou d'une dizaine de pieds. »" },
       { "q": "Après le pompage, tu plies le boyau avec 2 ty-rap. Combien de temps reste-t-il plié ?",
         "o": ["6 heures", "12 heures", "24 heures (cure)", "48 heures"], "a": 2,
         "e": "« …le boyau où l'on pompe le ciment doit être plié en deux et 2 ty-rap doivent le tenir plié jusqu'à ce que le temps de cure de 24 hrs soit complété. »" },
-      { "q": "Qu'est-ce qui doit toujours être sur le site pendant le ciment ?",
-        "o": ["Un téléphone", "Une trousse d'urgence", "Un deuxième opérateur", "Un extincteur à poudre"], "a": 1,
+      { "t": "vf", "q": "Une trousse d'urgence est obligatoire sur le site.",
+        "vrai": true,
         "e": "« Trousse d'urgence obligatoire sur le site. »" }    ]
   };
   var T = window.QUIZ_PROC || (window.QUIZ_PROC = {});

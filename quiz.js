@@ -87,12 +87,11 @@ window.QUIZ = [
   },
   {
     "id": "q6",
-    "question": "Tu changes la coupling sur une foreuse CUBEX. Le bell housing est en aluminium. Quel outil tu prends pour le décoller sans l'abîmer ?",
+    "type": "vf",
+    "question": "Sur une foreuse CUBEX, comme le bell housing est en aluminium, on doit le décoller uniquement avec une masse en caoutchouc.",
     "options": [
-      "Une masse en caoutchouc",
-      "Un marteau en acier",
-      "Un pipe wrench",
-      "Une pry bar frappée à la masse"
+      "Vrai",
+      "Faux"
     ],
     "answer": 0,
     "explication": "Le bell housing étant en aluminium, la procédure impose d'utiliser uniquement une masse de caoutchouc pour le décoller afin de ne pas l'endommager. La pry bar frappée à la masse ne sert qu'à décoller une coupling collée, après retrait du bell housing.",
@@ -131,7 +130,8 @@ window.QUIZ = [
   },
   {
     "id": "q9",
-    "question": "Sur la foreuse ITH, tu dévisses des tiges avec des clés et un tire-fort. L'ancrage du mât ne doit jamais dépasser quelle charge ?",
+    "type": "trou",
+    "question": "Sur la foreuse ITH, tu dévisses des tiges avec un tire-fort. L'ancrage du mât est certifié ______ et tu ne dois jamais dépasser cette charge.",
     "options": [
       "1000 kg",
       "2500 kg",
@@ -150,12 +150,11 @@ window.QUIZ = [
   },
   {
     "id": "q10",
-    "question": "Tu dévisses des tiges sur la foreuse ITH. Que doivent avoir les crochets du tire-fort ?",
+    "type": "vf",
+    "question": "Pour dévisser des tiges sur la foreuse ITH, on peut utiliser un tire-fort dont les crochets n'ont pas de linguet.",
     "options": [
-      "Ils sont peints en jaune",
-      "Ils ont un linguet",
-      "Ils sont en aluminium",
-      "Ils sont doublés pour partager la charge"
+      "Vrai",
+      "Faux"
     ],
     "answer": 1,
     "explication": "La procédure exige de n'utiliser qu'un tire-fort dont les crochets sont munis de linguet (N.B. : les crochets doivent être munis de linguet).",
@@ -169,14 +168,13 @@ window.QUIZ = [
   },
   {
     "id": "q18",
-    "question": "Tu déplaces la foreuse ITH sans remorque, avec une barre de tir. Qu'est-ce qui est interdit ?",
+    "type": "vf",
+    "question": "Il est permis de déplacer la foreuse ITH sans la remorque dans la rampe.",
     "options": [
-      "La déplacer sans remorque dans la rampe",
-      "La déplacer à plat sur une courte distance",
-      "La déplacer à basse vitesse",
-      "Mettre une chaîne de sécurité entre la foreuse et la chargeuse"
+      "Vrai",
+      "Faux"
     ],
-    "answer": 0,
+    "answer": 1,
     "explication": "La procédure permet le déplacement sans remorque à plat, sur de courtes distances et à basse vitesse, mais précise qu'il est interdit de déplacer la foreuse sans la remorque dans la rampe. L'installation d'une chaîne de sécurité reliant la foreuse à la chargeuse est au contraire exigée.",
     "sourceId": "pro-op-ith-003",
     "code": "PRO-OP-ITH-003",
@@ -209,7 +207,8 @@ window.QUIZ = [
   },
   {
     "id": "q20",
-    "question": "Tu relies le traîneau ou la remorque au véhicule pour déplacer la foreuse ITH. Que faut-il pour les élingues ?",
+    "type": "trou",
+    "question": "Pour relier le traîneau ou la remorque au véhicule (foreuse ITH), il faut ______.",
     "options": [
       "Deux élingues d'au moins 1'' x 8 pieds, avec des manilles de 1''1/4 au minimum",
       "Une seule élingue de 3/4'' avec une manille de 1/2''",
@@ -229,7 +228,8 @@ window.QUIZ = [
   },
   {
     "id": "q21",
-    "question": "Sur la foreuse ITH, tu fais du forage de production. Quelle distance minimale tu gardes entre le mât et la console ?",
+    "type": "trou",
+    "question": "Sur la foreuse ITH, en forage de production, tu gardes une distance minimale de ______ entre le mât et la console.",
     "options": [
       "0,5 mètre",
       "1 mètre",
@@ -275,12 +275,11 @@ window.QUIZ = [
   },
   {
     "id": "q23",
-    "question": "Tu fais du forage de production sur la foreuse ITH. La rallonge du câble électrique est sous tension. Avec quoi tu la touches ?",
+    "type": "vf",
+    "question": "En forage de production sur la foreuse ITH, la rallonge du câble électrique sous tension ne doit être manipulée qu'avec le crochet en plastique.",
     "options": [
-      "Seulement avec le crochet en plastique",
-      "À mains nues, avec des gants en cuir",
-      "Avec une pince en métal isolée",
-      "En tirant direct sur le câble"
+      "Vrai",
+      "Faux"
     ],
     "answer": 0,
     "explication": "La procédure indique de ne manipuler l'extension du câble électrique sous tension qu'avec le crochet de plastique, afin d'éviter tout contact électrique dangereux.",
@@ -347,14 +346,13 @@ window.QUIZ = [
   },
   {
     "id": "q27",
-    "question": "Tu forages avec la V-30 en descendant. Quelle est la règle pour le couvert (de M.R.I. ou du client) sur la monterie ?",
+    "type": "vf",
+    "question": "Lors du forage de la V-30 en descendant, l'installation du couvert (M.R.I. ou client) sur la monterie est obligatoire en tout temps.",
     "options": [
-      "Il est facultatif si le trou fait moins de 40 pieds",
-      "Il est obligatoire en tout temps quand tu forages en descendant",
-      "Il faut le mettre seulement à la fin du forage",
-      "Tu peux l'enlever sans précaution dès que le forage commence"
+      "Vrai",
+      "Faux"
     ],
-    "answer": 1,
+    "answer": 0,
     "explication": "La procédure précise que l'installation du couvert fourni par M.R.I. ou le client sur la monterie est obligatoire en tout temps lors du forage de V-30 en descendant.",
     "sourceId": "pro-op-ith-005",
     "code": "PRO-OP-ITH-005",
@@ -373,7 +371,8 @@ window.QUIZ = [
   },
   {
     "id": "q32",
-    "question": "Tu suspends et places la tête V-30 pour l'alésage. Quelle chaîne de levage tu dois utiliser ?",
+    "type": "trou",
+    "question": "Pour suspendre et placer la tête V-30 lors de l'alésage, tu dois utiliser ______.",
     "options": [
       "Une chaîne de grade 80 (7100 lbs)",
       "Une chaîne de grade 30 (1900 lbs)",
@@ -398,7 +397,8 @@ window.QUIZ = [
   },
   {
     "id": "q33",
-    "question": "Tu fais un alésage ascendant sans accès avec la tête V-30. Pendant le forage, à quelle distance du mât tout le monde doit rester ?",
+    "type": "trou",
+    "question": "Alésage ascendant sans accès avec la tête V-30 : pendant le forage, tout le monde doit rester à au moins ______ du mât.",
     "options": [
       "1,5 mètre",
       "3 mètres",
@@ -424,7 +424,8 @@ window.QUIZ = [
   },
   {
     "id": "q37",
-    "question": "Sur la V-30, un taillant se brise dans un trou qui descend (monterie). Quel outil tu prends pour sortir les pièces au fond ?",
+    "type": "trou",
+    "question": "Sur la V-30, un taillant se brise dans une monterie (trou descendant) : pour sortir les pièces au fond, tu utilises ______.",
     "options": [
       "Le racloir de monterie (raise scraper) fait pour ça",
       "Une perche aimantée au bout d'une élingue",
@@ -443,14 +444,13 @@ window.QUIZ = [
   },
   {
     "id": "q38",
-    "question": "Sur la V-30, un taillant se brise ou des outils tombent dans une monterie en forage descendant. Qui a le droit de descendre au fond pour prendre les pièces en métal ?",
+    "type": "vf",
+    "question": "Quand un taillant se brise ou que des outils tombent dans une monterie en forage descendant, il est interdit à quiconque, en tout temps, de descendre au fond pour récupérer les pièces métalliques.",
     "options": [
-      "Seulement le foreur responsable",
-      "Un travailleur avec un harnais, attaché à une ligne de vie",
-      "L'aide-foreur, si le superviseur surveille",
-      "Personne. C'est défendu à tout le monde, en tout temps"
+      "Vrai",
+      "Faux"
     ],
-    "answer": 3,
+    "answer": 0,
     "explication": "La procédure interdit strictement à quiconque, et ce en tout temps, de descendre au fond de la monterie pour dégager ou récupérer les pièces métalliques, les outils, les taillants ou tout autre équipement.",
     "sourceId": "pro-op-ith-008",
     "code": "PRO-OP-ITH-008",
@@ -500,7 +500,8 @@ window.QUIZ = [
   },
   {
     "id": "q41",
-    "question": "Tu fais du forage à distance avec une foreuse ITH. Quelle distance minimale tu mets entre le foreur (commande à distance) et le trou à forer ?",
+    "type": "trou",
+    "question": "En forage à distance avec une foreuse ITH, tu mets une distance minimale de ______ entre le foreur (commande à distance) et le trou à forer.",
     "options": [
       "50' (15 mètres)",
       "7 mètres",
@@ -540,14 +541,13 @@ window.QUIZ = [
   },
   {
     "id": "q43",
-    "question": "En forage à distance, tu débloques un trou dynamité avec de l'amex (ANFO). Que dois-tu faire pour baisser le risque d'explosion ?",
+    "type": "vf",
+    "question": "Pour débloquer un trou dynamité à l'amex (ANFO), on met de l'eau dans les tiges de forage afin de diminuer le risque d'explosion.",
     "options": [
-      "Mettre plus de pression d'air dans les tiges",
-      "Mettre de l'eau dans les tiges de forage",
-      "Souffler les tiges à l'air sec avant de débloquer",
-      "Vaporiser de l'huile dans les tiges de forage"
+      "Vrai",
+      "Faux"
     ],
-    "answer": 1,
+    "answer": 0,
     "explication": "La procédure exige de mettre de l'eau dans les tiges de forage lors du déblocage d'un trou dynamité avec amex (ANFO) afin de diminuer le risque d'explosion.",
     "sourceId": "pro-op-ith-012",
     "code": "PRO-OP-ITH-012",
@@ -560,12 +560,11 @@ window.QUIZ = [
   },
   {
     "id": "q45",
-    "question": "Tu installes un tubage (casing) au collet des trous avec la foreuse ITH. Quand est-il interdit de mettre une partie de ton corps sous les tables ?",
+    "type": "vf",
+    "question": "Lors de l'installation d'un tubage (casing), il est interdit de mettre une partie de son corps sous les tables tant que le marteau n'est pas monté au-dessus des tables et que la slip-plate n'est pas fermée.",
     "options": [
-      "Tant que le marteau n'est pas monté au-dessus des tables et que la slip-plate n'est pas fermée",
-      "Seulement quand la foreuse est sous tension",
-      "Seulement s'il n'y a pas un deuxième travailleur",
-      "Tant que le tubage n'est pas entré de 1 pied dans le roc solide"
+      "Vrai",
+      "Faux"
     ],
     "answer": 0,
     "explication": "La procédure interdit formellement à quiconque de positionner toute partie de son corps sous les tables si le marteau n'est pas monté au-delà des tables ET que la slip-plate n'est pas fermée.",
@@ -582,7 +581,8 @@ window.QUIZ = [
   },
   {
     "id": "q47",
-    "question": "Tu installes un tubage (casing) au collet des trous avec la foreuse ITH. De combien le 2e forage doit-il entrer dans le roc solide ?",
+    "type": "trou",
+    "question": "Tu installes un tubage (casing) au collet des trous avec la foreuse ITH. Le 2e forage doit entrer de ______ dans le roc solide.",
     "options": [
       "1 pied dans le roc solide",
       "1 mètre dans le roc solide",
@@ -604,12 +604,11 @@ window.QUIZ = [
   },
   {
     "id": "q49",
-    "question": "Selon la procédure des marteaux de forage, comment tu transportes toujours les marteaux de 6 pouces ?",
+    "type": "vf",
+    "question": "Les marteaux de forage de 6 pouces doivent toujours être transportés à l'aide du chariot conçu à cet effet.",
     "options": [
-      "Avec le chariot fait pour ça",
-      "À la main, par un seul travailleur",
-      "Attachés direct à la console de la foreuse",
-      "Sur l'épaule de l'aide-foreur"
+      "Vrai",
+      "Faux"
     ],
     "answer": 0,
     "explication": "La procédure exige que les marteaux de 6\" soient TOUJOURS transportés à l'aide du chariot conçu à cet effet (le marteau 6\" pèse 211 lbs).",
@@ -650,7 +649,8 @@ window.QUIZ = [
   },
   {
     "id": "q51",
-    "question": "Tu manipules les marteaux de forage. Quelle pièce doit rester installée sur le marteau en tout temps ?",
+    "type": "trou",
+    "question": "Tu manipules les marteaux de forage. La pièce qui doit rester installée sur le marteau en tout temps est ______.",
     "options": [
       "Le « DRIVER SUB »",
       "Le centralisateur",

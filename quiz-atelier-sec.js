@@ -6,8 +6,7 @@
 (function () {
   var Q = {
     "atelier-mec-001": [
-      { "q": "Combien de fois l'opérateur de la chargeuse doit-il klaxonner avant d'entrer ?",
-        "o": ["Une fois", "Deux fois", "Trois fois", "Il ne klaxonne pas"], "a": 1,
+      { "t": "vf", "q": "L'opérateur doit appuyer sur le klaxon de la chargeuse à deux reprises avant d'entrer dans l'atelier.", "vrai": true,
         "e": "« L'opérateur doit appuyer sur le klaxon de la chargeuse à deux reprises avant d'entrer. »" },
       { "q": "Que doit-on déposer sous les tractions d'un équipement qui entre, sort ou se déplace dans l'atelier ?",
         "o": ["Rien de particulier", "Des lanières de caoutchouc", "Des blocs de bois", "Du sable"], "a": 1,
@@ -29,12 +28,11 @@
       { "q": "Combien d'options de sertissage la sertisseuse propose-t-elle ?",
         "o": ["4", "6", "8", "10"], "a": 2,
         "e": "« Sélectionner une des 8 options selon la grosseur du boyau et le nombre de brins. »" },
-      { "q": "Qu'est-ce qui arrête immédiatement le coupe-boyau ou la sertisseuse en tout temps ?",
-        "o": ["Rien ne peut les arrêter", "Le bouton d'arrêt d'urgence", "Attendre la fin du cycle", "Débrancher le courant"], "a": 1,
+      { "t": "vf", "q": "En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coupe-boyau.", "vrai": true,
         "e": "« En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coup-boyau »" }
     ],
     "atelier-mec-003": [
-      { "q": "Quelle est la pression maximale de la presse ENERPAC IPR 5075 ?",
+      { "t": "trou", "q": "La presse ENERPAC IPR 5075 opère à une pression maximum de ______.",
         "o": ["1 000 psi", "5 000 psi", "10 000 psi", "20 000 psi"], "a": 2,
         "e": "« La presse IPR 5075 opère à une pression maximum de 10 000 psi et génère une poussée de 50 tonnes métriques. »" },
       { "q": "Quand la barre de l'interverrouillage est tournée vers le haut, que se passe-t-il ?",
@@ -48,7 +46,7 @@
         "e": "« …une analyse de risque (formulaire en annexe) doit être effectuée avec le surintendant SST, le superviseur de l'atelier et les travailleurs qui doivent faire le travail. »" }
     ],
     "atelier-transport-001": [
-      { "q": "Combien de temps à l'avance le contremaître-général doit-il être averti du départ du transport ?",
+      { "t": "trou", "q": "Le contremaître-général au site doit être averti du moment du départ du transport ______ à l'avance.",
         "o": ["12 heures", "24 heures", "48 heures", "Aucun préavis requis"], "a": 2,
         "e": "« Le contremaître-général au site doit être averti du moment du départ du transport 48 heures à l'avance par le superviseur de l'atelier. »" },
       { "q": "Que doit obligatoirement posséder le chauffeur ?",
@@ -71,8 +69,7 @@
       { "q": "Où faut-il positionner le trépied ?",
         "o": ["Collé à la foreuse", "À l'écart de la foreuse, en considérant la projection d'étincelles", "N'importe où", "Sous la foreuse"], "a": 1,
         "e": "« Il doit être positionné à l'écart de la foreuse et il faut considérer la projection d'étincelle. »" },
-      { "q": "Que doit-on faire des raccords électriques ?",
-        "o": ["Les laisser au sol", "Les accrocher pour ne pas être en contact avec l'eau", "Les immerger", "Peu importe"], "a": 1,
+      { "t": "vf", "q": "Les raccords électriques doivent être accrochés pour ne pas être en contact avec l'eau.", "vrai": true,
         "e": "« Les raccords électriques doivent être accrochés pour ne pas être en contact avec l'eau. »" }
     ],
     "ges-san-sec-001": [
@@ -82,12 +79,11 @@
       { "q": "Qui a l'autorité d'autoriser une modification sur une foreuse CUBEX ?",
         "o": ["Le foreur", "Le directeur entretien", "N'importe quel superviseur", "Le fournisseur seulement"], "a": 1,
         "e": "« Foreuse Cubex : Directeur entretien »" },
-      { "q": "La procédure s'applique-t-elle aux travaux d'entretien ou de réparation normaux ?",
-        "o": ["Oui, systématiquement", "Non, si les paramètres d'origine ne sont pas modifiés", "Seulement le vendredi", "Uniquement sur demande écrite"], "a": 1,
+      { "t": "vf", "q": "Le protocole ne s'applique pas aux travaux d'entretien ou de réparation normaux où les paramètres ou spécifications de conception d'origine ne sont pas modifiés.", "vrai": true,
         "e": "« Le protocole ne s'applique pas aux travaux d'entretien ou de réparation normaux où les paramètres ou spécifications de conception d'origine ne sont pas modifiés. »" }
     ],
     "procedure-serrage-marteau": [
-      { "q": "Sur un marteau NEUF, à quel couple torque-t-on les écrous (nut) ?",
+      { "t": "trou", "q": "Sur un marteau NEUF, on torque à ______ sur l'écrou (nut).",
         "o": ["100 pi-lbs", "250 pi-lbs", "800 pi-lbs", "1200 pi-lbs"], "a": 1,
         "e": "« Torquer à 250 PD/LBS sur l'écrou (Nut) »" },
       { "q": "Sur un marteau NEUF, à quel couple torque-t-on les boulons (bolt) ?",

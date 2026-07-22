@@ -5,7 +5,7 @@
 (function () {
   var Q = {
     "pro-op-ith-017": [
-      { "q": "Quand on déplace les tiges, à quelle distance doivent rester le soudeur et les travailleurs du haut ?",
+      { "t": "trou", "q": "Quand on déplace les tiges, le soudeur et les travailleurs du haut doivent obligatoirement se tenir à une distance minimum de ______.",
         "o": ["1 mètre", "2 mètres", "3 mètres", "5 mètres"], "a": 2,
         "e": "« …doivent obligatoirement se tenir à une distance minimum de 3 mètres. »" },
       { "q": "Pour une cédule 80, quelle pression doit montrer le cadran des mâchoires hydrauliques ?",
@@ -17,12 +17,12 @@
       { "q": "Pendant le travail, qui a le droit de se parler ?",
         "o": ["Toute l'équipe", "Le foreur et le soudeur seulement, sans personne au milieu", "Le superviseur et le foreur", "N'importe qui, par radio"], "a": 1,
         "e": "« Les deux seules personnes à communiquer ensemble doivent être le foreur et le soudeur. Aucune personne ne doit faire l'intermédiaire. »" },
-      { "q": "Quel poids au minimum doit tenir l'élingue qui soulève la charge ?",
-        "o": ["500 kg", "Une tonne", "2 tonnes", "5 tonnes"], "a": 1,
+      { "t": "vf", "q": "L'élingue servant au levage de la charge doit avoir une capacité minimale d'une tonne.",
+        "vrai": true,
         "e": "« L'élingue servant au levage de la charge doit avoir une capacité minimale d'une tonne et elle doit être accrochée à une plaque d'ancrage fixée au toit… »" }
     ],
     "pro-op-ith-001": [
-      { "q": "Tu mets le SHANK dans le marteau. Ensuite, tu visses la bit d'au moins combien de tours ?",
+      { "t": "trou", "q": "Tu mets le SHANK dans le marteau. Ensuite, tu visses la bit un minimum de ______.",
         "o": ["Un demi-tour", "Au moins 2 tours", "5 tours", "Juste jusqu'au blocage"], "a": 1,
         "e": "« Aligner le SHANK dans le bout du marteau, l'insérer le plus loin possible et visser la bit un minimum de 2 tours. »" },
       { "q": "Avec quelle pression faut-il serrer la bit ?",
@@ -33,7 +33,7 @@
         "e": "« Bien graisser les filets du driver sub. »" }
     ],
     "pro-pt-001": [
-      { "q": "Le bras télescopique du PIPE-TUB mesure quelle longueur ?",
+      { "t": "trou", "q": "Le bras télescopique du PIPE-TUB mesure ______.",
         "o": ["6 pi (1,8 m)", "12 pi (3,66 m)", "20 pi (6 m)", "8 pi (2,4 m)"], "a": 1,
         "e": "« …manipuler des tiges au train de forage au moyen d'un bras télescopique de 12 pi [3,66 m]. »" },
       { "q": "Pendant le forage, à quelle distance du mât place-t-on les contrôles ?",
@@ -44,12 +44,12 @@
         "e": "« Si la commande à distance n'est pas utilisée, la fiche d'obturation doit être insérée dans la boîte de connexion. »" }
     ],
     "pro-op-sm-001": [
-      { "q": "Tu trouves la zone de forage. Que vérifies-tu en premier ?",
-        "o": ["L'éclairage", "L'air (la ventilation)", "Le niveau d'eau", "Les outils"], "a": 1,
+      { "t": "vf", "q": "Après avoir localisé la zone de forage, il faut d'abord vérifier la qualité de la ventilation.",
+        "vrai": true,
         "e": "« Après avoir localisé la zone de forage, vérifiez d'abord la qualité de la ventilation. »" }
     ],
     "pro-op-sm-002": [
-      { "q": "Les tiges tournent. Tu dois toujours rester à quelle distance ?",
+      { "t": "trou", "q": "Les tiges tournent. Tu dois toujours te tenir à l'écart, soit à ______, des tiges rotatives.",
         "o": ["1 mètre", "2,4 mètres", "5 mètres", "Pas de distance fixe"], "a": 1,
         "e": "« Tenez-vous toujours à l'écart (2,4 mètres) des tiges rotatives. »" },
       { "q": "Un trou a besoin de plusieurs forets. Dans quel ordre les utiliser ?",
@@ -59,15 +59,15 @@
       { "q": "Quand la foreuse se déplace, quelle distance minimum garder entre toi et elle ?",
         "o": ["1 mètre", "2,4 mètres", "5 mètres", "Aucune"], "a": 1,
         "e": "« Toujours garder une distance de 2,4 mètres minimum entre vous et la foreuse. »" },
-      { "q": "Quand tu déplaces la machine dans la rampe, où doit être le panier ?",
-        "o": ["Vers le bas", "Toujours vers le haut (UP RAMP)", "Au centre", "Replié"], "a": 1,
+      { "t": "vf", "q": "Lors des déplacements, le panier doit toujours être vers le haut (UP RAMP).",
+        "vrai": true,
         "e": "« Lors des déplacements, le panier doit TOUJOURS être vers le haut (UP RAMP). »" },
       { "q": "Sur quels tuyaux faut-il mettre des câbles anti-fouet (whipcheck) ?",
         "o": ["Tous les tuyaux", "Les tuyaux de plus de 1 pouce", "Juste les tuyaux d'eau", "Aucun"], "a": 1,
         "e": "« Installer des câbles anti-fouets (whipcheck) sur les tuyaux de plus d'un (1) pouce. »" }
     ],
     "pro-op-sm-004": [
-      { "q": "Au Québec, quel article du règlement (RSSTM) dit de souffler le plancher avant de forer ?",
+      { "t": "trou", "q": "Au Québec, le plancher du chantier à forer doit être soufflé selon l'______ du RSSTM.",
         "o": ["Article 12", "Article 437", "Article 136", "Article 439"], "a": 1,
         "e": "« Le plancher du chantier à forer doit être soufflé selon l'article 437 du Règlement sur la santé et la sécurité du travail dans les mines (RSSTM Québec)… »" },
       { "q": "Le casing doit mesurer quelle longueur ?",
@@ -75,10 +75,10 @@
         "e": "« Retirez la tige et insérez un casing d'environ 2 pouces plus long que la longueur alésée. »" }
     ],
     "pro-op-bu-001": [
-      { "q": "Quelle protection portes-tu toujours quand tu fais marcher la foreuse V-KING ?",
-        "o": ["Un masque seulement", "Une double protection pour les oreilles", "Un harnais", "Rien de spécial"], "a": 1,
+      { "t": "vf", "q": "Sur la foreuse V-KING, le port de la double protection auditive est obligatoire.",
+        "vrai": true,
         "e": "« Le port de la double protection auditive est obligatoire. »" },
-      { "q": "Tu forages un trou vers le bas. Quelle longueur de tubage mets-tu dans le roc, au moins ?",
+      { "t": "trou", "q": "Lors du forage de trous descendants, le foreur devra installer un tubage d'une longueur minimum de ______ dans le roc.",
         "o": ["6 pouces", "12 pouces", "24 pouces", "Aucune"], "a": 1,
         "e": "« Lors du forage de trous descendant, le foreur devra installer un tubage d'une longueur minimum de 12 pouces dans le roc. »" },
       { "q": "Quelles conduites d'air ont besoin d'un système anti-fouettement ?",
@@ -92,7 +92,7 @@
       { "q": "Quelle capacité minimale doit avoir l'équipement de levage pour démonter le mât ?",
         "o": ["3 000 livres", "6 000 livres", "10 000 livres", "15 000 livres"], "a": 1,
         "e": "« Équipement de levage doit avoir une capacité de 6,000 livres ou plus. »" },
-      { "q": "À quelle distance minimale de la foreuse dois-tu te tenir avant le retrait du mât ?",
+      { "t": "trou", "q": "Avant le retrait du mât, se tenir dans un endroit sécuritaire d'une distance minimum de ______ de la foreuse.",
         "o": ["6 pieds", "8 pieds", "10 pieds", "12 pieds"], "a": 3,
         "e": "« Se tenir dans un endroit sécuritaire d'une distance minimum de douze pieds de la foreuse… »" },
       { "q": "Où ne dois-tu JAMAIS te placer pendant l'opération ?",
@@ -103,7 +103,7 @@
         "e": "« …reliées entre elles par le centre avec une grosse manille (clavis) d'un pouce de diamètre. »" }
     ],
     "pro-mec-002": [
-      { "q": "À quel couple serres-tu les boulons SECS du mât ?",
+      { "t": "trou", "q": "Le couple de serrage des boulons SECS du mât est de ______.",
         "o": ["80 lbs/pied", "95 lbs/pied", "110 lbs/pied", "150 lbs/pied"], "a": 2,
         "e": "« Boulons secs……………………110 lbs/pied »" },
       { "q": "Et les boulons LUBRIFIÉS (anti-seize) ?",
@@ -117,8 +117,8 @@
         "e": "« Retirer les élingues seulement quand les boulons sont bien serrés. »" }
     ],
     "pro-mec-003": [
-      { "q": "À quel angle places-tu le mât avant de commencer ?",
-        "o": ["45 degrés", "60 degrés", "90 degrés", "0 degré (horizontal)"], "a": 2,
+      { "t": "vf", "q": "Avant de commencer, il faut mettre le mât à 90 degrés.",
+        "vrai": true,
         "e": "« Mettre le mât à 90 degrés »" },
       { "q": "À quel couple serres-tu la swivel à la fin ?",
         "o": ["400 lbs", "600 lbs", "800 lbs", "1000 lbs"], "a": 2,
@@ -134,8 +134,8 @@
       { "q": "Que dois-tu cadenasser avant de dévisser les boyaux à air ?",
         "o": ["Rien", "L'air au header (alimentation principale)", "Seulement l'eau", "Le moteur électrique"], "a": 1,
         "e": "« Cadenasser l'air au header (alimentation principale) et purger l'air sur la foreuse »" },
-      { "q": "Peux-tu tenir la swivel avec les mains pendant que la rotation est actionnée ?",
-        "o": ["Oui, toujours", "Oui, avec des gants", "Non, jamais", "Seulement à basse vitesse"], "a": 2,
+      { "t": "vf", "q": "Il ne faut jamais tenir la swivel avec les mains quand la rotation est actionnée.",
+        "vrai": true,
         "e": "« NE JAMAIS TENIR LA SWIVEL AVEC LES MAINS QUAND LA ROTATION EST ACTIONNÉE. »" },
       { "q": "Quelle pression maximale ne dois-tu pas dépasser sur le cadran de rotation ?",
         "o": ["500 PSI", "800 PSI", "1000 PSI", "1200 PSI"], "a": 1,
@@ -145,8 +145,8 @@
         "e": "« …dévisser la swivel à la main (les filets sont anti-horaires). »" }
     ],
     "pro-mec-005": [
-      { "q": "Que ne dois-tu JAMAIS faire pendant les opérations de levage et d'élingage ?",
-        "o": ["Porter des gants", "Te positionner sous une charge", "Parler à l'opérateur", "Utiliser des élingues"], "a": 1,
+      { "t": "vf", "q": "Il ne faut jamais se positionner sous une charge pendant les opérations de levage et d'élingage.",
+        "vrai": true,
         "e": "« NE JAMAIS SE POSITIONNER SOUS UNE CHARGE PENDANT LES OPÉRATIONS DE LEVAGE ET D'ÉLINGAGE »" },
       { "q": "Quelle procédure dois-tu appliquer en premier pour enlever le mât ?",
         "o": ["PRO-MEC-002", "PRO-MEC-001", "PRO-MEC-005 elle-même", "Aucune, tu improvises"], "a": 1,
@@ -162,7 +162,7 @@
       { "q": "Dans la méthode 1, que ne dois-tu PAS faire avec la tige de forage ?",
         "o": ["La visser au saver sub", "La lubrifier", "La retirer", "La mesurer"], "a": 0,
         "e": "« NE PAS VISSER LA TIGE AU SAVER SUB »" },
-      { "q": "À quelle pression hydraulique visses-tu complètement le nouveau saver sub ?",
+      { "t": "trou", "q": "La pression hydraulique préalablement ajustée à ______ sert à visser complètement le saver sub.",
         "o": ["1 500 psi", "2 000 psi", "2 800 psi", "3 500 psi"], "a": 2,
         "e": "« …préalablement ajustée à 2800 psi, pour visser complètement le saver sub… »" },
       { "q": "Dans la méthode 2, que faut-il éviter en repositionnant la clé ?",
@@ -179,7 +179,7 @@
       { "q": "Sur quelle structure ne peux-tu PAS appuyer le blocage de bois ?",
         "o": ["Le châssis", "Le panier", "Les chenilles", "La table"], "a": 1,
         "e": "« Mise en garde : La structure du panier n'est pas un point d'appui pour le blocage »" },
-      { "q": "Quelle est la hauteur maximale pour lever un côté de la foreuse ?",
+      { "t": "trou", "q": "On peut monter la foreuse de maximum ______ en utilisant la poussée hydraulique du mât.",
         "o": ["10 cm (4'')", "20 cm (8'')", "30 cm (12'')", "50 cm (20'')"], "a": 1,
         "e": "« Monter la foreuse de maximum 20 cm (8'') en utilisant la poussée hydraulique du mât… »" },
       { "q": "Combien pèse une foreuse CUBEX, selon cette procédure ?",
@@ -190,7 +190,7 @@
       { "q": "Combien de côtés du système de glissière changes-tu à la fois ?",
         "o": ["Les deux en même temps", "Un seul à la fois", "Aucun ordre précis", "Trois"], "a": 1,
         "e": "« N.B. ne faire qu'une seule partie à la fois et un seul côté à la fois. »" },
-      { "q": "En atelier, quelle capacité minimale doit avoir l'élingue utilisée avec le pont roulant ?",
+      { "t": "trou", "q": "En atelier, il faut utiliser une élingue d'une capacité de ______.",
         "o": ["3 000 livres", "5 000 livres", "7 000 livres", "10 000 livres"], "a": 2,
         "e": "« Utiliser une élingue d'une capacité de 7000 livres. »" },
       { "q": "En chantier, quelle longueur minimale de tige forés-tu dans le roc pour immobiliser la tête de rotation ?",
@@ -201,7 +201,7 @@
         "e": "« Clé 15/16'' • Ratchet et Douille 15/16'' • Clé ¾ »" }
     ],
     "pro-mec-009": [
-      { "q": "Combien de boulons de floating box dévisses-tu au départ ?",
+      { "t": "trou", "q": "Au départ, tu dévisses à moitié les ______ boulons de floating box.",
         "o": ["4", "6", "8", "10"], "a": 2,
         "e": "« Dévisser à moitié les 8 boulons de floating box »" },
       { "q": "Combien de personnes doivent donner des indications à l'opérateur de l'équipement de levage ?",
@@ -215,7 +215,7 @@
         "e": "« …porter une attention particulière à la pression accumulée. Dévisser lentement. »" }
     ],
     "pro-mec-010": [
-      { "q": "Combien de boulons faut-il retirer/serrer sur l'actuateur ?",
+      { "t": "trou", "q": "Il faut procéder à l'enlèvement des ______ boulons d'actuateur.",
         "o": ["8", "10", "12", "14"], "a": 2,
         "e": "« Procéder à l'enlèvement des 12 boulons d'actuateur… »" },
       { "q": "Où ne dois-tu JAMAIS te placer en retirant le mât ?",

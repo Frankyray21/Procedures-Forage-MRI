@@ -7,8 +7,7 @@
 (function () {
   var Q = {
     "cadenassage-cat-416": [
-      { "q": "Que doit-on faire en tout temps lorsque la fiche de cadenassage de la Caterpillar 416 est appliquée ?",
-        "o": ["Rien de particulier", "Mettre les cales de roues en place", "Vider le réservoir", "Retirer la batterie"], "a": 1,
+      { "t": "vf", "q": "Les cales de roues doivent être en place en tout temps lorsque la fiche de cadenassage de la Caterpillar 416 est appliquée.", "vrai": true,
         "e": "« Les cales de roues doivent être en place en tout temps lorsque la fiche de cadenassage est appliquée. »" },
       { "q": "Que doit-on cadenasser si l'interrupteur principal ne peut être cadenassé ?",
         "o": ["Rien, on annule le travail", "La poignée du panneau", "Le klaxon", "Le capot"], "a": 1,
@@ -21,7 +20,7 @@
       { "q": "Sur quoi doit se faire le cadenassage simple de la CUBEX ?",
         "o": ["Le disjoncteur", "Le réservoir d'huile", "Le klaxon", "Le mât uniquement"], "a": 0,
         "e": "« Travaux qui nécessitent un cadenassage simple sur le disjoncteur. »" },
-      { "q": "Pour le cadenassage multiple gravitationnel, à quel angle met-on le boom si l'équipement ne peut être bougé ?",
+      { "t": "trou", "q": "Pour le cadenassage multiple gravitationnel, si l'équipement ne peut être bougé, mettre le boom à ______ et cadenasser la barrure mécanique sur les cylindres de « dump ».",
         "o": ["45 degrés", "90 degrés", "180 degrés", "Aucun angle requis"], "a": 1,
         "e": "« Mettre le boom à 90 degrés et mettre et cadenasser la barrure mécanique sur les cylindres de ''dump''. »" },
       { "q": "Que doit-on faire si un bris empêche de bouger l'équipement ?",
@@ -32,24 +31,21 @@
       { "q": "Quels travaux nécessitent un cadenassage sur le Toyota Land Cruiser ?",
         "o": ["Seulement le lavage", "Le système électrique et les travaux mécaniques sous le capot", "Le changement de pneus", "Aucun travail"], "a": 1,
         "e": "« Travaux qui nécessitent un cadenassage : Travaux sur le système électrique / Travaux mécaniques (filtres, courroie alternateur, refroidisseur, tout travaux sous le capot du véhicule). »" },
-      { "q": "Comment fait-on le test de démarrage après cadenassage du Land Cruiser ?",
-        "o": ["En appuyant sur le klaxon", "En tournant la clé de contact", "En ouvrant le capot", "Ce n'est pas nécessaire"], "a": 1,
+      { "t": "vf", "q": "Après le cadenassage du Land Cruiser, on fait le test de démarrage sur le moteur diesel en tournant la clé de contact.", "vrai": true,
         "e": "« FAIRE LE TEST DE DÉMARRAGE SUR LE MOTEUR DIESEL EN TOURNANT LA CLÉ DE CONTACT »" }
     ],
     "cadenassage-kovatera-kt200": [
       { "q": "Comment fait-on l'essai de démarrage du Kovatera KT-200 ?",
         "o": ["Avec la clé de contact", "En tournant le bouton de démarrage OFF/START", "Avec une télécommande", "Il n'y a pas d'essai"], "a": 1,
         "e": "« FAIRE LE TEST DE DÉMARRAGE DU MOTEUR DIESEL EN TOURNANT LE BOUTON DE DÉMARAGE OFF/START »" },
-      { "q": "Que faut-il faire en cas de travaux inachevés sur le Kovatera KT-200 ?",
-        "o": ["Laisser l'équipement sans supervision", "Retirer les cadenas personnels et poser un scellé avec étiquette de contrôle", "Redémarrer l'équipement", "Rien de particulier"], "a": 1,
+      { "t": "vf", "q": "En cas de travaux inachevés sur le Kovatera KT-200, il faut retirer les cadenas personnels et poser un scellé avec étiquette de contrôle sur la pince ou la boîte.", "vrai": true,
         "e": "« Retirer les cadenas personnels, poser un scellé avec étiquette de contrôle sur la pince ou la boîte. »" }
     ],
     "cadenassage-manitou": [
       { "q": "Le cadenassage du Manitou vise quel type de véhicule selon la fiche ?",
         "o": ["Les foreuses", "Les tracteurs", "Les camions à flèche", "Les compresseurs"], "a": 1,
         "e": "« Cette fiche de cadenassage a comme objectif de présenter la méthode de cadenassage des tracteurs »" },
-      { "q": "Que doit-on toujours laisser sur la pince de verrouillage lors du cadenassage du Manitou ?",
-        "o": ["Un cadenas supplémentaire fermé", "Un trou libre pour l'ajout d'une autre pince", "Rien de spécial", "La clé du véhicule"], "a": 1,
+      { "t": "vf", "q": "Lors du cadenassage du Manitou, il faut toujours laisser un trou libre sur la pince de verrouillage pour l'ajout d'une autre pince.", "vrai": true,
         "e": "« Toujours laisser un trou libre pour l'ajout d'une autre pince »" }
     ],
     "cadenassage-pegasus-du311": [
@@ -59,16 +55,14 @@
       { "q": "Quelles pièces doivent être bloquées pour l'énergie gravitationnelle sur la PEGASUS/DU-311 ?",
         "o": ["Les roues seulement", "Le mât et/ou la boîte d'engrenage (gear box)", "Le klaxon", "Le tableau de bord"], "a": 1,
         "e": "« les deux pièces qui doivent être bloquées, ou mis en position pour ne pas se déplacer, sont le mât et/ou la boîte d'engrenage (gear box) »" },
-      { "q": "Que doit-on installer sous l'équipement pour les travaux nécessitant d'appuyer les stabilisateurs au sol ?",
-        "o": ["Rien de spécial", "Une chandelle comme protection supplémentaire", "Un tapis", "Une bâche"], "a": 1,
+      { "t": "vf", "q": "Pour les travaux nécessitant d'appuyer les stabilisateurs au sol, une chandelle doit être installée sous l'équipement comme protection supplémentaire.", "vrai": true,
         "e": "« une chandelle doit être installée sous l'équipement comme protection supplémentaire »" }
     ],
     "cadenassage-stopemaster": [
       { "q": "Sur quels deux éléments doit se faire le cadenassage multiple de la STOPEMASTER HX ?",
         "o": ["Le klaxon et le phare", "Le disjoncteur du panneau principal et la master switch du moteur diesel", "Les deux pneus avant", "Le réservoir d'eau seulement"], "a": 1,
         "e": "« Travaux qui nécessitent un cadenassage multiple sur le disjoncteur du panneau principal et sur l'interrupteur (master switch) du moteur diesel. »" },
-      { "q": "Avec quelle main doit-on ouvrir et fermer l'interrupteur du panneau principal ?",
-        "o": ["La main droite", "La main gauche", "Les deux mains", "Peu importe"], "a": 1,
+      { "t": "vf", "q": "Il faut toujours utiliser la main gauche pour ouvrir et fermer l'interrupteur du panneau principal et se placer à droite du panneau.", "vrai": true,
         "e": "« Toujours utiliser votre main gauche pour ouvrir et fermer l'interrupteur et se placer à droite du panneau »" },
       { "q": "Sur quoi le travail sous le transporteur doit-il être appuyé ?",
         "o": ["Seulement les jacks hydrauliques", "Des chandelles certifiées", "Des blocs de bois", "Rien de spécial"], "a": 1,
@@ -78,8 +72,7 @@
       { "q": "Sur quoi doit se faire le cadenassage simple de la foreuse U-6 EPIROC ?",
         "o": ["Le câble 600V", "Le réservoir d'eau", "La chenille", "Le klaxon"], "a": 0,
         "e": "« Le cadenassage simple doit se faire sur le câble 600V. »" },
-      { "q": "Que doit-on faire si la foreuse redémarre pendant un essai de démarrage ?",
-        "o": ["Continuer normalement", "Arrêter les travaux et appeler le superviseur", "Ignorer et poursuivre", "Redémarrer une seconde fois"], "a": 1,
+      { "t": "vf", "q": "Si la foreuse U-6 EPIROC redémarre pendant un essai de démarrage, il faut arrêter les travaux et appeler le superviseur.", "vrai": true,
         "e": "« SI LA FOREUSE REDÉMARRE, ARRÊTER LES TRAVAUX ET APPELER LE SUPERVISEUR »" },
       { "q": "Que doit-on faire avant de fermer le disjoncteur, lors de l'arrêt power unit ?",
         "o": ["Rien de particulier", "Appuyer sur l'arrêt d'urgence du panneau 600v", "Klaxonner", "Ouvrir le capot"], "a": 1,
@@ -92,13 +85,11 @@
       { "q": "Que se passe-t-il si un arrêt d'urgence est enclenché avant que les valves 24V soient actionnées ?",
         "o": ["Rien de particulier", "Il y a rupture de communication entre le remote et le récepteur scanreco", "Les valves s'ouvrent automatiquement", "L'équipement redémarre seul"], "a": 1,
         "e": "« Lorsqu'un arrêt d'urgence est enclenché il y a une rupture de communication entre le remote et le récepteur scanreco, les valves 24V ne peuvent donc plus être actionnées »" },
-      { "q": "Que doit-on faire si un mouvement ou démarrage se produit lors de l'essai de démarrage ?",
-        "o": ["Continuer les travaux", "Suspendre les travaux et faire une analyse de risque", "Ignorer et redémarrer", "Rien de spécial"], "a": 1,
+      { "t": "vf", "q": "Si un mouvement ou un démarrage se produit lors de l'essai de démarrage, les travaux doivent être suspendus et une analyse de risques doit être effectuée.", "vrai": true,
         "e": "« RIEN NE DOIT SE PRODUIRE. S'IL Y MOUVEMENT OU DÉMARRAGE DE QUOI QUE CE SOIT, LES TRAVAUX DOIVENT ÊTRE SUSPENDUS ET UNE ANALYSE DE RISQUES DOIT ÊTRE EFFECTUÉE »" }
     ],
     "cadenassage-dd-stm1500": [
-      { "q": "Où la fiche de cadenassage de la STM-1500 doit-elle toujours être disponible ?",
-        "o": ["Au bureau du superviseur seulement", "Dans la boîte de cadenassage", "Dans le camion", "Elle n'a pas besoin d'être disponible"], "a": 1,
+      { "t": "vf", "q": "La fiche de cadenassage de la STM-1500 doit être disponible en tout temps dans la boîte de cadenassage.", "vrai": true,
         "e": "« LA FICHE DE CADENASSAGE DOIT ÊTRE DISPONIBLE EN TOUT TEMPS DANS LA BOÎTE DE CADENASSAGE »" },
       { "q": "Pour quelle raison peut-on sortir les équipements de cadenassage de la boîte ?",
         "o": ["Pour n'importe quel usage", "Seulement pour l'application de la mise à énergie zéro", "Pour les prêter à un collègue", "Jamais"], "a": 1,
@@ -111,8 +102,7 @@
       { "q": "Sur quels boutons appuie-t-on en premier pour le cadenassage simple des DR-900/DR-1500 ?",
         "o": ["Le klaxon", "Le bouton arrêt du panneau 600V", "L'arrêt d'urgence du mât", "Le frein à main"], "a": 1,
         "e": "« Appuyer sur le bouton arrêt du panneau 600V »" },
-      { "q": "Que doit-on faire pour tout travail sur le mât des DR-900/DR-1500 si les mesures gravitationnelles ne peuvent s'appliquer ?",
-        "o": ["Continuer sans précaution", "Effectuer une analyse de risque avant de procéder", "Attendre le lendemain", "Rien de spécial"], "a": 1,
+      { "t": "vf", "q": "Pour tout travail sur le mât des DR-900/DR-1500 où on ne peut appliquer les mesures sur l'énergie gravitationnelle, une analyse de risque doit être effectuée avant de procéder aux travaux.", "vrai": true,
         "e": "« POUR TOUT TRAVAUX OU ON NE PEUT APPLIQUER LES MESURES PRÉCÉDENTES SUR L'ÉNERGIE GRAVITATIONNELLE, UNE ANALYSE DE RISQUE DOIT ÊTRE EFFCTUÉE AVANT DE PROCÉDER AUX TRAVAUX »" }
     ],
     "programme-maitrise-energies-dangereuses": [
@@ -125,8 +115,7 @@
       { "q": "Qu'est-ce qui est obligatoire lorsque du cadenassage est effectué sur un équipement ?",
         "o": ["Un ruban rouge", "Un ruban jaune", "Une pancarte lumineuse", "Rien de spécial"], "a": 1,
         "e": "« L'installation d'un ruban jaune est obligatoire lorsque du cadenassage est effectué sur un équipement. »" },
-      { "q": "Que doit faire un employé qui doit s'absenter pendant des travaux cadenassés ?",
-        "o": ["Laisser son cadenas en place", "Enlever son cadenas", "Couper le cadenas d'un collègue", "Rien de particulier"], "a": 1,
+      { "t": "vf", "q": "Tout employé devant s'absenter pendant des travaux cadenassés doit enlever son cadenas.", "vrai": true,
         "e": "« Tout employé devant s'absenter doit enlever son cadenas. »" }
     ]
   };
