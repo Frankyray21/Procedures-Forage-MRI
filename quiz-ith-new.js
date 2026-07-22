@@ -100,7 +100,10 @@
         "e": "« TRÈS IMPORTANT : NE JAMAIS SE PLACER EN-DESSOUS DU MAT. »" },
       { "q": "Quel diamètre doit avoir la manille (clavis) reliant les élingues ?",
         "o": ["1/2 pouce", "3/4 pouce", "1 pouce", "2 pouces"], "a": 2,
-        "e": "« …reliées entre elles par le centre avec une grosse manille (clavis) d'un pouce de diamètre. »" }
+        "e": "« …reliées entre elles par le centre avec une grosse manille (clavis) d'un pouce de diamètre. »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le démantèlement d'un mât de forage.",
+        "o": ["L'équipement de levage doit avoir une capacité de 6 000 livres ou plus.", "Un équipement de levage de 3 000 livres est suffisant pour démonter le mât.", "Il ne faut jamais se placer en-dessous du mât.", "On peut retirer la manille dès que le mât se soulève, sans attendre qu'il soit appuyé.", "Se tenir à au moins douze pieds de la foreuse et rester visible de l'opérateur."], "a": [0, 2, 4],
+        "e": "Vrai : « Utiliser un équipement de levage d'une capacité de 6 000 livres ou plus », « ne jamais se placer en-dessous du mât » et « se tenir à une distance minimale de douze pieds de la foreuse et rester visible de l'opérateur ». Pour la manille : « Personne ne doit retirer la manille tant que le mât n'est pas bien appuyé sur le blocage. »" }
     ],
     "pro-mec-002": [
       { "t": "trou", "q": "Le couple de serrage des boulons SECS du mât est de ______.",
@@ -114,7 +117,10 @@
         "e": "« Installer les douze boulons en suivant la séquence ci-dessous. »" },
       { "q": "Quand peux-tu retirer les élingues ?",
         "o": ["Dès que le mât touche l'actuateur", "Seulement quand les boulons sont bien serrés", "Avant de démarrer la foreuse", "Après le premier boulon"], "a": 1,
-        "e": "« Retirer les élingues seulement quand les boulons sont bien serrés. »" }
+        "e": "« Retirer les élingues seulement quand les boulons sont bien serrés. »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur l'installation d'un mât de foreuse CUBEX.",
+        "o": ["À sec, serrer les douze boulons du mât à 110 lbs/pied.", "Les boulons secs se serrent à seulement 80 lbs/pied.", "Avec antigrippant (anti-seize), le couple est de 80 lbs/pied.", "On retire les élingues avant même de serrer les boulons.", "Il faut vérifier le serrage des boulons du mât après un quart de travail."], "a": [0, 2, 4],
+        "e": "« Serrer les douze boulons du mât à l'aide d'une clé dynamométrique : 110 lbs/pied à sec, 80 lbs/pied avec antigrippant (anti-seize). » ; « Ne retirer les élingues qu'une fois les boulons bien serrés. » ; « Vérifier le serrage des boulons du mât après un quart de travail. »" }
     ],
     "pro-mec-003": [
       { "t": "vf", "q": "Avant de commencer, il faut mettre le mât à 90 degrés.",
@@ -128,7 +134,10 @@
         "e": "« Appuyer les fourches sous le gear box ou mettre une légère tension sur les élingues ou la chaîne »" },
       { "q": "Une fois le nouveau gear box en place, que dois-tu vérifier ?",
         "o": ["Sa couleur", "Qu'il tourne dans le bon sens", "Son poids", "Rien"], "a": 1,
-        "e": "« S'assurer que le gear box tourne dans le bon sens. »" }
+        "e": "« S'assurer que le gear box tourne dans le bon sens. »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement d'un gear box de foreuse ITH.",
+        "o": ["Il faut mettre le mât à 90 degrés puis cadenasser avant de débrancher les boyaux.", "On peut retirer les deux derniers boulons du gear box sans aucune tension sur les élingues.", "On serre la swivel à 800 lbs de torque.", "Il faut s'assurer que le gear box tourne dans le bon sens avant la remise en service.", "Serrer la swivel à 400 lbs de torque est suffisant."], "a": [0, 2, 3],
+        "e": "« Serrer la swivel au couple prescrit de 800 lbs de torque et s'assurer que le gear box tourne dans le bon sens avant la remise en service. » ; au départ, « mettre le mât à 90 degrés et appliquer la procédure de cadenassage avant de débrancher les boyaux hydrauliques et pneumatiques. »" }
     ],
     "pro-mec-004": [
       { "q": "Que dois-tu cadenasser avant de dévisser les boyaux à air ?",
@@ -142,7 +151,10 @@
         "e": "« NE PAS DÉPASSER 800 PSI sur le cadran de rotation. »" },
       { "q": "Dans quel sens sont les filets de la swivel ?",
         "o": ["Horaires", "Anti-horaires", "Ça dépend du modèle", "Il n'y a pas de filets"], "a": 1,
-        "e": "« …dévisser la swivel à la main (les filets sont anti-horaires). »" }
+        "e": "« …dévisser la swivel à la main (les filets sont anti-horaires). »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement de l'air swivel (gear box).",
+        "o": ["Ne jamais tenir la swivel avec les mains quand la rotation est actionnée.", "On peut tenir la swivel à la main pendant la rotation si on fait attention.", "Ne pas dépasser 800 PSI sur le cadran de rotation lors du serrage final.", "S'assurer que personne n'est dans la ligne de tir de la masse si on doit casser la swivel.", "Dépasser 800 PSI sur le cadran de rotation est permis au serrage final."], "a": [0, 2, 3],
+        "e": "Trois consignes vraies : « personne ne se trouve dans la ligne de tir de la masse si son utilisation est nécessaire pour casser la swivel », « ne pas dépasser 800 PSI sur le cadran de rotation » et « ne jamais tenir la swivel avec les mains quand la rotation est actionnée »." }
     ],
     "pro-mec-005": [
       { "t": "vf", "q": "Il ne faut jamais se positionner sous une charge pendant les opérations de levage et d'élingage.",
@@ -156,7 +168,10 @@
         "e": "« Un électricien doit déconnecter le moteur électrique; »" },
       { "q": "Qui est responsable de l'élingage dans le puits et des déplacements en galerie ?",
         "o": ["Machines Roger International", "La mine", "L'opérateur de la CUBEX", "Le fournisseur d'équipement"], "a": 1,
-        "e": "« Les déplacements dans la galerie sont la responsabilité de la mine. L'élingage dans le puits est la responsabilité de la mine. »" }
+        "e": "« Les déplacements dans la galerie sont la responsabilité de la mine. L'élingage dans le puits est la responsabilité de la mine. »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le démantèlement de la CUBEX pour élingage.",
+        "o": ["Ne jamais se positionner sous une charge pendant les opérations de levage et d'élingage.", "N'importe quel travailleur peut déconnecter le moteur électrique.", "La procédure PRO-MEC-001 doit être appliquée pour enlever le mât d'abord.", "Le cadenassage s'applique avant de déconnecter le système ANSUL et le moteur électrique.", "On peut se tenir brièvement sous une charge suspendue si on va vite."], "a": [0, 2, 3],
+        "e": "Vrai : « la procédure PRO-MEC-001 doit être appliquée pour enlever le mât », « un électricien doit déconnecter le moteur électrique », le cadenassage précède la déconnexion du système ANSUL, et « ne jamais se positionner sous une charge pendant les opérations de levage et d'élingage »." }
     ],
     "pro-mec-006": [
       { "q": "Dans la méthode 1, que ne dois-tu PAS faire avec la tige de forage ?",
@@ -170,7 +185,10 @@
         "e": "« …il faut la manipuler par l'extrémité afin de ne pas s'exposer à une zone de coincement. (Cercle jaune) »" },
       { "q": "Sur la nouvelle console, que dois-tu faire avant d'entretenir une composante du mât ?",
         "o": ["Rien de spécial", "Enfoncer le bouton d'arrêt", "Mettre le levier au maximum", "Débrancher la radio"], "a": 1,
-        "e": "« …il doit obligatoirement enfoncer le bouton d'arrêt pour enlever l'alimentation de la console. »" }
+        "e": "« …il doit obligatoirement enfoncer le bouton d'arrêt pour enlever l'alimentation de la console. »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement du saver sub (gear box ITH).",
+        "o": ["Il ne faut pas visser la tige de forage au saver sub lors de son installation (méthode 1).", "On peut visser la tige de forage directement au saver sub à l'installation.", "En méthode 2, manipuler la clé par l'extrémité pour éviter la zone de coincement.", "Le nouveau saver sub se visse avec la force hydraulique ajustée à 2 800 psi.", "Il n'y a aucune limite de pression pour serrer le saver sub."], "a": [0, 2, 3],
+        "e": "« Ne pas visser la tige de forage utilisée comme retenue de la clé au saver sub. » ; en repositionnant la clé, « la manipuler par l'extrémité afin de ne pas s'exposer à la zone de coincement. » ; « Visser le nouveau saver sub complètement avec la force hydraulique ajustée à 2 800 psi ». Sur l'ancienne console, positionner le levier au neutre avant tout entretien." }
     ],
     "pro-mec-007": [
       { "q": "Combien de côtés de la foreuse peux-tu soulever en même temps ?",
@@ -184,7 +202,10 @@
         "e": "« Monter la foreuse de maximum 20 cm (8'') en utilisant la poussée hydraulique du mât… »" },
       { "q": "Combien pèse une foreuse CUBEX, selon cette procédure ?",
         "o": ["15 000 lbs", "18 000 lbs", "22 000 lbs", "30 000 lbs"], "a": 2,
-        "e": "« Le poids d'une Cubex est 22000 Lbs »" }
+        "e": "« Le poids d'une Cubex est 22000 Lbs »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur les travaux sur chenille de traction.",
+        "o": ["Il est strictement interdit de soulever l'ensemble de la foreuse d'un seul coup.", "On peut soulever les deux côtés de la foreuse en même temps pour aller plus vite.", "La structure du panier n'est pas un point d'appui pour le blocage.", "Ne jamais s'exposer sous la foreuse ou les composantes élevées durant les travaux.", "La structure du panier est un point d'appui solide pour le blocage."], "a": [0, 2, 3],
+        "e": "Vrai : « la structure du panier n'est pas un point d'appui pour le blocage », « il est strictement interdit de soulever l'ensemble de la foreuse d'un seul coup » et « ne jamais s'exposer sous la foreuse ou les composantes élevées durant les travaux »." }
     ],
     "pro-mec-008": [
       { "q": "Combien de côtés du système de glissière changes-tu à la fois ?",
@@ -198,7 +219,10 @@
         "e": "« Forer la longueur du marteau et une tige de 1.8 m dans le roc. »" },
       { "q": "Quels outils sont requis pour cette procédure ?",
         "o": ["Clé 15/16'' et clé 3/4''", "Marteau seulement", "Perceuse", "Aucun outil"], "a": 0,
-        "e": "« Clé 15/16'' • Ratchet et Douille 15/16'' • Clé ¾ »" }
+        "e": "« Clé 15/16'' • Ratchet et Douille 15/16'' • Clé ¾ »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement de téflon sur feed extension.",
+        "o": ["Il faut ne changer qu'une seule partie et qu'un seul côté de la glissière à la fois.", "On peut changer les deux côtés du système de glissière en même temps.", "En chantier, forer le marteau et une tige de 1,8 m dans le roc pour immobiliser la tête de rotation.", "En atelier, utiliser une élingue d'une capacité de 7 000 livres pour stabiliser le mât.", "En atelier, une élingue de 3 000 livres suffit pour stabiliser le mât."], "a": [0, 2, 3],
+        "e": "« Ne retirer qu'une seule partie et qu'un seul côté du système de glissière à la fois. » ; « Forer la longueur du marteau et une tige de 1,8 m dans le roc pour immobiliser la tête de rotation ». En atelier, « utiliser le pont roulant avec une élingue d'une capacité de 7 000 livres pour stabiliser le mât. »" }
     ],
     "pro-mec-009": [
       { "t": "trou", "q": "Au départ, tu dévisses à moitié les ______ boulons de floating box.",
@@ -212,7 +236,10 @@
         "e": "« Installer une élingue de 4 ou 6 pieds en CHOKE autour du cylindre le plus près possible à gauche du gear box. »" },
       { "q": "En dévissant les bouchons de la grosse canisse à la fin, à quoi dois-tu faire attention ?",
         "o": ["À la température", "À la pression accumulée", "Au bruit", "À rien de particulier"], "a": 1,
-        "e": "« …porter une attention particulière à la pression accumulée. Dévisser lentement. »" }
+        "e": "« …porter une attention particulière à la pression accumulée. Dévisser lentement. »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement d'un cylindre de feed sur ITH-CUBEX.",
+        "o": ["Une seule personne doit donner des indications à l'opérateur de l'équipement de levage.", "Deux personnes peuvent diriger simultanément l'opérateur de l'équipement de levage.", "L'élingue s'installe en choke autour du cylindre, le plus près possible du gear box.", "Un seul travailleur met les mains sur le cylindre pour l'aider à sortir de son emplacement.", "Plusieurs travailleurs peuvent tenir le cylindre à la fois pour aller plus vite."], "a": [0, 2, 3],
+        "e": "« Une seule personne doit donner des indications à l'opérateur de l'équipement de levage. » ; « Installer une élingue en choke autour du cylindre, le plus près possible du gear box, en gardant une tension verticale constante. » ; « Un seul travailleur doit mettre les mains sur le cylindre pour l'aider à sortir de son emplacement. »" }
     ],
     "pro-mec-010": [
       { "t": "trou", "q": "Il faut procéder à l'enlèvement des ______ boulons d'actuateur.",
@@ -226,7 +253,10 @@
         "e": "« VEUILLEZ NOTER QUE LES BOULONS DEVRONT ÊTRE RESERRÉS APRÈS 1 QUART DE TRAVAIL DE FORAGE »" },
       { "q": "Que dois-tu appliquer sur les contrôles de la foreuse après le changement ?",
         "o": ["Rien", "Une étiquette bleue de suivi mécanique", "Un autocollant rouge", "Un cadenas permanent"], "a": 1,
-        "e": "« APPLIQUER UNE ÉTIQUETTE BLEUE DE SUIVI MÉCANIQUE SUR LES CONTRÔLES DE LA FOREUSE »" }
+        "e": "« APPLIQUER UNE ÉTIQUETTE BLEUE DE SUIVI MÉCANIQUE SUR LES CONTRÔLES DE LA FOREUSE »" },
+      { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement ou la réparation d'un actuateur.",
+        "o": ["Il ne faut jamais se placer en-dessous du mât et il faut surveiller les lignes de tir des pièces soulevées.", "On peut passer sous le mât un instant pendant le retrait de l'actuateur.", "Utiliser un équipement de levage d'une capacité de 6 000 livres ou plus, foreuse au niveau.", "Un équipement de levage de 3 000 livres suffit pour changer l'actuateur.", "Protéger ses doigts lors du dépinage des cylindres et du retrait des demi-lunes."], "a": [0, 2, 4],
+        "e": "« Utiliser un équipement de levage d'une capacité de 6 000 livres ou plus et positionner la foreuse au niveau. » ; « protéger ses doigts lors du dépinage des cylindres et du retrait des demi-lunes » ; et ne jamais se placer en-dessous du mât, en surveillant les lignes de tir des pièces soulevées." }
     ]
   };
   var T = window.QUIZ_PROC || (window.QUIZ_PROC = {});
