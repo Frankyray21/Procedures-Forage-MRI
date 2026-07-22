@@ -5,14 +5,13 @@
 window.QUIZ = [
   {
     "id": "q1",
-    "question": "Tu installes le centralisateur. Combien de travailleurs faut-il pour faire le travail ?",
+    "type": "vf",
+    "question": "Vrai ou faux : l'installation du centralisateur doit toujours se faire à deux travailleurs.",
     "options": [
-      "1 seul travailleur",
-      "2 travailleurs",
-      "3 travailleurs",
-      "Ça dépend, selon qui est là"
+      "Vrai",
+      "Faux"
     ],
-    "answer": 1,
+    "answer": 0,
     "explication": "La procédure indique en avertissement majeur : « L'installation du centralisateur doit TOUJOURS se faire à deux travailleurs. » La fiche des valeurs confirme : « Nombre de travailleurs requis : 2 ».",
     "sourceId": "centralisateur",
     "code": "",
@@ -25,12 +24,13 @@ window.QUIZ = [
   },
   {
     "id": "q2",
-    "question": "Tu installes le centralisateur. Quel outil est interdit pour serrer les boulons ?",
+    "type": "erreur",
+    "question": "Un collègue serre les boulons du centralisateur. Quelle action est une ERREUR ?",
     "options": [
-      "Une clé (box)",
-      "Un wescot ou un pipe wrench",
-      "Une clé dynamométrique",
-      "Une clé Allen"
+      "Il serre les boulons avec une clé (box)",
+      "Il utilise un wescot ou un pipe wrench",
+      "Il maintient une tension sur les lockwashers pendant le serrage",
+      "Il choisit l'outil adéquat (clé ou box)"
     ],
     "answer": 1,
     "explication": "La procédure est claire : « L'utilisation d'un wescot ou d'un pipe wrench n'est pas adéquate. » Le serrage doit se faire avec l'outil adéquat (clé ou box).",
@@ -45,12 +45,13 @@ window.QUIZ = [
   },
   {
     "id": "q3",
-    "question": "Le centralisateur a un danger. Pourquoi bien te placer avant de prendre une pièce ?",
+    "type": "trou",
+    "question": "Avant de soulever une pièce du centralisateur, tu te places bien car chaque pièce pèse ______.",
     "options": [
-      "Chaque pièce pèse 46 livres",
-      "Les pièces coupent",
-      "Les pièces sont à 800 °F",
-      "Les pièces ont du courant électrique"
+      "46 livres",
+      "26 livres",
+      "93 livres",
+      "12 livres"
     ],
     "answer": 0,
     "explication": "La procédure avertit : « Risque de manutention : chaque pièce pèse 46 livres. Se positionner correctement avant de soulever/manipuler les pièces. » (2 pièces de 46 livres chacune).",
@@ -65,15 +66,16 @@ window.QUIZ = [
   },
   {
     "id": "q4",
-    "question": "Avant de serrer le centralisateur, combien de pièces dois-tu vérifier ?",
+    "type": "multi",
+    "question": "Coche les affirmations VRAIES sur le montage du centralisateur.",
     "options": [
-      "6 boulons, 6 locknuts et 6 lockwashers",
-      "12 boulons, 12 locknuts et 12 lockwashers",
-      "8 boulons, 8 locknuts et 8 lockwashers",
-      "12 boulons seulement, sans locknuts ni lockwashers"
+      "Chaque pièce du centralisateur pèse 46 livres",
+      "Un wescot ou un pipe wrench convient pour serrer les boulons",
+      "L'installation se fait toujours à deux travailleurs",
+      "Il faut vérifier 12 boulons, 12 locknuts et 12 lockwashers avant le serrage"
     ],
-    "answer": 1,
-    "explication": "La consigne exige de « vérifier la présence des 12 boulons, 12 locknuts et 12 lockwashers avant le serrage » (répartis 6 dans un sens et 6 dans l'autre).",
+    "answers": [0, 2, 3],
+    "explication": "« Risque de manutention : chaque pièce pèse 46 livres » ; « L'installation du centralisateur doit TOUJOURS se faire à deux travailleurs » ; « vérifier la présence des 12 boulons, 12 locknuts et 12 lockwashers avant le serrage ». À l'inverse, « l'utilisation d'un wescot ou d'un pipe wrench n'est pas adéquate ».",
     "sourceId": "centralisateur",
     "code": "",
     "titre": "Procédure d'installation du centralisateur",
