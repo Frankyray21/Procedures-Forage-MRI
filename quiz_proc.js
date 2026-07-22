@@ -70,7 +70,10 @@ window.QUIZ_PROC = {
       "e": "« Placer le gearbox le plus loin possible des tables pour disposer de l'espace nécessaire à l'installation de la clé. »" },
     { "q": "Combien de manilles faut-il, et de quelle taille ?",
       "o": ["1 manille 1/2", "2 manilles 3/4", "4 manilles 3/4", "2 manilles 1''"], "a": 1,
-      "e": "« Manilles requises : 2 manilles 3/4. »" }  ],
+      "e": "« Manilles requises : 2 manilles 3/4. »" },
+    { "t": "multi", "q": "Coche les affirmations VRAIES sur le coup de masse et le cadenassage lors du dévissage des tiges.",
+      "o": ["Appliquer le cadenassage avant d'intervenir pour dévisser des tiges ou un marteau coincé.", "Lors d'un coup de masse, garder les pieds sur une surface solide.", "On peut décadenasser l'équipement dès que les clés sont installées, sans attendre la fin de l'opération.", "Lors d'un coup de masse, personne ne doit se tenir dans la ligne de la masse si elle est échappée.", "Inspecter les outils nécessaires avant d'amorcer la tâche."], "a": [0, 1, 3, 4],
+      "e": "« Appliquer la procédure de cadenassage avant d'intervenir sur l'équipement pour dévisser des tiges ou un marteau coincé. » ; « Lors d'un coup de masse sur le manche de la clé, s'assurer d'avoir les pieds sur une surface solide. » ; « ...s'assurer que personne ne se trouve dans la ligne de la masse advenant qu'elle soit échappée. » ; « Inspecter les outils nécessaires avant d'amorcer la tâche. » L'option fausse contredit : « Retirer les clés et décadenasser l'équipement uniquement une fois l'opération terminée. »" }  ],
   "pro-op-ith-003": [
     { "t": "vf", "q": "Le traîneau ou la remorque doit être relié au véhicule avec deux élingues d'au moins 1'' X 8 pieds.", "vrai": true,
       "e": "« Relier le traîneau ou la remorque au véhicule avec deux élingues d'au moins 1'' X 8 pieds. »" },
@@ -159,6 +162,9 @@ window.QUIZ_PROC = {
     { "t": "trou", "q": "Pour suspendre et positionner la tête V-30, utiliser une chaîne de ______.",
       "o": ["Grade 30", "Grade 70", "Grade 80 (7100 lbs)", "N'importe laquelle"], "a": 2,
       "e": "« Utiliser une chaîne de grade 80 (7100 lbs) pour suspendre et positionner la tête V-30. »" },
+    { "t": "multi", "q": "Coche les affirmations VRAIES sur la manipulation des tiges et les bris de tige lors de l'alésage V-30.",
+      "o": ["Relever et arrêter la boîte de vitesse et mettre la foreuse au point mort avant d'installer ou d'enlever les tiges.", "En cas de bris de tige, arrêter le forage, couper l'électricité et l'air comprimé, puis barricader l'accès.", "Après un bris de tige, on peut poursuivre le forage sans attendre l'arrivée du contremaître.", "Interdire à toute personne de circuler en avant de la foreuse pendant le forage.", "Ne jamais interchanger les boyaux basse et haute pression."], "a": [3, 0, 4, 1],
+      "e": "« Pour installer ou enlever les tiges, relever et arrêter la boîte de vitesse et placer la foreuse au point mort avant toute manipulation. » ; « En cas de bris de tige, arrêter immédiatement le forage, fermer l'interrupteur électrique et l'alimentation en air comprimé, puis barricader l'accès. » ; « Pendant le forage, interdire à toute personne de circuler en avant de la foreuse. » ; « Ne jamais interchanger les boyaux basse et haute pression [...]. » L'option fausse contredit : « ...aucun travail de forage n'est permis avant [l'arrivée du contremaître]. »" },
   ],
   "pro-op-ith-007": [
     { "t": "trou", "q": "Positionner la commande de forage à ______ du point de forage pour être à l'abri des projections de roche.",
@@ -184,7 +190,10 @@ window.QUIZ_PROC = {
       "e": "« Récupérer le taillant ou les pièces brisées au fond de la monterie uniquement à l'aide du racloir de monterie (raise scraper) conçu à cet effet. »" },
     { "q": "Que faut-il sortir de la monterie avant de commencer la récupération ?",
       "o": ["Le couvercle", "La V-30 (on enlève les tiges de forage)", "Le racloir", "Rien"], "a": 1,
-      "e": "« Sortir la V-30 de la monterie en enlevant les tiges de forage avant d'entreprendre la récupération du taillant brisé. »" }  ],
+      "e": "« Sortir la V-30 de la monterie en enlevant les tiges de forage avant d'entreprendre la récupération du taillant brisé. »" },
+    { "t": "multi", "q": "Coche les affirmations VRAIES sur la protection antichute et le suivi après un bris de taillant.",
+      "o": ["Demeurer attaché à un ancrage ou à une ligne de vie tant que le couvercle est retiré.", "Remettre le couvercle sur la monterie entre les manipulations du racloir.", "Une fois le couvercle retiré, on peut détacher son cordon pour travailler plus librement.", "Avertir le superviseur de la mine si un taillant brisé demeure et que l'accès au niveau inférieur est impossible.", "Couvrir la monterie de façon sécuritaire une fois les travaux terminés."], "a": [4, 0, 3, 1],
+      "e": "« Demeurer attaché à un ancrage ou à une ligne de vie durant tous les travaux de manipulation du couvercle et tant que le couvercle est retiré de la monterie. » ; « Remettre le couvercle sur la monterie entre les manipulations du racloir et couvrir la monterie de façon sécuritaire une fois les travaux terminés. » ; « Avertir le superviseur de la mine lorsqu'un taillant brisé demeure présent et que l'accès au niveau inférieur n'est pas possible pour le récupérer. » L'option fausse contredit l'obligation de rester attaché tant que le couvercle est retiré." }  ],
   "pro-op-ith-012": [
     { "t": "trou", "q": "Installer le système de commande à distance à un minimum de ______ entre le foreur et le trou à forer.",
       "o": ["10 pieds", "50 pieds (15 mètres)", "100 pieds", "5 mètres"], "a": 1,
@@ -199,7 +208,10 @@ window.QUIZ_PROC = {
       "e": "« Lors du déblocage d'un trou dynamité avec amex (ANFO), mettre de l'eau dans les tiges de forage pour diminuer le risque d'explosion. »" },
     { "q": "Quel article de la loi parle du forage à distance ?",
       "o": ["Article 100", "Article 440", "Article 250", "Article 12"], "a": 1,
-      "e": "« Article 440 : des trous peuvent être forés à des distances moindres [...] pourvu que le forage soit exécuté au moyen d'un dispositif de commande à distance sous surveillance et que la zone de forage soit évacuée. »" }
+      "e": "« Article 440 : des trous peuvent être forés à des distances moindres [...] pourvu que le forage soit exécuté au moyen d'un dispositif de commande à distance sous surveillance et que la zone de forage soit évacuée. »" },
+    { "t": "multi", "q": "Coche les affirmations VRAIES sur le positionnement et la signalisation lors du forage à distance.",
+      "o": ["Se positionner vers la sortie en s'assurant que rien ne bloque l'accès.", "Ne jamais se tenir dans la ligne de sautage.", "Barricader tous les accès aux lieux de forage (clôture) ou les faire garder par un travailleur.", "Le foreur peut quitter la zone sécuritaire pendant que le forage se poursuit.", "Apposer sur la clôture une signalisation (ACCÈS INTERDIT, FORAGE EN COURS, FORAGE À DISTANCE)."], "a": [4, 0, 2, 1],
+      "e": "« Le foreur et l'aide-foreur doivent se positionner vers la sortie en s'assurant que rien ne bloque l'accès. » ; « Ne jamais se tenir dans la ligne de sautage. » ; « Barricader tous les accès aux lieux de forage par une clôture (selon les exigences du client) ou les faire garder par un travailleur. » ; « Apposer sur la clôture une signalisation indiquant le type de travaux (ACCÈS INTERDIT, FORAGE EN COURS, FORAGE À DISTANCE). » L'option fausse contredit : « Le foreur et l'aide-foreur doivent rester en tout temps dans la zone sécuritaire pendant le forage. »" }
   ],
   "pro-op-ith-014": [
     { "q": "Quand est-il interdit de mettre ton corps sous les tables ?",
