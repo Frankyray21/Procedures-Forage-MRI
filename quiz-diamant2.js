@@ -86,16 +86,16 @@
         "e": "« Le dead man doit être positionné […] à côté du rack à rod. »" }
     ],
     "dr600-op-002": [
-      { "q": "La foreuse va se déplacer seule. Qu'est-ce qui lève les roues du sol ?",
-        "o": ["La télécommande", "Les 4 pattes de coins", "La master switch", "Le treuil principal"], "a": 1,
+      { "t": "vf", "q": "On actionne les 4 pattes de coins afin que les roues ne touchent plus au sol.",
+        "vrai": true,
         "e": "« Actionner les 4 pattes de coins afin que les roues ne touchent plus au sol. »" },
       { "q": "Avant de déplacer la foreuse, que vérifies-tu au centre des 4 roues ?",
         "o": ["La pression des pneus", "Que l'engagement est dévissé AU COMPLET", "La graisse", "Rien"], "a": 1,
         "e": "« S'assurer que l'engagement au centre des 4 roues est bien dévissé AU COMPLET. »" }
     ],
     "std-dd-installation": [
-      { "q": "Les contrôles des foreuses DR sont de quel côté ?",
-        "o": ["Toujours à gauche", "À droite ou à gauche", "Toujours au centre", "À l'arrière"], "a": 1,
+      { "t": "vf", "q": "Les contrôles des foreuses DR peuvent aussi être à droite ou à gauche.",
+        "vrai": true,
         "e": "« Les contrôles des DR peuvent aussi être à droite ou à gauche. »" }
     ]
   };
