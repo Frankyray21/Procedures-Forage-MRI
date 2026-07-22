@@ -6,12 +6,12 @@
 (function () {
   var DD = {
     "pro-dd-st-001": [
-      { "t": "vf", "q": "Avant de visser la tige de forage de 3 mètres avec le water swivel, il est très important de bien graisser les filets.",
-        "vrai": true,
+      { "t": "trou", "q": "On met la tige de forage de ______ avec le water swivel, et il est très important de bien graisser les filets.",
+        "o": ["1,5 mètre", "1 mètre", "3 mètres", "6 mètres"], "a": 2,
         "e": "« Mettre la tige de forage de 3 mètres avec le water swivel. Il est très important de bien graisser les filets. »" }    ],
     "pro-dd-st-002": [
-      { "t": "vf", "q": "Pour vérifier si le tube carottier est vide, on peut regarder directement dans le tube.",
-        "vrai": false,
+      { "t": "trou", "q": "Pour vérifier si le tube carottier est vide, on insère une tige de métal de ______ dans l'extrémité et on la fait glisser dans le tube.",
+        "o": ["un pied", "deux pieds", "six pouces", "un mètre"], "a": 0,
         "e": "« Ne jamais regarder dans le tube pour voir s'il est vide, insérer plutôt une tige de métal d'un pied dans l'extrémité et la faire glisser dans le tube. »" }    ],
     "pro-dd-st-003": [
       { "q": "À quelle distance mets-tu les 8''X8'' et les 6''X6'' ?",
@@ -30,8 +30,8 @@
         "e": "« Mettre la transmission en première vitesse avant de dévisser la water swivell. »" }
     ],
     "pro-dd-st-006": [
-      { "t": "vf", "q": "En aucun cas le pipe wrench ne doit être utilisé pour dévisser la water swivel.",
-        "vrai": true,
+      { "t": "erreur", "q": "Un collègue doit dévisser la water swivel. Quelle action est une ERREUR ?",
+        "o": ["Employer l'outil approprié pour la dévisser", "Utiliser un pipe wrench pour dévisser la water swivel", "Refuser tout pipe wrench pour cette opération", "Ne jamais forcer sur la water swivel avec un pipe wrench"], "a": 1,
         "e": "« EN AUCUN CAS LE PIPE WRENCH NE DOIT ÊTRE UTILISÉ POUR DÉVISSER LA WATER SWIVEL. »" },
     ],
     "pro-dd-st-007": [
@@ -74,8 +74,8 @@
         "e": "« Entre 200 et 300 psi = poursuite des travaux avec vigilance. »" },
     ],
     "pro-op-dd-005": [
-      { "t": "vf", "q": "Avant de démonter le clam ou le chuck, les manettes doivent être en position fermée pour que les ressorts soient étirés au maximum.",
-        "vrai": true,
+      { "t": "erreur", "q": "Un collègue s'apprête à démonter le clam ou le chuck (mandrin). Quelle action est une ERREUR ?",
+        "o": ["Laisser les manettes en position ouverte", "S'assurer que les manettes sont en position fermée", "Vérifier que les ressorts sont étirés au maximum", "Barrer le clam ou le chuck avant de le démonter"], "a": 0,
         "e": "« S'assurer que les manettes pour barrer le clam ou le chuck (mandrin) soient en position fermée pour que les ressorts soient étirés au maximum. »" },
     ],
     "pro-op-dd-012": [
@@ -120,8 +120,8 @@
       { "q": "Combien d'extincteurs faut-il à l'entrée du site ?",
         "o": ["Aucun", "Un seul", "Deux", "Ça dépend du client"], "a": 1,
         "e": "« 1 extincteur à l'entrée du site. »" },
-      { "t": "vf", "q": "Les contrôles de la STM sont toujours à droite.",
-        "vrai": true,
+      { "t": "erreur", "q": "Un collègue s'installe pour opérer une foreuse STM. Quelle action est une ERREUR ?",
+        "o": ["Se positionner du côté droit où se trouvent les contrôles", "Vérifier l'emplacement des contrôles avant de commencer", "Garder un accès dégagé vers les contrôles de la STM", "Chercher les contrôles de la STM du côté gauche"], "a": 3,
         "e": "« Les contrôles de STM sont toujours à droite. »" }
     ]
   };

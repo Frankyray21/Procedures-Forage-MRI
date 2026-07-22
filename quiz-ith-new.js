@@ -44,8 +44,8 @@
         "e": "« Si la commande à distance n'est pas utilisée, la fiche d'obturation doit être insérée dans la boîte de connexion. »" }
     ],
     "pro-op-sm-001": [
-      { "t": "vf", "q": "Après avoir localisé la zone de forage, il faut d'abord vérifier la qualité de la ventilation.",
-        "vrai": true,
+      { "t": "erreur", "q": "Un collègue vient de localiser la zone de forage. Quelle action est une ERREUR ?",
+        "o": ["Vérifier d'abord la qualité de la ventilation", "S'assurer que la ventilation est adéquate avant de forer", "Contrôler la ventilation dès que la zone est localisée", "Commencer à forer sans vérifier la ventilation"], "a": 3,
         "e": "« Après avoir localisé la zone de forage, vérifiez d'abord la qualité de la ventilation. »" }
     ],
     "pro-op-sm-002": [

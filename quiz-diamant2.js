@@ -5,13 +5,13 @@
 (function () {
   var DD2 = {
     "pro-dd-st-001": [
-      { "t": "vf", "q": "On boulonne le bearing avec le bushing standard sur le clam une fois le core barrel au fond du trou.",
-        "vrai": true,
+      { "t": "erreur", "q": "Un collègue installe le bearing une fois le core barrel au fond du trou. Quelle action est une ERREUR ?",
+        "o": ["Boulonner le bearing avec le bushing standard", "Poser le bushing standard sur le clam", "Utiliser un bushing non standard sur le clam", "S'assurer que le core barrel est au fond du trou"], "a": 2,
         "e": "« Boulonner le bearing avec le bushing standard sur le clam une fois le core barrel au fond du trou. »" }
     ],
     "pro-dd-st-002": [
-      { "t": "vf", "q": "Il ne faut jamais mettre les tubes carottiers par terre ou à la hauteur du visage.",
-        "vrai": true,
+      { "t": "erreur", "q": "Un collègue manipule des tubes carottiers. Quelle action est une ERREUR ?",
+        "o": ["Éviter de mettre les tubes à la hauteur du visage", "Ne jamais déposer les tubes directement au sol", "Garder les tubes loin de la hauteur du visage", "Déposer les tubes par terre entre deux manipulations"], "a": 3,
         "e": "« Ne jamais mettre les tubes par terre ou à la hauteur du visage. »" },
       { "q": "Qui doit vérifier les boîtes avant de les fermer ?",
         "o": ["L'aide-foreur", "Le foreur", "Le superviseur", "Le géologue"], "a": 1,
@@ -51,8 +51,8 @@
         "o": ["De l'air", "Un bouchon 'VAN RUTH', poussé par l'eau", "Une tige d'acier", "Du ciment"], "a": 1,
         "e": "« Pousser un bouchon de type 'VAN RUTH' avec la pression d'eau jusqu'au tube carottier afin de prévenir l'éjection du tube carottier. »" }    ],
     "pro-op-dd-005": [
-      { "t": "vf", "q": "On dévisse les 6 boulons ¾ du couvert des jaws (mâchoires) avec une clé 1'' 1/8.",
-        "vrai": true,
+      { "t": "trou", "q": "On dévisse les 6 boulons ¾ du couvert des jaws (mâchoires) avec une clé ______.",
+        "o": ["3/4", "1'' 1/8", "7/8", "1'' 1/2"], "a": 1,
         "e": "« Dévisser les 6 boulons ¾ du couvert des jaws (mâchoires) avec une clé 1'' 1/8. »" }
     ],
     "pro-op-dd-012": [
