@@ -15,6 +15,7 @@
         "e": "« Le site de forage débute au ruban jaune. »" },
       { "q": "Un visiteur arrive. Qui vérifie qu'il porte bien ses équipements de protection (ÉPI) ?",
         "o": ["Le visiteur lui-même", "Le foreur ou l'aide-foreur qui l'accueille", "Le superviseur de la mine", "Personne"], "a": 1,
+        "img": "images/figures/san-sec-005-1.jpg", "detail": "Affiche « Personne autorisée seulement » à l'entrée du site de forage.",
         "e": "« Le foreur ou l'aide-foreur qui accueille le visiteur doit s'assurer que ce dernier porte convenablement [les ÉPI]. »" },
       { "t": "vf", "q": "Le superviseur n'est pas considéré comme un visiteur.",
         "vrai": true,
