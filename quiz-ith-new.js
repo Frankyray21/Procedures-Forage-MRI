@@ -140,10 +140,7 @@
         "e": "« Appuyer les fourches sous le gear box ou mettre une légère tension sur les élingues ou la chaîne »" },
       { "q": "Une fois le nouveau gear box en place, que dois-tu vérifier ?",
         "o": ["Sa couleur", "Qu'il tourne dans le bon sens", "Son poids", "Rien"], "a": 1,
-        "e": "« S'assurer que le gear box tourne dans le bon sens. »" },
-      { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement d'un gear box de foreuse ITH.",
-        "o": ["Il faut mettre le mât à 90 degrés puis cadenasser avant de débrancher les boyaux.", "On peut retirer les deux derniers boulons du gear box sans aucune tension sur les élingues.", "On serre la swivel à 800 lbs de torque.", "Il faut s'assurer que le gear box tourne dans le bon sens avant la remise en service.", "Serrer la swivel à 400 lbs de torque est suffisant."], "a": [0, 2, 3],
-        "e": "« Serrer la swivel au couple prescrit de 800 lbs de torque et s'assurer que le gear box tourne dans le bon sens avant la remise en service. » ; au départ, « mettre le mât à 90 degrés et appliquer la procédure de cadenassage avant de débrancher les boyaux hydrauliques et pneumatiques. »" }
+        "e": "« S'assurer que le gear box tourne dans le bon sens. »" }
     ],
     "pro-mec-004": [
       { "q": "Que dois-tu cadenasser avant de dévisser les boyaux à air ?",
