@@ -7,7 +7,6 @@
     "pro-op-cat-416-001": [
       { "t": "trou", "q": "Dans la rampe, tu dois garder une distance de ______ entre les véhicules.",
         "o": ["10 mètres", "20 mètres", "30 mètres", "50 mètres"], "a": 2,
-        "img": "images/figures/pro-op-cat-416-001-10.jpg", "detail": "Extrait de la procédure officielle du tracteur 416 F2 (section Utilisation).",
         "e": "« Toujours garder une distance de 30 mètres entre les véhicules dans la rampe. »" },
       { "q": "Combien les fourches peuvent-elles lever au maximum ?",
         "o": ["1 100 kg", "2 964 kg / 6 535 lb", "3 300 kg", "4 600 kg"], "a": 1,
@@ -33,7 +32,6 @@
     "pro-op-cim-001": [
       { "q": "Avant de commencer le ciment, quel masque mets-tu ?",
         "o": ["Un masque jetable", "Le masque power flow (avec ventilateur)", "Aucun masque", "Un masque à cartouche"], "a": 1,
-        "img": "images/figures/pro-op-cim-001-3.jpg", "detail": "L'équipement de protection respiratoire porté pour la cimentation.",
         "e": "« Enfiler le masque power flow, activer le ventilateur et ajuster le masque. »" },
       { "q": "Jusqu'à quand dois-tu porter tes ÉPI ?",
         "o": ["Jusqu'à la fin du pompage", "Jusqu'à ce que la machine à ciment soit bien nettoyée", "Pendant 10 minutes", "Tant qu'il y a de la poussière"], "a": 1,
