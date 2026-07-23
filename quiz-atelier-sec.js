@@ -16,11 +16,7 @@
         "e": "« Lors de l'ouverture ou de la fermeture de la porte, une lumière stroboscopique s'allumera pour avertir toutes les personnes présentes dans l'atelier. »" },
       { "q": "À quelle vitesse doit se faire l'entrée, la sortie ou le déplacement d'un équipement dans l'atelier ?",
         "o": ["Vitesse normale", "Vitesse très lente", "Le plus vite possible", "Peu importe"], "a": 1,
-        "e": "« L'entrée ou la sortie de l'équipement doit se faire à vitesse très lente. »" },
-      { "t": "multi", "q": "Coche les affirmations VRAIES sur le contrôle des déplacements d'équipements dans l'atelier.",
-        "o": ["L'opérateur de la chargeuse à fourche doit attendre qu'un travailleur de l'intérieur vienne le guider.", "L'opérateur peut manœuvrer sans signaleur si l'atelier semble dégagé.", "Le signaleur doit rester visible en tout temps par l'opérateur.", "Le frein de stationnement doit être appliqué quand les manœuvres sont terminées.", "Une fois le matériel déposé, aucune vérification n'est requise derrière le véhicule."],
-        "a": [2, 0, 3],
-        "e": "« L'opérateur de la chargeuse à fourche doit attendre qu'un travailleur de l'intérieur vienne le guider pour déposer ou ramasser le matériel. » « Le signaleur doit s'assurer que l'espace est suffisant […] et rester visible en tout temps par l'opérateur. » « Le frein de stationnement doit être appliqué quand les manœuvres sont terminées. »" }
+        "e": "« L'entrée ou la sortie de l'équipement doit se faire à vitesse très lente. »" }
     ],
     "atelier-mec-002": [
       { "q": "Que fait-on avant d'utiliser le coupe-boyau ?",
@@ -34,11 +30,7 @@
         "e": "« Sélectionner une des 8 options selon la grosseur du boyau et le nombre de brins. »",
         "img": "images/figures/atelier-mec-002-8.jpg", "detail": "Le panneau de la sertisseuse présente 8 options numérotées." },
       { "t": "vf", "q": "En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coupe-boyau.", "vrai": true,
-        "e": "« En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coup-boyau »" },
-      { "t": "multi", "q": "Coche les affirmations VRAIES sur la fabrication des boyaux hydrauliques.",
-        "o": ["Aligner la ligne de l'adapteur avec le bord des mâchoires de la sertisseuse avant de choisir l'option.", "On peut actionner la sertisseuse avec le garde ouvert pour aller plus vite.", "Sélectionner l'option de sertissage selon la grosseur du boyau et le nombre de brins.", "Au relâchement du sélecteur « CRIMP », les mâchoires de la sertisseuse se rétractent.", "Le travail terminé au coupe-boyau, on laisse la clé en position « ON »."],
-        "a": [0, 2, 3],
-        "e": "« Aligner la ligne de l'adapteur avec le bord des mâchoires de la sertisseuse avant de sélectionner l'option de sertissage. » « Sélectionner l'option de sertissage correspondant à la grosseur du boyau et au nombre de brins avant d'appuyer sur CRIMP. » « Lors du relâchement du sélecteur CRIMP, les mâchoires de la sertisseuse se rétractent. »" }
+        "e": "« En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coup-boyau »" }
     ],
     "atelier-mec-003": [
       { "t": "trou", "q": "La presse ENERPAC IPR 5075 opère à une pression maximum de ______.",
@@ -52,11 +44,7 @@
         "e": "« Toujours se tenir de côté et non face aux pièces à presser »" },
       { "q": "Que faut-il faire pour tout travail avec les portes de la presse ouvertes ?",
         "o": ["Rien de spécial", "Une analyse de risque avec le surintendant SST et le superviseur", "Porter seulement des gants", "Avertir uniquement un collègue"], "a": 1,
-        "e": "« …une analyse de risque (formulaire en annexe) doit être effectuée avec le surintendant SST, le superviseur de l'atelier et les travailleurs qui doivent faire le travail. »" },
-      { "t": "multi", "q": "Coche les affirmations VRAIES sur l'utilisation de la presse hydraulique ENERPAC.",
-        "o": ["Il est interdit de laisser la pression sur la pièce quand les portes sont ouvertes.", "On peut fermer l'alimentation de la presse à l'aide de l'interverrouillage.", "Fermer les deux portes et mettre l'interverrouillage en place avant d'appuyer sur l'interrupteur.", "Attendre que le message d'arrêt s'éteigne complètement à l'écran avant de réenclencher la barre.", "Si la presse ne réagit pas comme prévu, on continue et on règle le problème soi-même."],
-        "a": [3, 0, 2],
-        "e": "« Il est interdit de laisser la pression sur la pièce quand les portes sont ouvertes. » « Fermer les deux portes et mettre l'interverrouillage en place avant d'appuyer sur l'interrupteur de la manette. » « Avant de réenclencher la barre de l'interverrouillage, attendre que le message d'arrêt s'éteigne complètement sur l'écran de contrôle. »" }
+        "e": "« …une analyse de risque (formulaire en annexe) doit être effectuée avec le surintendant SST, le superviseur de l'atelier et les travailleurs qui doivent faire le travail. »" }
     ],
     "atelier-transport-001": [
       { "t": "trou", "q": "Le contremaître-général au site doit être averti du moment du départ du transport ______ à l'avance.",
@@ -70,11 +58,7 @@
         "e": "« Le chauffeur doit avertir le contremaître-général dès son arrivée »" },
       { "q": "Qu'est-ce qui doit être fait pour un déchargement autre que des conteneurs MRI, palettes ou chargeuse à fourches ?",
         "o": ["Rien de spécial", "Un A-3", "Un appel au directeur", "Une signature seulement"], "a": 1,
-        "e": "« Un A-3 devra être fait pour le déchargement autre que des conteneurs de matériel rouge-MRI ou de palettes, ou qui ne se décharge pas avec la chargeuse à fourches. »" },
-      { "t": "multi", "q": "Coche les affirmations VRAIES sur les transports à la mine Éléonore.",
-        "o": ["12 heures à l'avance, le chauffeur avertit le contremaître-général de l'heure prévue d'arrivée.", "Le stationnement du transport peut se faire n'importe où, même s'il gêne la circulation.", "Une réunion de sécurité à partir du tableau des risques mortels est tenue avec le chauffeur.", "Un contremaître-général ou un superviseur doit être sur place durant le déchargement-chargement.", "Le préavis du départ n'a pas besoin d'être donné d'avance au contremaître-général."],
-        "a": [2, 0, 3],
-        "e": "« 12 heures à l'avance, le chauffeur doit avertir le contremaître-général de l'heure prévue d'arrivée. » « Une réunion de sécurité à partir du tableau des risques mortels doit être tenue avec le chauffeur, avec signature d'un formulaire. » « Un contremaître-général ou un superviseur doit être sur place durant toutes les opérations de déchargement-chargement. »" }
+        "e": "« Un A-3 devra être fait pour le déchargement autre que des conteneurs de matériel rouge-MRI ou de palettes, ou qui ne se décharge pas avec la chargeuse à fourches. »" }
     ],
     "pro-sec-010": [
       { "q": "Quel EPI est obligatoire spécifiquement lors du façonnage ?",
@@ -87,11 +71,7 @@
         "o": ["Collé à la foreuse", "À l'écart de la foreuse, en considérant la projection d'étincelles", "N'importe où", "Sous la foreuse"], "a": 1,
         "e": "« Il doit être positionné à l'écart de la foreuse et il faut considérer la projection d'étincelle. »" },
       { "t": "vf", "q": "Les raccords électriques doivent être accrochés pour ne pas être en contact avec l'eau.", "vrai": true,
-        "e": "« Les raccords électriques doivent être accrochés pour ne pas être en contact avec l'eau. »" },
-      { "t": "multi", "q": "Coche les affirmations VRAIES sur l'affûtage de trépan sous terre.",
-        "o": ["Le port des goggles et de tous les autres EPI est obligatoire lors du ponçage.", "La poignée et le garde du disque de la meuleuse doivent obligatoirement être présents.", "On peut affûter sans vérifier le niveau du système de lubrification de la ponceuse.", "Choisir la bonne meule de ponçage en fonction du diamètre du bouton à affûter.", "Les raccords électriques peuvent rester au sol, en contact avec l'eau."],
-        "a": [1, 3, 0],
-        "e": "« Le port des goggles et de tous les autres EPI est obligatoire lors du ponçage. » « La poignée et le garde du disque de la meuleuse doivent obligatoirement être présents ; vérifier le bon fonctionnement de l'interrupteur. » « Choisir la bonne meule de ponçage en fonction du diamètre du bouton à affûter. »" }
+        "e": "« Les raccords électriques doivent être accrochés pour ne pas être en contact avec l'eau. »" }
     ],
     "ges-san-sec-001": [
       { "q": "Que faut-il faire avant toute modification à un équipement ou un système ?",
@@ -116,11 +96,7 @@
         "e": "« N.B. Ne Jamais Meuler (Grinder) la V-30. »" },
       { "q": "Où met-on la rondelle (washer) lors du serrage sur un marteau usé ?",
         "o": ["Sur l'écrou (nut) seulement", "Sur le boulon (bolt) seulement", "Peu importe", "Jamais de rondelle"], "a": 1,
-        "e": "« Toujours mettre la rondelle (Washer) sur le Boulon (Bolt). Non pas sur l'écrou (Nut) »" },
-      { "t": "multi", "q": "Coche les affirmations VRAIES sur le serrage et l'entretien du marteau.",
-        "o": ["Avant de remonter un marteau usé, nettoyer la boue de forage et/ou la rouille et vérifier l'usure.", "Ne pas utiliser d'anti-seize sur les boulons servant à serrer les rondelles (washer).", "On peut meuler la V-30 elle-même pour ajuster la surface.", "Sur un marteau neuf, torquer à 250 pi-lbs sur l'écrou (nut), puis à 1200 pi-lbs sur le boulon (bolt).", "La rondelle (washer) se place sur l'écrou (nut)."],
-        "a": [3, 0, 1],
-        "e": "« Marteau usé, avant remontage : retirer le marteau de la V-30, nettoyer la boue de forage et/ou la rouille, vérifier l'usure […]. » « Ne pas utiliser d'anti-seize sur les boulons servant à serrer les rondelles (washer) — seulement sur les boulons (bolt) prévus. » « Marteau neuf : […] torquer à 250 pi-lbs sur l'écrou (nut) […], puis torquer à 1200 pi-lbs sur le boulon (bolt) […]. »" }
+        "e": "« Toujours mettre la rondelle (Washer) sur le Boulon (Bolt). Non pas sur l'écrou (Nut) »" }
     ]
   };
   var T = window.QUIZ_PROC || (window.QUIZ_PROC = {});
