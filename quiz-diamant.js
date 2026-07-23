@@ -41,8 +41,7 @@
     "pro-dd-st-007": [
       { "q": "Pour faire le ciment, quel masque faut-il porter ?",
         "o": ["Un masque jetable", "Le masque powerflow", "Aucun masque", "Juste des lunettes"], "a": 1,
-        "e": "« ÉPI OBLIGATOIRES : […] Masque powerflow […] » (avec fit test pour masque powerflow).",
-        "img": "images/figures/pro-dd-st-007-2.jpg", "detail": "L'équipement de protection à porter pour le travail au ciment." },
+        "e": "« ÉPI OBLIGATOIRES : […] Masque powerflow […] » (avec fit test pour masque powerflow)." },
       { "q": "Avec quoi huile-t-on les pièces qui touchent le ciment ?",
         "o": ["De l'huile à moteur", "De l'huile végétale, au pulvérisateur", "De l'eau", "De la graisse"], "a": 1,
         "e": "« Bien huiler avec de l'huile végétale avec un pulvérisateur toutes les composantes du mélangeur et de la pompe qui seront en contact avec le ciment. »" },
@@ -59,8 +58,7 @@
         "e": "« S'assurer d'avoir un angle entre 75° et 80°. »" },
       { "q": "Comment ranges-tu les tiges dans le support ?",
         "o": ["En vrac", "En quinconce, rangée par rangée depuis la gauche, appuyées sur la barre du fond", "Debout", "Sur les côtés"], "a": 1,
-        "e": "« Placer les tiges dans le support en quinconce […] par rangée à partir de la gauche » et « S'assurer d'appuyer les tiges sur la barre transversale du fond et non sur les côtés. »",
-        "img": "images/figures/pro-dd-st-008-2.jpg", "detail": "Disposition des tiges dans le support selon le sens de chargement." }
+        "e": "« Placer les tiges dans le support en quinconce […] par rangée à partir de la gauche » et « S'assurer d'appuyer les tiges sur la barre transversale du fond et non sur les côtés. »" }
     ],
     "pro-dd-st-009-1": [
       { "q": "Quels boulons faut-il utiliser?",
@@ -114,8 +112,7 @@
         "e": "« Le dead man doit être positionné à un minimum de 1,5 mètre de la tour de la foreuse […] »" },
       { "q": "Le système FORTRESS a combien de pièces ?",
         "o": ["Une", "Deux : coulisse et serrure", "Trois", "Quatre"], "a": 1,
-        "e": "« Le système d'interverrouillage « FORTRESS » comprend 2 pièces : la coulisse et la serrure. »",
-        "img": "images/figures/ss-dd-st-001-1.jpg", "detail": "Le système FORTRESS installé sur la barrière." }
+        "e": "« Le système d'interverrouillage « FORTRESS » comprend 2 pièces : la coulisse et la serrure. »" }
     ],
     "dr600-op-002": [
       { "t": "vf", "q": "Il n'y a aucun frein sur la foreuse si les planétaires sont désengagés.",

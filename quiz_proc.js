@@ -29,8 +29,7 @@ window.QUIZ_PROC = {
       "e": "« Attention de ne pas endommager les filets des boulons quand vous les entrez dans les trous prévus à cet effet. »" },
     { "q": "Comment place-t-on les boulons sur le centralisateur ?",
       "o": ["Tous du même côté", "6 d'un côté et 6 de l'autre", "4 et 8", "Au hasard"], "a": 1,
-      "e": "« Répartition des boulons : 6 dans un sens et 6 dans l'autre sens. »",
-      "img": "images/figures/centralisateur-1.jpg", "detail": "Vue éclatée du centralisateur montrant la disposition des boulons." },
+      "e": "« Répartition des boulons : 6 dans un sens et 6 dans l'autre sens. »" },
     { "q": "Combien pèse le centralisateur au complet ?",
       "o": ["46 lbs", "93 lbs", "12 lbs", "211 lbs"], "a": 1,
       "e": "« Poids total du centralisateur (dessin technique) : 93,0 lbs. »" }

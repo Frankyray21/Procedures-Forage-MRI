@@ -27,8 +27,7 @@
         "e": "« 2 lignes dans le bas de l'adapteur égale 2 brins »" },
       { "q": "Combien d'options de sertissage la sertisseuse propose-t-elle ?",
         "o": ["4", "6", "8", "10"], "a": 2,
-        "e": "« Sélectionner une des 8 options selon la grosseur du boyau et le nombre de brins. »",
-        "img": "images/figures/atelier-mec-002-8.jpg", "detail": "Le panneau de commande de la sertisseuse." },
+        "e": "« Sélectionner une des 8 options selon la grosseur du boyau et le nombre de brins. »" },
       { "t": "vf", "q": "En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coupe-boyau.", "vrai": true,
         "e": "« En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coup-boyau »" }
     ],
