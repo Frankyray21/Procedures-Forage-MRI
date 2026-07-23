@@ -174,20 +174,20 @@
         "e": "Vrai : « la procédure PRO-MEC-001 doit être appliquée pour enlever le mât », « un électricien doit déconnecter le moteur électrique », le cadenassage précède la déconnexion du système ANSUL, et « ne jamais se positionner sous une charge pendant les opérations de levage et d'élingage »." }
     ],
     "pro-mec-006": [
-      { "q": "Dans la méthode 1, que ne dois-tu PAS faire avec la tige de forage ?",
+      { "q": "En changeant le saver sub avec le mât à l'horizontale, que ne dois-tu PAS faire avec la tige de forage qui sert à retenir la clé ?",
         "o": ["La visser au saver sub", "La lubrifier", "La retirer", "La mesurer"], "a": 0,
-        "e": "« NE PAS VISSER LA TIGE AU SAVER SUB »" },
+        "e": "« NE PAS VISSER LA TIGE AU SAVER SUB » (méthode mât à l'horizontale)." },
       { "t": "trou", "q": "La pression hydraulique préalablement ajustée à ______ sert à visser complètement le saver sub.",
         "o": ["1 500 psi", "2 000 psi", "2 800 psi", "3 500 psi"], "a": 2,
         "e": "« …préalablement ajustée à 2800 psi, pour visser complètement le saver sub… »" },
-      { "q": "Dans la méthode 2, que faut-il éviter en repositionnant la clé ?",
-        "o": ["De la salir", "Une zone de coincement", "De la faire tomber", "Rien de particulier"], "a": 1,
-        "e": "« …il faut la manipuler par l'extrémité afin de ne pas s'exposer à une zone de coincement. (Cercle jaune) »" },
+      { "q": "En changeant le saver sub avec le mât à la verticale, tu repositionnes la clé du saver sub sur les centralisateurs « jaw ». Pour ne pas te blesser, que faut-il éviter ?",
+        "o": ["De salir la clé", "T'exposer à une zone de coincement", "De faire tomber la clé", "Rien de particulier"], "a": 1,
+        "e": "« En repositionnant la clé […] la manipuler par l'extrémité afin de ne pas s'exposer à la zone de coincement » (méthode mât à la verticale, cercle jaune)." },
       { "q": "Sur la nouvelle console, que dois-tu faire avant d'entretenir une composante du mât ?",
         "o": ["Rien de spécial", "Enfoncer le bouton d'arrêt", "Mettre le levier au maximum", "Débrancher la radio"], "a": 1,
         "e": "« …il doit obligatoirement enfoncer le bouton d'arrêt pour enlever l'alimentation de la console. »" },
       { "t": "multi", "q": "Coche les affirmations VRAIES sur le changement du saver sub (gear box ITH).",
-        "o": ["Il ne faut pas visser la tige de forage au saver sub lors de son installation (méthode 1).", "On peut visser la tige de forage directement au saver sub à l'installation.", "En méthode 2, manipuler la clé par l'extrémité pour éviter la zone de coincement.", "Le nouveau saver sub se visse avec la force hydraulique ajustée à 2 800 psi.", "Il n'y a aucune limite de pression pour serrer le saver sub."], "a": [0, 2, 3],
+        "o": ["Avec le mât à l'horizontale, il ne faut pas visser au saver sub la tige de forage qui retient la clé.", "On peut visser la tige de forage directement au saver sub à l'installation.", "Avec le mât à la verticale, manipuler la clé du saver sub par l'extrémité pour éviter la zone de coincement.", "Le nouveau saver sub se visse avec la force hydraulique ajustée à 2 800 psi.", "Il n'y a aucune limite de pression pour serrer le saver sub."], "a": [0, 2, 3],
         "e": "« Ne pas visser la tige de forage utilisée comme retenue de la clé au saver sub. » ; en repositionnant la clé, « la manipuler par l'extrémité afin de ne pas s'exposer à la zone de coincement. » ; « Visser le nouveau saver sub complètement avec la force hydraulique ajustée à 2 800 psi ». Sur l'ancienne console, positionner le levier au neutre avant tout entretien." }
     ],
     "pro-mec-007": [

@@ -1149,7 +1149,7 @@
     ],
     "en-pro-mec-006a": [
       {
-        "q": "In Method #1, how must the drill rod be inserted into the gearbox saver sub?",
+        "q": "When changing the saver sub with the mast horizontal, how must the drill rod (used to hold the wrench) be inserted into the gearbox saver sub?",
         "o": [
           "By screwing it firmly to the saver sub",
           "By moving it without rotation, without screwing it to the saver sub",
@@ -1172,7 +1172,7 @@
         "e": "« Use hydraulic force, previously adjusted to 2800 psi, to fully screw the saver sub to the gear box contact. »"
       },
       {
-        "q": "In Method #2, how must the wrench be handled if it needs to be repositioned to align with the saver sub?",
+        "q": "When changing the saver sub with the mast vertical, how must the saver sub wrench be handled if it needs to be repositioned on the \"jaw\" centralizers?",
         "o": [
           "It must be manipulated by the end so as not to expose oneself to a jamming zone",
           "It must be held in the middle with both hands",
