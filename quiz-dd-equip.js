@@ -33,7 +33,7 @@
     "pro-op-cim-001": [
       { "q": "Avant de commencer le ciment, quel masque mets-tu ?",
         "o": ["Un masque jetable", "Le masque power flow (avec ventilateur)", "Aucun masque", "Un masque à cartouche"], "a": 1,
-        "img": "images/figures/pro-op-cim-001-3.jpg", "detail": "Le masque Power Flow porté avec son ventilateur alimenté (unité à la ceinture) et la combinaison complète.",
+        "img": "images/figures/pro-op-cim-001-3.jpg", "detail": "L'équipement de protection respiratoire porté pour la cimentation.",
         "e": "« Enfiler le masque power flow, activer le ventilateur et ajuster le masque. »" },
       { "q": "Jusqu'à quand dois-tu porter tes ÉPI ?",
         "o": ["Jusqu'à la fin du pompage", "Jusqu'à ce que la machine à ciment soit bien nettoyée", "Pendant 10 minutes", "Tant qu'il y a de la poussière"], "a": 1,

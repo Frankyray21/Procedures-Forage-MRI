@@ -30,7 +30,7 @@ window.QUIZ_PROC = {
     { "q": "Comment place-t-on les boulons sur le centralisateur ?",
       "o": ["Tous du même côté", "6 d'un côté et 6 de l'autre", "4 et 8", "Au hasard"], "a": 1,
       "e": "« Répartition des boulons : 6 dans un sens et 6 dans l'autre sens. »",
-      "img": "images/figures/centralisateur-1.jpg", "detail": "Vue éclatée : 6 boulons dans un sens, 6 dans l'autre." },
+      "img": "images/figures/centralisateur-1.jpg", "detail": "Vue éclatée du centralisateur montrant la disposition des boulons." },
     { "q": "Combien pèse le centralisateur au complet ?",
       "o": ["46 lbs", "93 lbs", "12 lbs", "211 lbs"], "a": 1,
       "e": "« Poids total du centralisateur (dessin technique) : 93,0 lbs. »" }
@@ -61,7 +61,7 @@ window.QUIZ_PROC = {
     { "q": "Que doivent avoir les crochets du tire-fort ?",
       "o": ["Être rouges", "Un linguet", "Être neufs", "Être doublés"], "a": 1,
       "e": "« Les crochets doivent être munis de linguet. »",
-      "img": "images/figures/pro-op-ith-002-1.jpg", "detail": "Le tire-fort et ses crochets à linguet." },
+      "img": "images/figures/pro-op-ith-002-1.jpg", "detail": "Gros plan des crochets du tire-fort." },
     { "t": "trou", "q": "Lors de la mise en tension avec le tire-fort, ne pas dépasser la charge certifiée de l'ancrage du mât, soit ______.",
       "o": ["1000 kg", "1500 kg", "2500 kg", "5000 kg"], "a": 2,
       "e": "« Ne pas dépasser la charge certifiée de l'ancrage du mât (2500 kg) lors de la mise en tension avec le tire-fort. »" },

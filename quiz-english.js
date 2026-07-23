@@ -37,7 +37,9 @@
           "No, it is not a point of support for blocking"
         ],
         "a": 3,
-        "e": "« Warning: The structure of the basket is not a point of support for blocking »"
+        "e": "« Warning: The structure of the basket is not a point of support for blocking »",
+        "img": "images/figures/pro-mec-007-1.jpg",
+        "detail": "Never rest or lean the lifting/blocking on the track (chenille) or the basket structure."
       },
       {
         "q": "Who must approve the full implementation of this procedure before the work is carried out?",
@@ -95,7 +97,9 @@
           "50 meters"
         ],
         "a": 2,
-        "e": "« Always keep a distance of 30 meters between vehicles on the ramp. »"
+        "e": "« Always keep a distance of 30 meters between vehicles on the ramp. »",
+        "img": "images/figures/pro-op-cat-416-001-10.jpg",
+        "detail": "Vehicles moving on the ramp."
       }
     ],
     "en-pro-op-ith-006a": [
@@ -108,7 +112,9 @@
           "No distance is required"
         ],
         "a": 1,
-        "e": "« A distance of at least 3 metres (10 feet) must be left between the barricade at the site entrance and the first pieces of equipment (toolbox, oil, etc.). »"
+        "e": "« A distance of at least 3 metres (10 feet) must be left between the barricade at the site entrance and the first pieces of equipment (toolbox, oil, etc.). »",
+        "img": "images/figures/pro-op-ith-006-4.jpg",
+        "detail": "Site layout showing the barricade and the material."
       },
       {
         "q": "Who is authorized to circulate in front of the drilling unit during the drilling of the hole?",
@@ -189,7 +195,9 @@
           "A Wescot or pipe wrench"
         ],
         "a": 3,
-        "e": "« USING A WESCOT OR PIPE WRENCH IS NOT APPROPRIATE »"
+        "e": "« USING A WESCOT OR PIPE WRENCH IS NOT APPROPRIATE »",
+        "img": "images/figures/centralisateur-1.jpg",
+        "detail": "Exploded view of the centraliser and its bolts."
       },
       {
         "q": "How often are rod centralisers normally installed?",
@@ -294,7 +302,9 @@
           "Nothing, tightening at installation is final"
         ],
         "a": 2,
-        "e": "« PLEASE NOTE THE BOLTS HAVE TO BE TIGHTENED AFTER 1 DRILLING SHIFT »"
+        "e": "« PLEASE NOTE THE BOLTS HAVE TO BE TIGHTENED AFTER 1 DRILLING SHIFT »",
+        "img": "images/figures/pro-mec-010-1.jpg",
+        "detail": "The actuator bolts shown on the diagram."
       }
     ],
     "en-pro-mec-001a": [
@@ -465,7 +475,9 @@
           "Any pressure, as long as the jaws are closed"
         ],
         "a": 1,
-        "e": "« Tighten the bit with a minimum of 1000 psi and no more than 2000 psi »"
+        "e": "« Tighten the bit with a minimum of 1000 psi and no more than 2000 psi »",
+        "img": "images/figures/pro-op-ith-001-2.jpg",
+        "detail": "The SHANK inserted in the hammer and the bit on the threads."
       },
       {
         "q": "Is it allowed to manoeuvre the controls while the operator is handling the bit or rods?",
@@ -528,7 +540,9 @@
           "The OHS Superintendent"
         ],
         "a": 2,
-        "e": "« The visitors can cross the ribbon and the supervisor is responsible of the visitors »"
+        "e": "« The visitors can cross the ribbon and the supervisor is responsible of the visitors »",
+        "img": "images/figures/san-sec-005-1.jpg",
+        "detail": "\"Authorized personnel only\" sign at the site entrance."
       }
     ],
     "en-pro-mec-003a": [
@@ -886,7 +900,9 @@
           "Removing the drill rig from the stope"
         ],
         "a": 1,
-        "e": "« When this is necessary, a risk analysis must be carried out »"
+        "e": "« When this is necessary, a risk analysis must be carried out »",
+        "img": "images/figures/pro-op-ith-002-1.jpg",
+        "detail": "The come-along (tire-fort) hooks must be fitted with a latch (safety)."
       }
     ],
     "en-pro-op-sm-001a": [
@@ -951,7 +967,9 @@
           "Only the site supervisor may enter"
         ],
         "a": 2,
-        "e": "« IT IS STRICTLY FORBIDDEN FOR ANYONE TO ENTER THE 30-INCH RAISE TO RECOVER ANYTHING, REGARDLESS TO HIS DEPTH »"
+        "e": "« IT IS STRICTLY FORBIDDEN FOR ANYONE TO ENTER THE 30-INCH RAISE TO RECOVER ANYTHING, REGARDLESS TO HIS DEPTH »",
+        "img": "images/figures/pro-op-ith-005-6.jpg",
+        "detail": "Cover removed from the raise: never enter or reach into the open hole."
       },
       {
         "t": "trou",
@@ -998,7 +1016,9 @@
           "Only after removing the teflons"
         ],
         "a": 1,
-        "e": "« N.B. only one part at a time and one side at a time. »"
+        "e": "« N.B. only one part at a time and one side at a time. »",
+        "img": "images/figures/pro-mec-008-1.jpg",
+        "detail": "Change the slide (feed extension) system one side at a time, one part at a time."
       },
       {
         "t": "trou",
@@ -1081,7 +1101,9 @@
         "t": "vf",
         "q": "You must always use your left hand to open or close the master switch and place your body on the right side of the panel.",
         "vrai": true,
-        "e": "« Always use your left hand to open or close the master switch and place your body on the right side of the panel »"
+        "e": "« Always use your left hand to open or close the master switch and place your body on the right side of the panel »",
+        "img": "images/figures/cadenassage-stopemaster-3.jpg",
+        "detail": "The STOPEMASTER main electrical panel."
       },
       {
         "q": "What is required before working under the carrier or on a wheel?",
@@ -1180,7 +1202,10 @@
           "It must be repositioned while the rotation is running"
         ],
         "a": 0,
-        "e": "« If the wrench needs to be repositioned to align with the saver sub, it must be manipulated by the end so as not to expose itself to a jamming zone. »"
+        "e": "« If the wrench needs to be repositioned to align with the saver sub, it must be manipulated by the end so as not to expose itself to a jamming zone. »",
+        "img": "images/figures/pro-mec-006-1.jpg",
+        "imgEssentiel": true,
+        "detail": "The yellow circle marks the spot to keep your hands away from; handle the wrench by its end."
       },
       {
         "q": "On a drill with the new console, what must a worker do before maintaining, inspecting or replacing components on the mast?",
@@ -1238,7 +1263,9 @@
           "At least 7 feet 6 inches"
         ],
         "a": 1,
-        "e": "« They must be installed at least 3 metres (10 feet) from the first pieces of equipment or material »"
+        "e": "« They must be installed at least 3 metres (10 feet) from the first pieces of equipment or material »",
+        "img": "images/figures/pro-op-ith-004-3.jpg",
+        "detail": "Site layout showing the barricade and the material."
       }
     ],
     "en-pro-op-ith-012a": [
@@ -1532,7 +1559,9 @@
         "t": "vf",
         "q": "If the bell housing sticks to the electric motor, a rubber hammer must be used to tap it.",
         "vrai": true,
-        "e": "« If the bell housing sticks to the electric motor, use a rubber hammer to tap it. THE BELL HOUSING IS MADE OF ALUMINIUM »"
+        "e": "« If the bell housing sticks to the electric motor, use a rubber hammer to tap it. THE BELL HOUSING IS MADE OF ALUMINIUM »",
+        "img": "images/figures/pro-mec-011-6.jpg",
+        "detail": "The aluminium bell housing on the CUBEX drill."
       },
       {
         "q": "Why was this procedure put in place?",
@@ -1551,7 +1580,9 @@
         "t": "vf",
         "q": "It is forbidden to use a pipe wrench to unscrew the water swivel.",
         "vrai": true,
-        "e": "« IT IS FORBIDDEN TO USE A PIPE WRENCH TO UNSCREW THE WATER SWIVELL »"
+        "e": "« IT IS FORBIDDEN TO USE A PIPE WRENCH TO UNSCREW THE WATER SWIVELL »",
+        "img": "images/figures/pro-dd-st-004-2.jpg",
+        "detail": "Unscrewing the water swivel with the drill."
       },
       {
         "q": "Why must the loading chambers be in place at all times until the tube is raised to the collar?",
@@ -1697,7 +1728,9 @@
           "Blow compressed air through the tube"
         ],
         "a": 2,
-        "e": "« Never look into the tube to see if it is empty, instead insert a metal rod into the end and slide it into the tube. »"
+        "e": "« Never look into the tube to see if it is empty, instead insert a metal rod into the end and slide it into the tube. »",
+        "img": "images/figures/pro-dd-st-002-2.jpg",
+        "detail": "Checking whether the core tube is empty."
       },
       {
         "q": "Why is a back and forth movement with the core knocker forbidden?",
@@ -1743,7 +1776,9 @@
           "Starting with the bolt closest to the operator"
         ],
         "a": 2,
-        "e": "« It is important to unscrew the bolts only 1 turn at a time, following the order in the picture, the springs are crushed 1/4 inch. »"
+        "e": "« It is important to unscrew the bolts only 1 turn at a time, following the order in the picture, the springs are crushed 1/4 inch. »",
+        "img": "images/figures/pro-op-dd-005-1.jpg",
+        "detail": "Dismantling the clam/chuck (mandrel)."
       },
       {
         "q": "Why are the three half inch bolts put back without the bushing during dismantling?",
@@ -1779,7 +1814,9 @@
           "The sensor and the alarm"
         ],
         "a": 0,
-        "e": "« FORTRESS interlocking system consists of two parts: The slider and the lock »"
+        "e": "« FORTRESS interlocking system consists of two parts: The slider and the lock »",
+        "img": "images/figures/ss-dd-st-001-1.jpg",
+        "detail": "The FORTRESS interlocking system on the gate."
       },
       {
         "q": "Where must the slider of the FORTRESS system be installed?",
@@ -1832,7 +1869,9 @@
         "t": "vf",
         "q": "When putting the 3 meters drill rod with the water swivel, it is very important to thoroughly grease the thread.",
         "vrai": true,
-        "e": "« Put the 3 meters drill rod with the water swivel. It is very important to thoroughly grease the tread »"
+        "e": "« Put the 3 meters drill rod with the water swivel. It is very important to thoroughly grease the tread »",
+        "img": "images/figures/pro-dd-st-001-4.jpg",
+        "detail": "The drill rod and the water swivel."
       },
       {
         "q": "What must you verify when installing the bearing with the modified bushing on the clam cover?",
@@ -1867,7 +1906,9 @@
           "Dragged along the ground by one worker"
         ],
         "a": 0,
-        "e": "« ALWAYS CARRY LARGE PIECES OF WOOD WITH TWO WORKER AND HAVING A GOOD COMMUNICATION IS VERY IMPORTANT »"
+        "e": "« ALWAYS CARRY LARGE PIECES OF WOOD WITH TWO WORKER AND HAVING A GOOD COMMUNICATION IS VERY IMPORTANT »",
+        "img": "images/figures/pro-dd-st-003-1.jpg",
+        "detail": "Floor built from the 8x8 and 6x6 timbers, laid at the required spacing."
       },
       {
         "t": "trou",

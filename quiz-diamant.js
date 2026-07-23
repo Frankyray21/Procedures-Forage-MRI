@@ -42,7 +42,7 @@
       { "q": "Pour faire le ciment, quel masque faut-il porter ?",
         "o": ["Un masque jetable", "Le masque powerflow", "Aucun masque", "Juste des lunettes"], "a": 1,
         "e": "« ÉPI OBLIGATOIRES : […] Masque powerflow […] » (avec fit test pour masque powerflow).",
-        "img": "images/figures/pro-dd-st-007-2.jpg", "detail": "ÉPI complet avec masque powerflow pour le ciment." },
+        "img": "images/figures/pro-dd-st-007-2.jpg", "detail": "L'équipement de protection à porter pour le travail au ciment." },
       { "q": "Avec quoi huile-t-on les pièces qui touchent le ciment ?",
         "o": ["De l'huile à moteur", "De l'huile végétale, au pulvérisateur", "De l'eau", "De la graisse"], "a": 1,
         "e": "« Bien huiler avec de l'huile végétale avec un pulvérisateur toutes les composantes du mélangeur et de la pompe qui seront en contact avec le ciment. »" },
@@ -115,7 +115,7 @@
       { "q": "Le système FORTRESS a combien de pièces ?",
         "o": ["Une", "Deux : coulisse et serrure", "Trois", "Quatre"], "a": 1,
         "e": "« Le système d'interverrouillage « FORTRESS » comprend 2 pièces : la coulisse et la serrure. »",
-        "img": "images/figures/ss-dd-st-001-1.jpg", "detail": "Le système FORTRESS sur la barrière : coulisse et serrure." }
+        "img": "images/figures/ss-dd-st-001-1.jpg", "detail": "Le système FORTRESS installé sur la barrière." }
     ],
     "dr600-op-002": [
       { "t": "vf", "q": "Il n'y a aucun frein sur la foreuse si les planétaires sont désengagés.",
