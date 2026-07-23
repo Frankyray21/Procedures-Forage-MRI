@@ -8,15 +8,18 @@
     "pro-dd-st-001": [
       { "t": "trou", "q": "On met la tige de forage de ______ avec le water swivel, et il est très important de bien graisser les filets.",
         "o": ["1,5 mètre", "1 mètre", "3 mètres", "6 mètres"], "a": 2,
-        "e": "« Mettre la tige de forage de 3 mètres avec le water swivel. Il est très important de bien graisser les filets. »" }    ],
+        "e": "« Mettre la tige de forage de 3 mètres avec le water swivel. Il est très important de bien graisser les filets. »",
+        "img": "images/figures/pro-dd-st-001-4.jpg", "detail": "Les filets de la tige (à gauche), à bien graisser avant le montage." }    ],
     "pro-dd-st-002": [
       { "t": "trou", "q": "Pour vérifier si le tube carottier est vide, on insère une tige de métal de ______ dans l'extrémité et on la fait glisser dans le tube.",
         "o": ["un pied", "deux pieds", "six pouces", "un mètre"], "a": 0,
-        "e": "« Ne jamais regarder dans le tube pour voir s'il est vide, insérer plutôt une tige de métal d'un pied dans l'extrémité et la faire glisser dans le tube. »" }    ],
+        "e": "« Ne jamais regarder dans le tube pour voir s'il est vide, insérer plutôt une tige de métal d'un pied dans l'extrémité et la faire glisser dans le tube. »",
+        "img": "images/figures/pro-dd-st-002-2.jpg", "detail": "On insère la tige de métal dans l'extrémité du tube plutôt que d'y regarder." }    ],
     "pro-dd-st-003": [
       { "q": "À quelle distance mets-tu les 8''X8'' et les 6''X6'' ?",
         "o": ["Les deux à 24''", "Les 8''X8'' à 48'' et les 6''X6'' à 36''", "Les deux à 48''", "N'importe où"], "a": 1,
-        "e": "« Placer les 8''X8'' à une distance de 48'', et les 6''X6'' à une distance de 36''. »" },
+        "e": "« Placer les 8''X8'' à une distance de 48'', et les 6''X6'' à une distance de 36''. »",
+        "img": "images/figures/pro-dd-st-003-1.jpg", "detail": "Disposition des pièces de bois au sol pour le plancher." },
       { "t": "vf", "q": "Pour mettre le plancher bien droit, on utilise un niveau de 48''.",
         "vrai": true,
         "e": "« Placer le plancher au niveau en utilisant un niveau de 48'' et un morceau de 3''X8'' de 8 pieds minimum... »" }
@@ -27,7 +30,8 @@
         "e": "« IL EST INTERDIT D'UTILISER UN PIPE WRENCH POUR DÉVISSER LA WATER SWIVELL. »" },
       { "q": "Tu vas dévisser la water swivel avec la foreuse. Quelle vitesse mets-tu ?",
         "o": ["La marche arrière", "La première vitesse", "La vitesse maximale", "Le neutre"], "a": 1,
-        "e": "« Mettre la transmission en première vitesse avant de dévisser la water swivell. »" }
+        "e": "« Mettre la transmission en première vitesse avant de dévisser la water swivell. »",
+        "img": "images/figures/pro-dd-st-004-2.jpg", "detail": "L'opérateur règle la transmission aux commandes de la foreuse." }
     ],
     "pro-dd-st-006": [
       { "t": "erreur", "q": "Un collègue doit dévisser la water swivel. Quelle action est une ERREUR ?",
@@ -37,7 +41,8 @@
     "pro-dd-st-007": [
       { "q": "Pour faire le ciment, quel masque faut-il porter ?",
         "o": ["Un masque jetable", "Le masque powerflow", "Aucun masque", "Juste des lunettes"], "a": 1,
-        "e": "« ÉPI OBLIGATOIRES : […] Masque powerflow […] » (avec fit test pour masque powerflow)." },
+        "e": "« ÉPI OBLIGATOIRES : […] Masque powerflow […] » (avec fit test pour masque powerflow).",
+        "img": "images/figures/pro-dd-st-007-2.jpg", "detail": "ÉPI complet avec masque powerflow pour le ciment." },
       { "q": "Avec quoi huile-t-on les pièces qui touchent le ciment ?",
         "o": ["De l'huile à moteur", "De l'huile végétale, au pulvérisateur", "De l'eau", "De la graisse"], "a": 1,
         "e": "« Bien huiler avec de l'huile végétale avec un pulvérisateur toutes les composantes du mélangeur et de la pompe qui seront en contact avec le ciment. »" },
@@ -54,7 +59,8 @@
         "e": "« S'assurer d'avoir un angle entre 75° et 80°. »" },
       { "q": "Comment ranges-tu les tiges dans le support ?",
         "o": ["En vrac", "En quinconce, rangée par rangée depuis la gauche, appuyées sur la barre du fond", "Debout", "Sur les côtés"], "a": 1,
-        "e": "« Placer les tiges dans le support en quinconce […] par rangée à partir de la gauche » et « S'assurer d'appuyer les tiges sur la barre transversale du fond et non sur les côtés. »" }
+        "e": "« Placer les tiges dans le support en quinconce […] par rangée à partir de la gauche » et « S'assurer d'appuyer les tiges sur la barre transversale du fond et non sur les côtés. »",
+        "img": "images/figures/pro-dd-st-008-2.jpg", "detail": "Disposition des tiges dans le support selon le sens de chargement." }
     ],
     "pro-dd-st-009-1": [
       { "q": "Quels boulons faut-il utiliser?",
@@ -71,12 +77,14 @@
     "pro-dd-st-011": [
       { "t": "vf", "q": "Lorsque la pression d'eau est entre 200 et 300 psi, on poursuit les travaux avec vigilance.",
         "vrai": true,
-        "e": "« Entre 200 et 300 psi = poursuite des travaux avec vigilance. »" },
+        "e": "« Entre 200 et 300 psi = poursuite des travaux avec vigilance. »",
+        "img": "images/figures/pro-dd-st-011-1.jpg", "detail": "Manomètre de pression d'eau (WATER PRESSURE) à surveiller." },
     ],
     "pro-op-dd-005": [
       { "t": "erreur", "q": "Un collègue s'apprête à démonter le clam ou le chuck (mandrin). Quelle action est une ERREUR ?",
         "o": ["Laisser les manettes en position ouverte", "S'assurer que les manettes sont en position fermée", "Vérifier que les ressorts sont étirés au maximum", "Barrer le clam ou le chuck avant de le démonter"], "a": 0,
-        "e": "« S'assurer que les manettes pour barrer le clam ou le chuck (mandrin) soient en position fermée pour que les ressorts soient étirés au maximum. »" },
+        "e": "« S'assurer que les manettes pour barrer le clam ou le chuck (mandrin) soient en position fermée pour que les ressorts soient étirés au maximum. »",
+        "img": "images/figures/pro-op-dd-005-1.jpg", "detail": "Le clam ou chuck (mandrin), pièce à démonter." },
     ],
     "pro-op-dd-012": [
       { "q": "Quels articles de la loi parlent du forage à distance ?",
@@ -106,7 +114,8 @@
         "e": "« Le dead man doit être positionné à un minimum de 1,5 mètre de la tour de la foreuse […] »" },
       { "q": "Le système FORTRESS a combien de pièces ?",
         "o": ["Une", "Deux : coulisse et serrure", "Trois", "Quatre"], "a": 1,
-        "e": "« Le système d'interverrouillage « FORTRESS » comprend 2 pièces : la coulisse et la serrure. »" }
+        "e": "« Le système d'interverrouillage « FORTRESS » comprend 2 pièces : la coulisse et la serrure. »",
+        "img": "images/figures/ss-dd-st-001-1.jpg", "detail": "Le système FORTRESS sur la barrière : coulisse et serrure." }
     ],
     "dr600-op-002": [
       { "t": "vf", "q": "Il n'y a aucun frein sur la foreuse si les planétaires sont désengagés.",
@@ -114,7 +123,8 @@
         "e": "« ATTENTION, IL N'Y A AUCUN FREIN SUR LA FOREUSE SI LES PLANÉTAIRES SONT DÉSENGAGÉS. »" },
       { "q": "Avant de déplacer la foreuse, combien d'arrêts d'urgence faut-il désactiver ?",
         "o": ["Un seul", "3 en tout : un sur chaque boîtier électrique et un « Pull cord »", "Deux", "Aucun"], "a": 1,
-        "e": "« Assurez-vous que tous les arrêts d'urgence sont désactivés […]. Il y en a 3 au total : Un sur chaque boîtier électrique et un « Pull cord » qu'on réactive avec le bouton bleu. »" }
+        "e": "« Assurez-vous que tous les arrêts d'urgence sont désactivés […]. Il y en a 3 au total : Un sur chaque boîtier électrique et un « Pull cord » qu'on réactive avec le bouton bleu. »",
+        "img": "images/figures/dr600-op-002-2.jpg", "detail": "Le « Pull cord » : arrêt d'urgence à câble." }
     ],
     "std-dd-installation": [
       { "q": "Combien d'extincteurs faut-il à l'entrée du site ?",
