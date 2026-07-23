@@ -1749,6 +1749,30 @@
     // a changé (quiz mis à jour), sinon l'ancien record devient imbattable.
     if (!b || b.max !== max || pts > b.pts) { try { localStorage.setItem(pkey('pq_pts_' + id), JSON.stringify({ pts: pts, max: max })); } catch (e) {} }
   }
+  // Bloc « détail / photo » optionnel d'une question. Champs possibles sur it :
+  //   it.detail        : texte d'aide (précision, mise en contexte) ;
+  //   it.img           : chemin d'image (ou tableau de chemins) illustrant la question ;
+  //   it.imgEssentiel  : true → détail + photo affichés DIRECTEMENT (image
+  //                      indispensable pour répondre) ; sinon repliés derrière
+  //                      un bouton « Voir le détail / la photo ».
+  function pqDetailHTML(it, ctx) {
+    var pid = (ctx && ctx.proc) ? ctx.proc : '';
+    var imgs = it.img ? (Array.isArray(it.img) ? it.img : [it.img]) : [];
+    if (!it.detail && !imgs.length) return '';
+    var media = imgs.map(function (s) {
+      return '<img class="pq-img" src="' + esc(withRev(s, pid)) + '" alt="Illustration de la question" loading="lazy">';
+    }).join('');
+    var inner = (it.detail ? '<p class="pq-detail-txt">' + esc(it.detail) + '</p>' : '') + media;
+    if (it.imgEssentiel) {
+      return '<div class="pq-detail pq-detail-ess">' + inner + '</div>';
+    }
+    var label = imgs.length ? (it.detail ? 'Voir le détail et la photo' : 'Voir la photo') : 'Voir le détail';
+    return '<div class="pq-detail-wrap">' +
+      '<button type="button" class="pq-detail-btn" aria-expanded="false">' +
+        '<span class="pq-detail-ico" aria-hidden="true">🔍</span> ' + label +
+      '</button>' +
+      '<div class="pq-detail" hidden>' + inner + '</div></div>';
+  }
   // Rend une question selon son type. it.t : absent = choix de réponse ;
   // 'vf' = vrai ou faux ; 'multi' = cocher les affirmations vraies ;
   // 'ordre' = remettre les étapes en ordre (it.o est DANS l'ordre correct,
@@ -1764,7 +1788,7 @@
     });
     if (it.t === 'vf') {
       return '<div class="pq pq-vf" data-i="' + oi + '">' +
-        qhead + '<span class="pq-type">Vrai ou faux</span>' + pqPtsHTML(it) + esc(it.q) + '</p>' +
+        qhead + '<span class="pq-type">Vrai ou faux</span>' + pqPtsHTML(it) + esc(it.q) + '</p>' + pqDetailHTML(it, ctx) +
         '<div class="pq-opts pq-opts-vf">' + ['Vrai', 'Faux'].map(function (opt, j) {
           return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + opt + '</span></label>';
         }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div>' + rate + '</div>';
@@ -1774,7 +1798,7 @@
       var mperm = shuffle(it.o.map(function (_, j) { return j; }));
       return '<div class="pq pq-multi" data-i="' + oi + '">' +
         qhead + '<span class="pq-type">Plusieurs réponses</span>' + pqPtsHTML(it) + esc(it.q) +
-        ' <span class="pq-hint">Coche TOUTES les affirmations vraies, puis valide.</span></p>' +
+        ' <span class="pq-hint">Coche TOUTES les affirmations vraies, puis valide.</span></p>' + pqDetailHTML(it, ctx) +
         '<div class="pq-opts">' + mperm.map(function (j) {
           return '<label class="pq-opt"><input type="checkbox" value="' + j + '"><span class="pq-mark pq-sq"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
         }).join('') + '</div>' +
@@ -1787,7 +1811,7 @@
       if (identity) ord.push(ord.shift());     // jamais présenté déjà en ordre
       return '<div class="pq pq-ordre" data-i="' + oi + '">' +
         qhead + '<span class="pq-type">Remettre en ordre</span>' + pqPtsHTML(it) + esc(it.q) +
-        ' <span class="pq-hint">Touche les étapes dans l\'ordre (1, 2, 3…), puis valide.</span></p>' +
+        ' <span class="pq-hint">Touche les étapes dans l\'ordre (1, 2, 3…), puis valide.</span></p>' + pqDetailHTML(it, ctx) +
         '<div class="pq-steps">' + ord.map(function (k) {
           return '<button type="button" class="pq-step" data-k="' + k + '"><span class="pq-num"></span><span class="pq-txt">' + esc(it.o[k]) + '</span></button>';
         }).join('') + '</div>' +
@@ -1803,7 +1827,7 @@
       }).join('');
       return '<div class="pq pq-assoc" data-i="' + oi + '">' +
         qhead + '<span class="pq-type">Association</span>' + pqPtsHTML(it) + esc(it.q) +
-        ' <span class="pq-hint">Choisis la valeur officielle de chaque paramètre, puis valide.</span></p>' +
+        ' <span class="pq-hint">Choisis la valeur officielle de chaque paramètre, puis valide.</span></p>' + pqDetailHTML(it, ctx) +
         '<div class="pq-pairs">' + it.pairs.map(function (pr, k) {
           return '<div class="pq-pair" data-k="' + k + '"><span class="pq-pl">' + esc(pr.l) + '</span>' +
             '<select class="pq-sel">' + selOpts + '</select><span class="pq-cor"></span></div>';
@@ -1818,7 +1842,7 @@
     // position ») ; value = index d'origine, la correction est inchangée.
     var perm = shuffle(it.o.map(function (_, j) { return j; }));
     return '<div class="pq" data-i="' + oi + '">' + qhead +
-      (badge ? '<span class="pq-type">' + badge + '</span>' : '') + pqPtsHTML(it) + esc(it.q) + '</p>' +
+      (badge ? '<span class="pq-type">' + badge + '</span>' : '') + pqPtsHTML(it) + esc(it.q) + '</p>' + pqDetailHTML(it, ctx) +
       '<div class="pq-opts">' + perm.map(function (j) {
         return '<label class="pq-opt"><input type="radio" name="pq_' + oi + '" value="' + j + '"><span class="pq-mark"></span><span class="pq-txt">' + esc(it.o[j]) + '</span></label>';
       }).join('') + '</div><div class="pq-fb"></div><div class="pq-exp"></div>' + rate + '</div>';
@@ -2170,6 +2194,16 @@
     });
 
     box.addEventListener('click', function (e) {
+      // bouton « Voir le détail / la photo » : replie/déplie le bloc d'aide
+      var dBtn = e.target.closest && e.target.closest('.pq-detail-btn');
+      if (dBtn) {
+        var panel = dBtn.parentNode.querySelector('.pq-detail');
+        var open = dBtn.getAttribute('aria-expanded') === 'true';
+        dBtn.setAttribute('aria-expanded', open ? 'false' : 'true');
+        dBtn.classList.toggle('open', !open);
+        if (panel) panel.hidden = open;
+        return;
+      }
       // remise en ordre : touche les étapes pour bâtir la séquence (1, 2, 3…)
       var step = e.target.closest && e.target.closest('.pq-step');
       if (step) {
@@ -2487,7 +2521,8 @@
       QP[pid].forEach(function (q) {
         if (!q.t || q.t === 'assoc') return;
         var item = { type: q.t, question: q.q, explication: q.e, sourceId: pid,
-          code: p.code || '', titre: p.titre, categorie: p.categorie };
+          code: p.code || '', titre: p.titre, categorie: p.categorie,
+          img: q.img, detail: q.detail, imgEssentiel: q.imgEssentiel };
         if (q.t === 'vf') { item.options = ['Vrai', 'Faux']; item.answer = q.vrai ? 0 : 1; }
         else if (q.t === 'multi') { item.options = q.o; item.answers = q.a; }
         else if (q.t === 'ordre') { item.steps = q.o; }
@@ -2563,11 +2598,22 @@
         (q.type && QTYPE_LBL[q.type] ? ' · ' + QTYPE_LBL[q.type] : '') +
         ' · Question ' + (s.idx + 1) + '/' + s.pool.length + '</div>' +
         '<h2 class="qq">' + esc(q.question) + '</h2>' +
+        pqDetailHTML(q, { proc: q.sourceId }) +
         (hint ? '<p class="qhint">' + hint + '</p>' : '') +
         body +
         (needV ? '<div class="qvald"><button class="btn" id="qValider"' + (q.type === 'ordre' ? ' disabled' : '') + '>Valider</button></div>' : '') +
         '<div class="qfb" id="qfb" role="status" aria-live="polite"></div>' +
       '</div></div>';
+
+    // bouton « Voir le détail / la photo » (si la question en a un)
+    var qDBtn = view.querySelector('.pq-detail-btn');
+    if (qDBtn) qDBtn.onclick = function () {
+      var panel = qDBtn.parentNode.querySelector('.pq-detail');
+      var open = qDBtn.getAttribute('aria-expanded') === 'true';
+      qDBtn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      qDBtn.classList.toggle('open', !open);
+      if (panel) panel.hidden = open;
+    };
 
     if (q.type === 'multi') {
       [].forEach.call(document.querySelectorAll('.qsel'), function (b) {

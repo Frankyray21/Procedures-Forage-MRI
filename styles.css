@@ -614,6 +614,23 @@ footer b{color:var(--muted)}
 .pq-pts{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
   color:var(--dim);border:1px dashed var(--border);border-radius:6px;padding:.12rem .4rem;margin-right:.45rem;vertical-align:.1em;white-space:nowrap}
 .pq-hint{display:block;margin-top:.25rem;font-size:.82rem;font-weight:500;color:var(--dim)}
+/* bloc « détail / photo » d'une question : bouton repliable, ou affiché
+   directement quand l'image est essentielle pour répondre (imgEssentiel) */
+.pq-detail-wrap{margin:.5rem 0 .2rem}
+.pq-detail-btn{display:inline-flex;align-items:center;gap:.4rem;cursor:pointer;
+  font-size:.85rem;font-weight:700;color:var(--muted);background:var(--card-2);
+  border:1px solid var(--border);border-radius:8px;padding:.4rem .7rem}
+.pq-detail-btn:hover{color:#fff;border-color:var(--accent-l)}
+.pq-detail-btn .pq-detail-ico{font-size:.95rem}
+.pq-detail-btn.open{color:#fff;border-color:var(--accent-l)}
+.pq-detail{margin:.55rem 0 .2rem;padding:.7rem .8rem;border:1px solid var(--border);
+  border-radius:10px;background:rgba(255,255,255,.03)}
+.pq-detail-ess{border-color:var(--accent-l);background:rgba(214,72,72,.06)}
+.pq-detail-txt{margin:0 0 .5rem;font-size:1rem;line-height:1.55;color:#dbe4f0}
+.pq-detail-txt:last-child{margin-bottom:0}
+.pq-img{display:block;width:100%;max-width:520px;height:auto;border-radius:8px;
+  border:1px solid var(--border);margin:.4rem 0 0;cursor:zoom-in}
+.pq-img+.pq-img{margin-top:.5rem}
 /* vrai / faux : deux options côte à côte */
 .pq-opts-vf{flex-direction:row}
 .pq-opts-vf .pq-opt{flex:1;justify-content:center;max-width:180px}
