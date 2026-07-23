@@ -66,16 +66,15 @@ window.QUIZ = [
   },
   {
     "id": "q4",
-    "type": "multi",
-    "question": "Coche les affirmations VRAIES sur le montage du centralisateur.",
+    "question": "Avant de serrer le centralisateur, combien de pièces dois-tu vérifier ?",
     "options": [
-      "Chaque pièce du centralisateur pèse 46 livres",
-      "Un wescot ou un pipe wrench convient pour serrer les boulons",
-      "L'installation se fait toujours à deux travailleurs",
-      "Il faut vérifier 12 boulons, 12 locknuts et 12 lockwashers avant le serrage"
+      "6 boulons, 6 locknuts et 6 lockwashers",
+      "12 boulons, 12 locknuts et 12 lockwashers",
+      "8 boulons, 8 locknuts et 8 lockwashers",
+      "12 boulons seulement, sans locknuts ni lockwashers"
     ],
-    "answers": [0, 2, 3],
-    "explication": "« Risque de manutention : chaque pièce pèse 46 livres » ; « L'installation du centralisateur doit TOUJOURS se faire à deux travailleurs » ; « vérifier la présence des 12 boulons, 12 locknuts et 12 lockwashers avant le serrage ». À l'inverse, « l'utilisation d'un wescot ou d'un pipe wrench n'est pas adéquate ».",
+    "answer": 1,
+    "explication": "La consigne exige de « vérifier la présence des 12 boulons, 12 locknuts et 12 lockwashers avant le serrage » (répartis 6 dans un sens et 6 dans l'autre).",
     "sourceId": "centralisateur",
     "code": "",
     "titre": "Procédure d'installation du centralisateur",
