@@ -97,9 +97,7 @@
           "50 meters"
         ],
         "a": 2,
-        "e": "« Always keep a distance of 30 meters between vehicles on the ramp. »",
-        "img": "images/figures/pro-op-cat-416-001-10.jpg",
-        "detail": "Vehicles moving on the ramp."
+        "e": "« Always keep a distance of 30 meters between vehicles on the ramp. »"
       }
     ],
     "en-pro-op-ith-006a": [
@@ -195,9 +193,7 @@
           "A Wescot or pipe wrench"
         ],
         "a": 3,
-        "e": "« USING A WESCOT OR PIPE WRENCH IS NOT APPROPRIATE »",
-        "img": "images/figures/centralisateur-1.jpg",
-        "detail": "Exploded view of the centraliser and its bolts."
+        "e": "« USING A WESCOT OR PIPE WRENCH IS NOT APPROPRIATE »"
       },
       {
         "q": "How often are rod centralisers normally installed?",
@@ -302,9 +298,7 @@
           "Nothing, tightening at installation is final"
         ],
         "a": 2,
-        "e": "« PLEASE NOTE THE BOLTS HAVE TO BE TIGHTENED AFTER 1 DRILLING SHIFT »",
-        "img": "images/figures/pro-mec-010-1.jpg",
-        "detail": "The actuator bolts shown on the diagram."
+        "e": "« PLEASE NOTE THE BOLTS HAVE TO BE TIGHTENED AFTER 1 DRILLING SHIFT »"
       }
     ],
     "en-pro-mec-001a": [
@@ -1814,9 +1808,7 @@
           "The sensor and the alarm"
         ],
         "a": 0,
-        "e": "« FORTRESS interlocking system consists of two parts: The slider and the lock »",
-        "img": "images/figures/ss-dd-st-001-1.jpg",
-        "detail": "The FORTRESS interlocking system on the gate."
+        "e": "« FORTRESS interlocking system consists of two parts: The slider and the lock »"
       },
       {
         "q": "Where must the slider of the FORTRESS system be installed?",
