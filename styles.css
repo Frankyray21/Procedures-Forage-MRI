@@ -932,6 +932,11 @@ footer b{color:var(--muted)}
 /* version (pied de page) */
 .verfoot{color:var(--dim);font-size:.78rem}
 .verfoot .ver{all:unset;color:var(--dim);font-size:inherit}
+/* QR « partage » du pied de page : petite tuile blanche + légende */
+.foot-qr{display:inline-flex;align-items:center;gap:.6rem;text-decoration:none;flex-basis:100%;margin-top:.4rem}
+.foot-qr img{width:88px;height:88px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px;display:block}
+.foot-qr-txt{color:var(--dim);font-size:.78rem;line-height:1.35;font-weight:600}
+.foot-qr:hover .foot-qr-txt{color:var(--muted)}
 
 /* accessibilité : animations coupées si le système le demande */
 @media (prefers-reduced-motion:reduce){
