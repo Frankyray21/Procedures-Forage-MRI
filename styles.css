@@ -858,6 +858,18 @@ footer b{color:var(--muted)}
 .attest-item b{color:#34d399}
 .attest-hint{font-size:.82rem;color:var(--dim);margin:.15rem 0 .5rem}
 .attest-hint.ok{color:#34d399;font-weight:700}
+.attest-hint.no{color:#fca5a5;font-weight:700}
+/* Zone de signature (dessin au doigt). touch-action:none → on signe sans
+   faire défiler la page. Fond clair : la signature encrée reste lisible. */
+.attest-sigfield{margin-top:.35rem}
+.sigpad-wrap{position:relative}
+.sigpad{width:100%;height:150px;display:block;background:#f8fafc;border:1px dashed var(--border);
+  border-radius:10px;touch-action:none;cursor:crosshair}
+.sig-clear{position:absolute;top:.4rem;right:.4rem;font:inherit;font-size:.76rem;font-weight:700;
+  color:var(--muted);background:rgba(255,255,255,.85);border:1px solid var(--border);border-radius:8px;
+  padding:.2rem .55rem;cursor:pointer}
+.sig-clear:hover{color:#0f172a;border-color:var(--brand)}
+.sig-hint{margin:.3rem 0 .5rem}
 .attest-send{align-self:flex-start;margin-top:.2rem}
 .attest-msg{font-size:.9rem;font-weight:600;margin-top:.5rem;min-height:1.2em}
 .attest-msg.no{color:#fca5a5}

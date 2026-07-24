@@ -1238,6 +1238,14 @@
           'role="combobox" aria-autocomplete="list" aria-expanded="false"></label>' +
         '<div class="attest-sugg" role="listbox" hidden></div>' +
         '<p class="attest-hint">Commence à taper, puis choisis ton nom dans la liste.</p>' +
+        // Signature dessinée au doigt (obligatoire) — intégrée au PDF, donc
+        // archivée dans Airtable avec la pièce jointe. Fonctionne hors-ligne.
+        '<div class="attest-field attest-sigfield"><span>Ta signature</span>' +
+          '<div class="sigpad-wrap">' +
+            '<canvas class="sigpad" aria-label="Signe ici avec ton doigt"></canvas>' +
+            '<button type="button" class="sig-clear" aria-label="Effacer la signature">Effacer</button>' +
+          '</div>' +
+          '<p class="attest-hint sig-hint">Signe dans le cadre avec ton doigt.</p></div>' +
         '<button type="button" class="btn attest-btn attest-send">' +
         '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
         ' Attester la lecture</button>' +
@@ -1266,6 +1274,15 @@
     var hint = form.querySelector('.attest-hint');
     var sendBtn = form.querySelector('.attest-send');
     var msg = form.querySelector('.attest-msg');
+    // Zone de signature (dessin au doigt) + bouton « Effacer ».
+    var sigCanvas = form.querySelector('.sigpad');
+    var sigPad = sigCanvas ? initSignaturePad(sigCanvas) : null;
+    var sigClearBtn = form.querySelector('.sig-clear');
+    if (sigClearBtn && sigPad) sigClearBtn.onclick = function () {
+      sigPad.clear();
+      var sh = form.querySelector('.sig-hint');
+      if (sh) { sh.textContent = 'Signe dans le cadre avec ton doigt.'; sh.className = 'attest-hint sig-hint'; }
+    };
     var pickedId = '', pickedName = '';
     var HINT0 = 'Commence à taper, puis choisis ton nom dans la liste.';
     try { input.value = profName() || localStorage.getItem('attest_name') || ''; } catch (e) {}
@@ -1356,6 +1373,14 @@
     sendBtn.onclick = function () {
       var name = (input.value || '').trim();
       if (!name) { input.focus(); setHint('Entre ton nom avant d\'attester.', false); return; }
+      // Signature obligatoire (comme l'attestation TMS).
+      if (sigPad && sigPad.isEmpty()) {
+        var sh = form.querySelector('.sig-hint');
+        if (sh) { sh.textContent = 'Signe dans le cadre avant d\'attester.'; sh.className = 'attest-hint sig-hint no'; }
+        if (sigCanvas && sigCanvas.scrollIntoView) sigCanvas.scrollIntoView({ block: 'center' });
+        return;
+      }
+      var sigDataUrl = sigPad ? sigPad.dataURL() : '';
       // Appareil partagé : ce nom devient le profil actif de l'appareil (le
       // quiz de cette fiche le suit si le nom diffère de l'ancien profil).
       profAdopt(p.id, name);
@@ -1366,7 +1391,11 @@
         score: best ? (best.s + '/' + best.n + ' — ' + best.pct + ' %') : '',
         revision: p.date_revision || p.date_creation || '',
         readTime: fmtDuration(t.read), quizTime: fmtDuration(t.quiz),
-        readSeconds: Math.round(t.read / 1000), quizSeconds: Math.round(t.quiz / 1000) };
+        readSeconds: Math.round(t.read / 1000), quizSeconds: Math.round(t.quiz / 1000),
+        signature: sigDataUrl };
+      // La signature est persistée par fiche pour que le re-téléchargement
+      // depuis « Mon suivi » la conserve (elle ne peut pas être régénérée).
+      try { if (sigDataUrl) localStorage.setItem(pkey('attest_sig_' + p.id), sigDataUrl); } catch (e) {}
       var sig = attestSig(p.id, name);
       var done = '';
       try { done = localStorage.getItem(pkey('attest_sent_' + p.id)) || ''; } catch (e) {}
@@ -1689,18 +1718,83 @@
     doc.text('Document généré automatiquement le ' + new Date().toLocaleString('fr-FR') +
       ' — Machines Roger International', 20, 285);
   }
+  /* ---------- zone de signature (dessin au doigt / souris) ----------
+     Canvas transparent ; on renvoie un petit objet { isEmpty, clear, dataURL }.
+     Pointer events → couvre tactile, souris et stylet. Le tracé est exporté en
+     PNG puis intégré au PDF (donc archivé dans Airtable via la pièce jointe). */
+  function initSignaturePad(canvas) {
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var empty = true, drawing = false, last = null;
+    function setup() {
+      var w = canvas.clientWidth || 300, h = canvas.clientHeight || 150;
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#0f172a';
+    }
+    setup();
+    function pos(e) {
+      var r = canvas.getBoundingClientRect();
+      var s = (e.touches && e.touches[0]) || e;
+      return { x: s.clientX - r.left, y: s.clientY - r.top };
+    }
+    function start(e) { e.preventDefault(); drawing = true; last = pos(e); }
+    function move(e) {
+      if (!drawing) return; e.preventDefault();
+      var pt = pos(e);
+      ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(pt.x, pt.y); ctx.stroke();
+      last = pt; empty = false;
+    }
+    function end() { drawing = false; }
+    canvas.addEventListener('pointerdown', start);
+    canvas.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    return {
+      isEmpty: function () { return empty; },
+      clear: function () { ctx.clearRect(0, 0, canvas.width, canvas.height); empty = true; },
+      // Export DÉCIMÉ, aplati sur blanc, en JPEG : un PNG avec alpha haute
+      // résolution ferait plusieurs centaines de ko (masque non compressé) —
+      // trop lourd pour le localStorage (« Mon suivi ») et le POST. La page PDF
+      // est blanche, donc un fond blanc est invisible. Ici ~8-25 ko.
+      dataURL: function () {
+        if (empty) return '';
+        var maxW = 480, scale = Math.min(1, maxW / canvas.width);
+        var tw = Math.max(1, Math.round(canvas.width * scale));
+        var th = Math.max(1, Math.round(canvas.height * scale));
+        var tmp = document.createElement('canvas'); tmp.width = tw; tmp.height = th;
+        var tctx = tmp.getContext('2d');
+        tctx.fillStyle = '#ffffff'; tctx.fillRect(0, 0, tw, th);
+        tctx.drawImage(canvas, 0, 0, tw, th);
+        return tmp.toDataURL('image/jpeg', 0.75);
+      }
+    };
+  }
   function buildWorkerPdf(payload, logo) {
-    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
     var y = pdfHeader(doc, logo, 'Attestation de lecture');
     y = pdfField(doc, y, 'Nom', payload.name);
     y = pdfField(doc, y, 'Procédure', (payload.proc || '') + (payload.titre ? ' — ' + payload.titre : ''));
     y = pdfField(doc, y, 'Date', fmtDateFR(payload.date));
     if (payload.revision) y = pdfField(doc, y, 'Révision de la procédure', payload.revision);
     if (payload.score) y = pdfField(doc, y, 'Résultat au quiz', payload.score);
+    if (payload.readTime) y = pdfField(doc, y, 'Temps de lecture', payload.readTime);
+    if (payload.quizTime) y = pdfField(doc, y, 'Temps sur le quiz', payload.quizTime);
     y += 8;
     doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(40);
     doc.text(doc.splitTextToSize('Cette personne atteste avoir consulté cette fiche de procédure ' +
       'et complété le quiz associé sur le site des procédures de forage de Machines Roger International.', 170), 20, y);
+    y += 20;
+    // Bloc signature : le tracé signé à l'écran, une ligne, le nom et la date.
+    if (payload.signature) {
+      try { doc.addImage(payload.signature, 'JPEG', 20, y - 16, 60, 20); } catch (e) {}
+    }
+    doc.setDrawColor(120); doc.line(20, y + 6, 90, y + 6);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(90);
+    doc.text('Signature', 20, y + 11);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(60);
+    doc.text(String(payload.name || ''), 20, y + 16);
+    doc.text('Le ' + fmtDateFR(payload.date), 130, y + 11);
     pdfFooter(doc);
     return doc;
   }
@@ -1718,7 +1812,9 @@
   }
   // Copie du payload + PDF (base64) joint, prête pour l'envoi au Worker.
   function attestBody(payload, b64) {
-    var o = {}; Object.keys(payload).forEach(function (k) { o[k] = payload[k]; });
+    // « signature » n'est PAS envoyée en clair : elle est déjà intégrée au PDF
+    // (pdfBase64), donc archivée dans Airtable sans doubler les données.
+    var o = {}; Object.keys(payload).forEach(function (k) { if (k !== 'signature') o[k] = payload[k]; });
     if (b64) { o.pdfBase64 = b64; o.pdfName = pdfFileName(payload); }
     return o;
   }
@@ -2896,13 +2992,19 @@
     var p = DATA.filter(function (x) { return x.id === pid; })[0]; if (!p) return;
     var att = attestInfo(pid) || {};
     var best = pqBestPct(pid);
+    var sig = '';
+    try { sig = localStorage.getItem(pkey('attest_sig_' + pid)) || ''; } catch (e) {}
+    var rd = ptGet(pkey('pt_read_' + pid)), qz = ptGet(pkey('pt_quiz_' + pid));
     var payload = {
       name: suiviName(),
       proc: p.code || p.id,
       titre: p.titre || '',
       date: att.date || new Date().toISOString().slice(0, 10),
       revision: p.date_revision || p.date_creation || '',
-      score: att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '')
+      score: att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : ''),
+      readTime: rd ? fmtDuration(rd) : '',
+      quizTime: qz ? fmtDuration(qz) : '',
+      signature: sig
     };
     var old = btnEl.innerHTML; btnEl.innerHTML = '<span>…</span>';
     Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
