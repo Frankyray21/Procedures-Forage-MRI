@@ -1694,29 +1694,124 @@
       return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     } catch (e) { return iso || ''; }
   }
-  function pdfHeader(doc, logo, title) {
-    var x0 = 20;
-    if (logo) { try { doc.addImage(logo, 'PNG', x0, 10, 20, 20); x0 = 44; } catch (e) {} }
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(20);
-    doc.text('Machines Roger International', x0, 18);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(110);
-    doc.text('Procédures de forage — sécurité', x0, 24);
-    doc.setDrawColor(200); doc.line(20, 34, 190, 34);
-    doc.setTextColor(20); doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
-    doc.text(title, 20, 46);
-    return 60;
+  /* ---------- rendu graphique de l'attestation (canvas) ----------
+     L'attestation est DESSINÉE sur un canvas au ratio A4 : une seule source de
+     mise en page qui sert à la fois d'aperçu affiché dans la page (image fiable
+     sur tous les téléphones) et de contenu du PDF (page A4 = cette image). */
+  function loadImg(src) {
+    return new Promise(function (resolve) {
+      if (!src) { resolve(null); return; }
+      var im = new Image();
+      im.onload = function () { resolve(im); };
+      im.onerror = function () { resolve(null); };
+      im.src = src;
+    });
   }
-  function pdfField(doc, y, label, value) {
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(20);
-    doc.text(label, 20, y);
-    doc.setFont('helvetica', 'normal'); doc.setTextColor(40);
-    doc.text(doc.splitTextToSize(String(value || '—'), 105), 78, y);
-    return y + 9;
+  function wrapText(g, text, x, y, maxW, lineH) {
+    var words = String(text || '').split(' '), line = '', yy = y;
+    for (var i = 0; i < words.length; i++) {
+      var test = line ? line + ' ' + words[i] : words[i];
+      if (g.measureText(test).width > maxW && line) { g.fillText(line, x, yy); line = words[i]; yy += lineH; }
+      else line = test;
+    }
+    if (line) g.fillText(line, x, yy);
+    return yy;
   }
-  function pdfFooter(doc) {
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150);
-    doc.text('Document généré automatiquement le ' + new Date().toLocaleString('fr-FR') +
-      ' — Machines Roger International', 20, 285);
+  function drawAttestationCanvas(payload, logoImg, sigImg) {
+    var W = 1000, H = 1414, M = 74;
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
+    var g = c.getContext('2d');
+    var INK = '#0f172a', SLATE = '#475569', MUT = '#64748b', LINE = '#e5e9f0', RED = '#d22325', PANEL = '#f8fafc';
+    var disp = "'Barlow Condensed','Arial Narrow',Arial,sans-serif";
+    var body = "'Barlow',Arial,Helvetica,sans-serif";
+    function rr(x, y, w, h, r) {
+      g.beginPath(); g.moveTo(x + r, y);
+      g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+      g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+    }
+    g.textBaseline = 'alphabetic';
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, H);
+    g.fillStyle = RED; g.fillRect(0, 0, W, 14);            // bande accent
+    // ---- en-tête : logo + identité ----
+    var hx = M;
+    if (logoImg) {
+      try {
+        g.fillStyle = '#0a0e17'; rr(M, 48, 96, 96, 16); g.fill();
+        var lw = 74, lh = 74;
+        var ar = (logoImg.width && logoImg.height) ? logoImg.width / logoImg.height : 1;
+        if (ar >= 1) { lh = 74 / ar; } else { lw = 74 * ar; }
+        g.drawImage(logoImg, M + (96 - lw) / 2, 48 + (96 - lh) / 2, lw, lh);
+        hx = M + 96 + 26;
+      } catch (e) { hx = M; }
+    }
+    g.fillStyle = INK; g.font = '800 34px ' + disp;
+    g.fillText('MACHINES ROGER INTERNATIONAL', hx, 92);
+    g.fillStyle = MUT; g.font = '600 19px ' + body;
+    g.fillText('Procédures de forage — Sécurité', hx, 122);
+    g.strokeStyle = LINE; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(M, 172); g.lineTo(W - M, 172); g.stroke();
+    // ---- titre ----
+    g.fillStyle = RED; g.fillRect(M, 214, 50, 8);
+    g.fillStyle = INK; g.font = '800 62px ' + disp;
+    g.fillText('ATTESTATION DE LECTURE', M, 274);
+    // ---- panneau des champs ----
+    var rows = [];
+    function add(l, v) { if (v) rows.push([l, String(v)]); }
+    add('Nom', payload.name);
+    add('Procédure', (payload.proc || '') + (payload.titre ? ' — ' + payload.titre : ''));
+    add('Date', fmtDateFR(payload.date));
+    add('Révision de la procédure', payload.revision);
+    add('Résultat au quiz', payload.score);
+    add('Temps de lecture', payload.readTime);
+    add('Temps sur le quiz', payload.quizTime);
+    var py = 314, rowH = 58, padY = 30;
+    var panelH = rows.length * rowH + padY;
+    g.fillStyle = PANEL; rr(M, py, W - 2 * M, panelH, 18); g.fill();
+    g.strokeStyle = LINE; g.lineWidth = 2; rr(M, py, W - 2 * M, panelH, 18); g.stroke();
+    var ry = py + padY + 14, labelX = M + 32, valX = M + 300;
+    rows.forEach(function (row, i) {
+      if (i) { g.strokeStyle = '#eef1f6'; g.lineWidth = 1; g.beginPath(); g.moveTo(M + 22, ry - 30); g.lineTo(W - M - 22, ry - 30); g.stroke(); }
+      g.fillStyle = SLATE; g.font = '700 20px ' + body; g.fillText(row[0], labelX, ry);
+      g.fillStyle = INK; g.font = '600 21px ' + body;
+      wrapText(g, row[1], valX, ry, W - M - 32 - valX, 26);
+      ry += rowH;
+    });
+    g.fillStyle = SLATE; g.font = '400 20px ' + body;
+    var pend = wrapText(g, 'Je confirme avoir lu et compris cette procédure de travail, et complété le quiz ' +
+      'associé sur le site des procédures de forage de Machines Roger International.', M, py + panelH + 54, W - 2 * M, 30);
+    // ---- signature ---- (bien en dessous du paragraphe pour éviter tout chevauchement)
+    var sy = pend + 154;                        // ligne de signature
+    if (sigImg) {
+      try {
+        var sw = 300, sh = 300 * ((sigImg.height / sigImg.width) || 0.4);
+        if (sh > 116) { sh = 116; sw = 116 * ((sigImg.width / sigImg.height) || 2.5); }
+        g.drawImage(sigImg, M, sy - 6 - sh, sw, sh);
+      } catch (e) {}
+    }
+    g.strokeStyle = INK; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(M, sy); g.lineTo(M + 360, sy); g.stroke();
+    g.fillStyle = MUT; g.font = '700 18px ' + body; g.fillText('Signature', M, sy + 28);
+    g.fillStyle = INK; g.font = '600 21px ' + body; g.fillText(String(payload.name || ''), M, sy + 56);
+    g.fillStyle = SLATE; g.font = '600 19px ' + body;
+    g.textAlign = 'right'; g.fillText('Le ' + fmtDateFR(payload.date), W - M, sy + 28); g.textAlign = 'left';
+    // ---- pied ----
+    g.strokeStyle = LINE; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(M, H - 100); g.lineTo(W - M, H - 100); g.stroke();
+    g.fillStyle = MUT; g.font = '400 15px ' + body;
+    g.fillText('Document généré automatiquement le ' + new Date().toLocaleString('fr-FR') + ' — Machines Roger International', M, H - 68);
+    g.fillStyle = '#94a3b8'; g.font = '600 14px ' + body;
+    g.fillText('Outil interne de formation — en cas de doute, le PDF officiel de la procédure fait foi.', M, H - 46);
+    return c;
+  }
+  // Rendu de l'attestation en image (JPEG) : logo + signature chargés d'abord,
+  // polices prêtes, puis dessin. Utilisée pour l'aperçu ET pour le PDF.
+  function buildAttestImage(payload) {
+    return getLogo().then(function (logoUrl) {
+      return Promise.all([loadImg(logoUrl), loadImg(payload.signature || '')]);
+    }).then(function (imgs) {
+      var draw = function () { return drawAttestationCanvas(payload, imgs[0], imgs[1]).toDataURL('image/jpeg', 0.92); };
+      return (document.fonts && document.fonts.ready) ? document.fonts.ready.then(draw, draw) : draw();
+    });
   }
   /* ---------- zone de signature (dessin au doigt / souris) ----------
      Canvas transparent ; on renvoie un petit objet { isEmpty, clear, dataURL }.
@@ -1770,32 +1865,11 @@
       }
     };
   }
-  function buildWorkerPdf(payload, logo) {
+  // PDF = l'image de l'attestation posée en pleine page A4 (même rendu que
+  // l'aperçu affiché à l'écran). imgDataUrl vient de buildAttestImage().
+  function buildWorkerPdf(payload, imgDataUrl) {
     var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
-    var y = pdfHeader(doc, logo, 'Attestation de lecture');
-    y = pdfField(doc, y, 'Nom', payload.name);
-    y = pdfField(doc, y, 'Procédure', (payload.proc || '') + (payload.titre ? ' — ' + payload.titre : ''));
-    y = pdfField(doc, y, 'Date', fmtDateFR(payload.date));
-    if (payload.revision) y = pdfField(doc, y, 'Révision de la procédure', payload.revision);
-    if (payload.score) y = pdfField(doc, y, 'Résultat au quiz', payload.score);
-    if (payload.readTime) y = pdfField(doc, y, 'Temps de lecture', payload.readTime);
-    if (payload.quizTime) y = pdfField(doc, y, 'Temps sur le quiz', payload.quizTime);
-    y += 8;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(40);
-    doc.text(doc.splitTextToSize('Cette personne atteste avoir consulté cette fiche de procédure ' +
-      'et complété le quiz associé sur le site des procédures de forage de Machines Roger International.', 170), 20, y);
-    y += 20;
-    // Bloc signature : le tracé signé à l'écran, une ligne, le nom et la date.
-    if (payload.signature) {
-      try { doc.addImage(payload.signature, 'JPEG', 20, y - 16, 60, 20); } catch (e) {}
-    }
-    doc.setDrawColor(120); doc.line(20, y + 6, 90, y + 6);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(90);
-    doc.text('Signature', 20, y + 11);
-    doc.setFont('helvetica', 'normal'); doc.setTextColor(60);
-    doc.text(String(payload.name || ''), 20, y + 16);
-    doc.text('Le ' + fmtDateFR(payload.date), 130, y + 11);
-    pdfFooter(doc);
+    try { doc.addImage(imgDataUrl, 'JPEG', 0, 0, 210, 297); } catch (e) {}
     return doc;
   }
   // Nom de fichier stable de l'attestation PDF (téléchargement + pièce jointe).
@@ -1803,9 +1877,9 @@
     return pdfSlug(payload.proc) + '-' + pdfSlug(payload.name) + '-attestation.pdf';
   }
   // Génère le PDF (jsPDF, hors-ligne OK) et renvoie sa base64 brute — ou ''
-  // si jsPDF/logo indisponibles (on enverra alors l'attestation sans pièce).
+  // si jsPDF/image indisponibles (on enverra alors l'attestation sans pièce).
   function buildPdfBase64(payload) {
-    return Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
+    return Promise.all([ensureJsPDF(), buildAttestImage(payload)]).then(function (r) {
       var uri = buildWorkerPdf(payload, r[1]).output('datauristring');
       var i = uri.indexOf(','); return i >= 0 ? uri.slice(i + 1) : '';
     }).catch(function () { return ''; });
@@ -1839,23 +1913,30 @@
       '<span>Merci ' + esc(name) + '. Ta lecture de cette procédure est enregistrée' +
       (linked ? ' et reliée à ton dossier employé' : '') + '.</span>' +
       (payload ?
+        // Aperçu affiché automatiquement dans la page + bouton de téléchargement.
+        '<div class="attest-preview"><div class="attest-preview-load">Génération de ton attestation…</div></div>' +
         '<div class="attest-pdfs">' +
-          '<button type="button" class="attest-pdf-btn attest-pdf-w">' + ICON.doc + ' Mon attestation (PDF)</button>' +
+          '<button type="button" class="attest-pdf-btn attest-pdf-w">' + ICON.doc + ' Télécharger le PDF</button>' +
           '<div class="attest-pdf-msg" aria-live="polite"></div>' +
         '</div>' : '') +
       '<p class="attest-next"><a href="#/suivi">Voir mon suivi de formation ' + ICON.arrow + '</a></p>' +
       '</div></div>';
     if (!payload) return;
+    var prev = sec.querySelector('.attest-preview');
     var msgEl = sec.querySelector('.attest-pdf-msg');
-    function fail() { msgEl.textContent = 'PDF indisponible pour le moment — réessaie quand tu as du réseau.'; }
+    // Génère l'image une seule fois : réutilisée pour l'aperçu ET le PDF.
+    var imgP = buildAttestImage(payload);
+    imgP.then(function (img) {
+      if (prev) prev.innerHTML = '<img class="attest-doc" alt="Attestation de lecture" src="' + img + '">';
+    }).catch(function () {
+      if (prev) prev.innerHTML = '<p class="attest-preview-load">Aperçu indisponible — utilise le bouton ci-dessous.</p>';
+    });
     sec.querySelector('.attest-pdf-w').onclick = function () {
       msgEl.textContent = '';
-      Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
-        buildWorkerPdf(payload, r[1]).save(pdfSlug(payload.proc) + '-' + pdfSlug(name) + '-attestation.pdf');
-      }).catch(fail);
+      Promise.all([ensureJsPDF(), imgP]).then(function (r) {
+        buildWorkerPdf(payload, r[1]).save(pdfFileName(payload));
+      }).catch(function () { msgEl.textContent = 'PDF indisponible pour le moment — réessaie quand tu as du réseau.'; });
     };
-    // (Fiche gestionnaire retirée de l'interface travailleur : les détails de
-    // suivi restent envoyés à Airtable, où les gestionnaires les consultent.)
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
@@ -3007,7 +3088,7 @@
       signature: sig
     };
     var old = btnEl.innerHTML; btnEl.innerHTML = '<span>…</span>';
-    Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
+    Promise.all([ensureJsPDF(), buildAttestImage(payload)]).then(function (r) {
       buildWorkerPdf(payload, r[1]).save(pdfFileName(payload));
       btnEl.innerHTML = old;
     }).catch(function () { btnEl.innerHTML = old; toast('PDF indisponible — réessaie dans un instant.'); });

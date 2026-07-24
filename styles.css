@@ -870,6 +870,11 @@ footer b{color:var(--muted)}
   padding:.2rem .55rem;cursor:pointer}
 .sig-clear:hover{color:#0f172a;border-color:var(--brand)}
 .sig-hint{margin:.3rem 0 .5rem}
+/* Aperçu de l'attestation affiché automatiquement après l'envoi. */
+.attest-preview{margin:.9rem 0 .3rem}
+.attest-preview-load{color:var(--muted);font-size:.9rem;padding:.6rem 0}
+.attest-doc{display:block;width:100%;max-width:480px;border:1px solid var(--border);border-radius:12px;
+  box-shadow:0 10px 34px rgba(0,0,0,.4);background:#fff}
 .attest-send{align-self:flex-start;margin-top:.2rem}
 .attest-msg{font-size:.9rem;font-weight:600;margin-top:.5rem;min-height:1.2em}
 .attest-msg.no{color:#fca5a5}
