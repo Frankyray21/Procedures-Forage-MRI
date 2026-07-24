@@ -368,6 +368,7 @@ footer b{color:var(--muted)}
 /* Détail du téléchargement hors-ligne : estimation, fichier en cours, liste */
 .offeta{color:var(--dim);font-size:.8rem}
 .offcur{color:var(--dim);font-size:.78rem;font-style:italic;min-height:1.1em}
+.offhint2{display:block;color:var(--dim);font-size:.76rem;margin-top:.25rem}
 .offlist{margin-top:.45rem;font-size:.82rem}
 .offlist summary{cursor:pointer;color:var(--accent-l);font-weight:700;list-style-position:inside}
 .offlist summary:hover{text-decoration:underline}

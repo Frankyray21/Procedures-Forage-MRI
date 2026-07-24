@@ -420,6 +420,7 @@
      vieille version en cache. Hors-ligne, l'ancienne copie reste servie en
      secours tant que la nouvelle n'est pas descendue. */
   var MEDIA_CACHE = 'mri-media-v1';        // même nom que dans service-worker.js
+  var precacheBusy = false;                // un seul téléchargement (auto ou manuel) à la fois
   var REV_BY_ID = null;
   function mediaRev(id) {
     if (!REV_BY_ID) {
@@ -455,7 +456,9 @@
       { label: 'Logo et icônes', files: BRAND_FILES }
     ];
   }
-  function includePdfs() { try { return localStorage.getItem('offline_pdfs') === '1'; } catch (e) { return false; } }
+  // Par défaut, le pack hors-ligne inclut TOUT (y compris les PDF officiels) :
+  // seul un décochage explicite (« 0 ») les exclut.
+  function includePdfs() { try { return localStorage.getItem('offline_pdfs') !== '0'; } catch (e) { return true; } }
   function activeGroups() {
     return offlineGroups().filter(function (g) { return !g.optional || includePdfs(); });
   }
@@ -565,6 +568,15 @@
         (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
         ') sont sur cet appareil.</span></div>' +
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
+    } else if (precacheBusy) {
+      // Pré-chargement automatique en cours : progression discrète, sans bouton.
+      box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
+        '<div class="offtxt" style="flex:1"><b>Préparation hors-ligne automatique…</b>' +
+        '<div class="offbar"><i id="offauto"></i></div>' +
+        '<span id="offautotxt" class="offcur" aria-live="polite">…</span>' +
+        '<span class="offhint2">Laisse l\'app ouverte avec du réseau — le contenu se met en cache une seule fois.</span>' +
+        '</div></div>';
+      return;
     } else {
       box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
         '<div class="offtxt"><b>Consulter sans réseau (sous terre)</b>' +
@@ -590,12 +602,14 @@
      fichiers ET en Mo, vitesse mesurée et temps restant réel. */
   function startPrecache(force) {
     var box = $('#offline'); if (!box) return;
+    if (precacheBusy) return;                 // un pré-chargement (auto) tourne déjà
     if (!navigator.onLine) {
       toast('Pas de réseau : lance le téléchargement quand tu as du Wi-Fi ou du signal.');
       return;
     }
+    precacheBusy = true;
     // Stockage persistant (au mieux) : évite que le système purge le pack.
-    try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
+    persistStorage();
     var urls = ['./'].concat(offlineAssets());
     var total = urls.length, totalBytes = sumBytes(urls);
     box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
@@ -627,6 +641,7 @@
       // Storage (médias présents + coquille de l'app en cache) — plus de faux
       // « tout est enregistré ».
       verifyAll().then(function (ok) {
+        precacheBusy = false;
         if (!failed && ok) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
         renderOffline();
         if (!failed && !ok) {
@@ -679,6 +694,62 @@
     }
     refresh(urls[0]);
     for (var k = 0; k < 4; k++) next();
+  }
+  // Rend le stockage PERSISTANT (au mieux) : le système ne purge plus le cache
+  // sous pression de stockage → le pack survit aux redémarrages de l'appareil.
+  function persistStorage() { try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {} }
+  /* ---------- pré-chargement AUTOMATIQUE du pack hors-ligne complet ----------
+     Objectif : après la 1re ouverture AVEC réseau, TOUT le contenu (fiches,
+     images, schémas ET PDF) se met en cache tout seul, en reprenant là où
+     c'était rendu — sans consulter chaque fiche ni bouton à presser, et UNE
+     SEULE FOIS (offline_ready coupe ensuite). Repris à chaque ouverture / au
+     retour du réseau tant que ce n'est pas complet ; 3 fichiers en parallèle
+     pour ne pas saturer la connexion. */
+  function autoPrecache() {
+    if (DEMO || !('caches' in window) || !navigator.onLine || offlineReady() || precacheBusy) return;
+    precacheBusy = true;
+    persistStorage();
+    renderOffline();                      // montre l'état « préparation » si la carte est à l'écran
+    var urls = ['./'].concat(offlineAssets());
+    var totalBytes = sumBytes(urls);
+    var done = 0, failed = 0, bytesDone = 0, fetched = 0, i = 0, active = 0;
+    function tick() {
+      var bar = $('#offauto'); if (!bar) return;
+      var pct = totalBytes ? Math.min(100, Math.round(bytesDone / totalBytes * 100)) : 0;
+      bar.style.width = pct + '%';
+      var t = $('#offautotxt'); if (t) t.textContent = pct + ' % · ' + fmtMo(bytesDone) + ' / ' + fmtMo(totalBytes);
+    }
+    function finish() {
+      verifyAll().then(function (ok) {
+        precacheBusy = false;
+        if (!failed && ok) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
+        renderOffline();
+        if (!failed && ok && fetched > 0) toast('Application prête hors ligne (' + fmtMo(bytesDone) + ') — même sans réseau au fond.');
+        // Échecs (réseau coupé en route) : on retentera à la prochaine ouverture / au retour du réseau.
+      });
+    }
+    function step() {
+      if (i >= urls.length) { if (active === 0) finish(); return; }
+      var u = urls[i++]; active++;
+      caches.match(u).then(function (hit) {
+        if (hit) { bytesDone += sizeOf(u); return; }             // déjà sur l'appareil (repris)
+        return fetch(u, {}).then(function (r) {
+          if (!r || r.status !== 200) { failed++; return; }
+          var wantQ = (u.indexOf('?') >= 0) ? u.slice(u.indexOf('?')) : '';
+          if (r.url && wantQ) { var gotQ = ''; try { gotQ = new URL(r.url).search; } catch (e) {} if (gotQ !== wantQ) { failed++; return; } }
+          var isMedia = u.indexOf('pdf/') === 0 || u.indexOf('images/pages/') >= 0 || u.indexOf('images/figures/') >= 0;
+          var putP = Promise.resolve();
+          if (isMedia) {
+            var copy = r.clone();
+            putP = caches.open(MEDIA_CACHE).then(function (c) { return c.put(u, copy).then(function () { return purgeOldRevs(c, u); }); }).catch(function () {});
+          }
+          return r.blob().then(function (b) { bytesDone += (b && b.size) || sizeOf(u); fetched++; return putP; });
+        });
+      }).catch(function () { failed++; })
+        .then(function () { done++; active--; tick(); step(); });
+    }
+    tick();
+    for (var k = 0; k < 3; k++) step();
   }
   function bindChips(sel, key) {
     var box = $(sel);
@@ -3276,5 +3347,22 @@
     progDirtyFlush();   // progression marquée « à pousser » pendant une panne
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
     rosterEnsure();     // annuaire employés mis en cache pour l'autocomplétion hors-ligne
+    // ---- pack hors-ligne complet, automatique et persistant ----
+    // À un nouveau déploiement (?v= changé), on rouvre la vérification : le
+    // pré-chargement complètera les fichiers révisés (les autres restent en cache).
+    try {
+      var sc = document.querySelector('script[src*="app.js?v="]');
+      var m = sc && sc.src.match(/[?&]v=(\d+)/), av = m ? m[1] : '';
+      if (av && localStorage.getItem('offline_ver') !== av) {
+        localStorage.removeItem('offline_ready');
+        localStorage.setItem('offline_ver', av);
+      }
+    } catch (e) {}
+    persistStorage();   // le cache survit aux redémarrages sans purge
+    autoPrecache();     // télécharge tout, une fois, en reprenant si interrompu
+    window.addEventListener('online', autoPrecache);                 // reprise au retour du réseau
+    document.addEventListener('visibilitychange', function () {      // reprise à la ré-ouverture (PWA)
+      if (!document.hidden) autoPrecache();
+    });
   });
 })();
