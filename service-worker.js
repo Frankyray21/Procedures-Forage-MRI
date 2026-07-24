@@ -16,7 +16,7 @@
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
      retarder l'installation. Le bouton « Tout télécharger » de l'accueil
      affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v144';
+const VERSION = 'mri-proc-v145';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -234,4 +234,99 @@ self.addEventListener('fetch', (e) => {
       }).catch(() => caches.match(req, { ignoreSearch: true }))
     )
   );
+});
+
+/* ─────────────── Background Fetch (pack hors-ligne, app fermée) ───────────────
+   Sur Android/Chrome, la page lance un « background fetch » de tout le pack : le
+   téléchargement continue MÊME si l'app est fermée (avec une notification
+   système). Ici on RANGE les réponses reçues dans le Cache Storage (Background
+   Fetch ne le fait pas tout seul), média dans MEDIA, reste dans VERSION. iOS ne
+   supporte pas l'API : la page retombe alors sur le pré-chargement premier-plan. */
+const BG_ID = 'mri-offline-pack';
+
+function bgIsMedia(path) {
+  return path.includes('/pdf/') || path.includes('/images/pages/') || path.includes('/images/figures/');
+}
+/* Purge en UNE passe les anciennes révisions des chemins qu'on vient de ranger.
+   purgeOldRevs relit toutes les clés du cache : l'appeler fichier par fichier
+   sur ~1000 médias serait quadratique (1000 × 1000 lectures de clés). */
+async function bgPurge(cache, keep) {          // keep : Map pathname → href gardé
+  const ks = await cache.keys();
+  await Promise.all(ks.map((k) => {
+    const want = keep.get(new URL(k.url).pathname);
+    return (want && k.url !== want) ? cache.delete(k) : null;
+  }));
+}
+// Range dans le cache toutes les réponses 200 d'un background fetch.
+async function bgStore(registration) {
+  let stored = 0, failed = 0;
+  const records = await registration.matchAll();
+  const media = await caches.open(MEDIA);
+  const shell = await caches.open(VERSION);
+  const keep = new Map();
+  /* Par LOTS : le pack fait ~170 Mo sur ~1100 fichiers. Tout ouvrir d'un coup
+     tiendrait les corps de réponse en mémoire en même temps et ferait tuer le
+     service worker par le système avant la fin de la mise en cache. */
+  for (let i = 0; i < records.length; i += 12) {
+    await Promise.all(records.slice(i, i + 12).map(async (record) => {
+      try {
+        const resp = await record.responseReady;
+        if (!resp || resp.status !== 200) { failed++; return; }
+        const url = new URL(record.request.url);
+        const isMedia = bgIsMedia(url.pathname);
+        await (isMedia ? media : shell).put(record.request, resp);
+        if (isMedia) keep.set(url.pathname, url.href);
+        stored++;
+      } catch (e) { failed++; }
+    }));
+  }
+  if (keep.size) { try { await bgPurge(media, keep); } catch (e) {} }
+  return { stored, failed };
+}
+async function bgNotifyPages(done) {
+  try {
+    const cs = await self.clients.matchAll({ includeUncontrolled: true });
+    cs.forEach((c) => c.postMessage({ type: done ? 'offline-pack-done' : 'offline-pack-partial' }));
+  } catch (e) {}
+}
+
+self.addEventListener('backgroundfetchsuccess', (event) => {
+  if (event.registration.id !== BG_ID) return;
+  event.waitUntil((async () => {
+    const r = await bgStore(event.registration);
+    const complete = r.failed === 0;
+    await bgNotifyPages(complete);
+    // La notification ne doit pas annoncer « disponible hors-ligne » si des
+    // réponses n'ont pas pu être rangées : la page complètera le reste.
+    try {
+      await event.updateUI({
+        title: complete ? 'Procédures disponibles hors-ligne ✓'
+                        : 'Procédures — téléchargement partiel, à compléter'
+      });
+    } catch (e) {}
+  })());
+});
+
+/* Échec partiel (réseau coupé) ou annulation par l'utilisateur : on garde quand
+   même ce qui a été reçu — sinon les octets déjà téléchargés seraient perdus. Le
+   reste sera complété à la prochaine ouverture (page → nouveau background fetch
+   avec seulement les fichiers manquants, ou pré-chargement premier-plan). */
+function bgSalvage(event) {
+  if (event.registration.id !== BG_ID) return;
+  event.waitUntil((async () => {
+    await bgStore(event.registration);
+    await bgNotifyPages(false);
+  })());
+}
+self.addEventListener('backgroundfetchfail', bgSalvage);
+self.addEventListener('backgroundfetchabort', bgSalvage);   // updateUI interdit ici : on n'en fait pas
+
+// Clic sur la notification → ouvre / ramène l'app au premier plan.
+self.addEventListener('backgroundfetchclick', (event) => {
+  if (event.registration.id !== BG_ID) return;
+  event.waitUntil((async () => {
+    const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    if (cs.length) return cs[0].focus();
+    return self.clients.openWindow('./');
+  })());
 });

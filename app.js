@@ -421,6 +421,7 @@
      secours tant que la nouvelle n'est pas descendue. */
   var MEDIA_CACHE = 'mri-media-v1';        // même nom que dans service-worker.js
   var precacheBusy = false;                // un seul téléchargement (auto ou manuel) à la fois
+  var bgFetchActive = false;               // Background Fetch en cours (Android : continue app fermée)
   var REV_BY_ID = null;
   function mediaRev(id) {
     if (!REV_BY_ID) {
@@ -568,6 +569,13 @@
         (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
         ') sont sur cet appareil.</span></div>' +
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
+    } else if (bgFetchActive) {
+      // Téléchargement en arrière-plan (Background Fetch) : continue app fermée.
+      box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
+        '<div class="offtxt"><b>Mise en cache hors-ligne en arrière-plan…</b>' +
+        '<span>Le téléchargement se poursuit même si tu fermes l\'app ; une notification t\'avertit à la fin.</span>' +
+        '</div></div>';
+      return;
     } else if (precacheBusy) {
       // Pré-chargement automatique en cours : progression discrète, sans bouton.
       box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
@@ -722,7 +730,7 @@
     function finish() {
       verifyAll().then(function (ok) {
         precacheBusy = false;
-        if (!failed && ok) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
+        if (!failed && ok) { bgSetTries(0); try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
         renderOffline();
         if (!failed && ok && fetched > 0) toast('Application prête hors ligne (' + fmtMo(bytesDone) + ') — même sans réseau au fond.');
         // Échecs (réseau coupé en route) : on retentera à la prochaine ouverture / au retour du réseau.
@@ -750,6 +758,93 @@
     }
     tick();
     for (var k = 0; k < 3; k++) step();
+  }
+  /* Background Fetch (Android/Chrome) : télécharge le pack MÊME app fermée, avec
+     une notification système. On ne passe que les fichiers MANQUANTS (reprise
+     incrémentale). Le service worker range les réponses en cache et prévient la
+     page (message « offline-pack-done »). Renvoie une promesse : true si le
+     Background Fetch prend le relais, false sinon (iOS, quota refusé, ou essais
+     épuisés) — l'appelant retombe alors sur le pré-chargement premier plan. */
+  var BG_ID = 'mri-offline-pack';
+  var BG_MAX_TRIES = 2;      // filet : au-delà, premier plan seulement (voir bgTries)
+  var bgStarting = null;     // démarrage en vol, partagé par tous les déclencheurs
+  /* Compteur d'essais Background Fetch. Si le service worker ne parvient pas à
+     ranger les réponses en cache (appareil capricieux), rien n'arrive et on
+     redemanderait 169 Mo à chaque ouverture : après BG_MAX_TRIES essais sans
+     succès on bascule définitivement sur le pré-chargement premier plan, qui
+     lui est vérifiable fichier par fichier. Remis à zéro dès que le pack est
+     complet, et à chaque nouveau déploiement. */
+  function bgTries() { try { return parseInt(localStorage.getItem('bg_tries') || '0', 10) || 0; } catch (e) { return 0; } }
+  function bgSetTries(n) { try { localStorage.setItem('bg_tries', String(Math.max(0, n))); } catch (e) {} }
+  /* navigator.serviceWorker.ready ne se résout JAMAIS si l'enregistrement du
+     service worker échoue : sans borne, le repli premier plan ne partirait pas. */
+  function swReady(ms) {
+    return new Promise(function (resolve) {
+      var settled = false;
+      function done(v) { if (!settled) { settled = true; resolve(v); } }
+      setTimeout(function () { done(null); }, ms);
+      navigator.serviceWorker.ready.then(done, function () { done(null); });
+    });
+  }
+  function startBackgroundFetch() {
+    // iOS/Safari : l'API n'existe pas → false, la page retombe sur le premier plan.
+    if (!('serviceWorker' in navigator) || !('BackgroundFetchManager' in window) || !window.BackgroundFetchManager) {
+      return Promise.resolve(false);
+    }
+    if (bgTries() >= BG_MAX_TRIES) return Promise.resolve(false);
+    if (bgStarting) return bgStarting;        // un seul démarrage à la fois (voir ensureOfflinePack)
+    bgStarting = swReady(8000).then(function (reg) {
+      if (!reg || !reg.backgroundFetch) return false;
+      return reg.backgroundFetch.get(BG_ID).then(function (existing) {
+        if (existing) {
+          // result vide = en cours → laisser continuer (même app fermée).
+          if (!existing.result) { bgFetchActive = true; renderOffline(); return true; }
+          // Terminé/échoué : on libère l'id pour repartir sur les manquants.
+          try { if (existing.abort) existing.abort(); } catch (e) {}
+        }
+        var urls = ['./'].concat(offlineAssets());
+        return Promise.all(urls.map(function (u) {
+          return caches.match(u).then(function (r) { return r ? null : u; }).catch(function () { return u; });
+        })).then(function (res) {
+          var missing = res.filter(Boolean);
+          if (!missing.length) {                          // déjà tout en cache
+            bgSetTries(0);
+            try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
+            renderOffline(); return true;
+          }
+          /* Marge sur downloadTotal : dépasser le total annoncé fait AVORTER le
+             téléchargement (spec Background Fetch), et sizes.js ne connaît pas
+             './' et peut dater d'un fichier près. */
+          var total = Math.round(sumBytes(missing) * 1.05) + 2 * 1024 * 1024;
+          bgSetTries(bgTries() + 1);
+          return reg.backgroundFetch.fetch(BG_ID, missing, {
+            title: 'Procédures de forage — mise en cache hors-ligne',
+            downloadTotal: total,
+            icons: [{ src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' }]
+          }).then(function () { bgFetchActive = true; renderOffline(); return true; }, function () {
+            /* Refus au lancement. Si c'est parce qu'un fetch du même id vient de
+               démarrer ailleurs, on le laisse vivre (sinon on lancerait EN PLUS
+               un téléchargement premier plan des mêmes 169 Mo). */
+            return reg.backgroundFetch.get(BG_ID).then(function (now) {
+              if (now && !now.result) { bgFetchActive = true; renderOffline(); return true; }
+              bgSetTries(bgTries() - 1);        // rien n'est parti : l'essai ne compte pas
+              return false;
+            }).catch(function () { bgSetTries(bgTries() - 1); return false; });
+          });
+        });
+      });
+    }).catch(function () { return false; })
+      .then(function (used) { bgStarting = null; return used; });
+    return bgStarting;
+  }
+  /* Assure la disponibilité hors-ligne : Background Fetch si dispo (Android,
+     continue app fermée), sinon pré-chargement premier-plan (iOS, tant que
+     l'app est ouverte). Ne fait rien si déjà prêt, hors-ligne, ou déjà en cours. */
+  function ensureOfflinePack() {
+    if (DEMO || !('caches' in window) || offlineReady() || !navigator.onLine) return;
+    if (bgFetchActive || precacheBusy || bgStarting) return;   // jamais deux téléchargements à la fois
+    persistStorage();
+    startBackgroundFetch().then(function (used) { if (!used) autoPrecache(); });
   }
   function bindChips(sel, key) {
     var box = $(sel);
@@ -3355,14 +3450,36 @@
       var m = sc && sc.src.match(/[?&]v=(\d+)/), av = m ? m[1] : '';
       if (av && localStorage.getItem('offline_ver') !== av) {
         localStorage.removeItem('offline_ready');
+        localStorage.removeItem('bg_tries');   // nouveau déploiement : Background Fetch a droit à sa chance
         localStorage.setItem('offline_ver', av);
       }
     } catch (e) {}
-    persistStorage();   // le cache survit aux redémarrages sans purge
-    autoPrecache();     // télécharge tout, une fois, en reprenant si interrompu
-    window.addEventListener('online', autoPrecache);                 // reprise au retour du réseau
+    persistStorage();       // le cache survit aux redémarrages sans purge
+    ensureOfflinePack();    // Background Fetch (Android, app fermée) ou premier plan (iOS)
+    window.addEventListener('online', ensureOfflinePack);            // reprise au retour du réseau
     document.addEventListener('visibilitychange', function () {      // reprise à la ré-ouverture (PWA)
-      if (!document.hidden) autoPrecache();
+      if (!document.hidden) ensureOfflinePack();
     });
+    // Le service worker signale la fin du Background Fetch (contenu rangé en cache).
+    if ('serviceWorker' in navigator && navigator.serviceWorker.addEventListener) {
+      navigator.serviceWorker.addEventListener('message', function (e) {
+        if (!e || !e.data) return;
+        if (e.data.type === 'offline-pack-done' || e.data.type === 'offline-pack-partial') {
+          bgFetchActive = false;
+          verifyAll().then(function (ok) {
+            if (ok) {
+              bgSetTries(0);
+              try { localStorage.setItem('offline_ready', '1'); } catch (e2) {}
+              renderOffline();
+            } else {
+              // Incomplet : on enchaîne (2e Background Fetch sur les manquants,
+              // puis premier plan une fois les essais épuisés).
+              renderOffline();
+              ensureOfflinePack();
+            }
+          });
+        }
+      });
+    }
   });
 })();
