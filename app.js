@@ -571,10 +571,15 @@
         '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
     } else if (bgFetchActive) {
       // Téléchargement en arrière-plan (Background Fetch) : continue app fermée.
+      // Le bouton reste offert : si le système gèle le téléchargement, l'utilisateur
+      // doit pouvoir reprendre la main ici et maintenant.
       box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
         '<div class="offtxt"><b>Mise en cache hors-ligne en arrière-plan…</b>' +
         '<span>Le téléchargement se poursuit même si tu fermes l\'app ; une notification t\'avertit à la fin.</span>' +
-        '</div></div>';
+        '</div>' +
+        '<button class="btn ghost" id="offNow" title="Annuler l\'arrière-plan et télécharger maintenant, app ouverte">Télécharger ici</button></div>';
+      var nowBtn = $('#offNow');
+      if (nowBtn) nowBtn.onclick = function () { bgAbortThenForeground(); };
       return;
     } else if (precacheBusy) {
       // Pré-chargement automatique en cours : progression discrète, sans bouton.
@@ -776,6 +781,26 @@
      complet, et à chaque nouveau déploiement. */
   function bgTries() { try { return parseInt(localStorage.getItem('bg_tries') || '0', 10) || 0; } catch (e) { return 0; } }
   function bgSetTries(n) { try { localStorage.setItem('bg_tries', String(Math.max(0, n))); } catch (e) {} }
+  var BG_STALL_MS = 10 * 60 * 1000;   // figé plus de 10 min entre deux ouvertures = gelé
+  function bgClearWatch() { try { localStorage.removeItem('bg_watch'); } catch (e) {} }
+  /* Le téléchargement d'arrière-plan AVANCE-t-il vraiment ? Certains Android
+     (économiseur de batterie agressif, économiseur de données) suspendent le
+     service de téléchargement de Chrome sans jamais émettre d'événement : la
+     registration reste « en cours » pour toujours. Sans ce contrôle, la page
+     la verrait à chaque ouverture, se croirait en bon chemin, et ne
+     basculerait JAMAIS sur le pré-chargement premier plan — l'utilisateur
+     serait alors plus mal loti qu'avant l'ajout du Background Fetch.
+     On compare donc les octets reçus d'une observation à l'autre : tant que ça
+     monte, on laisse faire ; figé trop longtemps, on tranche. */
+  function bgProgressing(reg) {
+    var got = reg.downloaded || 0, now = Date.now(), w = null;
+    try { w = JSON.parse(localStorage.getItem('bg_watch') || 'null'); } catch (e) { w = null; }
+    if (!w || typeof w.d !== 'number' || got > w.d) {     // 1re observation, ou ça progresse
+      try { localStorage.setItem('bg_watch', JSON.stringify({ d: got, t: now })); } catch (e) {}
+      return true;
+    }
+    return (now - w.t) < BG_STALL_MS;                     // pas encore concluant / gelé
+  }
   /* navigator.serviceWorker.ready ne se résout JAMAIS si l'enregistrement du
      service worker échoue : sans borne, le repli premier plan ne partirait pas. */
   function swReady(ms) {
@@ -791,24 +816,34 @@
     if (!('serviceWorker' in navigator) || !('BackgroundFetchManager' in window) || !window.BackgroundFetchManager) {
       return Promise.resolve(false);
     }
-    if (bgTries() >= BG_MAX_TRIES) return Promise.resolve(false);
     if (bgStarting) return bgStarting;        // un seul démarrage à la fois (voir ensureOfflinePack)
+    // Essais épuisés : on ne lance plus rien, mais on passe quand même vérifier
+    // qu'aucune registration fantôme ne traîne (elle bloquerait le premier plan).
+    var giveUp = bgTries() >= BG_MAX_TRIES;
     bgStarting = swReady(8000).then(function (reg) {
       if (!reg || !reg.backgroundFetch) return false;
       return reg.backgroundFetch.get(BG_ID).then(function (existing) {
         if (existing) {
-          // result vide = en cours → laisser continuer (même app fermée).
-          if (!existing.result) { bgFetchActive = true; renderOffline(); return true; }
-          // Terminé/échoué : on libère l'id pour repartir sur les manquants.
-          try { if (existing.abort) existing.abort(); } catch (e) {}
+          // result vide = en cours… ou gelé par le système (voir bgProgressing).
+          if (!existing.result && !giveUp && bgProgressing(existing)) {
+            bgFetchActive = true; renderOffline(); return true;
+          }
+          // Gelé, terminé, échoué, ou essais épuisés : on libère l'id.
+          var frozen = !existing.result;
+          if (frozen) bgSetTries(bgTries() + 1);   // un blocage compte comme un essai raté
+          try { if (existing.abort) existing.abort(); } catch (e) {}   // octets reçus conservés (backgroundfetchabort)
+          bgClearWatch();
+          bgFetchActive = false;
+          if (frozen) return false;                // → repli premier plan tout de suite
         }
+        if (giveUp) return false;
         var urls = ['./'].concat(offlineAssets());
         return Promise.all(urls.map(function (u) {
           return caches.match(u).then(function (r) { return r ? null : u; }).catch(function () { return u; });
         })).then(function (res) {
           var missing = res.filter(Boolean);
           if (!missing.length) {                          // déjà tout en cache
-            bgSetTries(0);
+            bgSetTries(0); bgClearWatch();
             try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
             renderOffline(); return true;
           }
@@ -821,7 +856,7 @@
             title: 'Procédures de forage — mise en cache hors-ligne',
             downloadTotal: total,
             icons: [{ src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' }]
-          }).then(function () { bgFetchActive = true; renderOffline(); return true; }, function () {
+          }).then(function () { bgClearWatch(); bgFetchActive = true; renderOffline(); return true; }, function () {
             /* Refus au lancement. Si c'est parce qu'un fetch du même id vient de
                démarrer ailleurs, on le laisse vivre (sinon on lancerait EN PLUS
                un téléchargement premier plan des mêmes 169 Mo). */
@@ -845,6 +880,25 @@
     if (bgFetchActive || precacheBusy || bgStarting) return;   // jamais deux téléchargements à la fois
     persistStorage();
     startBackgroundFetch().then(function (used) { if (!used) autoPrecache(); });
+  }
+  /* Échappatoire manuelle pendant un téléchargement d'arrière-plan : l'utilisateur
+     ne doit jamais rester coincé à regarder une barre qui n'avance pas. On annule
+     l'arrière-plan (le service worker conserve les octets déjà reçus via
+     backgroundfetchabort) puis on télécharge au premier plan, visible et
+     vérifiable fichier par fichier. */
+  function bgAbortThenForeground() {
+    bgFetchActive = false;
+    bgClearWatch();
+    bgSetTries(BG_MAX_TRIES);          // l'utilisateur a tranché : on reste au premier plan
+    function go() { startPrecache(false); }
+    if (!('serviceWorker' in navigator) || !('BackgroundFetchManager' in window)) { go(); return; }
+    swReady(4000).then(function (reg) {
+      if (!reg || !reg.backgroundFetch) return null;
+      return reg.backgroundFetch.get(BG_ID).then(function (r) {
+        if (r && r.abort) { try { return r.abort(); } catch (e) {} }
+        return null;
+      }).catch(function () { return null; });
+    }).catch(function () { return null; }).then(go, go);
   }
   function bindChips(sel, key) {
     var box = $(sel);
@@ -3451,6 +3505,7 @@
       if (av && localStorage.getItem('offline_ver') !== av) {
         localStorage.removeItem('offline_ready');
         localStorage.removeItem('bg_tries');   // nouveau déploiement : Background Fetch a droit à sa chance
+        localStorage.removeItem('bg_watch');
         localStorage.setItem('offline_ver', av);
       }
     } catch (e) {}
@@ -3468,12 +3523,15 @@
           bgFetchActive = false;
           verifyAll().then(function (ok) {
             if (ok) {
-              bgSetTries(0);
+              bgSetTries(0); bgClearWatch();
               try { localStorage.setItem('offline_ready', '1'); } catch (e2) {}
               renderOffline();
-            } else {
+            } else if (!precacheBusy) {
               // Incomplet : on enchaîne (2e Background Fetch sur les manquants,
-              // puis premier plan une fois les essais épuisés).
+              // puis premier plan une fois les essais épuisés). Si un
+              // téléchargement premier plan tourne déjà, il possède l'affichage :
+              // on n'y touche pas.
+              bgClearWatch();
               renderOffline();
               ensureOfflinePack();
             }
