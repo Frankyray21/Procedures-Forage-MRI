@@ -21,6 +21,10 @@
   --danger:#ef4444;--warn:#f59e0b;--success:#10b981;
   --text:#f1f5f9;--muted:#9aa7bd;--dim:#8694ad;--border:#1e293b;--strong:#fff;--lead:#cbd5e1;
   --g-red:linear-gradient(135deg,#e23a3c,#a81a1c);
+  /* Rangées de procédures : fond nettement détaché de la page (elles se
+     confondaient avec #0a0e17). Titre en blanc pur, code en retrait. */
+  --row-bg:#212c44;--row-bg-h:#2a3860;--row-bd:#3a486a;--row-code:#b7c2d8;
+  --row-sh:0 1px 8px rgba(0,0,0,.45);
   --shadow-card:0 1px 0 rgba(255,255,255,.04) inset,0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.28);
   --font-display:'Barlow Condensed','Barlow',sans-serif;
   --font-body:'Barlow',sans-serif;
@@ -514,15 +518,16 @@ footer b{color:var(--muted)}
 .srhint{display:block;margin-top:.5rem;font-size:.85rem}
 /* Rangée compacte : code · titre · tâche · état sur UNE ligne (passe à la
    ligne si étroit — rien n'est tronqué) ; liséré gauche = couleur de tâche. */
-.prow{display:flex;align-items:center;gap:.55rem;background:var(--card);border:1px solid var(--border);
-  border-left:3px solid var(--cat,var(--border));border-radius:10px;padding:.42rem .6rem .42rem .7rem;
+.prow{display:flex;align-items:center;gap:.55rem;background:var(--row-bg);border:1px solid var(--row-bd);
+  border-left:3px solid var(--cat,var(--row-bd));border-radius:10px;padding:.42rem .6rem .42rem .7rem;
+  box-shadow:var(--row-sh);
   transition:transform .15s,border-color .15s,background .15s}
 .prow:hover{border-color:rgba(210,35,37,.4);border-left-color:var(--cat,rgba(210,35,37,.4));
-  background:var(--card-2);transform:translateX(3px)}
+  background:var(--row-bg-h);transform:translateX(3px)}
 .prow .pcode{flex:none;font-family:var(--font-display);font-size:.7rem;font-weight:700;letter-spacing:.04em;
-  color:var(--dim);background:var(--bg-2);border:1px solid var(--border);border-radius:6px;padding:.12rem .38rem}
+  color:var(--row-code);background:var(--bg-2);border:1px solid var(--border);border-radius:6px;padding:.12rem .38rem}
 .prow .prow-main{flex:1;min-width:0;display:flex;align-items:center;gap:.25rem .55rem;flex-wrap:wrap}
-.prow .ptitle{font-weight:700;font-size:.9rem;line-height:1.3}
+.prow .ptitle{font-weight:700;font-size:.95rem;line-height:1.3;color:var(--strong)}
 .prow .pcat{display:inline-flex;align-items:center;gap:.35rem;font-size:.68rem;font-weight:700;
   text-transform:uppercase;letter-spacing:.04em;color:var(--cat,var(--dim))}  /* le mot suit la couleur de sa pastille */
 .prow .pcat i{width:7px;height:7px;border-radius:50%;flex:none}
@@ -969,6 +974,10 @@ footer b{color:var(--muted)}
   --bg:#f2f4f8;--bg-2:#e9edf3;--card:#ffffff;--card-2:#e8ecf1;
   --text:#111827;--muted:#4b5563;--dim:#6b7280;--border:#d4dae2;
   --accent-l:#b81b1d;--success:#0e8a63;--strong:#111827;--lead:#374151;
+  /* En thème clair, les cartes blanches ressortent déjà sur le fond gris :
+     on garde ce rendu, avec une ombre douce pour l'effet « surélevé ». */
+  --row-bg:#ffffff;--row-bg-h:#eef1f6;--row-bd:#cdd5e0;--row-code:#6b7280;
+  --row-sh:0 1px 6px rgba(15,23,42,.08);
 }
 :root[data-theme="light"] body{
   background-image:radial-gradient(120% 60% at 85% -5%,rgba(210,35,37,.05),transparent 55%)}
