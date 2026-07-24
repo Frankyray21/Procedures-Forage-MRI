@@ -62,6 +62,22 @@ Si tu dois en créer un : **airtable.com/create/tokens**
 - Liste **« Liste employé (registre formation) »** (`tbllKuNePDWZMr1cz`) —
   sert à l'autocomplétion du nom et au lien automatique.
 
+### ⚠️ À ajouter une fois : le champ pièce jointe « Attestation PDF »
+
+Pour que **le PDF de l'attestation soit archivé dans Airtable** (en plus d'être
+téléchargeable par le travailleur), ajoute **une seule fois** un champ à la table
+**« Attestations procédures (web) »** :
+
+- **Nom du champ** : `Attestation PDF` (exactement)
+- **Type** : **Attachment** (pièce jointe)
+
+Le PDF est **généré sur l'appareil du travailleur** (même sous terre, sans
+réseau) puis **téléversé à l'envoi** — ou, si l'attestation a été faite
+hors-ligne, **plus tard, dès que le réseau revient** (le PDF part avec
+l'attestation en file d'attente). Tant que le champ n'existe pas, l'attestation
+est enregistrée normalement, mais **sans** la pièce jointe (`pdf:false` dans la
+réponse). Aucune autre configuration : le Worker cible le champ par son nom.
+
 ## Ce qui est envoyé à Airtable
 
 | Colonne Airtable    | Exemple                          | Source                                  |
@@ -79,6 +95,7 @@ Si tu dois en créer un : **airtable.com/create/tokens**
 | Secondes quiz       | `130`                            | idem en secondes (tri / analyse)        |
 | Statut              | `Reçu` / `À relier`              | selon que l'employé a été trouvé        |
 | Source              | `site procédures`                | fixe                                    |
+| Attestation PDF     | *(pièce jointe .pdf)*            | PDF généré sur l'appareil, téléversé    |
 
 > **Temps (suivi gestionnaire, non affiché au travailleur)** : le site mesure le
 > temps *actif* (écran visible — en pause quand le téléphone est verrouillé)

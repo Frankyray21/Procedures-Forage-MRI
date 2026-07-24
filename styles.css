@@ -930,6 +930,12 @@ footer b{color:var(--muted)}
 .sv-b.sv-warn{color:#fbbf24;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.06)}
 .sv-b.sv-rev{color:#fca5a5;border-color:rgba(252,165,165,.35)}
 .sv-b.sv-mute{color:var(--dim)}
+/* Bouton « PDF » d'une rangée de suivi : télécharge l'attestation (hors-ligne OK). */
+.sv-pdf{flex:none;display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:700;
+  padding:.2rem .55rem;border-radius:999px;border:1px solid var(--border);color:var(--accent-l);
+  background:var(--card-2);cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s}
+.sv-pdf:hover{border-color:var(--brand);background:rgba(210,35,37,.1)}
+.sv-pdf svg{width:12px;height:12px}
 .sv-note{color:var(--dim);font-size:.82rem;margin:1.4rem 0 2rem;max-width:560px}
 @media (max-width:640px){
   .sv-row{flex-wrap:wrap}

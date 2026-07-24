@@ -1376,7 +1376,7 @@
       // l'envoi partira tout seul au retour du réseau.
       if (!navigator.onLine) { aqAdd(p.id, sig, payload); attestQueued(sec, name, payload); return; }
       sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
-      fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      postAttestation(endpoint, payload)
         .then(function (r) { return r ? r.json().then(function (j) { return { ok: r.ok, j: j }; }) : null; })
         .then(function (res) {
           sendBtn.disabled = false;
@@ -1419,7 +1419,7 @@
     aqBusy = true;
     var it = q[0];
     function aqDrop() { aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; })); }
-    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(it.payload) })
+    postAttestation(endpoint, it.payload)
       .then(function (r) {
         return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; });
       })
@@ -1433,7 +1433,7 @@
             localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
           } catch (e) {}
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
-          aqRefreshView(it.pid, uSlug);
+          aqRefreshView(it.pid, uSlug, it.payload);
           progPushSoon();
           aqFlush();                                   // suivante, s'il y en a
           return;
@@ -1462,13 +1462,15 @@
     aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(); }, 60000);
   }
   // Si la fiche ou le suivi de cette attestation est à l'écran, refléter l'envoi.
-  function aqRefreshView(pid, uSlug) {
+  function aqRefreshView(pid, uSlug, payload) {
     if (uSlug != null && uSlug !== profSlug(profName())) return;   // autre profil : rien à rafraîchir
     var h = location.hash || '';
     if (h === '#/p/' + pid) {
       var sec = document.querySelector('.attest-sec[data-proc="' + pid + '"]');
       var p = DATA.filter(function (x) { return x.id === pid; })[0];
-      if (sec && p) attestSuccess(sec, suiviName(), true, null, '');
+      // payload transmis → le bouton « Mon attestation (PDF) » s'affiche même
+      // quand l'attestation part au retour du réseau (faite hors-ligne au fond).
+      if (sec && p) attestSuccess(sec, suiviName(), true, payload || null, '');
     } else if (h.indexOf('#/suivi') === 0) {
       renderSuivi($('#view'));
     }
@@ -1485,7 +1487,7 @@
     for (var i = 0; i < q.length; i++) { if (q[i].pid === pid) { it = q[i]; break; } }
     if (!endpoint || !it || aqBusy) { cb(false); return; }
     aqBusy = true;
-    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(it.payload) })
+    postAttestation(endpoint, it.payload)
       .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; }); })
       .then(function (res) {
         aqBusy = false;
@@ -1496,7 +1498,7 @@
             localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
             localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
           } catch (e) {}
-          aqRefreshView(it.pid, uSlug); progPushSoon();
+          aqRefreshView(it.pid, uSlug, it.payload); progPushSoon();
           cb(true);
         } else { cb(false); }                 // 4xx/5xx : reste en file, repartira tout seul
       })
@@ -1701,6 +1703,35 @@
       'et complété le quiz associé sur le site des procédures de forage de Machines Roger International.', 170), 20, y);
     pdfFooter(doc);
     return doc;
+  }
+  // Nom de fichier stable de l'attestation PDF (téléchargement + pièce jointe).
+  function pdfFileName(payload) {
+    return pdfSlug(payload.proc) + '-' + pdfSlug(payload.name) + '-attestation.pdf';
+  }
+  // Génère le PDF (jsPDF, hors-ligne OK) et renvoie sa base64 brute — ou ''
+  // si jsPDF/logo indisponibles (on enverra alors l'attestation sans pièce).
+  function buildPdfBase64(payload) {
+    return Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
+      var uri = buildWorkerPdf(payload, r[1]).output('datauristring');
+      var i = uri.indexOf(','); return i >= 0 ? uri.slice(i + 1) : '';
+    }).catch(function () { return ''; });
+  }
+  // Copie du payload + PDF (base64) joint, prête pour l'envoi au Worker.
+  function attestBody(payload, b64) {
+    var o = {}; Object.keys(payload).forEach(function (k) { o[k] = payload[k]; });
+    if (b64) { o.pdfBase64 = b64; o.pdfName = pdfFileName(payload); }
+    return o;
+  }
+  // Envoi d'une attestation AVEC son PDF. Le PDF est (re)généré ICI, au moment
+  // de l'envoi : rien de lourd n'est stocké dans la file hors-ligne, et le PDF
+  // est téléversé dans Airtable par le Worker. Hors-ligne, l'attestation est
+  // mise en file (voir aqAdd) et cette fonction n'est appelée qu'au retour du
+  // réseau — le PDF part donc « plus tard, quand il y a du réseau ».
+  function postAttestation(endpoint, payload) {
+    return buildPdfBase64(payload).then(function (b64) {
+      return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(attestBody(payload, b64)) });
+    });
   }
   // (La « fiche gestionnaire » PDF a été retirée : les détails de suivi —
   // temps de lecture, temps de quiz, statut — sont envoyés à Airtable avec
@@ -2775,7 +2806,13 @@
       '<span class="sv-dot" style="--c:' + catColor(p.categorie) + '"></span>' +
       '<span class="sv-t"><b>' + esc(p.titre) + '</b>' +
         (p.code ? '<span class="sv-code">' + esc(p.code) + '</span>' : '') + '</span>' +
-      '<span class="sv-badges">' + badges + '</span>' + ICON.arrow + '</a>';
+      '<span class="sv-badges">' + badges + '</span>' +
+      // Attestation déjà obtenue → bouton de (re)téléchargement du PDF, généré
+      // sur l'appareil (fonctionne hors-ligne). role=button + data-pid : capté
+      // par délégation, sans déclencher la navigation du lien de la rangée.
+      (att ? '<span class="sv-pdf" role="button" tabindex="0" data-pid="' + esc(p.id) +
+        '" title="Télécharger l\'attestation (PDF)">' + ICON.doc + '<span>PDF</span></span>' : '') +
+      ICON.arrow + '</a>';
   }
   function suiviGroupHTML(titre, procs) {
     var att = procs.filter(function (p) { return !!attestInfo(p.id); }).length;
@@ -2844,6 +2881,34 @@
         '<p class="sv-note">Les résultats affichés ici restent sur ton appareil. Les gestionnaires font le suivi officiel à partir des attestations envoyées.</p>' +
       '</div>';
     initSuiviSync(view);
+    // Téléchargement du PDF d'attestation depuis « Mon suivi ». Délégué sur le
+    // conteneur recréé à chaque rendu (pas de fuite d'écouteurs sur #view).
+    var wrap = view.querySelector('.secwrap');
+    if (wrap) wrap.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('.sv-pdf'); if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      downloadSuiviPdf(b.getAttribute('data-pid'), b);
+    });
+  }
+  // Reconstruit le payload d'une attestation passée à partir des données de
+  // l'appareil (date attestée, meilleur score) + la fiche, et télécharge le PDF.
+  function downloadSuiviPdf(pid, btnEl) {
+    var p = DATA.filter(function (x) { return x.id === pid; })[0]; if (!p) return;
+    var att = attestInfo(pid) || {};
+    var best = pqBestPct(pid);
+    var payload = {
+      name: suiviName(),
+      proc: p.code || p.id,
+      titre: p.titre || '',
+      date: att.date || new Date().toISOString().slice(0, 10),
+      revision: p.date_revision || p.date_creation || '',
+      score: att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '')
+    };
+    var old = btnEl.innerHTML; btnEl.innerHTML = '<span>…</span>';
+    Promise.all([ensureJsPDF(), getLogo()]).then(function (r) {
+      buildWorkerPdf(payload, r[1]).save(pdfFileName(payload));
+      btnEl.innerHTML = old;
+    }).catch(function () { btnEl.innerHTML = old; toast('PDF indisponible — réessaie dans un instant.'); });
   }
   function suiviSyncHTML() {
     if (!attestEndpoint()) return '';

@@ -54,7 +54,12 @@
          "proc":"PRO-OP-ITH-004", "titre":"Forage en longtrou (ITH / CUBEX)",
          "score":"12/13 — 92 %", "revision":"Juin 2024", "date":"AAAA-MM-JJ",
          "readTime":"3 min 42 s", "quizTime":"2 min 10 s",
-         "readSeconds":222, "quizSeconds":130 }
+         "readSeconds":222, "quizSeconds":130,
+         "pdfBase64":"(opt) PDF de l'attestation en base64",
+         "pdfName":"(opt) nom du fichier .pdf" }
+       Le PDF (généré sur l'appareil, même hors-ligne) est joint au champ
+       « Attestation PDF ». Réponse : { ok, id, linked, pdf } — pdf=true si la
+       pièce jointe a bien été téléversée.
 
    SUIVI DU TEMPS (pour les gestionnaires) : le site mesure le temps ACTIF passé
    sur la fiche et sur le quiz (écran visible), NON affiché au travailleur. Écrit
@@ -65,6 +70,11 @@
 
 const AIRTABLE_BASE  = "appmq82YjvEUglYZU";   // base « Formations »
 const AIRTABLE_TABLE = "tblKKK7xpP1MwRvYw";   // table « Attestations procédures (web) »
+/* Champ pièce jointe où le PDF d'attestation est téléversé (à créer dans la
+   table ci-dessus, type « Attachment »). Le PDF est généré sur l'appareil du
+   travailleur puis joint ici. Si le champ n'existe pas encore, l'attestation
+   est enregistrée quand même (pdf:false renvoyé) — rien n'est bloqué. */
+const ATTACH_FIELD   = "Attestation PDF";
 
 /* Liste des employés, pour relier l'attestation au bon dossier. */
 const EMP_TABLE      = "tbllKuNePDWZMr1cz";   // « Liste employé (registre formation) »
@@ -218,9 +228,46 @@ export default {
     }
 
     const rec = await at.json();
-    return json({ ok: true, id: rec.id, linked: !!empId }, 200, cors);
+
+    // Téléversement du PDF d'attestation (généré sur l'appareil) dans le champ
+    // pièce jointe. Best-effort : l'attestation est déjà enregistrée, donc un
+    // échec d'upload ne la fait pas échouer — on renvoie juste pdf:false.
+    let pdf = false;
+    if (rec && rec.id && typeof body.pdfBase64 === "string" && body.pdfBase64) {
+      pdf = await uploadPdfAttachment(rec.id, body.pdfBase64, clean(body.pdfName, 120), env);
+    }
+
+    return json({ ok: true, id: rec.id, linked: !!empId, pdf }, 200, cors);
   },
 };
+
+/* Téléverse un PDF (base64) dans le champ pièce jointe ATTACH_FIELD d'un
+   enregistrement, via l'API « uploadAttachment » d'Airtable (content.airtable.com).
+   Accepte une base64 brute ou une data-URI (« data:…;base64,… »). Limite 5 Mo.
+   Renvoie true si Airtable a accepté, false sinon (jamais d'exception). */
+async function uploadPdfAttachment(recordId, pdfBase64, filename, env) {
+  if (!env.AIRTABLE_TOKEN) return false;
+  const comma = pdfBase64.indexOf(",");
+  const raw = pdfBase64.slice(0, 5) === "data:" && comma >= 0 ? pdfBase64.slice(comma + 1) : pdfBase64;
+  if (!raw || raw.length > 7000000) return false;   // ~5 Mo une fois décodé
+  const name = clean(filename, 120) || "attestation.pdf";
+  try {
+    const r = await fetch(
+      `https://content.airtable.com/v0/${AIRTABLE_BASE}/${recordId}/${encodeURIComponent(ATTACH_FIELD)}/uploadAttachment`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${env.AIRTABLE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ contentType: "application/pdf", filename: name, file: raw }),
+      }
+    );
+    return !!(r && r.ok);
+  } catch (e) {
+    return false;
+  }
+}
 
 /* POST d'un enregistrement. Table par défaut = « Attestations procédures (web) »,
    ou celle passée en 3e argument (nom ou id). Renvoie la Response Airtable, ou
