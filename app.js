@@ -422,6 +422,12 @@
   var MEDIA_CACHE = 'mri-media-v1';        // même nom que dans service-worker.js
   var precacheBusy = false;                // un seul téléchargement (auto ou manuel) à la fois
   var bgFetchActive = false;               // Background Fetch en cours (Android : continue app fermée)
+  /* Progression du téléchargement premier plan, conservée HORS du DOM :
+     renderOffline() est rappelé à chaque changement de route (renderHome), et
+     sans cet état il repeignait une carte vide — barre figée à 0 %, plus de
+     bouton — alors que le téléchargement continuait en coulisse. */
+  var dlManual = false;                    // true = « Tout télécharger » / « Mettre à jour »
+  var dlProg = null;                       // { done, total, bytes, totalBytes, cur, eta, force }
   var REV_BY_ID = null;
   function mediaRev(id) {
     if (!REV_BY_ID) {
@@ -520,6 +526,19 @@
       ')</summary><div class="offlist-body">' + inner + '</div></details>';
   }
   function offlineReady() { try { return localStorage.getItem('offline_ready') === '1'; } catch (e) { return false; } }
+  function isMediaUrl(u) {
+    return u.indexOf('pdf/') === 0 || u.indexOf('images/pages/') >= 0 || u.indexOf('images/figures/') >= 0;
+  }
+  /* Le pack est-il DÉJÀ sur l'appareil, fichier par fichier ?
+     Les js/css sont mis en cache par le service worker SOUS LEUR URL VERSIONNÉE
+     (« app.js?v=285 ») alors que la liste du pack les nomme sans ?v= : une
+     correspondance exacte les déclarerait absents et re-téléchargerait ~1,6 Mo
+     d'octets identiques À CHAQUE DÉPLOIEMENT, sur chaque appareil. Les MÉDIAS
+     gardent la correspondance exacte : leur ?r= identifie la révision, et
+     ignorer la requête servirait une vieille version comme si elle était à jour. */
+  function packMatch(u) {
+    return isMediaUrl(u) ? caches.match(u) : caches.match(u, { ignoreSearch: true });
+  }
   // Supprime du cache les anciennes révisions (même chemin, ?r= différent).
   function purgeOldRevs(c, u) {
     var target = new URL(u, location.href);
@@ -559,37 +578,71 @@
         }
       }).catch(function () {});
   }
+  /* Cartes de progression reconstruites À PARTIR de dlProg : renderOffline() est
+     rappelé à chaque changement de route, il doit donc pouvoir repeindre une
+     progression déjà en cours au lieu d'une carte vide. */
+  function dlPct() {
+    var p = dlProg;
+    if (!p || !p.totalBytes) return 0;
+    return Math.min(100, Math.round(p.bytes / p.totalBytes * 100));
+  }
+  function dlCardHTML(withList) {
+    var p = dlProg || { done: 0, total: 0, bytes: 0, totalBytes: 0, cur: '', eta: '', force: false };
+    return '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
+      '<div class="offtxt" style="flex:1"><b>' + (p.force ? 'Mise à jour' : 'Téléchargement') + ' en cours…</b>' +
+      '<div class="offbar"><i id="offbar" style="width:' + dlPct() + '%"></i></div>' +
+      '<span id="offcur" class="offcur" aria-live="polite">' + esc(p.cur || '') + '</span>' +
+      '<span id="offstat">' + p.done + ' / ' + p.total + ' fichiers · ' + fmtMo(p.bytes) + ' / ' + fmtMo(p.totalBytes) + '</span>' +
+      '<span id="offeta" class="offeta">' + esc(p.eta || 'Temps restant : calcul en cours…') + '</span>' +
+      (withList ? offlineListHTML() : '') + '</div></div>';
+  }
+  function autoCardHTML() {
+    var p = dlProg, pct = dlPct();
+    return '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
+      '<div class="offtxt" style="flex:1"><b>Préparation hors-ligne automatique…</b>' +
+      '<div class="offbar"><i id="offauto" style="width:' + pct + '%"></i></div>' +
+      '<span id="offautotxt" class="offcur" aria-live="polite">' +
+      (p && p.totalBytes ? pct + ' % · ' + fmtMo(p.bytes) + ' / ' + fmtMo(p.totalBytes) : '…') + '</span>' +
+      '<span class="offhint2">Laisse l\'app ouverte avec du réseau — le contenu se met en cache une seule fois.</span>' +
+      '</div></div>';
+  }
   function renderOffline() {
     var box = $('#offline'); if (!box) return;
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
     var files = offlineAssets(), totalBytes = sumBytes(files), nPdf = DATA.length + 1;
-    if (offlineReady()) {
-      box.innerHTML = '<div class="offcard ok slim"><span class="offic">' + ICON.check + '</span>' +
-        '<div class="offtxt"><b>Disponible hors ligne</b><span>Toutes les fiches' +
-        (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
-        ') sont sur cet appareil.</span></div>' +
-        '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
-    } else if (bgFetchActive) {
+    /* Un téléchargement en cours PRIME sur « disponible hors ligne » : sinon la
+       carte « Mettre à jour » s'affiche pendant une mise à jour forcée et son
+       bouton ne fait rien (startPrecache sort tout de suite si un
+       téléchargement tourne déjà). */
+    if (precacheBusy) {
+      box.innerHTML = dlManual ? dlCardHTML(false) : autoCardHTML();
+      return;
+    }
+    if (bgFetchActive) {
       // Téléchargement en arrière-plan (Background Fetch) : continue app fermée.
       // Le bouton reste offert : si le système gèle le téléchargement, l'utilisateur
       // doit pouvoir reprendre la main ici et maintenant.
+      var seen = '';
+      if (bgSeen && bgSeen.total) {
+        var bpc = Math.min(100, Math.round(bgSeen.got / bgSeen.total * 100));
+        seen = '<div class="offbar"><i style="width:' + bpc + '%"></i></div>' +
+          '<span class="offcur">' + fmtMo(bgSeen.got) + ' / ' + fmtMo(bgSeen.total) + ' · ' + bpc + ' %</span>';
+      }
       box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
-        '<div class="offtxt"><b>Mise en cache hors-ligne en arrière-plan…</b>' +
+        '<div class="offtxt" style="flex:1"><b>Mise en cache hors-ligne en arrière-plan…</b>' + seen +
         '<span>Le téléchargement se poursuit même si tu fermes l\'app ; une notification t\'avertit à la fin.</span>' +
         '</div>' +
         '<button class="btn ghost" id="offNow" title="Annuler l\'arrière-plan et télécharger maintenant, app ouverte">Télécharger ici</button></div>';
       var nowBtn = $('#offNow');
       if (nowBtn) nowBtn.onclick = function () { bgAbortThenForeground(); };
       return;
-    } else if (precacheBusy) {
-      // Pré-chargement automatique en cours : progression discrète, sans bouton.
-      box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
-        '<div class="offtxt" style="flex:1"><b>Préparation hors-ligne automatique…</b>' +
-        '<div class="offbar"><i id="offauto"></i></div>' +
-        '<span id="offautotxt" class="offcur" aria-live="polite">…</span>' +
-        '<span class="offhint2">Laisse l\'app ouverte avec du réseau — le contenu se met en cache une seule fois.</span>' +
-        '</div></div>';
-      return;
+    }
+    if (offlineReady()) {
+      box.innerHTML = '<div class="offcard ok slim"><span class="offic">' + ICON.check + '</span>' +
+        '<div class="offtxt"><b>Disponible hors ligne</b><span>Toutes les fiches' +
+        (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
+        ') sont sur cet appareil.</span></div>' +
+        '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
     } else {
       box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
         '<div class="offtxt"><b>Consulter sans réseau (sous terre)</b>' +
@@ -615,39 +668,52 @@
      fichiers ET en Mo, vitesse mesurée et temps restant réel. */
   function startPrecache(force) {
     var box = $('#offline'); if (!box) return;
-    if (precacheBusy) return;                 // un pré-chargement (auto) tourne déjà
+    if (precacheBusy) {                       // un pré-chargement (auto) tourne déjà
+      toast('Un téléchargement est déjà en cours — laisse-le finir.');
+      return;
+    }
     if (!navigator.onLine) {
       toast('Pas de réseau : lance le téléchargement quand tu as du Wi-Fi ou du signal.');
       return;
     }
-    precacheBusy = true;
-    // Stockage persistant (au mieux) : évite que le système purge le pack.
-    persistStorage();
     var urls = ['./'].concat(offlineAssets());
     var total = urls.length, totalBytes = sumBytes(urls);
-    box.innerHTML = '<div class="offcard"><span class="offic">' + DL_ICON + '</span>' +
-      '<div class="offtxt" style="flex:1"><b>' + (force ? 'Mise à jour' : 'Téléchargement') + ' en cours…</b>' +
-      '<div class="offbar"><i id="offbar"></i></div>' +
-      '<span id="offcur" class="offcur" aria-live="polite"></span>' +
-      '<span id="offstat">0 / ' + total + ' fichiers · 0 Ko / ' + fmtMo(totalBytes) + '</span>' +
-      '<span id="offeta" class="offeta">Temps restant : calcul en cours…</span>' +
-      offlineListHTML() + '</div></div>';
+    /* « Mettre à jour » re-télécharge TOUT (cache:'reload'), y compris les
+       fichiers déjà à jour : sur un forfait cellulaire partagé, ça se demande. */
+    if (force && typeof window.confirm === 'function' &&
+        !window.confirm('Re-télécharger tout le contenu (' + fmtMo(totalBytes) + ') ?\n\n' +
+          'Les fiches révisées se mettent déjà à jour toutes seules. Utilise plutôt le Wi-Fi.')) {
+      return;
+    }
+    precacheBusy = true;
+    dlManual = true;
+    dlProg = { done: 0, total: total, bytes: 0, totalBytes: totalBytes, cur: '', eta: '', force: !!force };
+    // Stockage persistant (au mieux) : évite que le système purge le pack.
+    persistStorage();
+    packHeartOn();          // le service worker ne doit pas télécharger le même pack en parallèle
+    box.innerHTML = dlCardHTML(true);
     var done = 0, failed = 0, bytesDone = 0, netBytes = 0, netStart = Date.now(), i = 0, active = 0;
     var listEls = {};
     [].forEach.call(box.querySelectorAll('.offul li'), function (li) { listEls[li.getAttribute('data-u')] = li; });
     function mark(u, cls) { var li = listEls[u]; if (li) li.className = cls; }
     function refresh(u) {
       var pct = totalBytes ? Math.min(100, Math.round(bytesDone / totalBytes * 100)) : Math.round(done / total * 100);
+      // L'état vit dans dlProg : renderOffline() peut ainsi repeindre la carte
+      // à l'identique après un changement de route, sans perdre la progression.
+      if (dlProg) { dlProg.done = done; dlProg.bytes = bytesDone; }
       var bar = $('#offbar'); if (bar) bar.style.width = pct + '%';
       var st = $('#offstat'); if (st) st.textContent = done + ' / ' + total + ' fichiers · ' + fmtMo(bytesDone) + ' / ' + fmtMo(totalBytes);
       var elapsed = (Date.now() - netStart) / 1000;
       if (elapsed > 3 && netBytes > 0) {
         var speed = netBytes / elapsed;
+        var txt = 'Temps restant : ' + fmtDur(Math.max(0, totalBytes - bytesDone) / speed) + ' (' + fmtMo(speed) + '/s)';
+        if (dlProg) dlProg.eta = txt;
         var eta = $('#offeta');
-        if (eta) eta.textContent = 'Temps restant : ' + fmtDur(Math.max(0, totalBytes - bytesDone) / speed) +
-          ' (' + fmtMo(speed) + '/s)';
+        if (eta) eta.textContent = txt;
       }
-      var cur = $('#offcur'); if (cur) cur.textContent = u ? 'Télécharge : ' + fileLabel(u) : '';
+      var curTxt = u ? 'Télécharge : ' + fileLabel(u) : '';
+      if (dlProg) dlProg.cur = curTxt;
+      var cur = $('#offcur'); if (cur) cur.textContent = curTxt;
     }
     function finish() {
       // « Prêt hors ligne » seulement après VÉRIFICATION réelle du Cache
@@ -655,7 +721,8 @@
       // « tout est enregistré ».
       verifyAll().then(function (ok) {
         precacheBusy = false;
-        if (!failed && ok) { try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
+        dlProg = null; dlManual = false;
+        if (!failed && ok) { bgSetTries(0); try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
         renderOffline();
         if (!failed && !ok) {
           toast('Téléchargement terminé, mais la vérification est incomplète — rouvre l\'app puis réessaie « Tout télécharger ».');
@@ -671,7 +738,7 @@
     function next() {
       if (i >= urls.length) { if (active === 0) finish(); return; }
       var u = urls[i++]; active++;
-      var precheck = (!force && 'caches' in window) ? caches.match(u) : Promise.resolve(null);
+      var precheck = (!force && 'caches' in window) ? packMatch(u) : Promise.resolve(null);
       precheck.then(function (hit) {
         if (hit) { bytesDone += sizeOf(u); mark(u, 'ok'); return; }   // déjà sur l'appareil
         return fetch(u, force ? { cache: 'reload' } : {}).then(function (r) {
@@ -689,7 +756,7 @@
           // par le service worker, absente au tout premier chargement) + purge
           // des anciennes révisions du même fichier.
           var putP = Promise.resolve();
-          var isMedia = u.indexOf('pdf/') === 0 || u.indexOf('images/pages/') >= 0 || u.indexOf('images/figures/') >= 0;
+          var isMedia = isMediaUrl(u);
           if (isMedia && 'caches' in window) {
             var copy = r.clone();
             putP = caches.open(MEDIA_CACHE).then(function (c) {
@@ -721,12 +788,16 @@
   function autoPrecache() {
     if (DEMO || !('caches' in window) || !navigator.onLine || offlineReady() || precacheBusy) return;
     precacheBusy = true;
+    dlManual = false;
     persistStorage();
-    renderOffline();                      // montre l'état « préparation » si la carte est à l'écran
+    packHeartOn();          // le service worker ne doit pas télécharger le même pack en parallèle
     var urls = ['./'].concat(offlineAssets());
     var totalBytes = sumBytes(urls);
+    dlProg = { done: 0, total: urls.length, bytes: 0, totalBytes: totalBytes, cur: '', eta: '', force: false };
+    renderOffline();                      // montre l'état « préparation » si la carte est à l'écran
     var done = 0, failed = 0, bytesDone = 0, fetched = 0, i = 0, active = 0;
     function tick() {
+      if (dlProg) { dlProg.done = done; dlProg.bytes = bytesDone; }
       var bar = $('#offauto'); if (!bar) return;
       var pct = totalBytes ? Math.min(100, Math.round(bytesDone / totalBytes * 100)) : 0;
       bar.style.width = pct + '%';
@@ -735,6 +806,7 @@
     function finish() {
       verifyAll().then(function (ok) {
         precacheBusy = false;
+        dlProg = null;
         if (!failed && ok) { bgSetTries(0); try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
         renderOffline();
         if (!failed && ok && fetched > 0) toast('Application prête hors ligne (' + fmtMo(bytesDone) + ') — même sans réseau au fond.');
@@ -744,13 +816,13 @@
     function step() {
       if (i >= urls.length) { if (active === 0) finish(); return; }
       var u = urls[i++]; active++;
-      caches.match(u).then(function (hit) {
+      packMatch(u).then(function (hit) {
         if (hit) { bytesDone += sizeOf(u); return; }             // déjà sur l'appareil (repris)
         return fetch(u, {}).then(function (r) {
           if (!r || r.status !== 200) { failed++; return; }
           var wantQ = (u.indexOf('?') >= 0) ? u.slice(u.indexOf('?')) : '';
           if (r.url && wantQ) { var gotQ = ''; try { gotQ = new URL(r.url).search; } catch (e) {} if (gotQ !== wantQ) { failed++; return; } }
-          var isMedia = u.indexOf('pdf/') === 0 || u.indexOf('images/pages/') >= 0 || u.indexOf('images/figures/') >= 0;
+          var isMedia = isMediaUrl(u);
           var putP = Promise.resolve();
           if (isMedia) {
             var copy = r.clone();
@@ -781,7 +853,53 @@
      complet, et à chaque nouveau déploiement. */
   function bgTries() { try { return parseInt(localStorage.getItem('bg_tries') || '0', 10) || 0; } catch (e) { return 0; } }
   function bgSetTries(n) { try { localStorage.setItem('bg_tries', String(Math.max(0, n))); } catch (e) {} }
-  var BG_STALL_MS = 10 * 60 * 1000;   // figé plus de 10 min entre deux ouvertures = gelé
+  /* L'utilisateur a appuyé sur « Télécharger ici » : il a explicitement choisi le
+     premier plan. Distinct de bg_tries (budget de reprises automatiques) — un
+     essai épuisé ne doit pas faire tuer un téléchargement qui avance bien. */
+  function bgOptedOut() { try { return localStorage.getItem('bg_off') === '1'; } catch (e) { return false; } }
+  function bgSetOptedOut() { try { localStorage.setItem('bg_off', '1'); } catch (e) {} }
+  var bgSeen = null;                  // { got, total } de la dernière inspection, pour l'affichage
+  var BG_POLL_MS = 60 * 1000;         // ré-inspection de la registration pendant le téléchargement
+  var bgLastCheck = 0;
+  var bgPoll = null;
+  /* Le contrôle « le téléchargement avance-t-il ? » doit tourner PENDANT la
+     session : une PWA installée reste ouverte des heures et ne redéclenche pas
+     DOMContentLoaded. Sans ce battement, un téléchargement gelé par le système
+     n'était détecté qu'au prochain démarrage à froid — c'est-à-dire jamais,
+     pour l'utilisateur qui garde l'app en tâche de fond. */
+  function bgPollStop() { if (bgPoll) { clearInterval(bgPoll); bgPoll = null; } }
+  function bgSetActive(on) {
+    bgFetchActive = !!on;
+    if (!on) { bgPollStop(); bgSeen = null; return; }
+    packHeartOn();
+    if (bgPoll) return;
+    bgPoll = setInterval(function () {
+      if (!bgFetchActive) { bgPollStop(); return; }
+      ensureOfflinePack();
+    }, BG_POLL_MS);
+  }
+  /* Revendication du pack auprès du service worker. Lui aussi pré-télécharge les
+     médias à son activation (precacheMedia) avec EXACTEMENT les mêmes URLs : sans
+     ce signal, les deux boucles tiraient les ~162 Mo en parallèle à la première
+     installation — double facture de données sur le forfait du foreur. */
+  var packHeart = null;
+  function packClaim() {
+    if (!('serviceWorker' in navigator)) return;
+    try {
+      navigator.serviceWorker.ready.then(function (reg) {
+        if (reg && reg.active) reg.active.postMessage({ type: 'pack-claim' });
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  function packHeartOn() {
+    packClaim();
+    if (packHeart) return;
+    packHeart = setInterval(function () {
+      if (!precacheBusy && !bgFetchActive) { clearInterval(packHeart); packHeart = null; return; }
+      packClaim();
+    }, 20000);
+  }
+  var BG_STALL_MS = 10 * 60 * 1000;   // figé plus de 10 min entre deux inspections = gelé
   function bgClearWatch() { try { localStorage.removeItem('bg_watch'); } catch (e) {} }
   /* Le téléchargement d'arrière-plan AVANCE-t-il vraiment ? Certains Android
      (économiseur de batterie agressif, économiseur de données) suspendent le
@@ -819,27 +937,33 @@
     if (bgStarting) return bgStarting;        // un seul démarrage à la fois (voir ensureOfflinePack)
     // Essais épuisés : on ne lance plus rien, mais on passe quand même vérifier
     // qu'aucune registration fantôme ne traîne (elle bloquerait le premier plan).
-    var giveUp = bgTries() >= BG_MAX_TRIES;
+    var giveUp = bgTries() >= BG_MAX_TRIES, optedOut = bgOptedOut();
+    bgLastCheck = Date.now();
     bgStarting = swReady(8000).then(function (reg) {
       if (!reg || !reg.backgroundFetch) return false;
       return reg.backgroundFetch.get(BG_ID).then(function (existing) {
         if (existing) {
-          // result vide = en cours… ou gelé par le système (voir bgProgressing).
-          if (!existing.result && !giveUp && bgProgressing(existing)) {
-            bgFetchActive = true; renderOffline(); return true;
+          /* result vide = en cours… ou gelé par le système (voir bgProgressing).
+             Le budget d'essais (giveUp) ne doit PAS entrer ici : il limite les
+             LANCEMENTS, pas l'adoption. Tuer un téléchargement qui avance bien
+             sous prétexte que le compteur est au maximum ferait perdre les
+             octets en vol et retirerait le « continue app fermée ». */
+          if (!existing.result && !optedOut && bgProgressing(existing)) {
+            bgSeen = { got: existing.downloaded || 0, total: existing.downloadTotal || 0 };
+            bgSetActive(true); renderOffline(); return true;
           }
-          // Gelé, terminé, échoué, ou essais épuisés : on libère l'id.
-          var frozen = !existing.result;
+          // Gelé, terminé, échoué, ou refusé par l'utilisateur : on libère l'id.
+          var frozen = !existing.result && !optedOut;
           if (frozen) bgSetTries(bgTries() + 1);   // un blocage compte comme un essai raté
           try { if (existing.abort) existing.abort(); } catch (e) {}   // octets reçus conservés (backgroundfetchabort)
           bgClearWatch();
-          bgFetchActive = false;
+          bgSetActive(false);
           if (frozen) return false;                // → repli premier plan tout de suite
         }
-        if (giveUp) return false;
+        if (giveUp || optedOut) return false;
         var urls = ['./'].concat(offlineAssets());
         return Promise.all(urls.map(function (u) {
-          return caches.match(u).then(function (r) { return r ? null : u; }).catch(function () { return u; });
+          return packMatch(u).then(function (r) { return r ? null : u; }).catch(function () { return u; });
         })).then(function (res) {
           var missing = res.filter(Boolean);
           if (!missing.length) {                          // déjà tout en cache
@@ -856,12 +980,20 @@
             title: 'Procédures de forage — mise en cache hors-ligne',
             downloadTotal: total,
             icons: [{ src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' }]
-          }).then(function () { bgClearWatch(); bgFetchActive = true; renderOffline(); return true; }, function () {
+          }).then(function (r) {
+            bgClearWatch();
+            bgSeen = { got: (r && r.downloaded) || 0, total: (r && r.downloadTotal) || total };
+            bgSetActive(true); renderOffline(); return true;
+          }, function () {
             /* Refus au lancement. Si c'est parce qu'un fetch du même id vient de
                démarrer ailleurs, on le laisse vivre (sinon on lancerait EN PLUS
                un téléchargement premier plan des mêmes 169 Mo). */
             return reg.backgroundFetch.get(BG_ID).then(function (now) {
-              if (now && !now.result) { bgFetchActive = true; renderOffline(); return true; }
+              if (now && !now.result) {
+                bgSeen = { got: now.downloaded || 0, total: now.downloadTotal || 0 };
+                bgClearWatch();               // registration adoptée : repartir d'une observation fraîche
+                bgSetActive(true); renderOffline(); return true;
+              }
               bgSetTries(bgTries() - 1);        // rien n'est parti : l'essai ne compte pas
               return false;
             }).catch(function () { bgSetTries(bgTries() - 1); return false; });
@@ -877,8 +1009,15 @@
      l'app est ouverte). Ne fait rien si déjà prêt, hors-ligne, ou déjà en cours. */
   function ensureOfflinePack() {
     if (DEMO || !('caches' in window) || offlineReady() || !navigator.onLine) return;
-    if (bgFetchActive || precacheBusy || bgStarting) return;   // jamais deux téléchargements à la fois
+    if (precacheBusy || bgStarting) return;   // jamais deux téléchargements à la fois
+    /* Un téléchargement d'arrière-plan tourne : on ne relance rien, mais on
+       RE-INSPECTE périodiquement la registration. C'est le seul moyen de voir
+       qu'elle est gelée sans attendre un redémarrage complet de l'app —
+       startBackgroundFetch décide ensuite (progresse → on laisse faire ; figée
+       → on l'annule et on bascule au premier plan). */
+    if (bgFetchActive && (Date.now() - bgLastCheck) < BG_POLL_MS) return;
     persistStorage();
+    packHeartOn();
     startBackgroundFetch().then(function (used) { if (!used) autoPrecache(); });
   }
   /* Échappatoire manuelle pendant un téléchargement d'arrière-plan : l'utilisateur
@@ -887,9 +1026,9 @@
      backgroundfetchabort) puis on télécharge au premier plan, visible et
      vérifiable fichier par fichier. */
   function bgAbortThenForeground() {
-    bgFetchActive = false;
+    bgSetActive(false);
     bgClearWatch();
-    bgSetTries(BG_MAX_TRIES);          // l'utilisateur a tranché : on reste au premier plan
+    bgSetOptedOut();                   // l'utilisateur a tranché : on reste au premier plan
     function go() { startPrecache(false); }
     if (!('serviceWorker' in navigator) || !('BackgroundFetchManager' in window)) { go(); return; }
     swReady(4000).then(function (reg) {
@@ -3506,6 +3645,7 @@
         localStorage.removeItem('offline_ready');
         localStorage.removeItem('bg_tries');   // nouveau déploiement : Background Fetch a droit à sa chance
         localStorage.removeItem('bg_watch');
+        localStorage.removeItem('bg_off');
         localStorage.setItem('offline_ver', av);
       }
     } catch (e) {}
@@ -3520,7 +3660,7 @@
       navigator.serviceWorker.addEventListener('message', function (e) {
         if (!e || !e.data) return;
         if (e.data.type === 'offline-pack-done' || e.data.type === 'offline-pack-partial') {
-          bgFetchActive = false;
+          bgSetActive(false);
           verifyAll().then(function (ok) {
             if (ok) {
               bgSetTries(0); bgClearWatch();

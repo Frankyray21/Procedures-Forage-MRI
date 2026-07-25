@@ -14,9 +14,11 @@
    - fetch(url, {cache:'reload'}) — bouton « Mettre à jour » : réseau forcé.
    - Les médias sont pré-téléchargés en ARRIÈRE-PLAN après l'activation
      (4 à la fois, en sautant ce qui est déjà sur l'appareil) sans bloquer ni
-     retarder l'installation. Le bouton « Tout télécharger » de l'accueil
-     affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v146';
+     retarder l'installation — mais SEULEMENT si la page ne s'en charge pas
+     déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
+     à la fois doublerait la facture de données. Le bouton « Tout télécharger »
+     de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
+const VERSION = 'mri-proc-v147';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -109,23 +111,59 @@ function purgeOldRevs(cache, absUrl) {
 }
 const MEDIA_LIST = mediaAssets();
 
+/* La PAGE télécharge elle aussi le pack (Background Fetch app fermée, ou
+   pré-chargement premier plan) avec EXACTEMENT les mêmes URLs. Rien ne
+   dédoublonne entre les deux : un cache.add() lancé d'ici ne passe pas par le
+   handler fetch, et un Background Fetch court-circuite complètement le service
+   worker (il ne range ses réponses qu'à la toute fin). Sans arbitrage, la
+   première installation tirait les ~162 Mo DEUX FOIS.
+   La page revendique donc le pack (message « pack-claim », renouvelé toutes les
+   20 s tant qu'elle télécharge) et le pré-chargement d'ici s'efface. */
+let packClaimAt = 0;
+const PACK_CLAIM_MS = 90 * 1000;
+self.addEventListener('message', (e) => {
+  if (e && e.data && e.data.type === 'pack-claim') packClaimAt = Date.now();
+});
+async function packOwnedByPage() {
+  if (Date.now() - packClaimAt < PACK_CLAIM_MS) return true;
+  try {
+    if (self.registration.backgroundFetch) {
+      const r = await self.registration.backgroundFetch.get(BG_ID);
+      if (r && !r.result) return true;          // téléchargement d'arrière-plan en cours
+    }
+  } catch (err) {}
+  return false;
+}
+
 /* Pré-téléchargement des médias : 4 requêtes à la fois, en sautant ce qui est
-   déjà en cache — une interruption reprend donc là où elle s'était arrêtée. */
+   déjà en cache — une interruption reprend donc là où elle s'était arrêtée.
+   Filet de sécurité seulement : si la page mène le téléchargement, on s'arrête. */
 function precacheMedia() {
   if (!MEDIA_LIST.length) return Promise.resolve();
-  return caches.open(MEDIA).then((cache) => new Promise((resolve) => {
-    let i = 0, active = 0;
-    const next = () => {
-      if (i >= MEDIA_LIST.length) { if (active === 0) resolve(); return; }
-      const u = MEDIA_LIST[i++]; active++;
-      cache.match(u)
-        .then((hit) => (hit ? null :
-          cache.add(u).then(() => purgeOldRevs(cache, new URL(u, self.location.href))).catch(() => null)))
-        .catch(() => null)
-        .then(() => { active--; next(); });
+  return (async () => {
+    // Laisse à la page le temps de revendiquer le pack (elle le fait dès que
+    // navigator.serviceWorker.ready se résout, c'est-à-dire maintenant).
+    await new Promise((r) => setTimeout(r, 5000));
+    if (await packOwnedByPage()) return;
+    const cache = await caches.open(MEDIA);
+    let i = 0, stop = false;
+    const worker = async () => {
+      while (!stop && i < MEDIA_LIST.length) {
+        const idx = i++;
+        // Re-contrôle régulier : la page peut démarrer son téléchargement après nous.
+        if (idx > 0 && idx % 25 === 0 && await packOwnedByPage()) { stop = true; return; }
+        const u = MEDIA_LIST[idx];
+        try {
+          const hit = await cache.match(u);
+          if (!hit) {
+            await cache.add(u);
+            await purgeOldRevs(cache, new URL(u, self.location.href));
+          }
+        } catch (err) {}
+      }
     };
-    for (let k = 0; k < 4; k++) next();
-  }));
+    await Promise.all([worker(), worker(), worker(), worker()]);
+  })();
 }
 
 /* Installation rapide et fiable : seulement l'app (~2 Mo), pas les 70 Mo de
@@ -219,8 +257,12 @@ self.addEventListener('fetch', (e) => {
   // au premier lancement de chaque nouvelle version. Les médias gardent la
   // correspondance exacte. Réseau si absent, puis mise en cache. Hors-ligne :
   // repli sur une version précédente du même fichier plutôt que rien.
+  // js/css : ils sont mis en cache SOUS LEUR URL VERSIONNÉE à l'installation,
+  // donc la correspondance doit ignorer le ?v= — sinon chaque déploiement les
+  // re-télécharge tous alors qu'ils sont déjà là, à l'octet près.
+  const bare = /\.(js|css)$/.test(path) ? { ignoreSearch: true } : undefined;
   e.respondWith(
-    caches.match(req).then((hit) => hit ||
+    caches.match(req, bare).then((hit) => hit ||
       fetch(req).then((res) => {
         if (res && res.status === 200) {
           const copy = res.clone();
