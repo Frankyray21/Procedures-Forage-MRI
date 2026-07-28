@@ -25,11 +25,6 @@
         "e": "« Mettre la transmission en première vitesse avant de dévisser la water swivell. »",
         "img": "images/figures/pro-dd-st-004-2.jpg", "detail": "L'opérateur règle la transmission aux commandes de la foreuse." }
     ],
-    "pro-dd-st-006": [
-      { "t": "erreur", "q": "Un collègue doit dévisser la water swivel. Quelle action est une ERREUR ?",
-        "o": ["Employer l'outil approprié pour la dévisser", "Utiliser un pipe wrench pour dévisser la water swivel", "Refuser tout pipe wrench pour cette opération", "Ne jamais forcer sur la water swivel avec un pipe wrench"], "a": 1,
-        "e": "« EN AUCUN CAS LE PIPE WRENCH NE DOIT ÊTRE UTILISÉ POUR DÉVISSER LA WATER SWIVEL. »" },
-    ],
     "pro-dd-st-007": [
       { "q": "Pour faire le ciment, quel masque faut-il porter ?",
         "o": ["Un masque jetable", "Le masque powerflow", "Aucun masque", "Juste des lunettes"], "a": 1,
