@@ -10,9 +10,6 @@
         "e": "« Boulonner le bearing avec le bushing standard sur le clam une fois le core barrel au fond du trou. »" }
     ],
     "pro-dd-st-002": [
-      { "t": "erreur", "q": "Un collègue manipule des tubes carottiers. Quelle action est une ERREUR ?",
-        "o": ["Éviter de mettre les tubes à la hauteur du visage", "Ne jamais déposer les tubes directement au sol", "Garder les tubes loin de la hauteur du visage", "Déposer les tubes par terre entre deux manipulations"], "a": 3,
-        "e": "« Ne jamais mettre les tubes par terre ou à la hauteur du visage. »" },
       { "q": "Qui doit vérifier les boîtes avant de les fermer ?",
         "o": ["L'aide-foreur", "Le foreur", "Le superviseur", "Le géologue"], "a": 1,
         "e": "« Le foreur doit toujours vérifier les boites avant qu'elles soient fermées. »" }
