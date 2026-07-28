@@ -111,8 +111,8 @@
         "o": ["Mettre la pompe à eau en marche", "Quand l'overshot touche le fond, purger la pression d'eau dans les tiges", "Desserrer le caoutchouc du loading chamber avec la clé à molette", "Sortir de la zone de travail", "Tirer le tube carottier au treuil jusqu'au loading chamber"],
         "e": "Étapes 11 à 15 de la procédure : « 11- Activer la pompe à l'eau […] 15- Tiré le tube carottier en utilisant la commande du treuil jusqu'à l'arrivée de celui-ci dans le loading chamber »" },
       { "t": "erreur", "q": "Un collègue récupère le tube carottier avec le loading chamber. Quelle action est une erreur ?",
-        "o": ["Il met la pompe à eau en marche", "Il purge la pression d'eau quand l'overshot touche le fond", "Il desserre le caoutchouc du loading chamber avec un pipe wrench", "Il sort de la zone avant de tirer le tube au treuil"], "a": 2,
-        "e": "« Desserrer le caoutchouc du «loading chamber» avec la clé à molette » — la clé à molette, pas un pipe wrench (interdit pour la water swivel)." }
+        "o": ["Il retire le boyau à eau à l'extrémité de la water swivell avant de la dévisser", "Il met la transmission en première vitesse avant de dévisser la water swivell", "En forage 6 mètres, il sort le deuxième tube avant que son partenaire ait passé la porte", "Il garde un contact visuel sur son partenaire qui s'éloigne avec l'autre tube"], "a": 2,
+        "e": "« Une fois que celui-ci a traversé la porte, le deuxième tube pourra alors être sorti des tiges. » (étape 20) — il faut attendre que le partenaire ait passé la porte avant de sortir le deuxième tube." }
     ],
     "pro-dd-st-006": [
       { "t": "vf", "q": "Pour dévisser la water swivel avec la foreuse, elle doit avoir un adapteur long.", "vrai": true,
