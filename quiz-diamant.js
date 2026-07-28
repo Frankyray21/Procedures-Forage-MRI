@@ -72,9 +72,6 @@
         "img": "images/figures/pro-op-dd-005-1.jpg", "detail": "Le clam ou chuck (mandrin), pièce à démonter." },
     ],
     "pro-op-dd-012": [
-      { "q": "Quels articles de la loi parlent du forage à distance ?",
-        "o": ["Les articles 12 et 13", "Les articles 439 et 440", "L'article 100", "Aucun article"], "a": 1,
-        "e": "« Les articles 439 et 440 du Règlement sur la Santé et la Sécurité du travail dans les Mines prévoient… »" },
       { "t": "trou", "q": "Il est interdit de forer à une distance inférieure à ______ d'un fond de trou qui a été chargé et qui a sauté.",
         "o": ["150 mm (5,9 po)", "1,5 m", "10 cm", "1 m"], "a": 0,
         "e": "« Il est interdit de forer à une distance inférieure à : 1° 150 mm (5,9 po) d'un fond de trou qui a été chargé et qui a sauté. »" },
