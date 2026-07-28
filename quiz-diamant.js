@@ -14,10 +14,7 @@
       { "q": "À quelle distance mets-tu les 8''X8'' et les 6''X6'' ?",
         "o": ["Les deux à 24''", "Les 8''X8'' à 48'' et les 6''X6'' à 36''", "Les deux à 48''", "N'importe où"], "a": 1,
         "e": "« Placer les 8''X8'' à une distance de 48'', et les 6''X6'' à une distance de 36''. »",
-        "img": "images/figures/pro-dd-st-003-1.jpg", "detail": "Disposition des pièces de bois au sol pour le plancher." },
-      { "t": "vf", "q": "Pour mettre le plancher bien droit, on utilise un niveau de 48''.",
-        "vrai": true,
-        "e": "« Placer le plancher au niveau en utilisant un niveau de 48'' et un morceau de 3''X8'' de 8 pieds minimum... »" }
+        "img": "images/figures/pro-dd-st-003-1.jpg", "detail": "Disposition des pièces de bois au sol pour le plancher." }
     ],
     "pro-dd-st-004": [
       { "t": "vf", "q": "Il est interdit d'utiliser un pipe wrench pour dévisser la water swivel.",
