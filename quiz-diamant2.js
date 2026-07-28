@@ -92,11 +92,6 @@
       { "q": "Avant de déplacer la foreuse, que vérifies-tu au centre des 4 roues ?",
         "o": ["La pression des pneus", "Que l'engagement est dévissé AU COMPLET", "La graisse", "Rien"], "a": 1,
         "e": "« S'assurer que l'engagement au centre des 4 roues est bien dévissé AU COMPLET. »" }
-    ],
-    "std-dd-installation": [
-      { "t": "vf", "q": "Les contrôles des foreuses DR peuvent aussi être à droite ou à gauche.",
-        "vrai": true,
-        "e": "« Les contrôles des DR peuvent aussi être à droite ou à gauche. »" }
     ]
   };
   var Q = window.QUIZ_PROC || (window.QUIZ_PROC = {});
