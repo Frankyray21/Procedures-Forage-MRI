@@ -49,9 +49,9 @@
       { "t": "trou", "q": "En mode diesel, avec les tractions en sens opposé, le potentiomètre ne doit pas dépasser ______, sinon le moteur cale.",
         "o": ["la moitié", "le quart", "les trois quarts", "le maximum"], "a": 0,
         "e": "« LORS DE L'UTILISATION DES TRACTIONS EN DIRECTION OPPOSÉE SUR MODE DIESEL, LA POSITION DU POTENTIOMÈTRE NE DOIT PAS DÉPASSER LA MOITIÉ POUR ÉVITER DE FAIRE CALER LE MOTEUR »" },
-      { "t": "erreur", "q": "Un collègue prépare le remorquage de la foreuse. Quelle action est une ERREUR ?",
-        "o": ["Il remorque du côté du moteur", "Il attache les chaînes de sécurité en « X »", "Il enroule le câble de l'écran sur le réservoir hydraulique et l'attache avec des sangles", "Il place un objet sous la tongue (chaudière vide, bloc de bois)"], "a": 2,
-        "e": "« Enroulez le câble de l'écran sur le réservoir à eau et le sécuriser en l'attachant à l'aide de sangles. » — sur le réservoir à eau, pas le réservoir hydraulique." }
+      { "t": "erreur", "q": "Un collègue déplace la foreuse DR-600-MU. Quelle action est une ERREUR ?",
+        "o": ["Il garde une bonne communication et un contact visuel avec l'opérateur de la chargeuse navette", "Il déplace la foreuse par ses propres moyens dans la rampe", "Il débranche le câble de 600 V et l'alimentation en eau avant le remorquage", "Il ferme le disjoncteur principal de la foreuse avant le remorquage"], "a": 1,
+        "e": "« IL EST STRICTEMENT INTERDIT DE DÉPLACER LA DR-600 PAR SES PROPRES MOYENS DANS LA RAMPE » — par ses propres moyens, elle ne se déplace que sur de courtes distances, sans pente." }
     ],
     "pro-dd-st-001": [
       { "t": "vf", "q": "Avant de monter le core barrel complet, tu vérifies l'usure du reaming shell avec la jauge à shell. Tu le changes si besoin.", "vrai": true,
