@@ -47,11 +47,6 @@
       { "q": "Cas spécial : forte pression, tube coincé ou câble coupé. Qu'est-ce que tu pousses jusqu'au tube ?",
         "o": ["De l'air", "Un bouchon 'VAN RUTH', poussé par l'eau", "Une tige d'acier", "Du ciment"], "a": 1,
         "e": "« Pousser un bouchon de type 'VAN RUTH' avec la pression d'eau jusqu'au tube carottier afin de prévenir l'éjection du tube carottier. »" }    ],
-    "pro-op-dd-005": [
-      { "t": "trou", "q": "On dévisse les 6 boulons ¾ du couvert des jaws (mâchoires) avec une clé ______.",
-        "o": ["3/4", "1'' 1/8", "7/8", "1'' 1/2"], "a": 1,
-        "e": "« Dévisser les 6 boulons ¾ du couvert des jaws (mâchoires) avec une clé 1'' 1/8. »" }
-    ],
     "pro-op-dd-012": [
       { "t": "trou", "q": "Il est interdit de forer à une distance inférieure à ______ d'un trou contenant des explosifs à la suite d'un raté.",
         "o": ["150 mm", "1,5 m (4,9 pi)", "50 cm", "7 m"], "a": 1,

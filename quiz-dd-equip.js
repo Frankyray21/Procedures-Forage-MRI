@@ -40,7 +40,7 @@
         "o": ["10 psi", "30 psi", "60 psi", "100 psi"], "a": 1,
         "e": "« Si la pression commence à monter à plus de 30 psi, remonter le tube vers le collet du trou d'une dizaine de pieds. »" },
       { "q": "Après le pompage, tu plies le boyau avec 2 ty-rap. Combien de temps reste-t-il plié ?",
-        "o": ["6 heures", "12 heures", "24 heures (cure)", "48 heures"], "a": 2,
+        "o": ["6 heures", "12 heures", "24 heures", "48 heures"], "a": 2,
         "e": "« …le boyau où l'on pompe le ciment doit être plié en deux et 2 ty-rap doivent le tenir plié jusqu'à ce que le temps de cure de 24 hrs soit complété. »" },
       { "t": "vf", "q": "Une trousse d'urgence est obligatoire sur le site.",
         "vrai": true,
