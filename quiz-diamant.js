@@ -5,11 +5,6 @@
    =========================================================================== */
 (function () {
   var DD = {
-    "pro-dd-st-001": [
-      { "t": "trou", "q": "On met la tige de forage de ______ avec le water swivel, et il est très important de bien graisser les filets.",
-        "o": ["1,5 mètre", "1 mètre", "3 mètres", "6 mètres"], "a": 2,
-        "e": "« Mettre la tige de forage de 3 mètres avec le water swivel. Il est très important de bien graisser les filets. »",
-        "img": "images/figures/pro-dd-st-001-4.jpg", "detail": "Les filets de la tige (à gauche), à bien graisser avant le montage." }    ],
     "pro-dd-st-002": [
       { "t": "trou", "q": "Pour vérifier si le tube carottier est vide, on insère une tige de métal de ______ dans l'extrémité et on la fait glisser dans le tube.",
         "o": ["un pied", "deux pieds", "six pouces", "un mètre"], "a": 0,
