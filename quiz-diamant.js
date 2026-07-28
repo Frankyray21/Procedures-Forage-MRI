@@ -128,8 +128,8 @@
         "o": ["Aucun", "Un seul", "Deux", "Ça dépend du client"], "a": 1,
         "e": "« 1 extincteur à l'entrée du site. »" },
       { "t": "erreur", "q": "Un collègue s'installe pour opérer une foreuse STM. Quelle action est une ERREUR ?",
-        "o": ["Se positionner du côté droit où se trouvent les contrôles", "Vérifier l'emplacement des contrôles avant de commencer", "Garder un accès dégagé vers les contrôles de la STM", "Chercher les contrôles de la STM du côté gauche"], "a": 3,
-        "e": "« Les contrôles de STM sont toujours à droite. »" }
+        "o": ["S'installer aux contrôles, du côté droit de la foreuse", "Vérifier l'emplacement des contrôles avant de commencer", "Garder un accès dégagé vers les contrôles de la STM", "S'installer du côté gauche pour opérer la STM"], "a": 3,
+        "e": "S'installer à gauche est l'erreur : « Les contrôles de STM sont toujours à droite. »" }
     ]
   };
   var Q = window.QUIZ_PROC || (window.QUIZ_PROC = {});
