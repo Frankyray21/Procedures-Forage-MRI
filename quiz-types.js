@@ -683,11 +683,9 @@
         "e": "La serrure va sur le cadrage, pas sur la porte : « 1. La coulisse doit être fixer sur la porte en tout temps; 2. La serrure doit être installée sur le cadrage de la porte en tout temps. »" }
     ],
     "std-dd-installation": [
-      { "t": "vf", "q": "Sur le site, il y a une table à core et une pompe à eau. Vrai ou faux ?", "vrai": true,
-        "e": "« COFFRE À OUTILS TABLE À CORE MARCHES AVEC RAMPES (si nécessaire) POMPE À EAU »" },
       { "t": "multi", "q": "Coche les phrases vraies sur le site de forage :",
-        "o": ["Une porte et des grillages ferment le site", "Il y a une trousse de premiers soins sur le site", "Le coffre à outils doit être à l'entrée du site", "Il y a de la graisse et une poubelle sur le site", "Le foreur choisit s'il met une table à core"], "a": [0, 1, 3],
-        "e": "« Porte et grillages […] COFFRE À OUTILS TABLE À CORE […] Trousse 1er soins 1 extincteur à l'entrée du site graisse poubelle » — c'est l'extincteur qui est à l'entrée, et seul « (si nécessaire) » s'applique aux marches avec rampes." }
+        "o": ["Une porte et des grillages ferment le site", "Il y a une trousse de premiers soins sur le site", "La pompe à eau n'est pas nécessaire sur le site", "Il y a de la graisse et une poubelle sur le site", "L'extincteur peut être placé n'importe où sur le site"], "a": [0, 1, 3],
+        "e": "« Porte et grillages […] POMPE À EAU […] Trousse 1er soins 1 extincteur à l'entrée du site graisse poubelle » — la pompe à eau fait partie du matériel du site, et l'extincteur doit être à l'entrée." }
     ]
   };
   var Q = window.QUIZ_PROC || (window.QUIZ_PROC = {});
