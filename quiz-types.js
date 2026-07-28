@@ -56,8 +56,6 @@
     "pro-dd-st-001": [
       { "t": "vf", "q": "Avant de monter le core barrel complet, tu vérifies l'usure du reaming shell avec la jauge à shell. Tu le changes si besoin.", "vrai": true,
         "e": "« Il est important de vérifier le reaming shell avec la jauge à shell pour vérifier l'usure et remplacer si nécessaire. » (étape 2)" },
-      { "t": "vf", "q": "À l'étape 9, tu enlèves le bushing standard et tu mets le bushing modifié sur la tige. Puis tu revisses la tige sur le core barrel.", "vrai": false,
-        "e": "C'est l'inverse : « retirer le bushing modifié et mettre le bushing standard sur la tige de forage, revisser la tige sur le core barrel » (étape 9)" },
       { "t": "trou", "q": "Tu fores au complet le core barrel de 1,5 m et la tige de ______ pour avoir l'espace nécessaire pour mettre le core barrel de 3 m.",
         "o": ["2 mètres", "1,5 mètre", "3 mètres", "4 mètres"], "a": 2,
         "e": "« Forer au complet le core barrel de 1,5 mètre et la tige de 3 mètres pour s'assurer d'avoir l'espace nécessaire pour mettre le core barrel de 3 mètres. » (étape 5)" },
