@@ -563,20 +563,85 @@
       });
     }).catch(function () { return false; });
   }
-  /* Les médias sont aussi pré-téléchargés en arrière-plan par le service
-     worker après son activation. On vérifie leur présence réelle dans le
-     Cache Storage pour afficher « Disponible hors-ligne » sans attendre un clic. */
-  function verifyOfflineCache() {
-    if (DEMO || !('caches' in window) || offlineReady()) return;
+  /* AUDIT du pack : le drapeau « offline_ready » ne vaut que si les fichiers
+     sont ENCORE dans le Cache Storage. Android/Samsung peuvent purger le cache
+     pour « libérer de l'espace » (surtout quand le stockage persistant est
+     refusé) : sans ce contrôle, l'app affichait « Disponible hors ligne » alors
+     que tout était parti — découvert une fois sous terre, trop tard. L'audit
+     est local (deux lectures de clés, aucune requête réseau) ; s'il manque des
+     fichiers, le drapeau tombe, la pastille passe au rouge et le téléchargement
+     automatique reprend là où c'était rendu (ensureOfflinePack). Il sert aussi
+     à détecter le pack complété par le service worker sans attendre un clic. */
+  var packMissing = -1;              // -1 = pas encore audité ; 0 = complet ; n = fichiers absents
+  var packAuditAt = 0;
+  function auditPack() {
+    if (DEMO || !('caches' in window)) return Promise.resolve();
+    packAuditAt = Date.now();
     var media = [];
     activeGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
-    Promise.all(media.map(function (u) { return caches.match(u).then(function (r) { return !!r; }); }))
-      .then(function (found) {
-        if (found.length && found.every(Boolean)) {
+    if (!media.length) return Promise.resolve();
+    return caches.open(MEDIA_CACHE).then(function (c) { return c.keys(); }).then(function (ks) {
+      var have = {};
+      ks.forEach(function (k) { have[k.url] = 1; });
+      var missing = 0;
+      media.forEach(function (u) { if (!have[new URL(u, location.href).href]) missing++; });
+      // Coquille de l'app (cache versionné) : les deux fichiers vitaux suffisent.
+      return Promise.all([
+        caches.match('./index.html', { ignoreSearch: true }),
+        caches.match('app.js', { ignoreSearch: true })
+      ]).then(function (shell) {
+        if (!shell[0] || !shell[1]) missing++;
+        var wasReady = offlineReady();
+        packMissing = missing;
+        if (!missing && !wasReady) {
           try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
           renderOffline();
+        } else if (missing && wasReady) {
+          // Des fichiers ont disparu depuis la dernière vérification : on
+          // l'assume, on l'affiche, et on répare TOUT DE SUITE si on a du
+          // réseau — pas au prochain événement 'online', qui ne viendra
+          // jamais si on est resté en ligne pendant la purge.
+          try { localStorage.removeItem('offline_ready'); } catch (e) {}
+          renderOffline();
+          ensureOfflinePack();
         }
-      }).catch(function () {});
+        renderPackBadge();
+      });
+    }).catch(function () {});
+  }
+  // Version bon marché pour les rendus fréquents : audite au plus une fois par minute.
+  function verifyOfflineCache() {
+    if (Date.now() - packAuditAt > 60 * 1000) auditPack();
+    else renderPackBadge();
+  }
+  /* Pastille d'état hors-ligne dans la barre du haut — visible en tout temps,
+     sur toutes les pages : le foreur voit AVANT de descendre si le contenu est
+     complet (vert), en cours de téléchargement (orange) ou incomplet (rouge). */
+  function renderPackBadge() {
+    var b = document.getElementById('packChip'); if (!b) return;
+    if (DEMO || !('caches' in window) || !('serviceWorker' in navigator)) { b.style.display = 'none'; return; }
+    var cls = 'packchip', txt = '', title = '';
+    if (precacheBusy || bgFetchActive) {
+      var pct = dlPct();
+      if (!pct && bgSeen && bgSeen.total) pct = Math.min(100, Math.round(bgSeen.got / bgSeen.total * 100));
+      cls += ' busy'; txt = '↓ ' + (pct ? pct + ' %' : '…');
+      title = 'Téléchargement du contenu hors-ligne en cours — laisse l\'app ouverte avec du réseau';
+    } else if (offlineReady()) {
+      // Le drapeau prime sur un packMissing périmé : il n'est posé qu'après
+      // vérification réelle (verifyAll ou audit) et l'audit le retire dès
+      // qu'un fichier manque — alors que packMissing, lui, n'est rafraîchi
+      // que par l'audit et peut dater d'avant une réparation réussie.
+      cls += ' ok'; txt = 'Hors-ligne ✓';
+      title = 'Tout le contenu est sur cet appareil — l\'app fonctionne sous terre';
+    } else if (packMissing > 0) {
+      cls += ' warn'; txt = packMissing + ' manquant' + (packMissing > 1 ? 's' : '');
+      title = packMissing + ' fichier(s) absent(s) de l\'appareil — reste sur le réseau, le téléchargement reprend tout seul';
+    } else {
+      cls += ' warn'; txt = 'Hors-ligne ?';
+      title = 'Contenu hors-ligne pas encore téléchargé';
+    }
+    b.className = cls; b.textContent = txt; b.title = title;
+    b.style.display = '';
   }
   /* Cartes de progression reconstruites À PARTIR de dlProg : renderOffline() est
      rappelé à chaque changement de route, il doit donc pouvoir repeindre une
@@ -607,6 +672,7 @@
       '</div></div>';
   }
   function renderOffline() {
+    renderPackBadge();                       // la pastille du haut suit chaque changement d'état
     var box = $('#offline'); if (!box) return;
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
     var files = offlineAssets(), totalBytes = sumBytes(files), nPdf = DATA.length + 1;
@@ -714,6 +780,7 @@
       var curTxt = u ? 'Télécharge : ' + fileLabel(u) : '';
       if (dlProg) dlProg.cur = curTxt;
       var cur = $('#offcur'); if (cur) cur.textContent = curTxt;
+      renderPackBadge();
     }
     function finish() {
       // « Prêt hors ligne » seulement après VÉRIFICATION réelle du Cache
@@ -722,7 +789,7 @@
       verifyAll().then(function (ok) {
         precacheBusy = false;
         dlProg = null; dlManual = false;
-        if (!failed && ok) { bgSetTries(0); try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
+        if (!failed && ok) { bgSetTries(0); packMissing = 0; try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
         renderOffline();
         if (!failed && !ok) {
           toast('Téléchargement terminé, mais la vérification est incomplète — rouvre l\'app puis réessaie « Tout télécharger ».');
@@ -733,6 +800,7 @@
           ? failed + ' fichiers n\'ont pas été téléchargés. Appuie encore sur « Tout télécharger » pour compléter — ce qui est déjà sur l\'appareil est conservé.'
           : 'Un fichier n\'a pas été téléchargé. Appuie encore sur « Tout télécharger » pour compléter — ce qui est déjà sur l\'appareil est conservé.')
         : 'Terminé : tout est disponible hors ligne (' + fmtMo(bytesDone) + ').');
+        if (failed) storageFullCheck();
       });
     }
     function next() {
@@ -754,19 +822,27 @@
           }
           // Mise en cache EXPLICITE des médias (sans dépendre de l'interception
           // par le service worker, absente au tout premier chargement) + purge
-          // des anciennes révisions du même fichier.
+          // des anciennes révisions du même fichier. Un échec de cache.put
+          // (stockage plein) compte comme un ÉCHEC : le fichier téléchargé mais
+          // pas rangé n'existera pas sous terre.
+          // putP est TOUJOURS résolue (échec mémorisé dans putFailed) : un
+          // c.put qui rejette pendant que blob() télécharge encore — ou après
+          // que blob() a échoué — ne doit pas rester un rejet non géré.
+          var putFailed = false;
           var putP = Promise.resolve();
           var isMedia = isMediaUrl(u);
           if (isMedia && 'caches' in window) {
             var copy = r.clone();
             putP = caches.open(MEDIA_CACHE).then(function (c) {
               return c.put(u, copy).then(function () { return purgeOldRevs(c, u); });
-            }).catch(function () {});
+            }).catch(function () { putFailed = true; });
           }
           return r.blob().then(function (b) {           // attend le fichier COMPLET
             var n = (b && b.size) || sizeOf(u);
-            bytesDone += n; netBytes += n; mark(u, 'ok');
-            return putP;
+            return putP.then(function () {
+              if (putFailed) { failed++; mark(u, 'ko'); }
+              else { bytesDone += n; netBytes += n; mark(u, 'ok'); }
+            });
           });
         });
       }).catch(function () { failed++; mark(u, 'ko'); })
@@ -775,9 +851,47 @@
     refresh(urls[0]);
     for (var k = 0; k < 4; k++) next();
   }
-  // Rend le stockage PERSISTANT (au mieux) : le système ne purge plus le cache
-  // sous pression de stockage → le pack survit aux redémarrages de l'appareil.
-  function persistStorage() { try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {} }
+  /* Rend le stockage PERSISTANT : sans lui, Android/Samsung peuvent effacer le
+     pack hors-ligne pour « libérer de l'espace ». persist() est accordé
+     d'office quand l'app est installée sur l'écran d'accueil ; s'il est refusé
+     (app utilisée dans le navigateur), on le dit UNE fois, avec le remède. */
+  var persistHinted = false;
+  function persistStorage() {
+    try {
+      if (!navigator.storage || !navigator.storage.persist) return;
+      navigator.storage.persist().then(function (granted) {
+        if (granted || persistHinted) return;
+        persistHinted = true;
+        var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || !!window.navigator.standalone;
+        if (standalone) return;
+        var seen = '';
+        try { seen = localStorage.getItem('persist_hint') || ''; } catch (e) {}
+        if (seen === '1') return;
+        try { localStorage.setItem('persist_hint', '1'); } catch (e) {}
+        // Marche à suivre selon la plateforme — pas de « bouton en haut à
+        // droite » : sur iOS il n'existe pas, et sur Android il peut ne pas
+        // être encore affiché (beforeinstallprompt pas encore émis).
+        toast(isIOS()
+          ? 'Conseil : ajoute l\'app à l\'écran d\'accueil (Partager → « Sur l\'écran d\'accueil ») — le contenu hors-ligne sera protégé contre le nettoyage automatique.'
+          : 'Conseil : installe l\'app sur l\'écran d\'accueil — le téléphone protégera alors le contenu hors-ligne contre le nettoyage automatique du stockage.');
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  // Stockage presque plein : la cause silencieuse d'un pack qui ne complète jamais.
+  function storageFullCheck() {
+    try {
+      if (!navigator.storage || !navigator.storage.estimate) return;
+      navigator.storage.estimate().then(function (est) {
+        if (est && est.quota && (est.quota - (est.usage || 0)) < 20 * 1048576) {
+          // Après le toast d'échec déjà affiché (5 s) : toast() n'a pas de
+          // file d'attente, appeler tout de suite écraserait le message.
+          setTimeout(function () {
+            toast('Le stockage de l\'appareil est presque plein : libère de l\'espace pour garder toutes les procédures hors-ligne.');
+          }, 5300);
+        }
+      }).catch(function () {});
+    } catch (e) {}
+  }
   /* ---------- pré-chargement AUTOMATIQUE du pack hors-ligne complet ----------
      Objectif : après la 1re ouverture AVEC réseau, TOUT le contenu (fiches,
      images, schémas ET PDF) se met en cache tout seul, en reprenant là où
@@ -798,6 +912,7 @@
     var done = 0, failed = 0, bytesDone = 0, fetched = 0, i = 0, active = 0;
     function tick() {
       if (dlProg) { dlProg.done = done; dlProg.bytes = bytesDone; }
+      renderPackBadge();
       var bar = $('#offauto'); if (!bar) return;
       var pct = totalBytes ? Math.min(100, Math.round(bytesDone / totalBytes * 100)) : 0;
       bar.style.width = pct + '%';
@@ -807,10 +922,11 @@
       verifyAll().then(function (ok) {
         precacheBusy = false;
         dlProg = null;
-        if (!failed && ok) { bgSetTries(0); try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
+        if (!failed && ok) { bgSetTries(0); packMissing = 0; try { localStorage.setItem('offline_ready', '1'); } catch (e) {} }
         renderOffline();
         if (!failed && ok && fetched > 0) toast('Application prête hors ligne (' + fmtMo(bytesDone) + ') — même sans réseau au fond.');
         // Échecs (réseau coupé en route) : on retentera à la prochaine ouverture / au retour du réseau.
+        if (failed) storageFullCheck();
       });
     }
     function step() {
@@ -823,12 +939,22 @@
           var wantQ = (u.indexOf('?') >= 0) ? u.slice(u.indexOf('?')) : '';
           if (r.url && wantQ) { var gotQ = ''; try { gotQ = new URL(r.url).search; } catch (e) {} if (gotQ !== wantQ) { failed++; return; } }
           var isMedia = isMediaUrl(u);
+          // Échec de rangement (stockage plein) = échec : sinon le pack serait
+          // déclaré « prêt » avec des fichiers jamais mis en cache. putP est
+          // TOUJOURS résolue (échec mémorisé) pour éviter un rejet non géré.
+          var putFailed = false;
           var putP = Promise.resolve();
           if (isMedia) {
             var copy = r.clone();
-            putP = caches.open(MEDIA_CACHE).then(function (c) { return c.put(u, copy).then(function () { return purgeOldRevs(c, u); }); }).catch(function () {});
+            putP = caches.open(MEDIA_CACHE).then(function (c) { return c.put(u, copy).then(function () { return purgeOldRevs(c, u); }); })
+              .catch(function () { putFailed = true; });
           }
-          return r.blob().then(function (b) { bytesDone += (b && b.size) || sizeOf(u); fetched++; return putP; });
+          return r.blob().then(function (b) {
+            var n = (b && b.size) || sizeOf(u);
+            return putP.then(function () {
+              if (putFailed) { failed++; } else { bytesDone += n; fetched++; }
+            });
+          });
         });
       }).catch(function () { failed++; })
         .then(function () { done++; active--; tick(); step(); });
@@ -967,7 +1093,7 @@
         })).then(function (res) {
           var missing = res.filter(Boolean);
           if (!missing.length) {                          // déjà tout en cache
-            bgSetTries(0); bgClearWatch();
+            bgSetTries(0); bgClearWatch(); packMissing = 0;
             try { localStorage.setItem('offline_ready', '1'); } catch (e) {}
             renderOffline(); return true;
           }
@@ -3650,11 +3776,38 @@
       }
     } catch (e) {}
     persistStorage();       // le cache survit aux redémarrages sans purge
-    ensureOfflinePack();    // Background Fetch (Android, app fermée) ou premier plan (iOS)
+    // AUDIT d'abord : si Android a purgé le cache depuis la dernière fois, le
+    // drapeau « prêt » tombe et ensureOfflinePack répare — sinon il ne ferait rien.
+    auditPack().then(function () { ensureOfflinePack(); });
     window.addEventListener('online', ensureOfflinePack);            // reprise au retour du réseau
     document.addEventListener('visibilitychange', function () {      // reprise à la ré-ouverture (PWA)
-      if (!document.hidden) ensureOfflinePack();
+      if (document.hidden) return;
+      // Ré-audit (pas seulement ensureOfflinePack : lui fait confiance au
+      // drapeau, or c'est pendant un passage en arrière-plan qu'Android purge
+      // le cache). L'audit est local et bon marché — throttle court.
+      if (Date.now() - packAuditAt > 60 * 1000) auditPack().then(function () { ensureOfflinePack(); });
+      else ensureOfflinePack();
     });
+    // On perd le réseau (descente sous terre ?) : avertir TOUT DE SUITE si le
+    // contenu est incomplet — c'est le dernier moment où on peut encore agir.
+    // offlineReady() prime (packMissing peut dater d'avant une réparation) ;
+    // rien en mode DEMO / sans Cache Storage : le hors-ligne n'y existe pas.
+    window.addEventListener('offline', function () {
+      if (DEMO || !('caches' in window) || !('serviceWorker' in navigator)) return;
+      if (!offlineReady()) {
+        toast('Attention : le contenu hors-ligne est incomplet — certaines fiches pourraient manquer sous terre. Reviens sur le réseau et laisse l\'app ouverte.');
+      }
+    });
+    // Pastille d'état (barre du haut) : un clic amène à la carte hors-ligne.
+    var pc = $('#packChip');
+    if (pc) pc.onclick = function () {
+      if (!/^#\/(procedures|diamant|english)/.test(location.hash)) location.hash = '#/procedures';
+      setTimeout(function () {
+        var o = $('#offline');
+        if (o && o.scrollIntoView) o.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    };
+    renderPackBadge();
     // Le service worker signale la fin du Background Fetch (contenu rangé en cache).
     if ('serviceWorker' in navigator && navigator.serviceWorker.addEventListener) {
       navigator.serviceWorker.addEventListener('message', function (e) {
@@ -3663,7 +3816,7 @@
           bgSetActive(false);
           verifyAll().then(function (ok) {
             if (ok) {
-              bgSetTries(0); bgClearWatch();
+              bgSetTries(0); bgClearWatch(); packMissing = 0;
               try { localStorage.setItem('offline_ready', '1'); } catch (e2) {}
               renderOffline();
             } else if (!precacheBusy) {
