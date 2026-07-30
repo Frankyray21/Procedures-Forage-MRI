@@ -9,3 +9,7 @@ desktop.ini
 
 # archives
 *.zip
+
+# app Android (Capacitor) — générés
+node_modules/
+apk/www/

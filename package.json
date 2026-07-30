@@ -1,0 +1,21 @@
+{
+  "name": "procedures-forage-mri",
+  "version": "1.0.0",
+  "description": "Procédures de forage MRI — site + app Android (Capacitor) avec tout le contenu embarqué",
+  "private": true,
+  "scripts": {
+    "apk:www": "node apk/build-www.js",
+    "apk:sync": "node apk/build-www.js && npx cap sync android"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frankyray21/Procedures-Forage-MRI"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
+    "qrcode": "^1.5.4"
+  }
+}

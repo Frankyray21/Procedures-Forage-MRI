@@ -105,6 +105,7 @@ const FEEDBACK_TABLE = "Retours quiz procédures (web)";
 const ALLOWED_ORIGINS = [
   "https://frankyray21.github.io",
   "https://procedures-forage-mri.pages.dev",
+  "https://localhost",                 // app Android (WebView Capacitor)
 ];
 
 export default {

@@ -575,7 +575,7 @@
   var packMissing = -1;              // -1 = pas encore audité ; 0 = complet ; n = fichiers absents
   var packAuditAt = 0;
   function auditPack() {
-    if (DEMO || !('caches' in window)) return Promise.resolve();
+    if (window.IS_APK || DEMO || !('caches' in window)) return Promise.resolve();
     packAuditAt = Date.now();
     var media = [];
     activeGroups().forEach(function (g) { if (g.media) media = media.concat(g.files); });
@@ -619,6 +619,13 @@
      complet (vert), en cours de téléchargement (orange) ou incomplet (rouge). */
   function renderPackBadge() {
     var b = document.getElementById('packChip'); if (!b) return;
+    if (window.IS_APK) {
+      // App Android : tout est embarqué à l'installation — toujours prêt.
+      b.className = 'packchip ok'; b.textContent = 'Hors-ligne ✓';
+      b.title = 'Tout le contenu est intégré dans l\'app — fonctionne sous terre';
+      b.style.display = '';
+      return;
+    }
     if (DEMO || !('caches' in window) || !('serviceWorker' in navigator)) { b.style.display = 'none'; return; }
     var cls = 'packchip', txt = '', title = '';
     if (precacheBusy || bgFetchActive) {
@@ -674,6 +681,16 @@
   function renderOffline() {
     renderPackBadge();                       // la pastille du haut suit chaque changement d'état
     var box = $('#offline'); if (!box) return;
+    if (window.IS_APK) {
+      // App Android : rien à télécharger — petite carte informative seulement.
+      var vName = (window.__APK_OVERRIDE && window.__APK_OVERRIDE.name) ||
+        (window.APK_BUILD && window.APK_BUILD.name) || '';
+      box.innerHTML = '<div class="offcard ok slim"><span class="offic">' + ICON.check + '</span>' +
+        '<div class="offtxt"><b>Disponible hors ligne</b><span>Tout le contenu est intégré dans l\'app' +
+        (vName ? ' (contenu ' + esc(vName) + ')' : '') +
+        ' et se met à jour tout seul quand il y a du réseau.</span></div></div>';
+      return;
+    }
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
     var files = offlineAssets(), totalBytes = sumBytes(files), nPdf = DATA.length + 1;
     /* Un téléchargement en cours PRIME sur « disponible hors ligne » : sinon la
@@ -733,6 +750,7 @@
      « Mettre à jour » (force=true) qui re-télécharge tout. Progression en
      fichiers ET en Mo, vitesse mesurée et temps restant réel. */
   function startPrecache(force) {
+    if (window.IS_APK) return;
     var box = $('#offline'); if (!box) return;
     if (precacheBusy) {                       // un pré-chargement (auto) tourne déjà
       toast('Un téléchargement est déjà en cours — laisse-le finir.');
@@ -858,6 +876,7 @@
   var persistHinted = false;
   function persistStorage() {
     try {
+      if (window.IS_APK) return;             // stockage natif : rien à demander
       if (!navigator.storage || !navigator.storage.persist) return;
       navigator.storage.persist().then(function (granted) {
         if (granted || persistHinted) return;
@@ -900,7 +919,7 @@
      retour du réseau tant que ce n'est pas complet ; 3 fichiers en parallèle
      pour ne pas saturer la connexion. */
   function autoPrecache() {
-    if (DEMO || !('caches' in window) || !navigator.onLine || offlineReady() || precacheBusy) return;
+    if (window.IS_APK || DEMO || !('caches' in window) || !navigator.onLine || offlineReady() || precacheBusy) return;
     precacheBusy = true;
     dlManual = false;
     persistStorage();
@@ -1134,7 +1153,7 @@
      continue app fermée), sinon pré-chargement premier-plan (iOS, tant que
      l'app est ouverte). Ne fait rien si déjà prêt, hors-ligne, ou déjà en cours. */
   function ensureOfflinePack() {
-    if (DEMO || !('caches' in window) || offlineReady() || !navigator.onLine) return;
+    if (window.IS_APK || DEMO || !('caches' in window) || offlineReady() || !navigator.onLine) return;
     if (precacheBusy || bgStarting) return;   // jamais deux téléchargements à la fois
     /* Un téléchargement d'arrière-plan tourne : on ne relance rien, mais on
        RE-INSPECTE périodiquement la registration. C'est le seul moyen de voir
@@ -3675,7 +3694,10 @@
   /* ---------- installation PWA ---------- */
   var deferredPrompt = null;
   function isStandalone() {
-    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    // L'app Android (APK) compte comme « installée » : aucune invitation à
+    // installer la PWA ne doit s'afficher à l'intérieur de l'app elle-même.
+    return window.IS_APK === true ||
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
       window.navigator.standalone === true;
   }
   function isIOS() {
@@ -3775,32 +3797,41 @@
         localStorage.setItem('offline_ver', av);
       }
     } catch (e) {}
-    persistStorage();       // le cache survit aux redémarrages sans purge
-    // AUDIT d'abord : si Android a purgé le cache depuis la dernière fois, le
-    // drapeau « prêt » tombe et ensureOfflinePack répare — sinon il ne ferait rien.
-    auditPack().then(function () { ensureOfflinePack(); });
-    window.addEventListener('online', ensureOfflinePack);            // reprise au retour du réseau
-    document.addEventListener('visibilitychange', function () {      // reprise à la ré-ouverture (PWA)
-      if (document.hidden) return;
-      // Ré-audit (pas seulement ensureOfflinePack : lui fait confiance au
-      // drapeau, or c'est pendant un passage en arrière-plan qu'Android purge
-      // le cache). L'audit est local et bon marché — throttle court.
-      if (Date.now() - packAuditAt > 60 * 1000) auditPack().then(function () { ensureOfflinePack(); });
-      else ensureOfflinePack();
-    });
-    // On perd le réseau (descente sous terre ?) : avertir TOUT DE SUITE si le
-    // contenu est incomplet — c'est le dernier moment où on peut encore agir.
-    // offlineReady() prime (packMissing peut dater d'avant une réparation) ;
-    // rien en mode DEMO / sans Cache Storage : le hors-ligne n'y existe pas.
-    window.addEventListener('offline', function () {
-      if (DEMO || !('caches' in window) || !('serviceWorker' in navigator)) return;
-      if (!offlineReady()) {
-        toast('Attention : le contenu hors-ligne est incomplet — certaines fiches pourraient manquer sous terre. Reviens sur le réseau et laisse l\'app ouverte.');
-      }
-    });
-    // Pastille d'état (barre du haut) : un clic amène à la carte hors-ligne.
+    if (!window.IS_APK) {
+      persistStorage();     // le cache survit aux redémarrages sans purge
+      // AUDIT d'abord : si Android a purgé le cache depuis la dernière fois, le
+      // drapeau « prêt » tombe et ensureOfflinePack répare — sinon il ne ferait rien.
+      auditPack().then(function () { ensureOfflinePack(); });
+      window.addEventListener('online', ensureOfflinePack);          // reprise au retour du réseau
+      document.addEventListener('visibilitychange', function () {    // reprise à la ré-ouverture (PWA)
+        if (document.hidden) return;
+        // Ré-audit (pas seulement ensureOfflinePack : lui fait confiance au
+        // drapeau, or c'est pendant un passage en arrière-plan qu'Android purge
+        // le cache). L'audit est local et bon marché — throttle court.
+        if (Date.now() - packAuditAt > 60 * 1000) auditPack().then(function () { ensureOfflinePack(); });
+        else ensureOfflinePack();
+      });
+      // On perd le réseau (descente sous terre ?) : avertir TOUT DE SUITE si le
+      // contenu est incomplet — c'est le dernier moment où on peut encore agir.
+      // offlineReady() prime (packMissing peut dater d'avant une réparation) ;
+      // rien en mode DEMO / sans Cache Storage : le hors-ligne n'y existe pas.
+      window.addEventListener('offline', function () {
+        if (DEMO || !('caches' in window) || !('serviceWorker' in navigator)) return;
+        if (!offlineReady()) {
+          toast('Attention : le contenu hors-ligne est incomplet — certaines fiches pourraient manquer sous terre. Reviens sur le réseau et laisse l\'app ouverte.');
+        }
+      });
+    }
+    // Pastille d'état (barre du haut) : un clic amène à la carte hors-ligne
+    // (dans l'app Android : rappel que tout est intégré).
     var pc = $('#packChip');
     if (pc) pc.onclick = function () {
+      if (window.IS_APK) {
+        var vName = (window.__APK_OVERRIDE && window.__APK_OVERRIDE.name) ||
+          (window.APK_BUILD && window.APK_BUILD.name) || '';
+        toast('Tout le contenu' + (vName ? ' (' + vName + ')' : '') + ' est intégré dans l\'app — les mises à jour arrivent toutes seules quand il y a du réseau.');
+        return;
+      }
       if (!/^#\/(procedures|diamant|english)/.test(location.hash)) location.hash = '#/procedures';
       setTimeout(function () {
         var o = $('#offline');

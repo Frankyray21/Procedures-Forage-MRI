@@ -1,0 +1,91 @@
+# Compile l'app Android (APK) avec tout le contenu embarqué, à chaque mise à
+# jour du site, et la publie sur la release « apk-latest » — l'URL de
+# téléchargement reste donc toujours la même :
+#   https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-latest/procedures-mri.apk
+name: Build Android APK
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # publier la release et son APK
+
+# Pas d'annulation en cours de route : un run annulé pendant la publication
+# laisserait la release sans APK (lien de téléchargement en 404).
+concurrency:
+  group: "apk"
+  cancel-in-progress: false
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Dépendances
+        run: npm ci
+
+      - name: Assembler le contenu embarqué (apk/www)
+        run: node apk/build-www.js
+
+      - name: Synchroniser Capacitor
+        run: npx cap sync android
+
+      - name: Lire la version du site
+        id: ver
+        run: |
+          V=$(grep -oP '\?v=\K\d+' index.html | head -1)
+          NAME=$(grep -oP '>v\K[0-9]+\.[0-9]+' index.html | head -1)
+          if [ -z "$V" ] || [ -z "$NAME" ]; then
+            echo "Version introuvable dans index.html (?v= ou vX.YY) — arrêt."
+            exit 1
+          fi
+          echo "code=$V" >> "$GITHUB_OUTPUT"
+          echo "name=v$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Compiler l'APK signé
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease \
+            -PappVersionCode=${{ steps.ver.outputs.code }} \
+            -PappVersionName=${{ steps.ver.outputs.name }}
+
+      - name: Renommer l'APK
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk dist/procedures-mri.apk
+          ls -lh dist
+
+      - name: Publier sur la release apk-latest
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: "App Android — Procédures MRI (${{ steps.ver.outputs.name }})"
+          body: |
+            APK de l'app **Procédures de forage MRI** avec tout le contenu embarqué
+            (fiches, images, PDF, quiz) — fonctionne sous terre dès l'installation.
+
+            Contenu : ${{ steps.ver.outputs.name }} (build ${{ steps.ver.outputs.code }})
+
+            **Installation** : télécharger `procedures-mri.apk` sur le téléphone,
+            l'ouvrir, accepter « installer des applications de cette source ».
+            Les mises à jour de contenu (quiz, textes) arrivent ensuite toutes
+            seules quand il y a du réseau ; réinstaller l'APK seulement quand
+            l'app le recommande (nouvelles images ou nouveaux PDF).
+          files: dist/procedures-mri.apk
