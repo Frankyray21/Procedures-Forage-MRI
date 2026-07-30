@@ -63,6 +63,23 @@
   // Partagé avec apk-update.js (écriture d'un nouvel override, purge).
   window.__APK_IDB = { open: idb, read: readOverride, clear: clearOverride };
 
+  /* Bouton RETOUR d'Android : sans ce branchement, Capacitor ferme l'app au
+     premier appui — alors que la navigation (fiches, quiz, onglets) est un
+     historique de hash tout à fait navigable. Retour = page précédente ;
+     à la racine, l'app est mise en veilleuse (icône récents) plutôt que
+     fermée, pour rouvrir instantanément. Le plugin @capacitor/app est natif :
+     il est présent dans l'APK même quand une mise à jour à chaud est active. */
+  try {
+    var AppP = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+    if (AppP && AppP.addListener) {
+      AppP.addListener('backButton', function (info) {
+        if (info && info.canGoBack) window.history.back();
+        else if (AppP.minimizeApp) AppP.minimizeApp();
+        else if (AppP.exitApp) AppP.exitApp();
+      });
+    }
+  } catch (e) {}
+
   function boot(ov) {
     // Un override ne vaut que s'il est PLUS RÉCENT que le contenu embarqué
     // (un nouvel APK installé par-dessus rend l'ancien override caduc) et
