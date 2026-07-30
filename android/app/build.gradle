@@ -1,0 +1,69 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace = "com.machinesroger.procedures"
+    compileSdk = rootProject.ext.compileSdkVersion
+    // Clé de signature COMMITÉE dans le dépôt : app interne distribuée en
+    // dehors du Play Store. La signature stable permet la mise à jour par-
+    // dessus l'installation existante. (Pour changer de clé : régénérer le
+    // keystore avec keytool et réinstaller l'app sur les appareils.)
+    signingConfigs {
+        release {
+            storeFile file('../../apk/mri-release.keystore')
+            storePassword 'mri-procedures-2026'
+            keyAlias 'mri'
+            keyPassword 'mri-procedures-2026'
+        }
+    }
+    defaultConfig {
+        applicationId "com.machinesroger.procedures"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        // versionCode/versionName injectés par la CI depuis le ?v= d'index.html
+        // (ex.: ./gradlew assembleRelease -PappVersionCode=301 -PappVersionName=v2.101)
+        versionCode (project.hasProperty('appVersionCode') ? project.property('appVersionCode').toInteger() : 1)
+        versionName (project.hasProperty('appVersionName') ? project.property('appVersionName').toString() : '1.0')
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
