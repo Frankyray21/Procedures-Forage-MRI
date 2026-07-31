@@ -678,17 +678,41 @@
       '<span class="offhint2">Laisse l\'app ouverte avec du réseau — le contenu se met en cache une seule fois.</span>' +
       '</div></div>';
   }
+  /* Partage de l'app Android : plugin natif Share dans l'APK, Web Share API
+     dans le navigateur, copie du lien en dernier recours. Le lien envoyé est
+     la page apk.html (QR + marche à suivre), pas le fichier de 180 Mo. */
+  var APK_PAGE_URL = 'https://frankyray21.github.io/Procedures-Forage-MRI/apk.html';
+  function shareApp() {
+    var payload = {
+      title: 'Procédures de forage MRI',
+      text: 'App Procédures de forage MRI — tout le contenu hors-ligne intégré, fonctionne sous terre. Installation : ',
+      url: APK_PAGE_URL
+    };
+    var ShareP = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Share;
+    if (window.IS_APK && ShareP && ShareP.share) {
+      try { ShareP.share({ title: payload.title, text: payload.text + payload.url, dialogTitle: 'Partager l\'app' }); } catch (e) {}
+      return;
+    }
+    if (navigator.share) { try { navigator.share(payload)['catch'](function () {}); } catch (e) {} return; }
+    try {
+      navigator.clipboard.writeText(APK_PAGE_URL).then(function () {
+        toast('Lien copié — colle-le dans un texto ou un courriel.');
+      });
+    } catch (e) {}
+  }
   function renderOffline() {
     renderPackBadge();                       // la pastille du haut suit chaque changement d'état
     var box = $('#offline'); if (!box) return;
     if (window.IS_APK) {
-      // App Android : rien à télécharger — petite carte informative seulement.
+      // App Android : rien à télécharger — carte informative + partage.
       var vName = (window.__APK_OVERRIDE && window.__APK_OVERRIDE.name) ||
         (window.APK_BUILD && window.APK_BUILD.name) || '';
       box.innerHTML = '<div class="offcard ok slim"><span class="offic">' + ICON.check + '</span>' +
         '<div class="offtxt"><b>Disponible hors ligne</b><span>Tout le contenu est intégré dans l\'app' +
         (vName ? ' (contenu ' + esc(vName) + ')' : '') +
-        ' et se met à jour tout seul quand il y a du réseau.</span></div></div>';
+        ' et se met à jour tout seul quand il y a du réseau.</span></div>' +
+        '<button class="btn ghost" id="shareAppBtn" title="Envoyer le lien d\'installation à un collègue">📤 Partager l\'app</button></div>';
+      var sb = $('#shareAppBtn'); if (sb) sb.onclick = shareApp;
       return;
     }
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
@@ -3727,9 +3751,17 @@
     var hint = isIOS()
       ? 'Sur iPhone/iPad : touchez <b>Partager</b> puis <b>« Sur l\'écran d\'accueil »</b>.'
       : 'Installe l\'application sur ton téléphone : accès rapide, même sans réseau.';
-    box.innerHTML = '<div class="offcard install"><span class="offic">' + INSTALL_ICON + '</span>' +
-      '<div class="offtxt"><b>Installer l\'application</b><span>' + hint + '</span></div>' +
-      '<button class="btn" id="installCardBtn">Installer</button></div>';
+    // Android : mettre en avant l'app APK (contenu intégré, garanti sous
+    // terre) — la PWA reste offerte sur iOS où l'APK n'existe pas.
+    var apkCard = isIOS() ? '' :
+      '<div class="offcard install"><span class="offic">' + INSTALL_ICON + '</span>' +
+      '<div class="offtxt"><b>App Android — tout le contenu intégré</b>' +
+      '<span>Fiches, images, PDF et quiz DANS l\'app : garanti sous terre, rien à télécharger ni à surveiller.</span></div>' +
+      '<a class="btn" href="apk.html">Voir comment l\'installer</a></div>';
+    box.innerHTML = apkCard +
+      '<div class="offcard install"><span class="offic">' + INSTALL_ICON + '</span>' +
+      '<div class="offtxt"><b>Installer l\'application (navigateur)</b><span>' + hint + '</span></div>' +
+      '<button class="btn ghost" id="installCardBtn">Installer</button></div>';
     var btn = $('#installCardBtn'); if (btn) btn.onclick = doInstall;
   }
   function initInstall() {

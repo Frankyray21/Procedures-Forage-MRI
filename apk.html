@@ -57,6 +57,23 @@
   </div>
 
   <div class="apkcard">
+    <h2>Pas de réseau ? Passe-la à un collègue (Quick Share)</h2>
+    <p class="apknote" style="margin-top:0">Le fichier <b>procedures-mri.apk</b> reste dans « Téléchargements » après l'installation :
+    envoie-le de téléphone à téléphone avec <b>Quick Share</b> (Samsung/Android) ou Bluetooth —
+    ça fonctionne même sous terre, sans une barre de signal. Un seul téléchargement Wi-Fi
+    peut équiper toute l'équipe de proche en proche.</p>
+  </div>
+
+  <div class="apkcard">
+    <h2>Faire connaître l'app</h2>
+    <div style="display:flex;gap:.7rem;flex-wrap:wrap;align-items:center">
+      <button class="apkbtn" id="shareBtn" style="border:none;cursor:pointer">📤 Partager le lien</button>
+      <a class="apkbtn" style="background:#31507a" href="affiche-apk.html">🖨 Affiche à imprimer (dry / bureau)</a>
+    </div>
+    <p class="apknote">Le partage envoie cette page (avec le QR et la marche à suivre) par texto, WhatsApp ou courriel.</p>
+  </div>
+
+  <div class="apkcard">
     <h2>App ou site web ?</h2>
     <ol class="apksteps">
       <li><b>L'app Android</b> : garantie totale sous terre — le contenu est dans l'app, Android ne peut pas l'effacer.</li>
@@ -64,5 +81,24 @@
     </ol>
   </div>
 </div>
+<script>
+(function () {
+  var URL_PAGE = 'https://frankyray21.github.io/Procedures-Forage-MRI/apk.html';
+  var TXT = 'App Procédures de forage MRI — tout le contenu hors-ligne intégré, fonctionne sous terre. Installation : ';
+  var b = document.getElementById('shareBtn');
+  if (!b) return;
+  b.onclick = function () {
+    if (navigator.share) {
+      navigator.share({ title: 'Procédures de forage MRI', text: TXT, url: URL_PAGE })['catch'](function () {});
+      return;
+    }
+    try {
+      navigator.clipboard.writeText(URL_PAGE).then(function () {
+        b.textContent = '✓ Lien copié — colle-le dans un texto ou un courriel';
+      });
+    } catch (e) { prompt('Copie ce lien :', URL_PAGE); }
+  };
+})();
+</script>
 </body>
 </html>

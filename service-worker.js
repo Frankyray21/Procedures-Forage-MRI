@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v165';
+const VERSION = 'mri-proc-v166';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -63,6 +63,7 @@ const CORE = [
   './suivi.html',
   './admin.html',
   './apk.html',
+  './affiche-apk.html',
   './qr-apk.svg',
   './images/logo_roger.png',
   './icons/icon-192.png',
@@ -176,7 +177,7 @@ function precacheMedia() {
    sont tolérés en absence. */
 function optional(u) {
   return u.indexOf('/fonts/') >= 0 || u.indexOf('./icons/') === 0 || u.indexOf('logo_roger') >= 0 ||
-    u === './suivi.html' || u === './admin.html' || u === './apk.html' || u === './qr-apk.svg';
+    u === './suivi.html' || u === './admin.html' || u === './apk.html' || u === './affiche-apk.html' || u === './qr-apk.svg';
 }
 self.addEventListener('install', (e) => {
   self.skipWaiting();

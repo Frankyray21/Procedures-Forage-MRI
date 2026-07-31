@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Affiche — App Procédures de forage MRI</title>
+<meta name="robots" content="noindex">
+<style>
+  /* Affiche format LETTRE, pensée pour l'impression (fond blanc, encre noire,
+     gros QR) — à coller au dry, au bureau et à la salle de réunion. */
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#e8eaef;font-family:Arial,Helvetica,sans-serif;color:#111}
+  .sheet{width:8.5in;min-height:11in;margin:1rem auto;background:#fff;padding:.75in .8in;
+    display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(0,0,0,.18)}
+  header{display:flex;align-items:center;gap:.35in;border-bottom:6px solid #d22325;padding-bottom:.25in}
+  header img{height:.85in}
+  header h1{font-size:30pt;line-height:1.05;font-weight:800}
+  header h1 span{display:block;font-size:13pt;font-weight:600;color:#555;margin-top:6pt}
+  .punch{font-size:15pt;font-weight:700;margin:.28in 0 .1in;text-align:center}
+  .punch b{color:#d22325}
+  .qrzone{display:flex;align-items:center;justify-content:center;gap:.5in;margin:.15in 0}
+  .qrzone img{width:3.1in;height:3.1in}
+  .steps{list-style:none;font-size:14pt;line-height:1.45;max-width:3.4in}
+  .steps li{margin:.16in 0;display:flex;gap:.14in;align-items:flex-start}
+  .steps .n{flex:none;width:.42in;height:.42in;border-radius:50%;background:#d22325;color:#fff;
+    font-weight:800;font-size:15pt;display:flex;align-items:center;justify-content:center}
+  .note{border:2px solid #111;border-radius:10px;padding:.16in .22in;font-size:12pt;line-height:1.45;margin-top:.22in}
+  .note b{display:block;font-size:13pt;margin-bottom:4pt}
+  footer{margin-top:auto;padding-top:.2in;border-top:1px solid #bbb;font-size:10pt;color:#555;
+    display:flex;justify-content:space-between;align-items:center}
+  .noprint{max-width:8.5in;margin:0 auto;padding:.6rem 0;text-align:center}
+  .noprint button{font-size:1rem;font-weight:700;padding:.6rem 1.4rem;border-radius:10px;border:none;
+    background:#d22325;color:#fff;cursor:pointer}
+  @media print{
+    html,body{background:#fff}
+    .sheet{margin:0;box-shadow:none;width:auto;min-height:auto}
+    .noprint{display:none}
+    @page{size:letter;margin:0}
+  }
+</style>
+</head>
+<body>
+<div class="noprint"><button onclick="window.print()">🖨 Imprimer l'affiche</button></div>
+<div class="sheet">
+  <header>
+    <img src="images/logo_roger.png" alt="Machines Roger International">
+    <h1>Procédures de forage — l'app<span>Toutes les procédures, images, PDF et quiz — <b>fonctionne sous terre, sans réseau</b></span></h1>
+  </header>
+
+  <p class="punch">Installe l'app <b>une fois</b> avec du Wi-Fi — ensuite tout est dans ton téléphone, <b>pour toujours</b>.</p>
+
+  <div class="qrzone">
+    <img src="qr-apk.svg" alt="QR code de téléchargement de l'app">
+    <ol class="steps">
+      <li><span class="n">1</span><span><b>Scanne le QR</b> avec l'appareil photo (Wi-Fi recommandé — ~180 Mo).</span></li>
+      <li><span class="n">2</span><span><b>Ouvre le fichier</b> téléchargé et accepte « installer de cette source ».</span></li>
+      <li><span class="n">3</span><span><b>Appuie sur Installer.</b> L'icône « Procédures MRI » apparaît. C'est tout.</span></li>
+    </ol>
+  </div>
+
+  <div class="note">
+    <b>Pas de réseau ? Passe-la à un collègue.</b>
+    Le fichier téléchargé reste dans « Téléchargements » : envoie-le de téléphone à téléphone avec
+    <b>Quick Share</b> (ou Bluetooth) — ça marche même sous terre, sans une barre de signal.
+    Un seul téléchargement peut équiper toute l'équipe.
+  </div>
+
+  <footer>
+    <span><b>Machines Roger International</b> — outil interne · Les mises à jour de contenu arrivent toutes seules quand il y a du réseau.</span>
+    <span>apk.html</span>
+  </footer>
+</div>
+</body>
+</html>
