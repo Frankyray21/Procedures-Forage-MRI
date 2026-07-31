@@ -10,9 +10,12 @@
 #     https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-latest/procedures-mri.apk
 name: Build Android APK
 
+# La branche « test » porte le travail en cours (site de test + APK de test) ;
+# « main » est la version OFFICIELLE (site partagé + APK officiel), mise à jour
+# seulement sur décision (fusion test -> main, puis dispatch production).
 on:
   push:
-    branches: ["main"]
+    branches: ["test"]
   workflow_dispatch:
     inputs:
       channel:
