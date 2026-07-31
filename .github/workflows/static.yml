@@ -1,43 +1,48 @@
-# Simple workflow for deploying static content to GitHub Pages
+# Publie DEUX sites sur GitHub Pages :
+#   OFFICIEL (branche main, le lien partagé aux équipes — ne bouge que sur décision) :
+#     https://frankyray21.github.io/Procedures-Forage-MRI/
+#   TEST (branche test, le travail en cours) :
+#     https://frankyray21.github.io/Procedures-Forage-MRI/test/
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches: ["main", "test"]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Site officiel (main)
         uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site
+      - name: Site de test (branche test, sous /test/)
+        uses: actions/checkout@v4
+        continue-on-error: true   # tant que la branche test n'existe pas
+        with:
+          ref: test
+          path: site/test
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: 'site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5

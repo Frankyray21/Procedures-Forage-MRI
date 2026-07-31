@@ -5,6 +5,17 @@ L'app est un **enrobage Capacitor** du site : `apk/build-www.js` assemble
 le copie dans le projet Android, et la CI (`.github/workflows/build-apk.yml`)
 compile et publie l'APK signé.
 
+## Branches : test d'abord, officiel sur décision
+
+- **`test`** : le travail en cours. Chaque poussée y déclenche le **site de
+  test** (`https://frankyray21.github.io/Procedures-Forage-MRI/test/`) et
+  l'**APK de test** (canal apk-test ci-dessous).
+- **`main`** : la version OFFICIELLE — le site PWA déjà partagé aux équipes
+  (`https://frankyray21.github.io/Procedures-Forage-MRI/`, aussi servi par
+  Cloudflare Pages) et l'APK officiel. Mise à jour seulement en fusionnant
+  `test` → `main` (« déploie »), puis, pour l'APK, en lançant le workflow
+  avec `channel=production`.
+
 ## Deux canaux
 
 - **TEST** (automatique à chaque poussée sur `main`) — application distincte
