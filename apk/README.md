@@ -8,13 +8,13 @@ compile et publie l'APK signé.
 ## Branches : test d'abord, officiel sur décision
 
 - **`test`** : le travail en cours. Chaque poussée y déclenche le **site de
-  test** (aperçu Cloudflare Pages : `https://test.procedures-forage-mri.pages.dev`)
-  et l'**APK de test** (canal apk-test ci-dessous).
-- **`main`** : la version OFFICIELLE — le site déjà partagé aux équipes
-  (`https://procedures-forage-mri.pages.dev` et le miroir GitHub Pages) et
-  l'APK officiel. Mise à jour seulement en fusionnant `test` → `main`
-  (« déploie »), puis, pour l'APK, en lançant le workflow avec
-  `channel=production`.
+  test** (`https://frankyray21.github.io/Procedures-Forage-MRI/test/`) et
+  l'**APK de test** (canal apk-test ci-dessous).
+- **`main`** : la version OFFICIELLE — le site PWA déjà partagé aux équipes
+  (`https://frankyray21.github.io/Procedures-Forage-MRI/`, aussi servi par
+  Cloudflare Pages) et l'APK officiel. Mise à jour seulement en fusionnant
+  `test` → `main` (« déploie »), puis, pour l'APK, en lançant le workflow
+  avec `channel=production`.
 
 ## Deux canaux
 
