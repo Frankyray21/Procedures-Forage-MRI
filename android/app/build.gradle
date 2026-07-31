@@ -23,6 +23,16 @@ android {
         // (ex.: ./gradlew assembleRelease -PappVersionCode=301 -PappVersionName=v2.101)
         versionCode (project.hasProperty('appVersionCode') ? project.property('appVersionCode').toInteger() : 1)
         versionName (project.hasProperty('appVersionName') ? project.property('appVersionName').toString() : '1.0')
+        // CANAL DE TEST (-PtestChannel=true) : application DISTINCTE, qui
+        // s'installe À CÔTÉ de l'officielle — id « .test » et nom
+        // « Procédures MRI (TEST) ». Le canal officiel (lien/QR partagés)
+        // n'est mis à jour que sur décision, jamais automatiquement.
+        if (project.hasProperty('testChannel')) {
+            applicationIdSuffix '.test'
+            manifestPlaceholders = [appLabel: 'Procédures MRI (TEST)']
+        } else {
+            manifestPlaceholders = [appLabel: '@string/app_name']
+        }
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

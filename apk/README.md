@@ -3,13 +3,20 @@
 L'app est un **enrobage Capacitor** du site : `apk/build-www.js` assemble
 `apk/www/` (tout le site + les ~170 Mo de médias), `npx cap sync android`
 le copie dans le projet Android, et la CI (`.github/workflows/build-apk.yml`)
-compile et publie l'APK signé sur la release **apk-latest** à chaque poussée
-sur `main` :
+compile et publie l'APK signé.
 
-> https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-latest/procedures-mri.apk
+## Deux canaux
+
+- **TEST** (automatique à chaque poussée sur `main`) — application distincte
+  « Procédures MRI (TEST) » (id `.test`), installable À CÔTÉ de l'officielle :
+  > https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-test/procedures-mri-test.apk
+- **OFFICIEL** (le lien/QR partagés aux équipes) — mis à jour SEULEMENT en
+  lançant le workflow *Build Android APK* à la main avec `channel=production`
+  (onglet Actions, ou demander à Claude de le déclencher) :
+  > https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-latest/procedures-mri.apk
 
 La page `apk.html` du site (lien au pied de page) donne le QR code et la
-marche à suivre.
+marche à suivre ; `affiche-apk.html` est l'affiche imprimable.
 
 ## Hybride : contenu embarqué + mises à jour à chaud
 
