@@ -26,6 +26,7 @@ on:
 
 permissions:
   contents: write   # publier la release et son APK
+  actions: write    # redéclencher le déploiement Pages (site de test)
 
 # Pas d'annulation en cours de route : un run annulé pendant la publication
 # laisserait la release sans APK (lien de téléchargement en 404).
@@ -39,6 +40,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Le site de test (github.io/…/test/) est publié par static.yml, qui ne
+      # peut tourner que depuis main (protection de l'environnement Pages) :
+      # on le redéclenche donc d'ici à chaque poussée sur la branche test.
+      - name: Redéployer le site de test
+        if: github.ref == 'refs/heads/test'
+        run: gh workflow run static.yml --ref main --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Node
         uses: actions/setup-node@v4

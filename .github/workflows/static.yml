@@ -5,9 +5,13 @@
 #     https://frankyray21.github.io/Procedures-Forage-MRI/test/
 name: Deploy static content to Pages
 
+# Toujours exécuté DEPUIS main : l'environnement github-pages n'autorise que
+# la branche par défaut à déployer. Les poussées sur la branche test
+# redéclenchent ce workflow par dispatch (voir build-apk.yml) — le contenu de
+# test est de toute façon récupéré ici par checkout, quelle que soit l'origine.
 on:
   push:
-    branches: ["main", "test"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
