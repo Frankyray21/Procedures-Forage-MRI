@@ -1,13 +1,25 @@
-# Compile l'app Android (APK) avec tout le contenu embarqué, à chaque mise à
-# jour du site, et la publie sur la release « apk-latest » — l'URL de
-# téléchargement reste donc toujours la même :
-#   https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-latest/procedures-mri.apk
+# Compile l'app Android (APK) avec tout le contenu embarqué.
+#
+# DEUX CANAUX :
+#   TEST (automatique, à chaque poussée sur main) — app distincte
+#   « Procédures MRI (TEST) », installable à côté de l'officielle :
+#     https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-test/procedures-mri-test.apk
+#   OFFICIEL (sur décision seulement : lancer ce workflow à la main avec
+#   channel=production) — le lien/QR déjà partagés, JAMAIS mis à jour
+#   automatiquement pendant une phase de test :
+#     https://github.com/Frankyray21/Procedures-Forage-MRI/releases/download/apk-latest/procedures-mri.apk
 name: Build Android APK
 
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
+    inputs:
+      channel:
+        description: "Canal de publication"
+        type: choice
+        options: [test, production]
+        default: test
 
 permissions:
   contents: write   # publier la release et son APK
@@ -46,7 +58,7 @@ jobs:
       - name: Synchroniser Capacitor
         run: npx cap sync android
 
-      - name: Lire la version du site
+      - name: Lire la version du site et choisir le canal
         id: ver
         run: |
           V=$(grep -oP '\?v=\K\d+' index.html | head -1)
@@ -55,24 +67,49 @@ jobs:
             echo "Version introuvable dans index.html (?v= ou vX.YY) — arrêt."
             exit 1
           fi
+          CHANNEL="${{ github.event.inputs.channel }}"
+          if [ -z "$CHANNEL" ]; then CHANNEL=test; fi   # push automatique = canal TEST
           echo "code=$V" >> "$GITHUB_OUTPUT"
           echo "name=v$NAME" >> "$GITHUB_OUTPUT"
+          echo "channel=$CHANNEL" >> "$GITHUB_OUTPUT"
 
       - name: Compiler l'APK signé
         working-directory: android
         run: |
           chmod +x gradlew
+          EXTRA=""
+          if [ "${{ steps.ver.outputs.channel }}" = "test" ]; then EXTRA="-PtestChannel=true"; fi
           ./gradlew assembleRelease \
             -PappVersionCode=${{ steps.ver.outputs.code }} \
-            -PappVersionName=${{ steps.ver.outputs.name }}
+            -PappVersionName=${{ steps.ver.outputs.name }} \
+            $EXTRA
 
       - name: Renommer l'APK
         run: |
           mkdir -p dist
-          cp android/app/build/outputs/apk/release/app-release.apk dist/procedures-mri.apk
+          if [ "${{ steps.ver.outputs.channel }}" = "test" ]; then
+            cp android/app/build/outputs/apk/release/app-release.apk dist/procedures-mri-test.apk
+          else
+            cp android/app/build/outputs/apk/release/app-release.apk dist/procedures-mri.apk
+          fi
           ls -lh dist
 
-      - name: Publier sur la release apk-latest
+      - name: Publier (canal TEST)
+        if: steps.ver.outputs.channel == 'test'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-test
+          name: "App Android TEST — Procédures MRI (${{ steps.ver.outputs.name }})"
+          prerelease: true
+          body: |
+            **Version de TEST** — s'installe à côté de l'app officielle
+            (icône « Procédures MRI (TEST) »). Ne pas distribuer aux équipes.
+
+            Contenu : ${{ steps.ver.outputs.name }} (build ${{ steps.ver.outputs.code }})
+          files: dist/procedures-mri-test.apk
+
+      - name: Publier (canal OFFICIEL)
+        if: steps.ver.outputs.channel == 'production'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
