@@ -10,7 +10,7 @@
 
   var CAT_COLORS = {
     'Forage': '#d22325', 'Alésage': '#3b82f6', 'Installation': '#10b981',
-    'Maintenance': '#f59e0b', 'Manutention': '#8b5cf6', 'Démobilisation': '#ec4899',
+    'Maintenance': '#e11d1d', 'Manutention': '#8b5cf6', 'Démobilisation': '#ec4899',
     'Intervention': '#ef4444',
     'Carottage & tube': '#06b6d4', 'Installation & plancher': '#10b981',
     'Déplacement': '#ec4899', 'Cimentation': '#a16207', 'Sécurité': '#ef4444',
@@ -116,6 +116,13 @@
     warn: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
     check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
     doc: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+    info: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5"/><path d="M12 8h.01"/></svg>',
+    open: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>',
+    dl: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>',
+    chev: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+    question: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+    lock: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+    clock: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
     fwd: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
     close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
     tool: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-7.6 7.6a2.1 2.1 0 0 1-3-3l7.6-7.6a4 4 0 0 0-2-2z"/><path d="M3 21l4-4"/></svg>',
@@ -1558,7 +1565,9 @@
     var viaEnglish = p.famille === 'english';
     var backHref = viaEnglish ? (enDD(p) ? '#/english-dd' : '#/english') : viaDiamant ? '#/diamant' : '#/procedures';
     var backLbl = viaEnglish ? (enDD(p) ? ' English — Diamond drilling' : ' English — ITH / CUBEX') : viaDiamant ? ' Forage au diamant' : ' Procédures de forage ITH / CUBEX';
-    var dates = [p.date_creation, p.date_revision ? 'Rév. ' + p.date_revision : ''].filter(Boolean).join(' · ');
+    var metaItems = (p.machines || []).slice();
+    if (p.date_creation) metaItems.push(p.date_creation);
+    if (p.date_revision) metaItems.push('Rév. ' + p.date_revision);
     var h = '<div class="wrap"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
       '<div class="phead">' +
         '<h1>' + esc(p.titre) + '</h1>' +
@@ -1566,12 +1575,11 @@
           (p.code ? '<span class="code-tag">' + esc(p.code) + '</span>' : '') +
           '<span class="cat-tag" style="--cat:' + col + '">' + esc(p.categorie) + '</span></div>' +
         '<div class="meta">' +
-          (p.machines || []).map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('<span class="dot"></span>') +
-          (dates ? '<span class="dot"></span><span>' + esc(dates) + '</span>' : '') +
+          metaItems.map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('<span class="dot"></span>') +
         '</div>' +
       '</div>';
 
-    if (p.resume) h += '<div class="sec"><div class="lead2">' + esc(p.resume) + '</div></div>';
+    if (p.resume) h += '<div class="sec"><div class="lead2"><span class="lead2-ic" aria-hidden="true">' + ICON.info + '</span><p>' + esc(p.resume) + '</p></div></div>';
 
     // Document officiel (PDF) — AU DÉBUT de la fiche
     if (DEMO) {
@@ -1601,10 +1609,10 @@
             '<span class="pv-more">Aperçu — toucher pour lire en plein écran (' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + ')</span></button>'
           : '';
         return '<div class="pdfbox">' +
-          '<div class="bar">' + ICON.doc + '<b>' + esc(label) + '</b><span class="sp"></span>' +
-            '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">Ouvrir</a>' +
-            '<a class="dl" href="' + pdf + '" download>Télécharger</a></div>' +
-          '<details class="pdfview"><summary>Feuilleter le document ici' +
+          '<div class="bar"><b>' + esc(label) + '</b><span class="sp"></span>' +
+            '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">' + ICON.open + 'Ouvrir</a>' +
+            '<a class="dl" href="' + pdf + '" download>' + ICON.dl + 'Télécharger</a></div>' +
+          '<details class="pdfview"><summary><span class="pv-chev" aria-hidden="true">' + ICON.chev + '</span>Feuilleter le document ici' +
             (pages.length ? '<span class="pv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + '</span>' : '') +
           '</summary>' + body + '</details>' +
           thumb + '</div>';
@@ -1613,7 +1621,7 @@
       if (p.id === 'centralisateur') {
         pdfInner += '<div style="margin-top:1rem">' + pdfBox('centralisateur-dessin', 'Dessin technique du centralisateur') + '</div>';
       }
-      h += '<div class="sec"><h2>Document officiel (PDF)</h2>' + pdfInner + '</div>';
+      h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.doc + '</span>Document officiel (PDF)</h2>' + pdfInner + '</div>';
     }
 
     // Photos et schémas — galerie visuelle (extraits des PDF)
@@ -1640,9 +1648,11 @@
       var pqOrder = shuffle(pqList.map(function (_, j) { return j; }));
       var pqCtx = { proc: p.id, titre: p.titre || p.code || '' };
       var pqitems = pqOrder.map(function (oi, disp) { return pqItemHTML(pqList[oi], oi, disp + 1, pqCtx); }).join('');
-      h += '<div class="sec"><h2>Quiz — valider mes connaissances</h2>' +
+      h += '<div class="sec seccard sc-quiz"><h2>Quiz — valider mes connaissances</h2>' +
         '<details class="pquiz" data-proc="' + esc(p.id) + '">' +
-          '<summary><span class="pqs-t">' + pqList.length + ' questions · réponse corrigée immédiatement</span>' +
+          '<summary><span class="pq-qic" aria-hidden="true">' + ICON.question + '</span>' +
+          '<span class="pqs-t">' + pqList.length + ' questions · réponse corrigée immédiatement</span>' +
+          '<span class="pqs-n">' + pqList.length + ' questions</span>' +
           '<span class="pqs-b">' + (best ? 'Meilleur : ' + best.s + '/' + best.n : 'Commencer') + '</span></summary>' +
           '<div class="pqbody">' +
             '<div class="pq-prog" aria-hidden="true"><i></i></div>' +
@@ -1660,9 +1670,10 @@
     h += attestationHTML(p);
 
     if (p.historique && p.historique.length) {
-      h += sec('Historique des révisions', '<table class="hist"><thead><tr><th>Date</th><th>Modification</th><th>Par</th></tr></thead><tbody>' +
+      h += '<div class="sec seccard sc-hist"><h2><span class="h2ic h2ic-hist" aria-hidden="true">' + ICON.clock + '</span>Historique des révisions</h2>' +
+        '<div class="scbody tscroll"><table class="hist"><thead><tr><th>Date</th><th>Modification</th><th>Par</th></tr></thead><tbody>' +
         p.historique.map(function (r) { return '<tr><td>' + esc(r.date) + '</td><td>' + esc(r.description) + '</td><td>' + esc(r.par) + '</td></tr>'; }).join('') +
-        '</tbody></table>');
+        '</tbody></table></div></div>';
     }
 
     h += '</div>';
@@ -1744,19 +1755,21 @@
   window.addEventListener('online', function () { rosterEnsure(); });
   function attestationHTML(p) {
     if (!attestEndpoint()) return '';
-    var head = '<div class="sec attest-sec" data-proc="' + esc(p.id) + '"><h2>Attestation de lecture</h2>';
+    var head = '<div class="sec seccard sc-lock attest-sec" data-proc="' + esc(p.id) + '"><h2>Attestation de lecture</h2>';
     // Conditionnel à la PASSATION du quiz : le formulaire n'apparaît qu'une
     // fois toutes les questions répondues (le score n'a pas d'importance).
     if (!pqCompleted(p)) {
-      return head +
+      return head + '<div class="scbody">' +
+        '<div class="attest-row"><span class="attest-ic" aria-hidden="true">' + ICON.lock + '</span>' +
         '<p class="attest-lead">Réponds d\'abord à <b>toutes les questions du quiz</b> ci-dessus pour pouvoir attester ' +
         'ta lecture (le score n\'a pas d\'importance).</p>' +
+        '<span class="attest-state">Verrouillé</span></div>' +
         '<button type="button" class="btn attest-btn attest-locked" disabled>' +
-        'Attester la lecture (complète d\'abord le quiz)</button></div>';
+        'Attester la lecture (complète d\'abord le quiz)</button></div></div>';
     }
     var best = pqBestPct(p.id);
     var scoreTxt = best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '';
-    return head +
+    return head + '<div class="scbody">' +
       '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure.' +
       (scoreTxt ? ' Ton résultat au quiz : <b>' + scoreTxt + '</b>.' : '') +
       ' Tape ton nom (choisis-le dans la liste) puis valide — ton attestation est enregistrée pour le suivi des formations.</p>' +
@@ -1778,7 +1791,7 @@
         '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
         ' Attester la lecture</button>' +
         '<div class="attest-msg" aria-live="polite"></div>' +
-      '</div></div>';
+      '</div></div></div>';
   }
   // Anti-doublon : un même nom + procédure + jour n'est envoyé qu'une fois.
   function attestSig(pid, name) { return pid + '|' + norm(name).trim() + '|' + new Date().toISOString().slice(0, 10); }
