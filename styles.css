@@ -241,8 +241,8 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .hist td:first-child{white-space:nowrap;color:var(--red);font-weight:700}
 @media(max-width:640px){.tscroll .hist{min-width:540px}}
 
-/* PDF viewer — LA carte dominante : bordure bleu vif, bandeau bleu foncé */
-.pdfbox{border:2px solid var(--blue);border-radius:6px;overflow:hidden;background:var(--surface)}
+/* PDF viewer — LA carte dominante : bandeau bleu foncé, sans encadré (sobre) */
+.pdfbox{border:none;border-radius:6px;overflow:hidden;background:var(--surface)}
 .pdfbox .bar{display:flex;align-items:center;gap:.6rem .9rem;flex-wrap:wrap;padding:.7rem 1rem;
   border-bottom:1px solid var(--blue-dark);color:#fff;
   background:linear-gradient(90deg,#0a58c7 0%,#051b48 100%)}
@@ -644,7 +644,7 @@ footer b{color:var(--muted)}
 .seccard .scbody{padding:1rem 1.1rem 1.1rem}
 .sc-quiz{border-color:var(--amber)}
 .sc-quiz>h2{background:linear-gradient(90deg,#a66a00 0%,#3c2800 100%)}
-.sc-hist{border-color:var(--red)}
+.sc-hist{border:none}
 .sc-hist>h2{background:linear-gradient(90deg,#760000 0%,#280000 100%)}
 .sc-lock>h2{background:var(--locked-dark);color:var(--text-main)}
 /* états ré-affichés dynamiquement dans la carte (attestation envoyée / en file) */
