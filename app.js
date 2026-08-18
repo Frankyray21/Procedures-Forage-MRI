@@ -1651,7 +1651,7 @@
       h += '<div class="sec seccard sc-quiz"><h2>Quiz — valider mes connaissances</h2>' +
         '<details class="pquiz" data-proc="' + esc(p.id) + '">' +
           '<summary><span class="pq-qic" aria-hidden="true">' + ICON.question + '</span>' +
-          '<span class="pqs-t">' + pqList.length + ' questions · réponse corrigée immédiatement</span>' +
+          '<span class="pqs-t">' + pqList.length + ' questions - réponse corrigée immédiatement</span>' +
           '<span class="pqs-n">' + pqList.length + ' questions</span>' +
           '<span class="pqs-b">' + (best ? 'Meilleur : ' + best.s + '/' + best.n : 'Commencer') + '</span></summary>' +
           '<div class="pqbody">' +
@@ -1762,7 +1762,7 @@
       return head + '<div class="scbody">' +
         '<div class="attest-row"><span class="attest-ic" aria-hidden="true">' + ICON.lock + '</span>' +
         '<p class="attest-lead">Réponds d\'abord à <b>toutes les questions du quiz</b> ci-dessus pour pouvoir attester ' +
-        'ta lecture (le score n\'a pas d\'importance).</p>' +
+        'la lecture (le score n\'a pas d\'importance).</p>' +
         '<span class="attest-state">Verrouillé</span></div>' +
         '<button type="button" class="btn attest-btn attest-locked" disabled>' +
         'Attester la lecture (complète d\'abord le quiz)</button></div></div>';

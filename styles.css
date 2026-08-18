@@ -235,11 +235,10 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .hist{width:100%;border-collapse:collapse;font-size:.95rem}
 .hist th,.hist td{text-align:left;padding:.6rem .7rem;border-bottom:1px solid var(--red-dark);vertical-align:top}
 .hist tbody tr:last-child td{border-bottom:none}
-.hist th{color:var(--strong);font-family:var(--font-display);text-transform:uppercase;font-size:.85rem;
+.hist th{color:#7e9cc7;font-family:var(--font-display);text-transform:uppercase;font-size:.85rem;
   font-weight:700;letter-spacing:.08em}
 .hist td{color:#e3e7ec}
 .hist td:first-child{white-space:nowrap;color:var(--red);font-weight:700}
-.hist th:last-child,.hist td:last-child{text-align:right}
 @media(max-width:640px){.tscroll .hist{min-width:540px}}
 
 /* PDF viewer — LA carte dominante : bordure bleu vif, bandeau bleu foncé */
@@ -247,10 +246,10 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .pdfbox .bar{display:flex;align-items:center;gap:.6rem .9rem;flex-wrap:wrap;padding:.7rem 1rem;
   border-bottom:1px solid var(--blue-dark);color:#fff;
   background:linear-gradient(90deg,#0a58c7 0%,#051b48 100%)}
-.pdfbox .bar b{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.05em;font-size:1.02rem;
-  font-weight:700;color:#fff}
+.pdfbox .bar b{font-family:var(--font-body);letter-spacing:.02em;font-size:.98rem;
+  font-weight:600;color:#fff}
 .pdfbox .bar .sp{margin-left:auto}
-.pdfbox a.dl{display:inline-flex;align-items:center;gap:.45rem;font-size:.9rem;font-weight:700;color:#fff;
+.pdfbox a.dl{display:inline-flex;align-items:center;gap:.45rem;font-size:.92rem;font-weight:600;color:#fff;
   padding:.55rem .5rem;margin:-.35rem 0;border-radius:5px}
 .pdfbox a.dl:hover{color:#cfe3ff}
 .pdfbox a.dl:focus-visible{outline-color:#fff}
@@ -263,16 +262,16 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .pdfview .pv-n{margin-left:auto;flex:none;font-size:.82rem;font-weight:700;color:var(--blue);
   border:1px solid var(--blue);border-radius:5px;padding:.3rem .7rem;white-space:nowrap}
 .pdfview[open]>summary{border-bottom:1px solid var(--border)}
-/* Aperçu de la première page (non rognée, sur fond gris très foncé) —
-   le toucher ouvre le document en plein écran */
-.pdfbox .pv-thumb{position:relative;display:block;width:calc(100% - 2rem);margin:0 1rem 1rem;padding:1rem 1rem .6rem;
-  border:1px solid var(--border);border-radius:5px;background:var(--pdf-well);
+/* Aperçu de la première page (haut de page, centré sur fond gris très foncé,
+   légende superposée sur la page) — le toucher ouvre le document en plein écran */
+.pdfbox .pv-thumb{position:relative;display:block;width:calc(100% - 2rem);margin:0 1rem 1rem;padding:.4rem .4rem 0;
+  max-height:390px;overflow:hidden;border:1px solid var(--border);border-radius:5px;background:var(--pdf-well);
   cursor:pointer;font:inherit;text-align:center;transition:border-color .15s}
 .pdfbox .pv-thumb:hover{border-color:var(--blue)}
-.pdfbox .pv-thumb img{display:block;margin:0 auto;width:auto;height:auto;max-width:min(100%,660px);
-  max-height:540px;object-fit:contain;background:#fff}
-.pdfbox .pv-thumb .pv-more{display:block;padding:.65rem .4rem 0;text-align:center;
-  font-size:.88rem;font-weight:700;color:var(--text-muted)}
+.pdfbox .pv-thumb img{display:block;margin:0 auto;width:100%;max-width:660px;height:auto;background:#fff}
+.pdfbox .pv-thumb .pv-more{position:absolute;left:50%;transform:translateX(-50%);bottom:0;
+  width:min(100%,660px);padding:2.2rem .9rem .55rem;text-align:center;font-size:.95rem;font-weight:700;
+  color:#111827;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 55%)}
 .pdfview[open]+.pv-thumb{display:none}
 
 /* Visionneuse plein écran du document officiel (ouverte depuis l'aperçu) */
@@ -663,11 +662,11 @@ footer b{color:var(--muted)}
   letter-spacing:.03em;color:var(--amber);border:1.5px solid var(--amber);border-radius:5px;
   padding:.32rem .75rem;white-space:nowrap}
 /* « Commencer » : l'action la plus visible de la page (bouton plein rouge) */
-.pquiz>summary .pqs-b{font-family:var(--font-display);font-size:1rem;font-weight:800;letter-spacing:.04em;
-  text-transform:uppercase;color:#fff;background:var(--brand);border:none;border-radius:5px;
-  padding:.68rem 1.4rem;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap;
+.pquiz>summary .pqs-b{font-family:var(--font-body);font-size:1.02rem;font-weight:700;letter-spacing:.01em;
+  color:#fff;background:#e01b1e;border:none;border-radius:5px;
+  padding:.68rem 1.5rem;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap;
   transition:background .15s}
-.pquiz>summary:hover .pqs-b{background:#e13234}
+.pquiz>summary:hover .pqs-b{background:#f03033}
 .pquiz[open]>summary{border-bottom:1px solid var(--border)}
 .pqbody{padding:1rem 1.1rem 1.2rem}
 .pq{padding:.9rem 0;border-bottom:1px solid var(--border)}
@@ -912,9 +911,9 @@ footer b{color:var(--muted)}
    que le quiz n'est pas complété ; le texte reste pleinement lisible. */
 .attest-row{display:flex;align-items:flex-start;gap:.9rem;flex-wrap:wrap;margin-bottom:.9rem}
 .attest-ic{flex:none;width:42px;height:42px;border-radius:6px;display:flex;align-items:center;
-  justify-content:center;background:var(--locked-dark);color:#aeb4bb}
+  justify-content:center;background:var(--locked-dark);color:#e3e7ec}
 .attest-state{flex:none;margin-left:auto;font-family:var(--font-display);font-size:.85rem;font-weight:700;
-  letter-spacing:.04em;color:#aeb4bb;border:1.5px solid var(--locked);border-radius:5px;
+  letter-spacing:.04em;color:#d4d8dd;border:1.5px solid var(--locked);border-radius:5px;
   padding:.32rem .75rem;white-space:nowrap}
 .attest-lead{flex:1;min-width:230px;color:var(--text-main);font-size:1.05rem;line-height:1.6;margin:0}
 .scbody>.attest-lead{margin:.1rem 0 .9rem}
@@ -1098,7 +1097,7 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .attest-ic{color:#5b6470}
 :root[data-theme="light"] .attest-state{color:#5b6470;border-color:#8b929c}
 :root[data-theme="light"] .attest-btn.attest-locked{color:#5b6470}
-:root[data-theme="light"] .hist th{color:var(--strong)}
+:root[data-theme="light"] .hist th{color:#3b5e91}
 :root[data-theme="light"] .hist td{color:#2a3138}
 :root[data-theme="light"] .hist th,:root[data-theme="light"] .hist td{border-bottom-color:#e0a8a8}
 :root[data-theme="light"] .hist tbody tr:last-child td{border-bottom:none}
@@ -1266,7 +1265,7 @@ footer b{color:var(--muted)}
   .attest-row .attest-lead{min-width:0}
   .attest-row .attest-state{grid-column:2;justify-self:start;margin-left:0}
   .attest-ic{width:38px;height:38px}
-  .pdfbox .pv-thumb{width:calc(100% - 1.6rem);margin:0 .8rem .8rem;padding:.7rem .7rem .5rem}
+  .pdfbox .pv-thumb{width:calc(100% - 1.6rem);margin:0 .8rem .8rem;padding:.35rem .35rem 0;max-height:340px}
   /* héro allégé : sur téléphone on garde le titre et les chiffres ; le badge
      décoratif et le paragraphe d'intro (redondant avec le bandeau hors-ligne)
      sont masqués — ils restent visibles sur grand écran */
