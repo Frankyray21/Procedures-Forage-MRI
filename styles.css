@@ -646,7 +646,10 @@ footer b{color:var(--muted)}
 .sc-quiz>h2{background:linear-gradient(90deg,#a66a00 0%,#3c2800 100%)}
 .sc-hist{border:none}
 .sc-hist>h2{background:linear-gradient(90deg,#760000 0%,#280000 100%)}
-.sc-lock>h2{background:var(--locked-dark);color:var(--text-main)}
+/* Attestation = formation : carte verte (le verrou reste signalé en gris
+   par le cadenas, la pastille « Verrouillé » et le bouton désactivé) */
+.sc-lock{border-color:#10b981}
+.sc-lock>h2{background:linear-gradient(90deg,#0b7d52 0%,#062d1e 100%);color:#fff}
 /* états ré-affichés dynamiquement dans la carte (attestation envoyée / en file) */
 .seccard>.attest-done{margin:1rem 1.1rem}
 /* ===== quiz intégré à la fiche ===== */
@@ -788,9 +791,10 @@ footer b{color:var(--muted)}
 .pq-score{font-weight:800;font-family:var(--font-display);letter-spacing:.02em}
 .pq-score.perfect,.pq-score.pass{color:#4ade80}
 .pq-score.fail{color:var(--accent-l)}
-/* barre de progression du quiz de fiche (part des questions répondues) */
+/* barre de progression du quiz de fiche (part des questions répondues) —
+   verte : elle mesure l'avancement de la FORMATION (vers l'attestation) */
 .pq-prog{height:6px;background:var(--card-2);border:1px solid var(--border);border-radius:50px;overflow:hidden;margin-bottom:.9rem}
-.pq-prog i{display:block;height:100%;width:0;background:var(--accent);border-radius:50px;transition:width .25s ease}
+.pq-prog i{display:block;height:100%;width:0;background:#10b981;border-radius:50px;transition:width .25s ease}
 /* message discret de mi-parcours (une seule fois par tentative) */
 .pq-mid{display:none;font-size:.85rem;color:var(--muted);margin:-.4rem 0 .8rem}
 .pq-mid.on{display:block}
@@ -917,8 +921,8 @@ footer b{color:var(--muted)}
   padding:.32rem .75rem;white-space:nowrap}
 .attest-lead{flex:1;min-width:230px;color:var(--text-main);font-size:1.05rem;line-height:1.6;margin:0}
 .scbody>.attest-lead{margin:.1rem 0 .9rem}
-.attest-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--brand);border-radius:5px}
-.attest-btn:hover{background:#e13234}
+.attest-btn{display:inline-flex;align-items:center;gap:.5rem;background:#047857;border-radius:5px}
+.attest-btn:hover{background:#059669}
 .attest-btn:disabled{cursor:default}
 /* formulaire d'attestation : nom + autocomplétion employés */
 .attest-form{position:relative;display:flex;flex-direction:column;gap:.2rem;max-width:440px}
@@ -982,6 +986,10 @@ footer b{color:var(--muted)}
 .cbmore.open{display:block}
 /* ---------- Mon suivi (progression + résultats détaillés) ---------- */
 .hero.herosm{padding:clamp(1.6rem,4vw,2.6rem) 0 1.2rem}
+/* Formation = vert : le héros du suivi troque l'accent rouge pour le vert */
+.hero-suivi .eyebrow{color:#34d399;border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.08)}
+.hero-suivi .eyebrow::before{background:#10b981}
+.hero-suivi h1 .hl{color:#34d399}
 .portal-suivi{display:flex;align-items:center;gap:.7rem;margin-top:1.2rem;padding:.85rem 1.1rem;
   background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);font-size:.94rem}
 .portal-suivi svg:first-child{color:var(--success)}
@@ -995,6 +1003,9 @@ footer b{color:var(--muted)}
 .portal-suivi.dl svg:first-child{color:var(--accent-l);width:19px;height:19px}
 .portal-suivi.dl:hover{border-color:rgba(210,35,37,.4)}
 .sv-sync{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin:1.2rem 0}
+/* action de formation : bouton vert (récupération de la progression) */
+.sv-sync .btn{background:#047857}
+.sv-sync .btn:hover{background:#059669}
 .sv-sync b{font-size:.95rem}
 .sv-sync p{color:var(--muted);font-size:.88rem;line-height:1.5;margin:.35rem 0 .7rem;max-width:560px}
 .sv-form{display:flex;flex-wrap:wrap;gap:.5rem}
@@ -1011,7 +1022,7 @@ footer b{color:var(--muted)}
 .sv-rows{display:flex;flex-direction:column;gap:.45rem}
 .sv-row{display:flex;align-items:center;gap:.65rem;padding:.65rem .8rem;background:var(--card);
   border:1px solid var(--border);border-radius:12px;color:var(--text)}
-.sv-row:hover{border-color:rgba(210,35,37,.35)}
+.sv-row:hover{border-color:rgba(16,185,129,.4)}
 .sv-row>svg{flex:none;color:var(--dim)}
 .sv-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--dim)}
 .sv-t{flex:1;min-width:0}
@@ -1028,9 +1039,9 @@ footer b{color:var(--muted)}
 .sv-b.sv-mute{color:var(--dim)}
 /* Bouton « PDF » d'une rangée de suivi : télécharge l'attestation (hors-ligne OK). */
 .sv-pdf{flex:none;display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:700;
-  padding:.2rem .55rem;border-radius:999px;border:1px solid var(--border);color:var(--accent-l);
+  padding:.2rem .55rem;border-radius:999px;border:1px solid var(--border);color:#34d399;
   background:var(--card-2);cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s}
-.sv-pdf:hover{border-color:var(--brand);background:rgba(210,35,37,.1)}
+.sv-pdf:hover{border-color:#10b981;background:rgba(16,185,129,.1)}
 .sv-pdf svg{width:12px;height:12px}
 .sv-note{color:var(--dim);font-size:.82rem;margin:1.4rem 0 2rem;max-width:560px}
 @media (max-width:640px){
@@ -1102,6 +1113,8 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .hist th,:root[data-theme="light"] .hist td{border-bottom-color:#e0a8a8}
 :root[data-theme="light"] .hist tbody tr:last-child td{border-bottom:none}
 :root[data-theme="light"] .hist td:first-child{color:#c00808}
+:root[data-theme="light"] .hero-suivi .eyebrow,:root[data-theme="light"] .hero-suivi h1 .hl{color:#047857}
+:root[data-theme="light"] .sv-pdf{color:#047857}
 :root[data-theme="light"] body{
   background-image:radial-gradient(120% 60% at 85% -5%,rgba(210,35,37,.05),transparent 55%)}
 :root[data-theme="light"] .chip.on{color:#b81b1d}
@@ -1155,7 +1168,7 @@ footer b{color:var(--muted)}
 .sp-pct{margin-left:auto;font-family:var(--font-display);font-size:.92rem;font-weight:800;color:var(--strong)}
 .sp-bar{height:8px;border-radius:999px;background:var(--card);border:1px solid var(--border);
   overflow:hidden;margin:.5rem 0 .4rem}
-.sp-bar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .4s ease}
+.sp-bar i{display:block;height:100%;background:#10b981;border-radius:999px;transition:width .4s ease}
 .secprg.done .sp-bar i{background:#10b981}
 .secprg.done .sp-pct{color:#34d399}
 :root[data-theme="light"] .secprg.done .sp-pct{color:#047857}

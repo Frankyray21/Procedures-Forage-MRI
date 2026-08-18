@@ -3576,7 +3576,7 @@
     var engDD = DATA.filter(function (p) { return p.famille === 'english' && enDD(p); }).sort(svCmp);
 
     view.innerHTML =
-      '<section class="hero herosm"><div class="wrap">' +
+      '<section class="hero herosm hero-suivi"><div class="wrap">' +
         '<span class="eyebrow">Suivi de formation</span>' +
         '<h1>Mon <span class="hl">suivi</span></h1>' +
         '<p class="lead">Ta progression sur les procédures : quiz complétés, attestations envoyées et résultats détaillés.' +
