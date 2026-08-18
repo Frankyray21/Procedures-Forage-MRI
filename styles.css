@@ -16,34 +16,41 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
 :root{
-  --bg:#0a0e17;--bg-2:#0d1320;--card:#111827;--card-2:#1a2332;
+  /* Palette industrielle sombre (fiche de procédure et base du site) */
+  --app-bg:#020406;--surface:#06090d;--surface-raised:#0b1016;
+  --text-main:#f4f6f8;--text-muted:#b7bec8;--border-neutral:#303943;
+  --blue:#0a84ff;--blue-dark:#062a67;--blue-surface:#03162f;
+  --amber:#ffb000;--amber-dark:#573800;--amber-surface:#211600;
+  --red:#ff2020;--red-dark:#650000;--red-surface:#260000;
+  --locked:#777c83;--locked-dark:#282c31;
+  --pdf-well:#10151c;
+  --bg:var(--app-bg);--bg-2:var(--surface-raised);--card:var(--surface);--card-2:var(--surface-raised);
   --brand:#d22325;--brand-d:#a81a1c;--accent:#d22325;--accent-l:#ef5a5c;
   --danger:#ef4444;--warn:#f59e0b;--success:#10b981;
-  --text:#f1f5f9;--muted:#9aa7bd;--dim:#8694ad;--border:#1e293b;--strong:#fff;--lead:#cbd5e1;
+  --text:var(--text-main);--muted:var(--text-muted);--dim:#8b929c;--border:var(--border-neutral);--strong:#fff;--lead:#c9ced6;
   --g-red:linear-gradient(135deg,#e23a3c,#a81a1c);
   /* Rangées de procédures : fond nettement détaché de la page (elles se
-     confondaient avec #0a0e17). Titre en blanc pur, code en retrait. */
-  --row-bg:#212c44;--row-bg-h:#2a3860;--row-bd:#3a486a;--row-code:#b7c2d8;
+     confondaient avec le fond presque noir). Titre en blanc pur, code en retrait. */
+  --row-bg:#141a22;--row-bg-h:#1c242e;--row-bd:#303943;--row-code:#b7bec8;
   --row-sh:0 1px 8px rgba(0,0,0,.45);
-  --shadow-card:0 1px 0 rgba(255,255,255,.04) inset,0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.28);
+  --shadow-card:0 1px 2px rgba(0,0,0,.4);
   --font-display:'Barlow Condensed','Barlow',sans-serif;
   --font-body:'Barlow',sans-serif;
-  --maxw:1080px;
+  --maxw:1100px;
 }
 
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.65;
-  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;min-height:100vh;
-  background-image:radial-gradient(120% 60% at 85% -5%,rgba(210,35,37,.10),transparent 55%);background-attachment:fixed}
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;min-height:100vh}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer}
 img{max-width:100%}
 ::selection{background:rgba(210,35,37,.35);color:#fff}
-:focus-visible{outline:2px solid var(--accent-l);outline-offset:2px;border-radius:8px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
 
 /* ===== top app bar ===== */
 .appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;
-  padding:.7rem clamp(1rem,4vw,2rem);background:rgba(10,14,23,.82);
+  padding:.7rem clamp(1rem,4vw,2rem);background:rgba(2,4,6,.86);
   backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
   border-bottom:1px solid rgba(255,255,255,.07)}
 .appbar .brand{display:flex;align-items:center;gap:.7rem;min-width:0}
@@ -89,7 +96,7 @@ img{max-width:100%}
   border:none;border-radius:50%;background:currentColor}}
 
 /* ===== layout ===== */
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(1rem,4vw,2rem)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(16px,3vw,24px)}
 main{padding-bottom:5rem;animation:fade .4s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-display);font-size:.8rem;
@@ -123,8 +130,6 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 /* Écrans tactiles (gants) : cibles d'au moins ~42px de haut */
 @media (pointer:coarse){
   .chip{padding:.72rem .95rem}
-  .pdfbox a.dl{padding:.5rem .55rem;margin:-.3rem 0}
-  .back{padding:.45rem .6rem .45rem 0}
 }
 .chip.on{color:#fff;background:rgba(210,35,37,.16);border-color:var(--brand)}
 .chip .ct{font-size:.72rem;color:var(--dim)}
@@ -158,25 +163,44 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .empty{text-align:center;color:var(--dim);padding:3rem 1rem}
 
 /* ===== procedure detail ===== */
-.back{display:inline-flex;align-items:center;gap:.4rem;color:var(--muted);font-weight:700;font-size:.9rem;
-  margin:1.4rem 0;transition:.2s}
-.back:hover{color:var(--strong)}
-.phead{border-bottom:1px solid var(--border);padding-bottom:1.4rem;margin-bottom:1.6rem}
-.phead h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:800;line-height:1.04;
-  text-transform:uppercase;margin:.7rem 0 .5rem;text-wrap:balance}
-.phead .meta{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;color:var(--dim);font-size:.82rem;font-weight:600}
-.phead .meta .dot{width:4px;height:4px;border-radius:50%;background:var(--dim)}
+/* Fil d'Ariane : texte bleu pâle, flèche blanche */
+.back{display:inline-flex;align-items:center;gap:.45rem;color:#8fbcff;font-weight:700;font-size:.95rem;
+  margin:1.3rem 0 1rem;padding:.3rem 0;transition:.2s}
+.back svg{color:var(--strong)}
+.back:hover{color:#c4dcff}
+.phead{border-bottom:1px solid var(--border);padding-bottom:1.3rem;margin-bottom:1.4rem}
+.phead h1{font-family:var(--font-display);font-size:clamp(1.875rem,1.1rem+3.4vw,3.25rem);font-weight:800;line-height:1.02;
+  text-transform:uppercase;letter-spacing:.005em;margin:.55rem 0 .5rem;text-wrap:balance;color:var(--strong)}
+.phead .tags{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+.phead .meta{display:flex;gap:.4rem .6rem;flex-wrap:wrap;align-items:center;color:var(--text-muted);font-size:.92rem;font-weight:600;margin-top:.7rem}
+.phead .meta .dot{width:5px;height:5px;border-radius:50%;background:var(--blue);flex:none}
+/* Code de procédure (blanc) + pastille de tâche pleine (rouge = maintenance) */
+.phead .code-tag{font-size:1rem;color:var(--strong);letter-spacing:.05em}
+.phead .cat-tag{color:#fff;background:var(--cat,var(--brand));border:none;border-radius:4px;
+  padding:.24rem .65rem;font-size:.78rem;letter-spacing:.09em}
 .kv{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.1rem}
 .kv .k{background:var(--card-2);border:1px solid var(--border);border-radius:11px;padding:.5rem .8rem;min-width:120px}
 .kv .k span{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--dim)}
 .kv .k b{font-family:var(--font-display);font-size:1.15rem;color:var(--strong);font-weight:700}
 
-.sec{margin:2rem 0}
-.sec > h2{font-family:var(--font-display);font-size:1.4rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;
-  display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
-.sec > h2::before{content:'';width:5px;height:1.25rem;background:var(--brand);border-radius:3px}
-.lead2{color:var(--lead);font-size:1.04rem;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--brand);
-  border-radius:12px;padding:1rem 1.2rem}
+.sec{margin:1.7rem 0}
+.sec > h2{font-family:var(--font-display);font-size:clamp(1.375rem,1.15rem+.75vw,1.625rem);font-weight:800;
+  text-transform:uppercase;letter-spacing:.02em;color:var(--strong);
+  display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
+.sec > h2::before{content:'';width:5px;height:1.3rem;background:var(--brand);border-radius:2px;flex:none}
+/* petite cellule d'icône dans un titre de section */
+.h2ic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:5px;flex:none}
+.h2ic svg{width:17px;height:17px}
+.h2ic-doc{background:var(--blue-surface);border:1px solid var(--blue-dark);color:var(--blue)}
+.h2ic-hist{background:rgba(0,0,0,.28);color:#fff}
+/* ===== bloc d'information (résumé) : carte noire, bordure bleue, icône à gauche ===== */
+.lead2{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:start;
+  color:var(--text-main);font-size:1.08rem;line-height:1.65;background:var(--surface);
+  border:2px solid var(--blue);border-radius:6px;padding:1.1rem 1.2rem}
+.lead2 .lead2-ic{display:flex;align-items:center;justify-content:center;width:46px;height:46px;
+  border-radius:6px;background:var(--blue-dark);color:#7db8ff}
+.lead2 p{margin:0}
 .pill-list{display:flex;flex-wrap:wrap;gap:.5rem}
 .pill{background:var(--card-2);border:1px solid var(--border);border-radius:9px;padding:.45rem .8rem;font-size:.9rem;color:var(--text)}
 .pill.epi{border-color:rgba(16,185,129,.35);color:#a7f3d0;background:rgba(16,185,129,.08)}
@@ -206,36 +230,49 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .rule .rt{flex:1}
 .rule .rsrc{font-size:.74rem;color:var(--dim);font-weight:700;margin-top:.2rem}
 
-/* history */
-.hist{width:100%;border-collapse:collapse;font-size:.86rem}
-.hist th,.hist td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--border);vertical-align:top}
-.hist th{color:var(--dim);text-transform:uppercase;font-size:.72rem;letter-spacing:.06em}
-.hist td:first-child{white-space:nowrap;color:var(--accent-l);font-weight:700}
+/* history — tableau : en-têtes blancs, séparateurs rouges fins, date rouge vif */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.hist{width:100%;border-collapse:collapse;font-size:.95rem}
+.hist th,.hist td{text-align:left;padding:.6rem .7rem;border-bottom:1px solid var(--red-dark);vertical-align:top}
+.hist tbody tr:last-child td{border-bottom:none}
+.hist th{color:var(--strong);font-family:var(--font-display);text-transform:uppercase;font-size:.85rem;
+  font-weight:700;letter-spacing:.08em}
+.hist td{color:#e3e7ec}
+.hist td:first-child{white-space:nowrap;color:var(--red);font-weight:700}
+.hist th:last-child,.hist td:last-child{text-align:right}
+@media(max-width:640px){.tscroll .hist{min-width:540px}}
 
-/* PDF viewer */
-.pdfbox{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#0b0f17}
-.pdfbox .bar{display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem;border-bottom:1px solid var(--border);
-  background:var(--card)}
-.pdfbox .bar b{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:.92rem}
+/* PDF viewer — LA carte dominante : bordure bleu vif, bandeau bleu foncé */
+.pdfbox{border:2px solid var(--blue);border-radius:6px;overflow:hidden;background:var(--surface)}
+.pdfbox .bar{display:flex;align-items:center;gap:.6rem .9rem;flex-wrap:wrap;padding:.7rem 1rem;
+  border-bottom:1px solid var(--blue-dark);color:#fff;
+  background:linear-gradient(90deg,#0a58c7 0%,#051b48 100%)}
+.pdfbox .bar b{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.05em;font-size:1.02rem;
+  font-weight:700;color:#fff}
 .pdfbox .bar .sp{margin-left:auto}
-.pdfbox a.dl{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:700;color:var(--accent-l)}
-.pdfview>summary{display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem;cursor:pointer;list-style:none;
-  color:var(--accent-l);font-weight:700;font-size:.9rem;user-select:none}
+.pdfbox a.dl{display:inline-flex;align-items:center;gap:.45rem;font-size:.9rem;font-weight:700;color:#fff;
+  padding:.55rem .5rem;margin:-.35rem 0;border-radius:5px}
+.pdfbox a.dl:hover{color:#cfe3ff}
+.pdfbox a.dl:focus-visible{outline-color:#fff}
+.pdfview>summary{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;cursor:pointer;list-style:none;
+  color:var(--blue);font-weight:700;font-size:.98rem;user-select:none}
 .pdfview>summary::-webkit-details-marker{display:none}
-.pdfview>summary::before{content:'';width:0;height:0;border-left:6px solid currentColor;
-  border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s;flex:none}
-.pdfview[open]>summary::before{transform:rotate(90deg)}
+.pdfview>summary .pv-chev{display:inline-flex;flex:none;transition:transform .15s}
+.pdfview[open]>summary .pv-chev{transform:rotate(180deg)}
 .pdfview>summary:hover{background:rgba(255,255,255,.04)}
-.pdfview .pv-n{margin-left:auto;font-size:.78rem;font-weight:700;color:var(--dim)}
+.pdfview .pv-n{margin-left:auto;flex:none;font-size:.82rem;font-weight:700;color:var(--blue);
+  border:1px solid var(--blue);border-radius:5px;padding:.3rem .7rem;white-space:nowrap}
 .pdfview[open]>summary{border-bottom:1px solid var(--border)}
-/* Aperçu de la première page — le toucher ouvre le document en plein écran */
-.pdfbox .pv-thumb{position:relative;display:block;width:calc(100% - 1.8rem);margin:0 .9rem .9rem;padding:0;
-  max-height:280px;overflow:hidden;border:1px solid var(--border);border-radius:10px;background:#525659;
-  cursor:pointer;font:inherit;text-align:center}
-.pdfbox .pv-thumb img{width:100%;max-width:640px;height:auto;display:block;margin:0 auto}
-.pdfbox .pv-thumb .pv-more{position:absolute;left:0;right:0;bottom:0;padding:2rem .9rem .6rem;
-  text-align:center;font-size:.8rem;font-weight:700;color:#fff;
-  background:linear-gradient(to bottom,transparent,rgba(10,14,23,.88))}
+/* Aperçu de la première page (non rognée, sur fond gris très foncé) —
+   le toucher ouvre le document en plein écran */
+.pdfbox .pv-thumb{position:relative;display:block;width:calc(100% - 2rem);margin:0 1rem 1rem;padding:1rem 1rem .6rem;
+  border:1px solid var(--border);border-radius:5px;background:var(--pdf-well);
+  cursor:pointer;font:inherit;text-align:center;transition:border-color .15s}
+.pdfbox .pv-thumb:hover{border-color:var(--blue)}
+.pdfbox .pv-thumb img{display:block;margin:0 auto;width:auto;height:auto;max-width:min(100%,660px);
+  max-height:540px;object-fit:contain;background:#fff}
+.pdfbox .pv-thumb .pv-more{display:block;padding:.65rem .4rem 0;text-align:center;
+  font-size:.88rem;font-weight:700;color:var(--text-muted)}
 .pdfview[open]+.pv-thumb{display:none}
 
 /* Visionneuse plein écran du document officiel (ouverte depuis l'aperçu) */
@@ -257,8 +294,8 @@ main{padding-bottom:5rem;animation:fade .4s ease}
   display:flex;flex-direction:column;align-items:center;gap:12px}
 .docfs-pages img{width:100%;max-width:980px;height:auto;display:block;border-radius:4px;
   box-shadow:0 2px 10px rgba(0,0,0,.45)}
-.pdfbox iframe,.pdfbox object{width:100%;height:78vh;border:0;display:block;background:#525659}
-.pdfbox .pdfpages{height:78vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#525659;
+.pdfbox iframe,.pdfbox object{width:100%;height:78vh;border:0;display:block;background:var(--pdf-well)}
+.pdfbox .pdfpages{height:78vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--pdf-well);
   padding:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
 .pdfbox .pdfpages img{width:100%;max-width:900px;height:auto;display:block;border-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.45)}
 
@@ -301,7 +338,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 
 /* ===== buttons / misc ===== */
 .btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#c01e20,#8f1517);color:#fff;
-  border:none;font-weight:800;padding:.75rem 1.4rem;border-radius:11px;font-size:.96rem;box-shadow:0 8px 24px rgba(210,35,37,.3);transition:.2s}
+  border:none;font-weight:800;padding:.75rem 1.4rem;border-radius:6px;font-size:.96rem;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:.2s}
 .btn:hover{transform:translateY(-2px)}
 .btn.ghost{background:var(--card-2);border:1px solid var(--border);box-shadow:none;color:var(--text)}
 .btn.ghost:hover{border-color:var(--brand)}
@@ -600,17 +637,37 @@ footer b{color:var(--muted)}
   .lightbox .lb-nav{width:42px;height:42px}
 }
 
+/* ===== cartes de section à bandeau (quiz / attestation / historique) ===== */
+.seccard{padding:0;background:var(--surface);border:1.5px solid var(--border-neutral);
+  border-radius:6px;overflow:hidden}
+.seccard>h2{margin:0;padding:.75rem 1.1rem;color:#fff}
+.seccard>h2::before{display:none}
+.seccard .scbody{padding:1rem 1.1rem 1.1rem}
+.sc-quiz{border-color:var(--amber)}
+.sc-quiz>h2{background:linear-gradient(90deg,#a66a00 0%,#3c2800 100%)}
+.sc-hist{border-color:var(--red)}
+.sc-hist>h2{background:linear-gradient(90deg,#760000 0%,#280000 100%)}
+.sc-lock>h2{background:var(--locked-dark);color:var(--text-main)}
+/* états ré-affichés dynamiquement dans la carte (attestation envoyée / en file) */
+.seccard>.attest-done{margin:1rem 1.1rem}
 /* ===== quiz intégré à la fiche ===== */
-.pquiz{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden}
-.pquiz>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
-  padding:1rem 1.1rem;font-weight:700}
+.pquiz{background:transparent;border:none;border-radius:0}
+.pquiz>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:.7rem .9rem;flex-wrap:wrap;
+  padding:.95rem 1.1rem;font-weight:600;font-size:1.05rem}
 .pquiz>summary::-webkit-details-marker{display:none}
-.pquiz>summary::before{content:"";flex:none;width:34px;height:34px;border-radius:9px;background:rgba(210,35,37,.14);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23ef5a5c' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.1 9a3 3 0 1 1 5.8 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
-.pquiz>summary .pqs-t{flex:1;min-width:140px}
-.pquiz>summary .pqs-b{font-family:var(--font-display);font-size:.8rem;font-weight:800;letter-spacing:.03em;
-  color:var(--accent-l);background:rgba(210,35,37,.1);border:1px solid rgba(210,35,37,.25);
-  border-radius:8px;padding:.25rem .6rem}
+.pquiz>summary:focus-visible{outline:2px solid var(--blue);outline-offset:-3px}
+.pquiz>summary .pq-qic{flex:none;width:42px;height:42px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;background:var(--amber-surface);border:1px solid var(--amber-dark);color:var(--amber)}
+.pquiz>summary .pqs-t{flex:1;min-width:150px}
+.pquiz>summary .pqs-n{flex:none;font-family:var(--font-display);font-size:.85rem;font-weight:700;
+  letter-spacing:.03em;color:var(--amber);border:1.5px solid var(--amber);border-radius:5px;
+  padding:.32rem .75rem;white-space:nowrap}
+/* « Commencer » : l'action la plus visible de la page (bouton plein rouge) */
+.pquiz>summary .pqs-b{font-family:var(--font-display);font-size:1rem;font-weight:800;letter-spacing:.04em;
+  text-transform:uppercase;color:#fff;background:var(--brand);border:none;border-radius:5px;
+  padding:.68rem 1.4rem;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap;
+  transition:background .15s}
+.pquiz>summary:hover .pqs-b{background:#e13234}
 .pquiz[open]>summary{border-bottom:1px solid var(--border)}
 .pqbody{padding:1rem 1.1rem 1.2rem}
 .pq{padding:.9rem 0;border-bottom:1px solid var(--border)}
@@ -704,8 +761,10 @@ footer b{color:var(--muted)}
 .pq-cor:empty{display:none}
 /* mode révision : questions masquées */
 .pq.pq-hidden{display:none}
-/* attestation verrouillée (note de passage 80 %) */
-.attest-btn.attest-locked{background:var(--card-2);border:1px solid var(--border);color:var(--dim);box-shadow:none;cursor:not-allowed}
+/* attestation verrouillée : bouton gris désactivé, mais texte lisible */
+.attest-btn.attest-locked{background:var(--locked-dark);border:1px solid var(--border-neutral);
+  color:#aeb4bb;box-shadow:none;cursor:not-allowed;transform:none}
+.attest-btn.attest-locked:hover{background:var(--locked-dark);transform:none}
 /* quiz éclair : nouveaux types */
 .qhint{color:var(--dim);font-size:.85rem;margin:-.4rem 0 .8rem}
 .qvald{margin-top:.9rem}
@@ -849,12 +908,19 @@ footer b{color:var(--muted)}
 .cbgrp-b{display:none;padding:.1rem .55rem .35rem}
 .cbgrp.open .cbgrp-b{display:block}
 .cbgrp-b .cbans{margin:.4rem 0}
-/* Attestation de lecture (par procédure) */
-.attest-sec{border:1px solid rgba(52,211,153,.4);background:rgba(52,211,153,.05)}
-.attest-lead{color:var(--muted);font-size:.95rem;line-height:1.55;margin:.1rem 0 .8rem}
-.attest-btn{display:inline-flex;align-items:center;gap:.5rem;background:#047857;border-color:#047857}
-.attest-btn:hover{background:#065f46;border-color:#065f46}
-.attest-btn:disabled{opacity:.6;cursor:default}
+/* Attestation de lecture (par procédure) — carte grise « verrouillée » tant
+   que le quiz n'est pas complété ; le texte reste pleinement lisible. */
+.attest-row{display:flex;align-items:flex-start;gap:.9rem;flex-wrap:wrap;margin-bottom:.9rem}
+.attest-ic{flex:none;width:42px;height:42px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;background:var(--locked-dark);color:#aeb4bb}
+.attest-state{flex:none;margin-left:auto;font-family:var(--font-display);font-size:.85rem;font-weight:700;
+  letter-spacing:.04em;color:#aeb4bb;border:1.5px solid var(--locked);border-radius:5px;
+  padding:.32rem .75rem;white-space:nowrap}
+.attest-lead{flex:1;min-width:230px;color:var(--text-main);font-size:1.05rem;line-height:1.6;margin:0}
+.scbody>.attest-lead{margin:.1rem 0 .9rem}
+.attest-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--brand);border-radius:5px}
+.attest-btn:hover{background:#e13234}
+.attest-btn:disabled{cursor:default}
 /* formulaire d'attestation : nom + autocomplétion employés */
 .attest-form{position:relative;display:flex;flex-direction:column;gap:.2rem;max-width:440px}
 .attest-field{display:flex;flex-direction:column;gap:.3rem}
@@ -1008,6 +1074,9 @@ footer b{color:var(--muted)}
 
 /* ===== thème clair (surface / plein soleil) — l'en-tête reste noir ===== */
 :root[data-theme="light"]{
+  --app-bg:#f2f4f8;--surface:#ffffff;--surface-raised:#e9edf3;
+  --text-main:#111827;--text-muted:#4b5563;--border-neutral:#c9d1da;
+  --locked:#5b6470;--locked-dark:#e2e6ea;--pdf-well:#ccd1d8;
   --bg:#f2f4f8;--bg-2:#e9edf3;--card:#ffffff;--card-2:#e8ecf1;
   --text:#111827;--muted:#4b5563;--dim:#6b7280;--border:#d4dae2;
   --accent-l:#b81b1d;--success:#0e8a63;--strong:#111827;--lead:#374151;
@@ -1016,6 +1085,24 @@ footer b{color:var(--muted)}
   --row-bg:#ffffff;--row-bg-h:#eef1f6;--row-bd:#cdd5e0;--row-code:#6b7280;
   --row-sh:0 1px 6px rgba(15,23,42,.08);
 }
+/* fiche de procédure en thème clair : mêmes fonctions, teintes assombries */
+:root[data-theme="light"] .back{color:#1d5fb8}
+:root[data-theme="light"] .back:hover{color:#0a3f8a}
+:root[data-theme="light"] .lead2 .lead2-ic{background:#dcebff;color:#0a58c7}
+:root[data-theme="light"] .h2ic-doc{background:#e3efff;border-color:#bcd7ff;color:#0a58c7}
+:root[data-theme="light"] .pdfview>summary{color:#0a58c7}
+:root[data-theme="light"] .pdfview .pv-n{color:#0a58c7;border-color:#0a58c7}
+:root[data-theme="light"] .pdfview>summary:hover{background:rgba(0,0,0,.04)}
+:root[data-theme="light"] .pquiz>summary .pq-qic{background:#fff3d6;border-color:#e6c26a;color:#8a5a00}
+:root[data-theme="light"] .pquiz>summary .pqs-n{color:#8a5a00;border-color:#b47d00}
+:root[data-theme="light"] .attest-ic{color:#5b6470}
+:root[data-theme="light"] .attest-state{color:#5b6470;border-color:#8b929c}
+:root[data-theme="light"] .attest-btn.attest-locked{color:#5b6470}
+:root[data-theme="light"] .hist th{color:var(--strong)}
+:root[data-theme="light"] .hist td{color:#2a3138}
+:root[data-theme="light"] .hist th,:root[data-theme="light"] .hist td{border-bottom-color:#e0a8a8}
+:root[data-theme="light"] .hist tbody tr:last-child td{border-bottom:none}
+:root[data-theme="light"] .hist td:first-child{color:#c00808}
 :root[data-theme="light"] body{
   background-image:radial-gradient(120% 60% at 85% -5%,rgba(210,35,37,.05),transparent 55%)}
 :root[data-theme="light"] .chip.on{color:#b81b1d}
@@ -1165,7 +1252,21 @@ footer b{color:var(--muted)}
 
 /* ===== mise en page mobile (téléphones) : tout plus dense, rien de retiré ===== */
 @media (max-width:640px){
-  .wrap{padding:0 .8rem}
+  .wrap{padding:0 1rem}
+  /* fiche de procédure : cellules d'icônes réduites, actions empilables,
+     boutons pleine largeur — l'ordre des sections ne change pas */
+  .lead2{padding:.85rem .9rem;gap:.75rem}
+  .lead2 .lead2-ic{width:38px;height:38px}
+  .lead2 .lead2-ic svg{width:19px;height:19px}
+  .seccard .scbody{padding:.85rem .9rem 1rem}
+  .pquiz>summary{padding:.85rem .9rem;gap:.6rem .8rem}
+  .pquiz>summary .pqs-b{flex:1 1 100%;justify-content:center}
+  /* attestation : icône + texte côte à côte, pastille « Verrouillé » dessous */
+  .attest-row{display:grid;grid-template-columns:auto 1fr;gap:.75rem;align-items:start}
+  .attest-row .attest-lead{min-width:0}
+  .attest-row .attest-state{grid-column:2;justify-self:start;margin-left:0}
+  .attest-ic{width:38px;height:38px}
+  .pdfbox .pv-thumb{width:calc(100% - 1.6rem);margin:0 .8rem .8rem;padding:.7rem .7rem .5rem}
   /* héro allégé : sur téléphone on garde le titre et les chiffres ; le badge
      décoratif et le paragraphe d'intro (redondant avec le bandeau hors-ligne)
      sont masqués — ils restent visibles sur grand écran */
@@ -1212,6 +1313,16 @@ footer b{color:var(--muted)}
   .lrow{margin:.1rem 0 .35rem;gap:.3rem}
   .lmode-b{font-size:.76rem;padding:.48rem .6rem}
   .lmode-t{font-size:.72rem}
+}
+
+/* ===== écrans tactiles (gants) : cibles d'au moins 44px sur la fiche =====
+   (déclaré APRÈS les règles de base pour gagner la cascade ; le débord des
+   liens du bandeau est absorbé par la marge négative — hauteur visuelle idem) */
+@media (pointer:coarse){
+  .pdfbox a.dl{padding:.95rem .6rem;margin:-.6rem 0}
+  .pdfview>summary{padding:.95rem 1rem}
+  .back{padding:.85rem .6rem .85rem 0;margin:.6rem 0 .4rem}
+  .btn{padding:.9rem 1.4rem}
 }
 
 /* filtre de tâche SÉLECTIONNÉ : le mot, la pastille, la bordure et le fond
