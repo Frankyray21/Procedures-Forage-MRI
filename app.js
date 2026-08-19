@@ -1568,7 +1568,7 @@
     var metaItems = (p.machines || []).slice();
     if (p.date_creation) metaItems.push(p.date_creation);
     if (p.date_revision) metaItems.push('Rév. ' + p.date_revision);
-    var h = '<div class="wrap"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
+    var h = '<div class="wrap" style="--cat:' + col + '"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
       '<div class="phead">' +
         '<h1>' + esc(p.titre) + '</h1>' +
         '<div class="tags" style="margin-top:.55rem">' +

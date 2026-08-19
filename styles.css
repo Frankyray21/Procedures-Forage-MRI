@@ -173,7 +173,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
   text-transform:uppercase;letter-spacing:.005em;margin:.55rem 0 .5rem;text-wrap:balance;color:var(--strong)}
 .phead .tags{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
 .phead .meta{display:flex;gap:.4rem .6rem;flex-wrap:wrap;align-items:center;color:var(--text-muted);font-size:.92rem;font-weight:600;margin-top:.7rem}
-.phead .meta .dot{width:5px;height:5px;border-radius:50%;background:var(--blue);flex:none}
+.phead .meta .dot{width:5px;height:5px;border-radius:50%;background:var(--cat,var(--blue));flex:none}
 /* Code de procédure (blanc) + pastille de tâche pleine (rouge = maintenance) */
 .phead .code-tag{font-size:1rem;color:var(--strong);letter-spacing:.05em}
 .phead .cat-tag{color:#fff;background:var(--cat,var(--brand));border:none;border-radius:4px;
@@ -240,9 +240,12 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 
 /* PDF viewer — LA carte dominante : bandeau bleu foncé, sans encadré (sobre) */
 .pdfbox{border:none;border-radius:6px;overflow:hidden;background:var(--surface)}
+/* bandeau à la couleur du TYPE DE TÂCHE de la procédure (--cat, posé sur la
+   fiche) : un voile noir dégradé assombrit la couleur pour garder le texte
+   blanc lisible (ex. Manutention = mauve, Forage = rouge, Alésage = bleu) */
 .pdfbox .bar{display:flex;align-items:center;gap:.6rem .9rem;flex-wrap:wrap;padding:.7rem 1rem;
-  border-bottom:1px solid var(--blue-dark);color:#fff;
-  background:linear-gradient(90deg,#0a58c7 0%,#051b48 100%)}
+  border-bottom:1px solid rgba(0,0,0,.4);color:#fff;
+  background:linear-gradient(90deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.82) 100%),var(--cat,#0a58c7)}
 .pdfbox .bar b{font-family:var(--font-body);letter-spacing:.02em;font-size:.98rem;
   font-weight:600;color:#fff}
 .pdfbox .bar .sp{margin-left:auto}
