@@ -122,6 +122,19 @@ main{padding-bottom:5rem;animation:fade .4s ease}
   background:var(--card);border:1px solid var(--border);border-radius:13px;transition:.2s}
 .search input::placeholder{color:var(--dim)}
 .search input:focus{border-color:var(--brand);background:var(--card-2);box-shadow:0 0 0 4px rgba(210,35,37,.12)}
+/* Recherche proéminente des listes : sous le titre, agrandie, collante sous
+   la barre d'app au défilement (fond fondu vers le bas pour la transition) */
+.srchbar{position:sticky;top:60px;z-index:40;padding:.6rem 0 .55rem;
+  background:linear-gradient(to bottom,var(--bg) 88%,transparent)}
+.srchbar .search input{padding:1rem 1.1rem 1rem 3.3rem;font-size:1.1rem;
+  background:#0d1218;border:1.5px solid #414c58;border-radius:10px}
+.srchbar .search svg{width:22px;height:22px;left:1.1rem;color:var(--text-muted)}
+:root[data-theme="light"] .srchbar .search input{background:#fff;border-color:#a8b2bd}
+@media(max-width:640px){
+  .srchbar{top:59px;padding:.45rem 0 .4rem}
+  .srchbar .search input{padding:.85rem 1rem .85rem 3rem;font-size:1rem}
+  .srchbar .search svg{width:20px;height:20px;left:.95rem}
+}
 .chips{display:flex;flex-wrap:wrap;gap:.45rem;padding:.6rem 0 .25rem}
 .chip{flex:none;display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .85rem;border-radius:50px;
   font-size:.85rem;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);

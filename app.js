@@ -336,14 +336,16 @@
           : englishDD ? ' <a class="lead-x" href="#/english">ITH / CUBEX »</a>' : '') +
         '</p>' +
       '</div></section>' +
+      // Recherche mise en évidence : juste sous le titre, agrandie, et
+      // COLLANTE sous la barre d'app quand on défile (toujours accessible).
+      '<div class="srchbar"><div class="wrap"><div class="search">' + ICON.search +
+        '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" aria-label="Rechercher une procédure" autocomplete="off">' +
+      '</div></div></div>' +
       // « Ma progression » tout en haut (sous l'entête) : elle ne coupe plus
       // l'accès à la liste des procédures.
       '<div class="wrap"><div id="prgRow"></div></div>' +
       '<div class="wrap"><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
-        '<div class="search">' + ICON.search +
-          '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" aria-label="Rechercher une procédure" autocomplete="off">' +
-        '</div>' +
         '<div class="chips" id="catChips">' +
           '<button class="chip on" data-cat="">Toutes</button>' + catChips +
         '</div>' +
