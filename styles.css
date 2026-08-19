@@ -127,9 +127,11 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .srchbar{position:sticky;top:60px;z-index:40;padding:.6rem 0 .55rem;
   background:linear-gradient(to bottom,var(--bg) 88%,transparent)}
 .srchbar .search input{padding:1rem 1.1rem 1rem 3.3rem;font-size:1.1rem;
-  background:#0d1218;border:1.5px solid #414c58;border-radius:10px}
-.srchbar .search svg{width:22px;height:22px;left:1.1rem;color:var(--text-muted)}
-:root[data-theme="light"] .srchbar .search input{background:#fff;border-color:#a8b2bd}
+  background:#10161d;border:2px solid var(--brand);border-radius:10px}
+.srchbar .search input::placeholder{color:#c2c9d1}
+.srchbar .search svg{width:24px;height:24px;left:1.05rem;color:var(--accent-l)}
+:root[data-theme="light"] .srchbar .search input{background:#fff}
+:root[data-theme="light"] .srchbar .search input::placeholder{color:#5b6470}
 @media(max-width:640px){
   .srchbar{top:59px;padding:.45rem 0 .4rem}
   .srchbar .search input{padding:.85rem 1rem .85rem 3rem;font-size:1rem}
@@ -1167,21 +1169,37 @@ footer b{color:var(--muted)}
 :root[data-theme="light"] .gfig{border-color:var(--border)}
 /* Lien croisé de secteur en fin de texte d'intro (les stats sont sur Mon suivi) */
 .lead-x{color:var(--accent-l);font-weight:700;white-space:nowrap}
-/* Ma progression (haut des listes de section) : barre + palier sobre. */
-.secprg{margin:1.1rem 0 .3rem;padding:.7rem .9rem;background:var(--card-2);
-  border:1px solid var(--border);border-radius:12px}
-.sp-top{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
-.sp-top b{font-family:var(--font-display);font-size:.86rem;font-weight:800;
-  text-transform:uppercase;letter-spacing:.05em;color:var(--strong)}
-.sp-top>span:not(.sp-pct){font-size:.8rem;color:var(--muted);font-weight:600}
-.sp-pct{margin-left:auto;font-family:var(--font-display);font-size:.92rem;font-weight:800;color:var(--strong)}
-.sp-bar{height:8px;border-radius:999px;background:var(--card);border:1px solid var(--border);
-  overflow:hidden;margin:.5rem 0 .4rem}
+/* Ma progression (listes) : LIGNE MINCE au-dessus du compte — libellé,
+   compte, barre fine qui prend la largeur restante, pourcentage. */
+.secprg{display:flex;align-items:center;gap:.5rem .8rem;flex-wrap:wrap;
+  margin:.95rem 0 .3rem;padding:0;background:none;border:none}
+.sp-top{display:contents}
+.sp-top b{order:1;font-family:var(--font-display);font-size:.8rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;color:var(--strong);white-space:nowrap}
+.sp-top>span:not(.sp-pct){order:2;font-size:.82rem;color:var(--muted);font-weight:600;white-space:nowrap}
+.sp-pct{order:4;font-family:var(--font-display);font-size:.9rem;font-weight:800;color:var(--strong)}
+.sp-bar{order:3;flex:1;min-width:110px;height:5px;border-radius:999px;background:var(--surface-raised);
+  border:1px solid var(--border);overflow:hidden;margin:0}
 .sp-bar i{display:block;height:100%;background:#10b981;border-radius:999px;transition:width .4s ease}
-.secprg.done .sp-bar i{background:#10b981}
 .secprg.done .sp-pct{color:#34d399}
 :root[data-theme="light"] .secprg.done .sp-pct{color:#047857}
-.sp-msg{font-size:.78rem;color:var(--dim);margin:0}
+.sp-msg{display:none}
+/* Disponibilité hors-ligne (pack complet) : fine ligne en marge sous les filtres */
+.offline-line{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
+  margin:.7rem 0 0;font-size:.82rem;color:var(--dim);line-height:1.5}
+.offline-line b{color:var(--muted);font-weight:700}
+.offline-line .ol-chk{display:inline-flex;flex:none;color:#34d399}
+.offline-line .ol-chk svg{width:13px;height:13px}
+.offline-line .ol-btn{background:none;border:none;padding:.3rem .1rem;font:inherit;font-size:.82rem;
+  font-weight:700;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.offline-line .ol-btn:hover{color:var(--strong)}
+:root[data-theme="light"] .offline-line .ol-chk{color:#047857}
+@media(max-width:640px){
+  /* la ligne coule comme du texte : coche, phrase et lien enchaînés */
+  .offline-line{display:block}
+  .offline-line .ol-chk{display:inline-flex;vertical-align:-2px;margin-right:.3rem}
+  .offline-line .ol-btn{display:inline;padding:0 0 0 .25rem}
+}
 @media (prefers-reduced-motion: reduce){.sp-bar i{transition:none}}
 /* Palier « Section maîtrisée » (Mon suivi) */
 .sv-master{display:inline-flex;align-items:center;gap:.3rem;margin-left:.6rem;font-size:.72rem;

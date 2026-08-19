@@ -341,17 +341,16 @@
       '<div class="srchbar"><div class="wrap"><div class="search">' + ICON.search +
         '<input id="q" type="search" placeholder="Rechercher une procédure, un équipement, une consigne…" aria-label="Rechercher une procédure" autocomplete="off">' +
       '</div></div></div>' +
-      // « Ma progression » tout en haut (sous l'entête) : elle ne coupe plus
-      // l'accès à la liste des procédures.
-      '<div class="wrap"><div id="prgRow"></div></div>' +
-      '<div class="wrap"><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="chips" id="catChips">' +
           '<button class="chip on" data-cat="">Toutes</button>' + catChips +
         '</div>' +
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
-      '<div class="wrap"><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
+      // Sous les filtres, en marge : la disponibilité hors-ligne (fine ligne
+      // quand le pack est complet) puis « Ma progression » en ligne mince —
+      // ni l'une ni l'autre ne retarde l'accès à la liste.
+      '<div class="wrap"><div class="offline" id="offline"></div><div id="prgRow"></div><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
       // Installation après le contenu ; le hors ligne est en haut (compact).
       '<div class="wrap"><div class="install" id="install"></div></div>';
 
@@ -719,11 +718,11 @@
       // App Android : rien à télécharger — carte informative + partage.
       var vName = (window.__APK_OVERRIDE && window.__APK_OVERRIDE.name) ||
         (window.APK_BUILD && window.APK_BUILD.name) || '';
-      box.innerHTML = '<div class="offcard ok slim"><span class="offic">' + ICON.check + '</span>' +
-        '<div class="offtxt"><b>Disponible hors ligne</b><span>Tout le contenu est intégré dans l\'app' +
+      box.innerHTML = '<div class="offline-line"><span class="ol-chk" aria-hidden="true">' + ICON.check + '</span>' +
+        '<span><b>Disponible hors ligne</b> — tout le contenu est intégré dans l\'app' +
         (vName ? ' (contenu ' + esc(vName) + ')' : '') +
-        ' et se met à jour tout seul quand il y a du réseau.</span></div>' +
-        '<button class="btn ghost" id="shareAppBtn" title="Envoyer le lien d\'installation à un collègue">📤 Partager l\'app</button></div>';
+        ' et se met à jour tout seul quand il y a du réseau.</span>' +
+        '<button type="button" class="ol-btn" id="shareAppBtn" title="Envoyer le lien d\'installation à un collègue">📤 Partager l\'app</button></div>';
       var sb = $('#shareAppBtn'); if (sb) sb.onclick = shareApp;
       return;
     }
@@ -757,11 +756,12 @@
       return;
     }
     if (offlineReady()) {
-      box.innerHTML = '<div class="offcard ok slim"><span class="offic">' + ICON.check + '</span>' +
-        '<div class="offtxt"><b>Disponible hors ligne</b><span>Toutes les fiches' +
+      // Pack complet : simple ligne en marge sous les filtres (pas de carte).
+      box.innerHTML = '<div class="offline-line"><span class="ol-chk" aria-hidden="true">' + ICON.check + '</span>' +
+        '<span><b>Disponible hors ligne</b> — toutes les fiches' +
         (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
-        ') sont sur cet appareil.</span></div>' +
-        '<button class="btn ghost" id="offBtn">Mettre à jour</button></div>';
+        ') sont sur cet appareil.</span>' +
+        '<button type="button" class="ol-btn" id="offBtn">Mettre à jour</button></div>';
     } else {
       box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
         '<div class="offtxt"><b>Consulter sans réseau (sous terre)</b>' +
