@@ -194,9 +194,9 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .h2ic svg{width:17px;height:17px}
 .h2ic-doc{background:var(--blue-surface);border:1px solid var(--blue-dark);color:var(--blue)}
 .h2ic-hist{background:rgba(0,0,0,.28);color:#fff}
-/* ===== bloc d'information (résumé) : carte noire, bordure bleue ===== */
+/* ===== bloc d'information (résumé) : carte sobre à bordure neutre ===== */
 .lead2{color:var(--text-main);font-size:1.08rem;line-height:1.65;background:var(--surface);
-  border:2px solid var(--blue);border-radius:6px;padding:1.1rem 1.2rem}
+  border:1px solid var(--border-neutral);border-radius:6px;padding:1.1rem 1.2rem}
 .lead2 p{margin:0}
 .pill-list{display:flex;flex-wrap:wrap;gap:.5rem}
 .pill{background:var(--card-2);border:1px solid var(--border);border-radius:9px;padding:.45rem .8rem;font-size:.9rem;color:var(--text)}
