@@ -336,6 +336,9 @@
           : englishDD ? ' <a class="lead-x" href="#/english">ITH / CUBEX »</a>' : '') +
         '</p>' +
       '</div></section>' +
+      // « Ma progression » tout en haut (sous l'entête) : elle ne coupe plus
+      // l'accès à la liste des procédures.
+      '<div class="wrap"><div id="prgRow"></div></div>' +
       '<div class="wrap"><div class="offline" id="offline"></div></div>' +
       '<div class="toolbar"><div class="wrap">' +
         '<div class="search">' + ICON.search +
@@ -346,7 +349,7 @@
         '</div>' +
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
-      '<div class="wrap"><div id="prgRow"></div><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
+      '<div class="wrap"><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
       // Installation après le contenu ; le hors ligne est en haut (compact).
       '<div class="wrap"><div class="install" id="install"></div></div>';
 
