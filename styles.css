@@ -1277,13 +1277,11 @@ footer b{color:var(--muted)}
   .seccard .scbody{padding:.45rem .9rem 1rem}
   .h2ic{width:26px;height:26px}
   .h2ic svg{width:14px;height:14px}
-  /* bandeau bleu du document → simple rangée : code + actions en liens bleus */
-  .pdfbox .bar{background:none;border-bottom:1px solid var(--border);color:var(--strong);
-    padding:.45rem .8rem;gap:.35rem .7rem}
-  .pdfbox .bar b{font-size:.9rem;color:var(--strong)}
-  .pdfbox a.dl{font-size:.88rem;gap:.35rem;color:var(--strong)}
-  .pdfbox a.dl:hover{color:var(--text-muted)}
-  .pdfbox a.dl:focus-visible{outline-color:var(--blue)}
+  /* bandeau du document : compact mais à la couleur du type de tâche,
+     comme sur ordinateur (texte et actions en blanc) */
+  .pdfbox .bar{padding:.45rem .8rem;gap:.35rem .7rem}
+  .pdfbox .bar b{font-size:.9rem}
+  .pdfbox a.dl{font-size:.88rem;gap:.35rem}
   .pdfview>summary{font-size:.9rem;padding:.6rem .8rem}
   .pdfview .pv-n{font-size:.75rem;padding:.24rem .55rem}
   .lead2{padding:.85rem .9rem}
