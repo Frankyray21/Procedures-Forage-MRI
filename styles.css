@@ -192,7 +192,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .h2ic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
   border-radius:5px;flex:none}
 .h2ic svg{width:17px;height:17px}
-.h2ic-doc{background:var(--blue-surface);border:1px solid var(--blue-dark);color:var(--blue)}
+.h2ic-doc{background:var(--surface-raised);border:1px solid var(--border-neutral);color:var(--text-main)}
 .h2ic-hist{background:rgba(0,0,0,.28);color:#fff}
 /* ===== bloc d'information (résumé) : carte sobre à bordure neutre ===== */
 .lead2{color:var(--text-main);font-size:1.08rem;line-height:1.65;background:var(--surface);
@@ -251,20 +251,20 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .pdfbox a.dl:hover{color:#cfe3ff}
 .pdfbox a.dl:focus-visible{outline-color:#fff}
 .pdfview>summary{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;cursor:pointer;list-style:none;
-  color:var(--blue);font-weight:700;font-size:.98rem;user-select:none}
+  color:var(--text-main);font-weight:700;font-size:.98rem;user-select:none}
 .pdfview>summary::-webkit-details-marker{display:none}
 .pdfview>summary .pv-chev{display:inline-flex;flex:none;transition:transform .15s}
 .pdfview[open]>summary .pv-chev{transform:rotate(180deg)}
 .pdfview>summary:hover{background:rgba(255,255,255,.04)}
-.pdfview .pv-n{margin-left:auto;flex:none;font-size:.82rem;font-weight:700;color:var(--blue);
-  border:1px solid var(--blue);border-radius:5px;padding:.3rem .7rem;white-space:nowrap}
+.pdfview .pv-n{margin-left:auto;flex:none;font-size:.82rem;font-weight:700;color:var(--text-muted);
+  border:1px solid var(--border-neutral);border-radius:5px;padding:.3rem .7rem;white-space:nowrap}
 .pdfview[open]>summary{border-bottom:1px solid var(--border)}
 /* Aperçu de la première page (haut de page, centré sur fond gris très foncé,
    légende superposée sur la page) — le toucher ouvre le document en plein écran */
 .pdfbox .pv-thumb{position:relative;display:block;width:calc(100% - 2rem);margin:0 1rem 1rem;padding:.4rem .4rem 0;
   max-height:390px;overflow:hidden;border:1px solid var(--border);border-radius:5px;background:var(--pdf-well);
   cursor:pointer;font:inherit;text-align:center;transition:border-color .15s}
-.pdfbox .pv-thumb:hover{border-color:var(--blue)}
+.pdfbox .pv-thumb:hover{border-color:#5a636d}
 .pdfbox .pv-thumb img{display:block;margin:0 auto;width:100%;max-width:660px;height:auto;background:#fff}
 .pdfbox .pv-thumb .pv-more{position:absolute;left:50%;transform:translateX(-50%);bottom:0;
   width:min(100%,660px);padding:2.2rem .9rem .55rem;text-align:center;font-size:.95rem;font-weight:700;
@@ -1095,9 +1095,6 @@ footer b{color:var(--muted)}
 /* fiche de procédure en thème clair : mêmes fonctions, teintes assombries */
 :root[data-theme="light"] .back{color:#1d5fb8}
 :root[data-theme="light"] .back:hover{color:#0a3f8a}
-:root[data-theme="light"] .h2ic-doc{background:#e3efff;border-color:#bcd7ff;color:#0a58c7}
-:root[data-theme="light"] .pdfview>summary{color:#0a58c7}
-:root[data-theme="light"] .pdfview .pv-n{color:#0a58c7;border-color:#0a58c7}
 :root[data-theme="light"] .pdfview>summary:hover{background:rgba(0,0,0,.04)}
 :root[data-theme="light"] .pquiz>summary .pq-qic{background:#fff3d6;border-color:#e6c26a;color:#8a5a00}
 :root[data-theme="light"] .pquiz>summary .pqs-n{color:#8a5a00;border-color:#b47d00}
@@ -1281,8 +1278,8 @@ footer b{color:var(--muted)}
   .pdfbox .bar{background:none;border-bottom:1px solid var(--border);color:var(--strong);
     padding:.45rem .8rem;gap:.35rem .7rem}
   .pdfbox .bar b{font-size:.9rem;color:var(--strong)}
-  .pdfbox a.dl{font-size:.88rem;gap:.35rem;color:var(--blue)}
-  .pdfbox a.dl:hover{color:#5aa9ff}
+  .pdfbox a.dl{font-size:.88rem;gap:.35rem;color:var(--strong)}
+  .pdfbox a.dl:hover{color:var(--text-muted)}
   .pdfbox a.dl:focus-visible{outline-color:var(--blue)}
   .pdfview>summary{font-size:.9rem;padding:.6rem .8rem}
   .pdfview .pv-n{font-size:.75rem;padding:.24rem .55rem}
