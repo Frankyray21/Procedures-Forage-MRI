@@ -194,12 +194,9 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .h2ic svg{width:17px;height:17px}
 .h2ic-doc{background:var(--blue-surface);border:1px solid var(--blue-dark);color:var(--blue)}
 .h2ic-hist{background:rgba(0,0,0,.28);color:#fff}
-/* ===== bloc d'information (résumé) : carte noire, bordure bleue, icône à gauche ===== */
-.lead2{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:start;
-  color:var(--text-main);font-size:1.08rem;line-height:1.65;background:var(--surface);
+/* ===== bloc d'information (résumé) : carte noire, bordure bleue ===== */
+.lead2{color:var(--text-main);font-size:1.08rem;line-height:1.65;background:var(--surface);
   border:2px solid var(--blue);border-radius:6px;padding:1.1rem 1.2rem}
-.lead2 .lead2-ic{display:flex;align-items:center;justify-content:center;width:46px;height:46px;
-  border-radius:6px;background:var(--blue-dark);color:#7db8ff}
 .lead2 p{margin:0}
 .pill-list{display:flex;flex-wrap:wrap;gap:.5rem}
 .pill{background:var(--card-2);border:1px solid var(--border);border-radius:9px;padding:.45rem .8rem;font-size:.9rem;color:var(--text)}
@@ -1098,7 +1095,6 @@ footer b{color:var(--muted)}
 /* fiche de procédure en thème clair : mêmes fonctions, teintes assombries */
 :root[data-theme="light"] .back{color:#1d5fb8}
 :root[data-theme="light"] .back:hover{color:#0a3f8a}
-:root[data-theme="light"] .lead2 .lead2-ic{background:#dcebff;color:#0a58c7}
 :root[data-theme="light"] .h2ic-doc{background:#e3efff;border-color:#bcd7ff;color:#0a58c7}
 :root[data-theme="light"] .pdfview>summary{color:#0a58c7}
 :root[data-theme="light"] .pdfview .pv-n{color:#0a58c7;border-color:#0a58c7}
@@ -1290,9 +1286,7 @@ footer b{color:var(--muted)}
   .pdfbox a.dl:focus-visible{outline-color:var(--blue)}
   .pdfview>summary{font-size:.9rem;padding:.6rem .8rem}
   .pdfview .pv-n{font-size:.75rem;padding:.24rem .55rem}
-  .lead2{padding:.85rem .9rem;gap:.75rem}
-  .lead2 .lead2-ic{width:38px;height:38px}
-  .lead2 .lead2-ic svg{width:19px;height:19px}
+  .lead2{padding:.85rem .9rem}
   .seccard .scbody{padding:.85rem .9rem 1rem}
   .pquiz>summary{padding:.85rem .9rem;gap:.6rem .8rem}
   .pquiz>summary .pqs-b{flex:1 1 100%;justify-content:center}

@@ -1579,7 +1579,7 @@
         '</div>' +
       '</div>';
 
-    if (p.resume) h += '<div class="sec"><div class="lead2"><span class="lead2-ic" aria-hidden="true">' + ICON.info + '</span><p>' + esc(p.resume) + '</p></div></div>';
+    if (p.resume) h += '<div class="sec"><div class="lead2"><p>' + esc(p.resume) + '</p></div></div>';
 
     // Document officiel (PDF) — AU DÉBUT de la fiche
     if (DEMO) {
