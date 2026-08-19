@@ -1267,14 +1267,27 @@ footer b{color:var(--muted)}
   .wrap{padding:0 1rem}
   /* fiche de procédure : cellules d'icônes réduites, actions empilables,
      boutons pleine largeur — l'ordre des sections ne change pas */
-  /* bandeaux compacts : titre sur une ligne, padding réduit */
+  /* pas de bandeaux colorés sur téléphone : titres de section compacts avec
+     un simple repère de couleur (ambre = quiz, vert = formation, rouge =
+     historique) — la hiérarchie reste lisible sans blocs pleins */
   .sec>h2{font-size:1.2rem;gap:.5rem;margin-bottom:.7rem}
-  .seccard>h2{font-size:1.1rem;padding:.5rem .9rem;letter-spacing:.01em}
+  .seccard>h2{font-size:1.15rem;padding:.65rem .9rem .15rem;letter-spacing:.01em;
+    background:none;color:var(--strong)}
+  .sc-quiz>h2,.sc-hist>h2,.sc-lock>h2{background:none;color:var(--strong)}
+  .seccard>h2::before{display:block;width:4px;height:1.05rem}
+  .sc-quiz>h2::before{background:var(--amber)}
+  .sc-lock>h2::before{background:#10b981}
+  .sc-hist>h2::before{background:var(--red)}
+  .seccard .scbody{padding:.45rem .9rem 1rem}
   .h2ic{width:26px;height:26px}
   .h2ic svg{width:14px;height:14px}
-  .pdfbox .bar{padding:.5rem .8rem;gap:.35rem .7rem}
-  .pdfbox .bar b{font-size:.88rem}
-  .pdfbox a.dl{font-size:.85rem;gap:.35rem}
+  /* bandeau bleu du document → simple rangée : code + actions en liens bleus */
+  .pdfbox .bar{background:none;border-bottom:1px solid var(--border);color:var(--strong);
+    padding:.45rem .8rem;gap:.35rem .7rem}
+  .pdfbox .bar b{font-size:.9rem;color:var(--strong)}
+  .pdfbox a.dl{font-size:.88rem;gap:.35rem;color:var(--blue)}
+  .pdfbox a.dl:hover{color:#5aa9ff}
+  .pdfbox a.dl:focus-visible{outline-color:var(--blue)}
   .pdfview>summary{font-size:.9rem;padding:.6rem .8rem}
   .pdfview .pv-n{font-size:.75rem;padding:.24rem .55rem}
   .lead2{padding:.85rem .9rem;gap:.75rem}
