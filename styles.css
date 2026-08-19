@@ -1267,6 +1267,16 @@ footer b{color:var(--muted)}
   .wrap{padding:0 1rem}
   /* fiche de procédure : cellules d'icônes réduites, actions empilables,
      boutons pleine largeur — l'ordre des sections ne change pas */
+  /* bandeaux compacts : titre sur une ligne, padding réduit */
+  .sec>h2{font-size:1.2rem;gap:.5rem;margin-bottom:.7rem}
+  .seccard>h2{font-size:1.1rem;padding:.5rem .9rem;letter-spacing:.01em}
+  .h2ic{width:26px;height:26px}
+  .h2ic svg{width:14px;height:14px}
+  .pdfbox .bar{padding:.5rem .8rem;gap:.35rem .7rem}
+  .pdfbox .bar b{font-size:.88rem}
+  .pdfbox a.dl{font-size:.85rem;gap:.35rem}
+  .pdfview>summary{font-size:.9rem;padding:.6rem .8rem}
+  .pdfview .pv-n{font-size:.75rem;padding:.24rem .55rem}
   .lead2{padding:.85rem .9rem;gap:.75rem}
   .lead2 .lead2-ic{width:38px;height:38px}
   .lead2 .lead2-ic svg{width:19px;height:19px}
