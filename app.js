@@ -317,6 +317,9 @@
     }).join('');
 
     view.innerHTML =
+      // Tout en haut, sous le bandeau : la mise en cache automatique / en
+      // arrière-plan s'affiche ici en LIGNE MINCE (discrète), jamais en carte.
+      '<div class="wrap"><div id="offTop"></div></div>' +
       '<section class="hero"><div class="wrap">' +
         '<span class="eyebrow">' + ((english || englishDD) ? 'Health &amp; Safety · Drilling' : diamant ? 'Santé-Sécurité · Forage au diamant' : 'Santé-Sécurité · Forage') + '</span>' +
         '<h1>' + (english ? 'English — <span class="hl">ITH / CUBEX</span>'
@@ -348,9 +351,9 @@
         '<div class="chips" id="machChips"></div>' +
       '</div></div>' +
       // Sous les filtres, en marge : la disponibilité hors-ligne (fine ligne
-      // quand le pack est complet) puis « Ma progression » en ligne mince —
-      // ni l'une ni l'autre ne retarde l'accès à la liste.
-      '<div class="wrap"><div class="offline" id="offline"></div><div id="prgRow"></div><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
+      // quand le pack est complet). « Ma progression » vit désormais dans le
+      // bandeau du haut (pastille + filet) — voir renderSectionProgress().
+      '<div class="wrap"><div class="offline" id="offline"></div><div id="resumeRow"></div><div class="lrow"><div class="count" id="count"></div><div class="lmodes" id="lmode"></div></div><div class="plist2" id="grid"></div></div>' +
       // Installation après le contenu ; le hors ligne est en haut (compact).
       '<div class="wrap"><div class="install" id="install"></div></div>';
 
@@ -679,15 +682,15 @@
       '<span id="offeta" class="offeta">' + esc(p.eta || 'Temps restant : calcul en cours…') + '</span>' +
       (withList ? offlineListHTML() : '') + '</div></div>';
   }
+  /* Mise en cache automatique : LIGNE MINCE tout en haut de la page (#offTop),
+     pas une carte — le détail complet reste dans l'infobulle. */
   function autoCardHTML() {
     var p = dlProg, pct = dlPct();
-    return '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
-      '<div class="offtxt" style="flex:1"><b>Préparation hors-ligne automatique…</b>' +
-      '<div class="offbar"><i id="offauto" style="width:' + pct + '%"></i></div>' +
-      '<span id="offautotxt" class="offcur" aria-live="polite">' +
-      (p && p.totalBytes ? pct + ' % · ' + fmtMo(p.bytes) + ' / ' + fmtMo(p.totalBytes) : '…') + '</span>' +
-      '<span class="offhint2">Laisse l\'app ouverte avec du réseau — le contenu se met en cache une seule fois.</span>' +
-      '</div></div>';
+    return '<div class="dl-line" title="Laisse l\'app ouverte avec du réseau — le contenu se met en cache une seule fois.">' +
+      '<span class="dl-ic" aria-hidden="true">' + DL_ICON + '</span>' +
+      '<span class="dl-txt"><b>Préparation hors-ligne</b> · <span id="offautotxt" aria-live="polite">' +
+      (p && p.totalBytes ? pct + ' % · ' + fmtMo(p.bytes) + ' / ' + fmtMo(p.totalBytes) : '…') + '</span></span>' +
+      '<span class="dl-bar"><i id="offauto" style="width:' + pct + '%"></i></span></div>';
   }
   /* Partage de l'app Android : plugin natif Share dans l'APK, Web Share API
      dans le navigateur, copie du lien en dernier recours. Le lien envoyé est
@@ -714,6 +717,11 @@
   function renderOffline() {
     renderPackBadge();                       // la pastille du haut suit chaque changement d'état
     var box = $('#offline'); if (!box) return;
+    /* Les téléchargements PASSIFS (automatique, arrière-plan) s'affichent en
+       ligne mince tout en haut de la page (#offTop) ; les cartes détaillées
+       (téléchargement manuel, invitation initiale) restent dans #offline. */
+    var top = $('#offTop');
+    if (top) top.innerHTML = '';
     if (window.IS_APK) {
       // App Android : rien à télécharger — carte informative + partage.
       var vName = (window.__APK_OVERRIDE && window.__APK_OVERRIDE.name) ||
@@ -733,24 +741,29 @@
        bouton ne fait rien (startPrecache sort tout de suite si un
        téléchargement tourne déjà). */
     if (precacheBusy) {
-      box.innerHTML = dlManual ? dlCardHTML(false) : autoCardHTML();
+      if (dlManual) {
+        box.innerHTML = dlCardHTML(false);
+      } else {
+        box.innerHTML = '';
+        (top || box).innerHTML = autoCardHTML();
+      }
       return;
     }
     if (bgFetchActive) {
       // Téléchargement en arrière-plan (Background Fetch) : continue app fermée.
-      // Le bouton reste offert : si le système gèle le téléchargement, l'utilisateur
-      // doit pouvoir reprendre la main ici et maintenant.
-      var seen = '';
-      if (bgSeen && bgSeen.total) {
-        var bpc = Math.min(100, Math.round(bgSeen.got / bgSeen.total * 100));
-        seen = '<div class="offbar"><i style="width:' + bpc + '%"></i></div>' +
-          '<span class="offcur">' + fmtMo(bgSeen.got) + ' / ' + fmtMo(bgSeen.total) + ' · ' + bpc + ' %</span>';
-      }
-      box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
-        '<div class="offtxt" style="flex:1"><b>Mise en cache hors-ligne en arrière-plan…</b>' + seen +
-        '<span>Le téléchargement se poursuit même si tu fermes l\'app ; une notification t\'avertit à la fin.</span>' +
-        '</div>' +
-        '<button class="btn ghost" id="offNow" title="Annuler l\'arrière-plan et télécharger maintenant, app ouverte">Télécharger ici</button></div>';
+      // Ligne mince discrète en haut de page ; le bouton reste offert : si le
+      // système gèle le téléchargement, l'utilisateur doit pouvoir reprendre
+      // la main ici et maintenant.
+      var bpc = (bgSeen && bgSeen.total) ? Math.min(100, Math.round(bgSeen.got / bgSeen.total * 100)) : 0;
+      var seen = (bgSeen && bgSeen.total)
+        ? fmtMo(bgSeen.got) + ' / ' + fmtMo(bgSeen.total) + ' · ' + bpc + ' %'
+        : 'en cours…';
+      box.innerHTML = '';
+      (top || box).innerHTML = '<div class="dl-line" title="Le téléchargement se poursuit même si tu fermes l\'app ; une notification t\'avertit à la fin.">' +
+        '<span class="dl-ic" aria-hidden="true">' + DL_ICON + '</span>' +
+        '<span class="dl-txt"><b>Mise en cache hors-ligne</b> en arrière-plan · <span>' + seen + '</span></span>' +
+        '<span class="dl-bar"><i style="width:' + bpc + '%"></i></span>' +
+        '<button type="button" class="ol-btn" id="offNow" title="Annuler l\'arrière-plan et télécharger maintenant, app ouverte — sinon le téléchargement continue même app fermée ; une notification t\'avertit à la fin">Télécharger ici</button></div>';
       var nowBtn = $('#offNow');
       if (nowBtn) nowBtn.onclick = function () { bgAbortThenForeground(); };
       return;
@@ -811,6 +824,7 @@
     // Stockage persistant (au mieux) : évite que le système purge le pack.
     persistStorage();
     packHeartOn();          // le service worker ne doit pas télécharger le même pack en parallèle
+    var topLine = $('#offTop'); if (topLine) topLine.innerHTML = '';   // la ligne mince du haut cède la place
     box.innerHTML = dlCardHTML(true);
     var done = 0, failed = 0, bytesDone = 0, netBytes = 0, netStart = Date.now(), i = 0, active = 0;
     var listEls = {};
@@ -1456,11 +1470,13 @@
     }).join('');
   }
   /* ---------- progression de section (engagement, ton sobre) ----------
-     Barre d'attestations + quiz complétés restants, et une phrase de palier
-     factuelle. Aucune animation, aucun badge — le sentiment d'avancement
-     vient du remplissage de la barre et des états sur les rangées. */
+     Affichée DANS LE BANDEAU du haut : pastille « n/N · % » (mini-barre) à
+     côté du profil + filet vert au ras du bandeau qui se remplit. La phrase
+     de palier vit dans l'infobulle de la pastille. Aucune animation, aucun
+     badge — le sentiment d'avancement vient du remplissage du filet et des
+     états sur les rangées. */
   function renderSectionProgress(P, inEnglish) {
-    var box = $('#prgRow'); if (!box) return;
+    var chip = $('#prgChip'); if (!chip) return;
     var att = 0, quizOk = 0;
     P.forEach(function (p) {
       if (attestInfo(p.id)) { att++; return; }
@@ -1486,13 +1502,18 @@
         : att > 0 ? 'Départ pris — une fiche à la fois.'
         : 'Commence par une fiche : lecture, quiz, attestation.';
     }
-    box.innerHTML = '<div class="secprg' + (pct === 100 ? ' done' : '') + '">' +
-      '<div class="sp-top"><b>' + (inEnglish ? 'My progress' : 'Ma progression') + '</b>' +
-      '<span>' + att + ' / ' + P.length + (inEnglish ? ' certified' : ' attestées') +
-      (quizOk ? ' · ' + quizOk + (inEnglish ? ' quiz done, to certify' : ' quiz à attester') : '') + '</span>' +
-      '<span class="sp-pct">' + pct + ' %</span></div>' +
-      '<div class="sp-bar"><i style="width:' + pct + '%"></i></div>' +
-      '<p class="sp-msg">' + msg + '</p></div>';
+    chip.className = 'prgchip' + (pct === 100 ? ' done' : '');
+    chip.style.display = '';
+    // Sur petit écran, la pastille remplace le lien « Suivi » (voir CSS).
+    var bar = $('#appbar'); if (bar) bar.classList.add('has-prg');
+    chip.title = (inEnglish ? 'My progress: ' : 'Ma progression : ') +
+      att + ' / ' + P.length + (inEnglish ? ' certified' : ' attestées') +
+      (quizOk ? ' · ' + quizOk + (inEnglish ? ' quiz done, to certify' : ' quiz à attester') : '') +
+      ' — ' + msg;
+    // « · % » masqué sur petit écran (.pc-p) : la mini-barre le montre déjà.
+    var t = $('#prgChipTxt'); if (t) t.innerHTML = att + '/' + P.length + '<span class="pc-p"> · ' + pct + ' %</span>';
+    var b = $('#prgChipBar'); if (b) b.style.width = pct + '%';
+    var f = $('#appbarPrgBar'); if (f) f.style.width = pct + '%';
   }
 
   function card(p) {
