@@ -1998,7 +1998,9 @@
   /* ---------- file d'attente hors-ligne des attestations ----------
      Sous terre, pas de réseau : l'attestation est enregistrée sur l'appareil
      (attest_queue + marqueur attest_pending_<id>) puis envoyée automatiquement
-     dès que la connexion revient (événement online, ou à l'ouverture de l'app). */
+     dès que possible : événement online, ouverture de l'app, RETOUR AU PREMIER
+     PLAN (app rouverte depuis les récents en remontant du fond), et réessai
+     périodique sans abandon tant que la file n'est pas vide. */
   function aqGet() { try { var v = JSON.parse(localStorage.getItem('attest_queue')); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
   function aqSet(q) { try { localStorage.setItem('attest_queue', JSON.stringify(q)); } catch (e) {} }
   function aqAdd(pid, sig, payload) {
@@ -2008,8 +2010,12 @@
     try { localStorage.setItem(pkey('attest_pending_' + pid), payload.date || ''); } catch (e) {}
   }
   var aqBusy = false;
-  function aqFlush() {
-    if (aqBusy || !navigator.onLine) return;
+  /* force=true : tente l'envoi même si navigator.onLine dit « hors ligne ».
+     Dans le WebView Android, onLine peut rester faussement à false après une
+     reprise depuis l'arrière-plan — la requête elle-même est le vrai test de
+     connectivité (un échec retombe sur le réessai programmé). */
+  function aqFlush(force) {
+    if (aqBusy || (!force && !navigator.onLine)) return;
     var endpoint = attestEndpoint(); if (!endpoint) return;
     var q = aqGet(); if (!q.length) return;
     aqBusy = true;
@@ -2031,7 +2037,7 @@
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
           aqRefreshView(it.pid, uSlug, it.payload);
           progPushSoon();
-          aqFlush();                                   // suivante, s'il y en a
+          aqFlush(true);        // suivante, s'il y en a (l'envoi vient de prouver la connectivité)
           return;
         }
         if (res.st >= 400 && res.st < 500) {
@@ -2041,7 +2047,7 @@
           aqDrop();
           try { localStorage.removeItem(pkeyFor((it.u != null) ? it.u : profSlug(profName()), 'attest_pending_' + it.pid)); } catch (e) {}
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » refusée — refais-la depuis la fiche.');
-          aqFlush();
+          aqFlush(true);
           return;
         }
         // 5xx / réponse inattendue : panne passagère → réessai programmé.
@@ -2049,13 +2055,17 @@
       })
       .catch(function () { aqBusy = false; aqRetryLater(); });   // réseau : réessai programmé
   }
-  // Réessai automatique borné (le seul événement « online » ne suffit pas :
-  // un 5xx peut arriver alors que le réseau est déjà là).
+  // Réessai automatique SANS abandon : tant que la file n'est pas vide, on
+  // retente — délai en backoff doux (1 min → 5 min) pour ne pas marteler.
+  // L'ancien plafond de 10 essais s'épuisait sous terre (10 min sans réseau)
+  // et l'envoi ne repartait plus jamais de la session ; le retour au premier
+  // plan ou du réseau remet le délai à 1 min (aqRetries = 0).
   var aqRetryT = null, aqRetries = 0;
   function aqRetryLater() {
-    if (aqRetryT || aqRetries >= 10 || !aqGet().length) return;
+    if (aqRetryT || !aqGet().length) return;
+    var delay = Math.min(5 * 60000, 60000 * (aqRetries + 1));
     aqRetries++;
-    aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(); }, 60000);
+    aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(true); }, delay);
   }
   // Si la fiche ou le suivi de cette attestation est à l'écran, refléter l'envoi.
   function aqRefreshView(pid, uSlug, payload) {
@@ -2071,7 +2081,22 @@
       renderSuivi($('#view'));
     }
   }
-  window.addEventListener('online', aqFlush);
+  // Retour du réseau : compteur remis à zéro (un cycle d'échecs précédent ne
+  // doit pas allonger les délais du nouveau) puis envoi immédiat.
+  window.addEventListener('online', function () { aqRetries = 0; aqFlush(); });
+  /* Retour au premier plan (app rouverte depuis les récents — le geste typique
+     en remontant du fond) : dans le WebView Android, l'événement 'online' émis
+     pendant que l'app était gelée est PERDU — c'est ici qu'on rattrape. On
+     relance aussi la progression marquée « à pousser ». */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) return;
+    if (aqGet().length) {
+      aqRetries = 0;
+      if (aqRetryT) { clearTimeout(aqRetryT); aqRetryT = null; }
+      aqFlush(true);
+    }
+    progDirtyFlush();
+  });
 
   /* Renvoi immédiat, à la demande (bouton « Réessayer l'envoi »), de
      l'attestation en file pour CETTE fiche. cb(true) si acceptée par le
@@ -2466,8 +2491,17 @@
   // réseau — le PDF part donc « plus tard, quand il y a du réseau ».
   function postAttestation(endpoint, payload) {
     return buildPdfBase64(payload).then(function (b64) {
-      return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(attestBody(payload, b64)) });
+      /* Timeout de 25 s : une requête qui reste pendue (réseau qui flanche à
+         mi-chemin) ne doit JAMAIS verrouiller aqBusy — sinon la file entière
+         (et le bouton « Réessayer l'envoi ») reste coincée jusqu'au redémarrage. */
+      var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
+      var timer = ctl ? setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 25000) : null;
+      var req = { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(attestBody(payload, b64)) };
+      if (ctl) req.signal = ctl.signal;
+      return fetch(endpoint, req).then(
+        function (r) { if (timer) clearTimeout(timer); return r; },
+        function (e) { if (timer) clearTimeout(timer); throw e; });
     });
   }
   // (La « fiche gestionnaire » PDF a été retirée : les détails de suivi —
@@ -3850,7 +3884,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     route(); initInstall(); initChecklistEvents(); initTheme(); initHoverCard();
     initQuizFeedback();   // pouce 👍/👎 + commentaire sous chaque question de quiz
-    aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
+    aqFlush(true);  // attestations en attente d'envoi (force : onLine peut mentir au réveil du WebView)
     progDirtyFlush();   // progression marquée « à pousser » pendant une panne
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
     rosterEnsure();     // annuaire employés mis en cache pour l'autocomplétion hors-ligne
