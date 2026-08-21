@@ -1973,10 +1973,9 @@
       if (!navigator.onLine) { aqAdd(p.id, sig, payload); attestQueued(sec, name, payload); return; }
       sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
       postAttestation(endpoint, payload)
-        .then(function (r) { return r ? r.json().then(function (j) { return { ok: r.ok, j: j }; }) : null; })
         .then(function (res) {
           sendBtn.disabled = false;
-          if (res && res.ok && res.j && res.j.ok) {
+          if (res && res.st >= 200 && res.st < 300 && res.j && res.j.ok) {
             try { localStorage.setItem(pkey('attest_sent_' + p.id), sig); } catch (e) {}
             attestSuccess(sec, name, res.j.linked, payload, res.j.id || '');
             progPushSoon();
@@ -1998,7 +1997,9 @@
   /* ---------- file d'attente hors-ligne des attestations ----------
      Sous terre, pas de réseau : l'attestation est enregistrée sur l'appareil
      (attest_queue + marqueur attest_pending_<id>) puis envoyée automatiquement
-     dès que la connexion revient (événement online, ou à l'ouverture de l'app). */
+     dès que possible : événement online, ouverture de l'app, RETOUR AU PREMIER
+     PLAN (app rouverte depuis les récents en remontant du fond), et réessai
+     périodique sans abandon tant que la file n'est pas vide. */
   function aqGet() { try { var v = JSON.parse(localStorage.getItem('attest_queue')); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
   function aqSet(q) { try { localStorage.setItem('attest_queue', JSON.stringify(q)); } catch (e) {} }
   function aqAdd(pid, sig, payload) {
@@ -2008,20 +2009,22 @@
     try { localStorage.setItem(pkey('attest_pending_' + pid), payload.date || ''); } catch (e) {}
   }
   var aqBusy = false;
-  function aqFlush() {
-    if (aqBusy || !navigator.onLine) return;
+  /* force=true : tente l'envoi même si navigator.onLine dit « hors ligne ».
+     Dans le WebView Android, onLine peut rester faussement à false après une
+     reprise depuis l'arrière-plan — la requête elle-même est le vrai test de
+     connectivité (un échec retombe sur le réessai programmé). */
+  function aqFlush(force) {
+    if (aqBusy || (!force && !navigator.onLine)) return;
     var endpoint = attestEndpoint(); if (!endpoint) return;
     var q = aqGet(); if (!q.length) return;
     aqBusy = true;
     var it = q[0];
     function aqDrop() { aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; })); }
     postAttestation(endpoint, it.payload)
-      .then(function (r) {
-        return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; });
-      })
       .then(function (res) {
         aqBusy = false;
         if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {          // envoyé
+          aqRetries = 0;        // succès : le prochain cycle d'échecs repart à 1 min
           aqDrop();
           var uSlug = (it.u != null) ? it.u : profSlug(profName());
           try {
@@ -2031,7 +2034,7 @@
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
           aqRefreshView(it.pid, uSlug, it.payload);
           progPushSoon();
-          aqFlush();                                   // suivante, s'il y en a
+          aqFlush(true);        // suivante, s'il y en a (l'envoi vient de prouver la connectivité)
           return;
         }
         if (res.st >= 400 && res.st < 500) {
@@ -2041,7 +2044,7 @@
           aqDrop();
           try { localStorage.removeItem(pkeyFor((it.u != null) ? it.u : profSlug(profName()), 'attest_pending_' + it.pid)); } catch (e) {}
           toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » refusée — refais-la depuis la fiche.');
-          aqFlush();
+          aqFlush(true);
           return;
         }
         // 5xx / réponse inattendue : panne passagère → réessai programmé.
@@ -2049,13 +2052,17 @@
       })
       .catch(function () { aqBusy = false; aqRetryLater(); });   // réseau : réessai programmé
   }
-  // Réessai automatique borné (le seul événement « online » ne suffit pas :
-  // un 5xx peut arriver alors que le réseau est déjà là).
+  // Réessai automatique SANS abandon : tant que la file n'est pas vide, on
+  // retente — délai en backoff doux (1 min → 5 min) pour ne pas marteler.
+  // L'ancien plafond de 10 essais s'épuisait sous terre (10 min sans réseau)
+  // et l'envoi ne repartait plus jamais de la session ; le retour au premier
+  // plan ou du réseau remet le délai à 1 min (aqRetries = 0).
   var aqRetryT = null, aqRetries = 0;
   function aqRetryLater() {
-    if (aqRetryT || aqRetries >= 10 || !aqGet().length) return;
+    if (aqRetryT || !aqGet().length) return;
+    var delay = Math.min(5 * 60000, 60000 * (aqRetries + 1));
     aqRetries++;
-    aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(); }, 60000);
+    aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(true); }, delay);
   }
   // Si la fiche ou le suivi de cette attestation est à l'écran, refléter l'envoi.
   function aqRefreshView(pid, uSlug, payload) {
@@ -2071,23 +2078,51 @@
       renderSuivi($('#view'));
     }
   }
-  window.addEventListener('online', aqFlush);
+  /* Réveil de la file (retour du réseau, retour au premier plan) : compteur et
+     timer remis à neuf, puis envoi immédiat. Si un envoi est déjà en vol
+     (aqBusy), on REPLANIFIE un filet court au lieu de perdre le timer qu'on
+     vient d'annuler — sinon un échec de l'envoi en vol via aqRetryNow
+     laisserait la file sans aucun réessai programmé. */
+  function aqKick(force) {
+    if (!aqGet().length) return;
+    aqRetries = 0;
+    if (aqRetryT) { clearTimeout(aqRetryT); aqRetryT = null; }
+    if (aqBusy) aqRetryLater();
+    else aqFlush(force);
+  }
+  // Retour du réseau : un cycle d'échecs précédent ne doit pas allonger les
+  // délais du nouveau (compteur ET vieux timer long remis à neuf).
+  window.addEventListener('online', function () { aqKick(); });
+  /* Retour au premier plan (app rouverte depuis les récents — le geste typique
+     en remontant du fond) : dans le WebView Android, l'événement 'online' émis
+     pendant que l'app était gelée est PERDU — c'est ici qu'on rattrape. On
+     relance aussi la progression marquée « à pousser » (force : onLine peut
+     mentir après la reprise, la requête est le vrai test de connectivité). */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) return;
+    aqKick(true);
+    progDirtyFlush(true);
+  });
 
   /* Renvoi immédiat, à la demande (bouton « Réessayer l'envoi »), de
      l'attestation en file pour CETTE fiche. cb(true) si acceptée par le
-     registre (la vue est alors réaffichée en « envoyée »), cb(false) sinon
-     (réseau/registre injoignable). Partage le verrou aqBusy → pas de double envoi. */
+     registre (la vue est alors réaffichée en « envoyée ») ; cb('busy') si un
+     envoi automatique est déjà en vol (verrou aqBusy partagé → pas de double
+     envoi) ; cb(false) sinon (réseau/registre injoignable). Chaque échec
+     REPLANIFIE le réessai automatique : « repartira toute seule » doit rester
+     vrai même si le timer a été consommé ou annulé pendant cet envoi. */
   function aqRetryNow(pid, cb) {
     var endpoint = attestEndpoint();
     var it = null, q = aqGet();
     for (var i = 0; i < q.length; i++) { if (q[i].pid === pid) { it = q[i]; break; } }
-    if (!endpoint || !it || aqBusy) { cb(false); return; }
+    if (!endpoint || !it) { cb(false); return; }
+    if (aqBusy) { cb('busy'); return; }
     aqBusy = true;
     postAttestation(endpoint, it.payload)
-      .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; }); })
       .then(function (res) {
         aqBusy = false;
         if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {
+          aqRetries = 0;
           aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
           var uSlug = (it.u != null) ? it.u : profSlug(profName());
           try {
@@ -2096,9 +2131,9 @@
           } catch (e) {}
           aqRefreshView(it.pid, uSlug, it.payload); progPushSoon();
           cb(true);
-        } else { cb(false); }                 // 4xx/5xx : reste en file, repartira tout seul
+        } else { aqRetryLater(); cb(false); }   // 4xx/5xx : reste en file, réessai replanifié
       })
-      .catch(function () { aqBusy = false; cb(false); });   // réseau/registre injoignable
+      .catch(function () { aqBusy = false; aqRetryLater(); cb(false); });   // réseau/registre injoignable
   }
 
   /* ---------- sauvegarde serveur de la progression ----------
@@ -2136,10 +2171,12 @@
   }
   var progT = null;
   function progPushSoon() { if (progT) clearTimeout(progT); progT = setTimeout(progPush, 4000); }
-  function progPush() {
+  /* force=true : tente l'envoi même si navigator.onLine ment (reprise du
+     WebView) — l'échec éventuel re-marque « à pousser », rien n'est perdu. */
+  function progPush(force) {
     var name = profName();
     if (!name || !attestEndpoint()) return;
-    if (!navigator.onLine) { try { localStorage.setItem(pkey('prog_dirty'), '1'); } catch (e) {} return; }
+    if (!force && !navigator.onLine) { try { localStorage.setItem(pkey('prog_dirty'), '1'); } catch (e) {} return; }
     var data = progCollect();
     if (!Object.keys(data.pq).length) return;
     fetch(attestEndpoint(), { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2183,10 +2220,10 @@
       })
       .catch(function () {});
   }
-  function progDirtyFlush() {
+  function progDirtyFlush(force) {
     var dirty = false;
     try { dirty = localStorage.getItem(pkey('prog_dirty')) === '1'; } catch (e) {}
-    if (dirty) progPush();
+    if (dirty) progPush(force);
   }
   window.addEventListener('online', function () { progDirtyFlush(); progPullAuto(); });
   // État « enregistrée sur l'appareil, envoi au retour du réseau ». Le message
@@ -2211,10 +2248,15 @@
       retry.disabled = true;
       var lbl = retry.textContent; retry.textContent = 'Envoi…';
       aqRetryNow(pid, function (ok) {
-        if (ok) return;                        // succès : aqRefreshView a réaffiché l'état « envoyée »
+        if (ok === true) return;               // succès : aqRefreshView a réaffiché l'état « envoyée »
         retry.disabled = false; retry.textContent = lbl;
-        if (msgEl) msgEl.innerHTML = 'Le registre ne répond toujours pas. Vérifie la connexion Internet ' +
-          'de ce poste ; si le problème persiste, préviens le bureau. Ton attestation reste enregistrée et repartira toute seule.';
+        if (!msgEl) return;
+        // 'busy' : l'envoi automatique (retour au premier plan / réseau) est
+        // déjà en vol — ce n'est PAS une panne, ne pas l'annoncer comme telle.
+        msgEl.innerHTML = (ok === 'busy')
+          ? 'Un envoi automatique est déjà en cours — laisse l\'app ouverte quelques secondes.'
+          : 'Le registre ne répond toujours pas. Vérifie la connexion Internet ' +
+            'de ce poste ; si le problème persiste, préviens le bureau. Ton attestation reste enregistrée et repartira toute seule.';
       });
     };
   }
@@ -2464,10 +2506,27 @@
   // est téléversé dans Airtable par le Worker. Hors-ligne, l'attestation est
   // mise en file (voir aqAdd) et cette fonction n'est appelée qu'au retour du
   // réseau — le PDF part donc « plus tard, quand il y a du réseau ».
+  /* Résout en { st, j } (statut HTTP + JSON de réponse, j=null si illisible) ;
+     rejette sur erreur réseau/abandon. Garde-fou de 120 s : une requête qui
+     reste pendue ne doit JAMAIS verrouiller aqBusy. Le délai est LONG à
+     dessein — le corps embarque le PDF (des centaines de Ko) et les liaisons
+     de site minier sont lentes : couper trop court empêcherait tout envoi et
+     fabriquerait des doublons (le serveur peut avoir déjà reçu le corps). Le
+     timer reste armé jusqu'à la LECTURE COMPLÈTE de la réponse : des en-têtes
+     reçus puis un corps qui gèle libèrent quand même la file (abort). */
   function postAttestation(endpoint, payload) {
     return buildPdfBase64(payload).then(function (b64) {
-      return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(attestBody(payload, b64)) });
+      var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
+      var timer = ctl ? setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 120000) : null;
+      var req = { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(attestBody(payload, b64)) };
+      if (ctl) req.signal = ctl.signal;
+      function disarm() { if (timer) { clearTimeout(timer); timer = null; } }
+      return fetch(endpoint, req).then(function (r) {
+        return r.json().then(
+          function (j) { disarm(); return { st: r.status, j: j }; },
+          function () { disarm(); return { st: r.status, j: null }; });
+      }, function (e) { disarm(); throw e; });
     });
   }
   // (La « fiche gestionnaire » PDF a été retirée : les détails de suivi —
@@ -3850,8 +3909,8 @@
   document.addEventListener('DOMContentLoaded', function () {
     route(); initInstall(); initChecklistEvents(); initTheme(); initHoverCard();
     initQuizFeedback();   // pouce 👍/👎 + commentaire sous chaque question de quiz
-    aqFlush();      // attestations en attente d'envoi (mises en file hors-ligne)
-    progDirtyFlush();   // progression marquée « à pousser » pendant une panne
+    aqFlush(true);  // attestations en attente d'envoi (force : onLine peut mentir au réveil du WebView)
+    progDirtyFlush(true);   // progression marquée « à pousser » pendant une panne (force : voir aqFlush)
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
     rosterEnsure();     // annuaire employés mis en cache pour l'autocomplétion hors-ligne
     // ---- pack hors-ligne complet, automatique et persistant ----
