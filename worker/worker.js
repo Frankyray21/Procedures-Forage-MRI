@@ -194,7 +194,7 @@ export default {
        attestation → on renvoie l'enregistrement existant au lieu d'un doublon,
        en complétant sa pièce jointe PDF si elle manquait. Si la recherche
        échoue (Airtable grognon), on crée quand même : ne jamais bloquer. */
-    const dup = await findExistingAttestation(name, proc, date, env);
+    const dup = await findExistingAttestation(name, proc, date, empId, env);
     if (dup) {
       let pdf = dup.hasPdf;
       if (!pdf && typeof body.pdfBase64 === "string" && body.pdfBase64) {
@@ -553,25 +553,38 @@ function sanitizeProgress(data) {
 }
 
 /* Cherche une attestation DÉJÀ enregistrée : même Nom (exact), même Procédure,
-   même Date (au jour). Renvoie { id, hasPdf } ou null — jamais d'exception.
-   La comparaison de date couvre les deux types de colonne possibles (texte
-   « AAAA-MM-JJ » ou vrai champ Date) via OR(égalité texte, IS_SAME). */
-async function findExistingAttestation(name, proc, date, env) {
+   même Date (au jour) ET même employé lié. Renvoie { id, hasPdf } ou null —
+   jamais d'exception. La comparaison de date couvre les deux types de colonne
+   possibles (texte « AAAA-MM-JJ » ou vrai champ Date) via OR(texte, IS_SAME).
+   L'employé se compare en JS (une formule ne peut pas viser le record id d'un
+   champ lié) avec l'empId RÉSOLU par le handler — résolution déterministe,
+   donc identique d'un réessai à l'autre : deux HOMONYMES qui ont chacun choisi
+   leur dossier dans l'autocomplétion restent deux attestations distinctes,
+   au lieu que la seconde soit absorbée comme doublon (et perdue). */
+async function findExistingAttestation(name, proc, date, empId, env) {
   if (!name || !proc || !date || !env.AIRTABLE_TOKEN) return null;
   const esc = (s) => String(s).replace(/["\\]/g, " ");
   const formula = `AND({Nom}="${esc(name)}",{Procédure}="${esc(proc)}",`
     + `OR({Date}&""="${esc(date)}",IS_SAME({Date},"${esc(date)}","day")))`;
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`
             + `?filterByFormula=${encodeURIComponent(formula)}`
-            + `&maxRecords=1&fields%5B%5D=${encodeURIComponent(ATTACH_FIELD)}`;
+            + `&maxRecords=10&fields%5B%5D=${encodeURIComponent(ATTACH_FIELD)}`
+            + `&fields%5B%5D=${encodeURIComponent("Employé")}`;
   try {
     const at = await fetch(url, { headers: { "Authorization": `Bearer ${env.AIRTABLE_TOKEN}` } });
     if (!at.ok) return null;
     const data = await at.json();
-    const rec = (data.records || [])[0];
-    if (!rec || !rec.id) return null;
-    const att = rec.fields && rec.fields[ATTACH_FIELD];
-    return { id: rec.id, hasPdf: Array.isArray(att) && att.length > 0 };
+    for (const rec of (data.records || [])) {
+      if (!rec || !rec.id) continue;
+      const linked = (rec.fields && Array.isArray(rec.fields["Employé"])) ? rec.fields["Employé"] : [];
+      // empId connu → même dossier exigé ; inconnu → seul un record non relié
+      // (même situation « À relier ») compte comme le même envoi.
+      const same = empId ? linked.indexOf(empId) >= 0 : linked.length === 0;
+      if (!same) continue;
+      const att = rec.fields && rec.fields[ATTACH_FIELD];
+      return { id: rec.id, hasPdf: Array.isArray(att) && att.length > 0 };
+    }
+    return null;
   } catch (e) {
     return null;
   }
