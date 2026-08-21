@@ -188,6 +188,21 @@ export default {
     // lien se fait même si la personne a tapé son nom sans cliquer la suggestion.
     if (!empId) empId = await findEmployeeByName(name, env);
 
+    /* Idempotence : le site ré-envoie la même attestation tant qu'il n'a pas VU
+       la réponse (file hors-ligne, timeout client, connexion coupée après que
+       le corps nous est parvenu). Même Nom + Procédure + Date = même
+       attestation → on renvoie l'enregistrement existant au lieu d'un doublon,
+       en complétant sa pièce jointe PDF si elle manquait. Si la recherche
+       échoue (Airtable grognon), on crée quand même : ne jamais bloquer. */
+    const dup = await findExistingAttestation(name, proc, date, env);
+    if (dup) {
+      let pdf = dup.hasPdf;
+      if (!pdf && typeof body.pdfBase64 === "string" && body.pdfBase64) {
+        pdf = await uploadPdfAttachment(dup.id, body.pdfBase64, clean(body.pdfName, 120), env);
+      }
+      return json({ ok: true, id: dup.id, linked: !!empId, pdf, dup: true }, 200, cors);
+    }
+
     // Champs envoyés à Airtable (les noms correspondent exactement aux colonnes).
     // typecast:true → Airtable crée automatiquement l'option « Procédure »
     // quand une nouvelle procédure est attestée pour la première fois.
@@ -535,6 +550,31 @@ function sanitizeProgress(data) {
     count++;
   }
   return { v: 1, pq };
+}
+
+/* Cherche une attestation DÉJÀ enregistrée : même Nom (exact), même Procédure,
+   même Date (au jour). Renvoie { id, hasPdf } ou null — jamais d'exception.
+   La comparaison de date couvre les deux types de colonne possibles (texte
+   « AAAA-MM-JJ » ou vrai champ Date) via OR(égalité texte, IS_SAME). */
+async function findExistingAttestation(name, proc, date, env) {
+  if (!name || !proc || !date || !env.AIRTABLE_TOKEN) return null;
+  const esc = (s) => String(s).replace(/["\\]/g, " ");
+  const formula = `AND({Nom}="${esc(name)}",{Procédure}="${esc(proc)}",`
+    + `OR({Date}&""="${esc(date)}",IS_SAME({Date},"${esc(date)}","day")))`;
+  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`
+            + `?filterByFormula=${encodeURIComponent(formula)}`
+            + `&maxRecords=1&fields%5B%5D=${encodeURIComponent(ATTACH_FIELD)}`;
+  try {
+    const at = await fetch(url, { headers: { "Authorization": `Bearer ${env.AIRTABLE_TOKEN}` } });
+    if (!at.ok) return null;
+    const data = await at.json();
+    const rec = (data.records || [])[0];
+    if (!rec || !rec.id) return null;
+    const att = rec.fields && rec.fields[ATTACH_FIELD];
+    return { id: rec.id, hasPdf: Array.isArray(att) && att.length > 0 };
+  } catch (e) {
+    return null;
+  }
 }
 
 /* Cherche UN employé dont le nom complet correspond exactement (casse/accents
