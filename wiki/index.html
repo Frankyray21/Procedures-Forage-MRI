@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Wiki RPS — SST psychosociale</title>
+<meta name="description" content="Wiki des risques psychosociaux (RPS) en milieu minier — vault SST1010.">
+<meta name="theme-color" content="#020406">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0e17'/%3E%3Cpath d='M14 16h14a6 6 0 0 1 6 6v26a5 5 0 0 0-5-5H14z' fill='%236ea8ff'/%3E%3Cpath d='M50 16H36a6 6 0 0 0-6 6v26a5 5 0 0 1 5-5h15z' fill='%23a8c7ff'/%3E%3C/svg%3E">
+<script>try{if(localStorage.getItem('theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+
+<header class="wbar" id="wbar">
+  <button class="iconbtn menubtn" id="menuBtn" title="Menu" aria-label="Ouvrir le menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="#/">
+    <span class="bmark" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 64 64"><path d="M14 16h14a6 6 0 0 1 6 6v26a5 5 0 0 0-5-5H14z" fill="currentColor" opacity=".9"/><path d="M50 16H36a6 6 0 0 0-6 6v26a5 5 0 0 1 5-5h15z" fill="currentColor" opacity=".55"/></svg>
+    </span>
+    <span class="bt"><b>Wiki RPS</b><span>SST psychosociale · vault SST1010</span></span>
+  </a>
+  <div class="search" id="searchBox">
+    <svg class="sicon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="q" type="search" placeholder="Rechercher dans le wiki…" autocomplete="off" spellcheck="false" aria-label="Rechercher dans le wiki">
+    <div class="qres" id="qres" hidden></div>
+  </div>
+  <button class="iconbtn" id="themeBtn" title="Thème clair / sombre" aria-label="Basculer entre thème clair et sombre">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <div class="scrim" id="scrim"></div>
+  <aside class="side" id="side" aria-label="Navigation du wiki"></aside>
+  <main class="wmain" id="wview">
+    <noscript><div class="article"><p>Ce wiki a besoin de JavaScript pour afficher les pages.</p></div></noscript>
+  </main>
+</div>
+
+<footer class="wfoot">
+  <span><b>Wiki RPS</b> — ébauche de travail, contenu non validé pour diffusion.</span>
+  <a href="../index.html">← Procédures de forage MRI</a>
+</footer>
+
+<script src="wiki-data.js" defer></script>
+<script src="wiki.js" defer></script>
+</body>
+</html>

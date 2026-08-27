@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v183';
+const VERSION = 'mri-proc-v184';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -60,6 +60,10 @@ const CORE = [
   './vendor/fonts/barlow-condensed-latin-700-normal.woff2',
   './vendor/fonts/barlow-condensed-latin-800-normal.woff2',
   './manifest.webmanifest',
+  './wiki/index.html',
+  './wiki/wiki.css',
+  './wiki/wiki-data.js',
+  './wiki/wiki.js',
   './suivi.html',
   './admin.html',
   './apk.html',
@@ -177,6 +181,7 @@ function precacheMedia() {
    sont tolérés en absence. */
 function optional(u) {
   return u.indexOf('/fonts/') >= 0 || u.indexOf('./icons/') === 0 || u.indexOf('logo_roger') >= 0 ||
+    u.indexOf('./wiki/') === 0 ||
     u === './suivi.html' || u === './admin.html' || u === './apk.html' || u === './affiche-apk.html' || u === './qr-apk.svg';
 }
 self.addEventListener('install', (e) => {
@@ -230,7 +235,8 @@ self.addEventListener('fetch', (e) => {
       }
       return res;
     });
-    const fromCache = () => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match('./index.html'));
+    const fromCache = () => caches.match(req, { ignoreSearch: true })
+      .then((r) => r || caches.match(path.includes('/wiki/') ? './wiki/index.html' : './index.html'));
     const timer = new Promise((resolve) => setTimeout(() => resolve(null), 3000));
     e.respondWith(
       Promise.race([net.then((r) => (r && r.status === 200 ? r : null)).catch(() => null), timer])
