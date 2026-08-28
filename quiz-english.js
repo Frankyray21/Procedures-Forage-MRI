@@ -1898,9 +1898,7 @@
           "Dragged along the ground by one worker"
         ],
         "a": 0,
-        "e": "« ALWAYS CARRY LARGE PIECES OF WOOD WITH TWO WORKER AND HAVING A GOOD COMMUNICATION IS VERY IMPORTANT »",
-        "img": "images/figures/pro-dd-st-003-1.jpg",
-        "detail": "Floor built from the 8x8 and 6x6 timbers, laid at the required spacing."
+        "e": "« ALWAYS CARRY LARGE PIECES OF WOOD WITH TWO PEOPLE. »"
       },
       {
         "t": "trou",
@@ -1915,15 +1913,16 @@
         "e": "« If the floor is higher than 12 inches, guardrails must be installed »"
       },
       {
-        "q": "What is required before a chain saw can be used for this work?",
+        "t": "trou",
+        "q": "The 6''X6'' of the base structure are positioned at a distance of ______ ''center'' each.",
         "o": [
-          "A hot work permit from the mine",
-          "Nothing, it is a standard tool",
-          "Supervisor approbation",
-          "A written authorization from the client"
+          "24''",
+          "32''",
+          "48''",
+          "36''"
         ],
-        "a": 2,
-        "e": "« Chain saw (supervisor approbation) »"
+        "a": 1,
+        "e": "« …then position the other four 6''X6'' at a distance of 32'' ''center'' each » (July 2026 revision)"
       },
       {
         "q": "After dismantling the floor, what must the red ribbon card indicate?",

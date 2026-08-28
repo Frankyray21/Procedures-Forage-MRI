@@ -1,4 +1,5 @@
-/* Pages des PDF rendues en images — affichage in-page (mobile, hors-ligne). ~125 DPI. */
+/* Pages des PDF rendues en images — affichage in-page (mobile, hors-ligne). ~125 DPI.
+   Entrées régénérées par sync-airtable.js quand un PDF officiel change. */
 window.PAGES = {
  "centralisateur-dessin": [
   "images/pages/centralisateur-dessin-1.jpg"
@@ -48,7 +49,19 @@ window.PAGES = {
   "images/pages/pro-dd-st-003-4.jpg",
   "images/pages/pro-dd-st-003-5.jpg",
   "images/pages/pro-dd-st-003-6.jpg",
-  "images/pages/pro-dd-st-003-7.jpg"
+  "images/pages/pro-dd-st-003-7.jpg",
+  "images/pages/pro-dd-st-003-8.jpg",
+  "images/pages/pro-dd-st-003-9.jpg",
+  "images/pages/pro-dd-st-003-10.jpg",
+  "images/pages/pro-dd-st-003-11.jpg",
+  "images/pages/pro-dd-st-003-12.jpg",
+  "images/pages/pro-dd-st-003-13.jpg",
+  "images/pages/pro-dd-st-003-14.jpg",
+  "images/pages/pro-dd-st-003-15.jpg",
+  "images/pages/pro-dd-st-003-16.jpg",
+  "images/pages/pro-dd-st-003-17.jpg",
+  "images/pages/pro-dd-st-003-18.jpg",
+  "images/pages/pro-dd-st-003-19.jpg"
  ],
  "pro-dd-st-004": [
   "images/pages/pro-dd-st-004-1.jpg",
@@ -147,7 +160,7 @@ window.PAGES = {
   "images/pages/pro-op-ith-002-5.jpg",
   "images/pages/pro-op-ith-002-6.jpg"
  ],
-  "pro-op-ith-003": [
+ "pro-op-ith-003": [
   "images/pages/pro-op-ith-003-1.jpg",
   "images/pages/pro-op-ith-003-2.jpg",
   "images/pages/pro-op-ith-003-3.jpg",
@@ -459,408 +472,425 @@ window.PAGES = {
   "images/pages/procedure-serrage-marteau-3.jpg",
   "images/pages/procedure-serrage-marteau-4.jpg"
  ],
-  "cadenassage-cat-416": [
-    "images/pages/cadenassage-cat-416-1.jpg",
-    "images/pages/cadenassage-cat-416-2.jpg",
-    "images/pages/cadenassage-cat-416-3.jpg",
-    "images/pages/cadenassage-cat-416-4.jpg",
-    "images/pages/cadenassage-cat-416-5.jpg"
-  ],
-  "cadenassage-cubex": [
-    "images/pages/cadenassage-cubex-1.jpg",
-    "images/pages/cadenassage-cubex-2.jpg",
-    "images/pages/cadenassage-cubex-3.jpg",
-    "images/pages/cadenassage-cubex-4.jpg",
-    "images/pages/cadenassage-cubex-5.jpg",
-    "images/pages/cadenassage-cubex-6.jpg",
-    "images/pages/cadenassage-cubex-7.jpg",
-    "images/pages/cadenassage-cubex-8.jpg",
-    "images/pages/cadenassage-cubex-9.jpg",
-    "images/pages/cadenassage-cubex-10.jpg",
-    "images/pages/cadenassage-cubex-11.jpg"
-  ],
-  "cadenassage-toyota-landcruiser": [
-    "images/pages/cadenassage-toyota-landcruiser-1.jpg",
-    "images/pages/cadenassage-toyota-landcruiser-2.jpg",
-    "images/pages/cadenassage-toyota-landcruiser-3.jpg",
-    "images/pages/cadenassage-toyota-landcruiser-4.jpg"
-  ],
-  "cadenassage-pegasus-du311": [
-    "images/pages/cadenassage-pegasus-du311-1.jpg",
-    "images/pages/cadenassage-pegasus-du311-2.jpg",
-    "images/pages/cadenassage-pegasus-du311-3.jpg",
-    "images/pages/cadenassage-pegasus-du311-4.jpg",
-    "images/pages/cadenassage-pegasus-du311-5.jpg",
-    "images/pages/cadenassage-pegasus-du311-6.jpg",
-    "images/pages/cadenassage-pegasus-du311-7.jpg",
-    "images/pages/cadenassage-pegasus-du311-8.jpg",
-    "images/pages/cadenassage-pegasus-du311-9.jpg",
-    "images/pages/cadenassage-pegasus-du311-10.jpg",
-    "images/pages/cadenassage-pegasus-du311-11.jpg"
-  ],
-  "cadenassage-kovatera-kt200": [
-    "images/pages/cadenassage-kovatera-kt200-1.jpg",
-    "images/pages/cadenassage-kovatera-kt200-2.jpg",
-    "images/pages/cadenassage-kovatera-kt200-3.jpg",
-    "images/pages/cadenassage-kovatera-kt200-4.jpg"
-  ],
-  "cadenassage-stopemaster": [
-    "images/pages/cadenassage-stopemaster-1.jpg",
-    "images/pages/cadenassage-stopemaster-2.jpg",
-    "images/pages/cadenassage-stopemaster-3.jpg",
-    "images/pages/cadenassage-stopemaster-4.jpg",
-    "images/pages/cadenassage-stopemaster-5.jpg",
-    "images/pages/cadenassage-stopemaster-6.jpg"
-  ],
-  "cadenassage-u6-epiroc": [
-    "images/pages/cadenassage-u6-epiroc-1.jpg",
-    "images/pages/cadenassage-u6-epiroc-2.jpg",
-    "images/pages/cadenassage-u6-epiroc-3.jpg",
-    "images/pages/cadenassage-u6-epiroc-4.jpg",
-    "images/pages/cadenassage-u6-epiroc-5.jpg",
-    "images/pages/cadenassage-u6-epiroc-6.jpg",
-    "images/pages/cadenassage-u6-epiroc-7.jpg"
-  ],
-  "cadenassage-dr600mu-btidr": [
-    "images/pages/cadenassage-dr600mu-btidr-1.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-2.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-3.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-4.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-5.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-6.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-7.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-8.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-9.jpg",
-    "images/pages/cadenassage-dr600mu-btidr-10.jpg"
-  ],
-  "cadenassage-manitou": [
-    "images/pages/cadenassage-manitou-1.jpg",
-    "images/pages/cadenassage-manitou-2.jpg",
-    "images/pages/cadenassage-manitou-3.jpg",
-    "images/pages/cadenassage-manitou-4.jpg"
-  ],
-  "cadenassage-dd-stm1500": [
-    "images/pages/cadenassage-dd-stm1500-1.jpg",
-    "images/pages/cadenassage-dd-stm1500-2.jpg",
-    "images/pages/cadenassage-dd-stm1500-3.jpg",
-    "images/pages/cadenassage-dd-stm1500-4.jpg",
-    "images/pages/cadenassage-dd-stm1500-5.jpg",
-    "images/pages/cadenassage-dd-stm1500-6.jpg",
-    "images/pages/cadenassage-dd-stm1500-7.jpg"
-  ],
-  "cadenassage-dd-dr900-dr1500": [
-    "images/pages/cadenassage-dd-dr900-dr1500-1.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-2.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-3.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-4.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-5.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-6.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-7.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-8.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-9.jpg",
-    "images/pages/cadenassage-dd-dr900-dr1500-10.jpg"
-  ],
-  "programme-maitrise-energies-dangereuses": [
-    "images/pages/programme-maitrise-energies-dangereuses-1.jpg",
-    "images/pages/programme-maitrise-energies-dangereuses-2.jpg",
-    "images/pages/programme-maitrise-energies-dangereuses-3.jpg",
-    "images/pages/programme-maitrise-energies-dangereuses-4.jpg",
-    "images/pages/programme-maitrise-energies-dangereuses-5.jpg",
-    "images/pages/programme-maitrise-energies-dangereuses-6.jpg",
-    "images/pages/programme-maitrise-energies-dangereuses-7.jpg",
-    "images/pages/programme-maitrise-energies-dangereuses-8.jpg"
-  ],
-  "en-ges-san-sec-001a": [
-    "images/pages/en-ges-san-sec-001a-1.jpg",
-    "images/pages/en-ges-san-sec-001a-2.jpg",
-    "images/pages/en-ges-san-sec-001a-3.jpg",
-    "images/pages/en-ges-san-sec-001a-4.jpg",
-    "images/pages/en-ges-san-sec-001a-5.jpg"
-  ],
-  "en-installation-rod-centralizer": [
-    "images/pages/en-installation-rod-centralizer-1.jpg",
-    "images/pages/en-installation-rod-centralizer-2.jpg"
-  ],
-  "en-lockout-stopemaster": [
-    "images/pages/en-lockout-stopemaster-1.jpg",
-    "images/pages/en-lockout-stopemaster-2.jpg",
-    "images/pages/en-lockout-stopemaster-3.jpg",
-    "images/pages/en-lockout-stopemaster-4.jpg",
-    "images/pages/en-lockout-stopemaster-5.jpg",
-    "images/pages/en-lockout-stopemaster-6.jpg"
-  ],
-  "en-pro-dd-st-001a": [
-    "images/pages/en-pro-dd-st-001a-1.jpg",
-    "images/pages/en-pro-dd-st-001a-2.jpg",
-    "images/pages/en-pro-dd-st-001a-3.jpg",
-    "images/pages/en-pro-dd-st-001a-4.jpg"
-  ],
-  "en-pro-dd-st-002a": [
-    "images/pages/en-pro-dd-st-002a-1.jpg",
-    "images/pages/en-pro-dd-st-002a-2.jpg",
-    "images/pages/en-pro-dd-st-002a-3.jpg",
-    "images/pages/en-pro-dd-st-002a-4.jpg",
-    "images/pages/en-pro-dd-st-002a-5.jpg",
-    "images/pages/en-pro-dd-st-002a-6.jpg"
-  ],
-  "en-pro-dd-st-003a": [
-    "images/pages/en-pro-dd-st-003a-1.jpg",
-    "images/pages/en-pro-dd-st-003a-2.jpg",
-    "images/pages/en-pro-dd-st-003a-3.jpg",
-    "images/pages/en-pro-dd-st-003a-4.jpg",
-    "images/pages/en-pro-dd-st-003a-5.jpg",
-    "images/pages/en-pro-dd-st-003a-6.jpg",
-    "images/pages/en-pro-dd-st-003a-7.jpg",
-    "images/pages/en-pro-dd-st-003a-8.jpg",
-    "images/pages/en-pro-dd-st-003a-9.jpg",
-    "images/pages/en-pro-dd-st-003a-10.jpg",
-    "images/pages/en-pro-dd-st-003a-11.jpg"
-  ],
-  "en-pro-dd-st-004a": [
-    "images/pages/en-pro-dd-st-004a-1.jpg",
-    "images/pages/en-pro-dd-st-004a-2.jpg",
-    "images/pages/en-pro-dd-st-004a-3.jpg",
-    "images/pages/en-pro-dd-st-004a-4.jpg",
-    "images/pages/en-pro-dd-st-004a-5.jpg"
-  ],
-  "en-pro-mec-001a": [
-    "images/pages/en-pro-mec-001a-1.jpg",
-    "images/pages/en-pro-mec-001a-2.jpg"
-  ],
-  "en-pro-mec-002a": [
-    "images/pages/en-pro-mec-002a-1.jpg",
-    "images/pages/en-pro-mec-002a-2.jpg"
-  ],
-  "en-pro-mec-003a": [
-    "images/pages/en-pro-mec-003a-1.jpg",
-    "images/pages/en-pro-mec-003a-2.jpg"
-  ],
-  "en-pro-mec-004a": [
-    "images/pages/en-pro-mec-004a-1.jpg",
-    "images/pages/en-pro-mec-004a-2.jpg"
-  ],
-  "en-pro-mec-005a": [
-    "images/pages/en-pro-mec-005a-1.jpg",
-    "images/pages/en-pro-mec-005a-2.jpg",
-    "images/pages/en-pro-mec-005a-3.jpg"
-  ],
-  "en-pro-mec-006a": [
-    "images/pages/en-pro-mec-006a-1.jpg",
-    "images/pages/en-pro-mec-006a-2.jpg",
-    "images/pages/en-pro-mec-006a-3.jpg",
-    "images/pages/en-pro-mec-006a-4.jpg"
-  ],
-  "en-pro-mec-007a": [
-    "images/pages/en-pro-mec-007a-1.jpg",
-    "images/pages/en-pro-mec-007a-2.jpg"
-  ],
-  "en-pro-mec-008a": [
-    "images/pages/en-pro-mec-008a-1.jpg",
-    "images/pages/en-pro-mec-008a-2.jpg",
-    "images/pages/en-pro-mec-008a-3.jpg"
-  ],
-  "en-pro-mec-010a": [
-    "images/pages/en-pro-mec-010a-1.jpg",
-    "images/pages/en-pro-mec-010a-2.jpg",
-    "images/pages/en-pro-mec-010a-3.jpg",
-    "images/pages/en-pro-mec-010a-4.jpg",
-    "images/pages/en-pro-mec-010a-5.jpg"
-  ],
-  "en-pro-mec-011a": [
-    "images/pages/en-pro-mec-011a-1.jpg",
-    "images/pages/en-pro-mec-011a-2.jpg",
-    "images/pages/en-pro-mec-011a-3.jpg",
-    "images/pages/en-pro-mec-011a-4.jpg",
-    "images/pages/en-pro-mec-011a-5.jpg",
-    "images/pages/en-pro-mec-011a-6.jpg",
-    "images/pages/en-pro-mec-011a-7.jpg",
-    "images/pages/en-pro-mec-011a-8.jpg",
-    "images/pages/en-pro-mec-011a-9.jpg",
-    "images/pages/en-pro-mec-011a-10.jpg",
-    "images/pages/en-pro-mec-011a-11.jpg",
-    "images/pages/en-pro-mec-011a-12.jpg"
-  ],
-  "en-pro-mec-sm-001a": [
-    "images/pages/en-pro-mec-sm-001a-1.jpg",
-    "images/pages/en-pro-mec-sm-001a-2.jpg"
-  ],
-  "en-pro-op-cat-416-001a": [
-    "images/pages/en-pro-op-cat-416-001a-1.jpg",
-    "images/pages/en-pro-op-cat-416-001a-2.jpg",
-    "images/pages/en-pro-op-cat-416-001a-3.jpg",
-    "images/pages/en-pro-op-cat-416-001a-4.jpg",
-    "images/pages/en-pro-op-cat-416-001a-5.jpg",
-    "images/pages/en-pro-op-cat-416-001a-6.jpg",
-    "images/pages/en-pro-op-cat-416-001a-7.jpg",
-    "images/pages/en-pro-op-cat-416-001a-8.jpg",
-    "images/pages/en-pro-op-cat-416-001a-9.jpg",
-    "images/pages/en-pro-op-cat-416-001a-10.jpg",
-    "images/pages/en-pro-op-cat-416-001a-11.jpg"
-  ],
-  "en-pro-op-dd-005a": [
-    "images/pages/en-pro-op-dd-005a-1.jpg",
-    "images/pages/en-pro-op-dd-005a-2.jpg",
-    "images/pages/en-pro-op-dd-005a-3.jpg",
-    "images/pages/en-pro-op-dd-005a-4.jpg"
-  ],
-  "en-pro-op-dd-012a": [
-    "images/pages/en-pro-op-dd-012a-1.jpg",
-    "images/pages/en-pro-op-dd-012a-2.jpg",
-    "images/pages/en-pro-op-dd-012a-3.jpg"
-  ],
-  "en-pro-op-ith-001a": [
-    "images/pages/en-pro-op-ith-001a-1.jpg",
-    "images/pages/en-pro-op-ith-001a-2.jpg",
-    "images/pages/en-pro-op-ith-001a-3.jpg",
-    "images/pages/en-pro-op-ith-001a-4.jpg",
-    "images/pages/en-pro-op-ith-001a-5.jpg",
-    "images/pages/en-pro-op-ith-001a-6.jpg",
-    "images/pages/en-pro-op-ith-001a-7.jpg",
-    "images/pages/en-pro-op-ith-001a-8.jpg",
-    "images/pages/en-pro-op-ith-001a-9.jpg"
-  ],
-  "en-pro-op-ith-002a": [
-    "images/pages/en-pro-op-ith-002a-1.jpg",
-    "images/pages/en-pro-op-ith-002a-2.jpg",
-    "images/pages/en-pro-op-ith-002a-3.jpg",
-    "images/pages/en-pro-op-ith-002a-4.jpg",
-    "images/pages/en-pro-op-ith-002a-5.jpg",
-    "images/pages/en-pro-op-ith-002a-6.jpg"
-  ],
-  "en-pro-op-ith-003a": [
-    "images/pages/en-pro-op-ith-003a-1.jpg",
-    "images/pages/en-pro-op-ith-003a-2.jpg",
-    "images/pages/en-pro-op-ith-003a-3.jpg",
-    "images/pages/en-pro-op-ith-003a-4.jpg",
-    "images/pages/en-pro-op-ith-003a-5.jpg"
-  ],
-  "en-pro-op-ith-004a": [
-    "images/pages/en-pro-op-ith-004a-1.jpg",
-    "images/pages/en-pro-op-ith-004a-2.jpg",
-    "images/pages/en-pro-op-ith-004a-3.jpg",
-    "images/pages/en-pro-op-ith-004a-4.jpg",
-    "images/pages/en-pro-op-ith-004a-5.jpg",
-    "images/pages/en-pro-op-ith-004a-6.jpg"
-  ],
-  "en-pro-op-ith-005a": [
-    "images/pages/en-pro-op-ith-005a-1.jpg",
-    "images/pages/en-pro-op-ith-005a-2.jpg",
-    "images/pages/en-pro-op-ith-005a-3.jpg",
-    "images/pages/en-pro-op-ith-005a-4.jpg",
-    "images/pages/en-pro-op-ith-005a-5.jpg",
-    "images/pages/en-pro-op-ith-005a-6.jpg",
-    "images/pages/en-pro-op-ith-005a-7.jpg",
-    "images/pages/en-pro-op-ith-005a-8.jpg",
-    "images/pages/en-pro-op-ith-005a-9.jpg",
-    "images/pages/en-pro-op-ith-005a-10.jpg",
-    "images/pages/en-pro-op-ith-005a-11.jpg"
-  ],
-  "en-pro-op-ith-006a": [
-    "images/pages/en-pro-op-ith-006a-1.jpg",
-    "images/pages/en-pro-op-ith-006a-2.jpg",
-    "images/pages/en-pro-op-ith-006a-3.jpg",
-    "images/pages/en-pro-op-ith-006a-4.jpg",
-    "images/pages/en-pro-op-ith-006a-5.jpg",
-    "images/pages/en-pro-op-ith-006a-6.jpg",
-    "images/pages/en-pro-op-ith-006a-7.jpg",
-    "images/pages/en-pro-op-ith-006a-8.jpg"
-  ],
-  "en-pro-op-ith-007a": [
-    "images/pages/en-pro-op-ith-007a-1.jpg",
-    "images/pages/en-pro-op-ith-007a-2.jpg",
-    "images/pages/en-pro-op-ith-007a-3.jpg",
-    "images/pages/en-pro-op-ith-007a-4.jpg",
-    "images/pages/en-pro-op-ith-007a-5.jpg",
-    "images/pages/en-pro-op-ith-007a-6.jpg",
-    "images/pages/en-pro-op-ith-007a-7.jpg",
-    "images/pages/en-pro-op-ith-007a-8.jpg",
-    "images/pages/en-pro-op-ith-007a-9.jpg",
-    "images/pages/en-pro-op-ith-007a-10.jpg",
-    "images/pages/en-pro-op-ith-007a-11.jpg",
-    "images/pages/en-pro-op-ith-007a-12.jpg",
-    "images/pages/en-pro-op-ith-007a-13.jpg"
-  ],
-  "en-pro-op-ith-008a": [
-    "images/pages/en-pro-op-ith-008a-1.jpg",
-    "images/pages/en-pro-op-ith-008a-2.jpg"
-  ],
-  "en-pro-op-ith-012a": [
-    "images/pages/en-pro-op-ith-012a-1.jpg",
-    "images/pages/en-pro-op-ith-012a-2.jpg",
-    "images/pages/en-pro-op-ith-012a-3.jpg",
-    "images/pages/en-pro-op-ith-012a-4.jpg",
-    "images/pages/en-pro-op-ith-012a-5.jpg"
-  ],
-  "en-pro-op-ith-014a": [
-    "images/pages/en-pro-op-ith-014a-1.jpg",
-    "images/pages/en-pro-op-ith-014a-2.jpg",
-    "images/pages/en-pro-op-ith-014a-3.jpg"
-  ],
-  "en-pro-op-ith-016a": [
-    "images/pages/en-pro-op-ith-016a-1.jpg",
-    "images/pages/en-pro-op-ith-016a-2.jpg",
-    "images/pages/en-pro-op-ith-016a-3.jpg",
-    "images/pages/en-pro-op-ith-016a-4.jpg",
-    "images/pages/en-pro-op-ith-016a-5.jpg",
-    "images/pages/en-pro-op-ith-016a-6.jpg"
-  ],
-  "en-pro-op-sm-001a": [
-    "images/pages/en-pro-op-sm-001a-1.jpg",
-    "images/pages/en-pro-op-sm-001a-2.jpg",
-    "images/pages/en-pro-op-sm-001a-3.jpg"
-  ],
-  "en-pro-op-sm-002a": [
-    "images/pages/en-pro-op-sm-002a-1.jpg",
-    "images/pages/en-pro-op-sm-002a-2.jpg",
-    "images/pages/en-pro-op-sm-002a-3.jpg",
-    "images/pages/en-pro-op-sm-002a-4.jpg",
-    "images/pages/en-pro-op-sm-002a-5.jpg",
-    "images/pages/en-pro-op-sm-002a-6.jpg",
-    "images/pages/en-pro-op-sm-002a-7.jpg",
-    "images/pages/en-pro-op-sm-002a-8.jpg"
-  ],
-  "en-pro-op-sm-003a": [
-    "images/pages/en-pro-op-sm-003a-1.jpg",
-    "images/pages/en-pro-op-sm-003a-2.jpg",
-    "images/pages/en-pro-op-sm-003a-3.jpg",
-    "images/pages/en-pro-op-sm-003a-4.jpg",
-    "images/pages/en-pro-op-sm-003a-5.jpg",
-    "images/pages/en-pro-op-sm-003a-6.jpg"
-  ],
-  "en-pro-op-sm-004a": [
-    "images/pages/en-pro-op-sm-004a-1.jpg",
-    "images/pages/en-pro-op-sm-004a-2.jpg",
-    "images/pages/en-pro-op-sm-004a-3.jpg"
-  ],
-  "en-pro-sec-001a": [
-    "images/pages/en-pro-sec-001a-1.jpg",
-    "images/pages/en-pro-sec-001a-2.jpg",
-    "images/pages/en-pro-sec-001a-3.jpg",
-    "images/pages/en-pro-sec-001a-4.jpg",
-    "images/pages/en-pro-sec-001a-5.jpg",
-    "images/pages/en-pro-sec-001a-6.jpg"
-  ],
-  "en-pro-sec-010a": [
-    "images/pages/en-pro-sec-010a-1.jpg",
-    "images/pages/en-pro-sec-010a-2.jpg"
-  ],
-  "en-san-sec-005a": [
-    "images/pages/en-san-sec-005a-1.jpg",
-    "images/pages/en-san-sec-005a-2.jpg",
-    "images/pages/en-san-sec-005a-3.jpg"
-  ],
-  "en-san-sec-006a": [
-    "images/pages/en-san-sec-006a-1.jpg",
-    "images/pages/en-san-sec-006a-2.jpg",
-    "images/pages/en-san-sec-006a-3.jpg"
-  ],
-  "en-ss-dd-005a": [
-    "images/pages/en-ss-dd-005a-1.jpg",
-    "images/pages/en-ss-dd-005a-2.jpg",
-    "images/pages/en-ss-dd-005a-3.jpg"
-  ],
-  "en-ss-dd-st-001a": [
-    "images/pages/en-ss-dd-st-001a-1.jpg",
-    "images/pages/en-ss-dd-st-001a-2.jpg"
-  ]
+ "cadenassage-cat-416": [
+  "images/pages/cadenassage-cat-416-1.jpg",
+  "images/pages/cadenassage-cat-416-2.jpg",
+  "images/pages/cadenassage-cat-416-3.jpg",
+  "images/pages/cadenassage-cat-416-4.jpg",
+  "images/pages/cadenassage-cat-416-5.jpg"
+ ],
+ "cadenassage-cubex": [
+  "images/pages/cadenassage-cubex-1.jpg",
+  "images/pages/cadenassage-cubex-2.jpg",
+  "images/pages/cadenassage-cubex-3.jpg",
+  "images/pages/cadenassage-cubex-4.jpg",
+  "images/pages/cadenassage-cubex-5.jpg",
+  "images/pages/cadenassage-cubex-6.jpg",
+  "images/pages/cadenassage-cubex-7.jpg",
+  "images/pages/cadenassage-cubex-8.jpg",
+  "images/pages/cadenassage-cubex-9.jpg",
+  "images/pages/cadenassage-cubex-10.jpg",
+  "images/pages/cadenassage-cubex-11.jpg"
+ ],
+ "cadenassage-toyota-landcruiser": [
+  "images/pages/cadenassage-toyota-landcruiser-1.jpg",
+  "images/pages/cadenassage-toyota-landcruiser-2.jpg",
+  "images/pages/cadenassage-toyota-landcruiser-3.jpg",
+  "images/pages/cadenassage-toyota-landcruiser-4.jpg"
+ ],
+ "cadenassage-pegasus-du311": [
+  "images/pages/cadenassage-pegasus-du311-1.jpg",
+  "images/pages/cadenassage-pegasus-du311-2.jpg",
+  "images/pages/cadenassage-pegasus-du311-3.jpg",
+  "images/pages/cadenassage-pegasus-du311-4.jpg",
+  "images/pages/cadenassage-pegasus-du311-5.jpg",
+  "images/pages/cadenassage-pegasus-du311-6.jpg",
+  "images/pages/cadenassage-pegasus-du311-7.jpg",
+  "images/pages/cadenassage-pegasus-du311-8.jpg",
+  "images/pages/cadenassage-pegasus-du311-9.jpg",
+  "images/pages/cadenassage-pegasus-du311-10.jpg",
+  "images/pages/cadenassage-pegasus-du311-11.jpg"
+ ],
+ "cadenassage-kovatera-kt200": [
+  "images/pages/cadenassage-kovatera-kt200-1.jpg",
+  "images/pages/cadenassage-kovatera-kt200-2.jpg",
+  "images/pages/cadenassage-kovatera-kt200-3.jpg",
+  "images/pages/cadenassage-kovatera-kt200-4.jpg"
+ ],
+ "cadenassage-stopemaster": [
+  "images/pages/cadenassage-stopemaster-1.jpg",
+  "images/pages/cadenassage-stopemaster-2.jpg",
+  "images/pages/cadenassage-stopemaster-3.jpg",
+  "images/pages/cadenassage-stopemaster-4.jpg",
+  "images/pages/cadenassage-stopemaster-5.jpg",
+  "images/pages/cadenassage-stopemaster-6.jpg"
+ ],
+ "cadenassage-u6-epiroc": [
+  "images/pages/cadenassage-u6-epiroc-1.jpg",
+  "images/pages/cadenassage-u6-epiroc-2.jpg",
+  "images/pages/cadenassage-u6-epiroc-3.jpg",
+  "images/pages/cadenassage-u6-epiroc-4.jpg",
+  "images/pages/cadenassage-u6-epiroc-5.jpg",
+  "images/pages/cadenassage-u6-epiroc-6.jpg",
+  "images/pages/cadenassage-u6-epiroc-7.jpg"
+ ],
+ "cadenassage-dr600mu-btidr": [
+  "images/pages/cadenassage-dr600mu-btidr-1.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-2.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-3.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-4.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-5.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-6.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-7.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-8.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-9.jpg",
+  "images/pages/cadenassage-dr600mu-btidr-10.jpg"
+ ],
+ "cadenassage-manitou": [
+  "images/pages/cadenassage-manitou-1.jpg",
+  "images/pages/cadenassage-manitou-2.jpg",
+  "images/pages/cadenassage-manitou-3.jpg",
+  "images/pages/cadenassage-manitou-4.jpg"
+ ],
+ "cadenassage-dd-stm1500": [
+  "images/pages/cadenassage-dd-stm1500-1.jpg",
+  "images/pages/cadenassage-dd-stm1500-2.jpg",
+  "images/pages/cadenassage-dd-stm1500-3.jpg",
+  "images/pages/cadenassage-dd-stm1500-4.jpg",
+  "images/pages/cadenassage-dd-stm1500-5.jpg",
+  "images/pages/cadenassage-dd-stm1500-6.jpg",
+  "images/pages/cadenassage-dd-stm1500-7.jpg"
+ ],
+ "cadenassage-dd-dr900-dr1500": [
+  "images/pages/cadenassage-dd-dr900-dr1500-1.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-2.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-3.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-4.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-5.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-6.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-7.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-8.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-9.jpg",
+  "images/pages/cadenassage-dd-dr900-dr1500-10.jpg"
+ ],
+ "programme-maitrise-energies-dangereuses": [
+  "images/pages/programme-maitrise-energies-dangereuses-1.jpg",
+  "images/pages/programme-maitrise-energies-dangereuses-2.jpg",
+  "images/pages/programme-maitrise-energies-dangereuses-3.jpg",
+  "images/pages/programme-maitrise-energies-dangereuses-4.jpg",
+  "images/pages/programme-maitrise-energies-dangereuses-5.jpg",
+  "images/pages/programme-maitrise-energies-dangereuses-6.jpg",
+  "images/pages/programme-maitrise-energies-dangereuses-7.jpg",
+  "images/pages/programme-maitrise-energies-dangereuses-8.jpg"
+ ],
+ "en-ges-san-sec-001a": [
+  "images/pages/en-ges-san-sec-001a-1.jpg",
+  "images/pages/en-ges-san-sec-001a-2.jpg",
+  "images/pages/en-ges-san-sec-001a-3.jpg",
+  "images/pages/en-ges-san-sec-001a-4.jpg",
+  "images/pages/en-ges-san-sec-001a-5.jpg"
+ ],
+ "en-installation-rod-centralizer": [
+  "images/pages/en-installation-rod-centralizer-1.jpg",
+  "images/pages/en-installation-rod-centralizer-2.jpg"
+ ],
+ "en-lockout-stopemaster": [
+  "images/pages/en-lockout-stopemaster-1.jpg",
+  "images/pages/en-lockout-stopemaster-2.jpg",
+  "images/pages/en-lockout-stopemaster-3.jpg",
+  "images/pages/en-lockout-stopemaster-4.jpg",
+  "images/pages/en-lockout-stopemaster-5.jpg",
+  "images/pages/en-lockout-stopemaster-6.jpg"
+ ],
+ "en-pro-dd-st-001a": [
+  "images/pages/en-pro-dd-st-001a-1.jpg",
+  "images/pages/en-pro-dd-st-001a-2.jpg",
+  "images/pages/en-pro-dd-st-001a-3.jpg",
+  "images/pages/en-pro-dd-st-001a-4.jpg"
+ ],
+ "en-pro-dd-st-002a": [
+  "images/pages/en-pro-dd-st-002a-1.jpg",
+  "images/pages/en-pro-dd-st-002a-2.jpg",
+  "images/pages/en-pro-dd-st-002a-3.jpg",
+  "images/pages/en-pro-dd-st-002a-4.jpg",
+  "images/pages/en-pro-dd-st-002a-5.jpg",
+  "images/pages/en-pro-dd-st-002a-6.jpg"
+ ],
+ "en-pro-dd-st-003a": [
+  "images/pages/en-pro-dd-st-003a-1.jpg",
+  "images/pages/en-pro-dd-st-003a-2.jpg",
+  "images/pages/en-pro-dd-st-003a-3.jpg",
+  "images/pages/en-pro-dd-st-003a-4.jpg",
+  "images/pages/en-pro-dd-st-003a-5.jpg",
+  "images/pages/en-pro-dd-st-003a-6.jpg",
+  "images/pages/en-pro-dd-st-003a-7.jpg",
+  "images/pages/en-pro-dd-st-003a-8.jpg",
+  "images/pages/en-pro-dd-st-003a-9.jpg",
+  "images/pages/en-pro-dd-st-003a-10.jpg",
+  "images/pages/en-pro-dd-st-003a-11.jpg",
+  "images/pages/en-pro-dd-st-003a-12.jpg",
+  "images/pages/en-pro-dd-st-003a-13.jpg",
+  "images/pages/en-pro-dd-st-003a-14.jpg",
+  "images/pages/en-pro-dd-st-003a-15.jpg",
+  "images/pages/en-pro-dd-st-003a-16.jpg",
+  "images/pages/en-pro-dd-st-003a-17.jpg",
+  "images/pages/en-pro-dd-st-003a-18.jpg",
+  "images/pages/en-pro-dd-st-003a-19.jpg"
+ ],
+ "en-pro-dd-st-004a": [
+  "images/pages/en-pro-dd-st-004a-1.jpg",
+  "images/pages/en-pro-dd-st-004a-2.jpg",
+  "images/pages/en-pro-dd-st-004a-3.jpg",
+  "images/pages/en-pro-dd-st-004a-4.jpg",
+  "images/pages/en-pro-dd-st-004a-5.jpg"
+ ],
+ "en-pro-mec-001a": [
+  "images/pages/en-pro-mec-001a-1.jpg",
+  "images/pages/en-pro-mec-001a-2.jpg"
+ ],
+ "en-pro-mec-002a": [
+  "images/pages/en-pro-mec-002a-1.jpg",
+  "images/pages/en-pro-mec-002a-2.jpg"
+ ],
+ "en-pro-mec-003a": [
+  "images/pages/en-pro-mec-003a-1.jpg",
+  "images/pages/en-pro-mec-003a-2.jpg"
+ ],
+ "en-pro-mec-004a": [
+  "images/pages/en-pro-mec-004a-1.jpg",
+  "images/pages/en-pro-mec-004a-2.jpg"
+ ],
+ "en-pro-mec-005a": [
+  "images/pages/en-pro-mec-005a-1.jpg",
+  "images/pages/en-pro-mec-005a-2.jpg",
+  "images/pages/en-pro-mec-005a-3.jpg"
+ ],
+ "en-pro-mec-006a": [
+  "images/pages/en-pro-mec-006a-1.jpg",
+  "images/pages/en-pro-mec-006a-2.jpg",
+  "images/pages/en-pro-mec-006a-3.jpg",
+  "images/pages/en-pro-mec-006a-4.jpg"
+ ],
+ "en-pro-mec-007a": [
+  "images/pages/en-pro-mec-007a-1.jpg",
+  "images/pages/en-pro-mec-007a-2.jpg"
+ ],
+ "en-pro-mec-008a": [
+  "images/pages/en-pro-mec-008a-1.jpg",
+  "images/pages/en-pro-mec-008a-2.jpg",
+  "images/pages/en-pro-mec-008a-3.jpg"
+ ],
+ "en-pro-mec-010a": [
+  "images/pages/en-pro-mec-010a-1.jpg",
+  "images/pages/en-pro-mec-010a-2.jpg",
+  "images/pages/en-pro-mec-010a-3.jpg",
+  "images/pages/en-pro-mec-010a-4.jpg",
+  "images/pages/en-pro-mec-010a-5.jpg"
+ ],
+ "en-pro-mec-011a": [
+  "images/pages/en-pro-mec-011a-1.jpg",
+  "images/pages/en-pro-mec-011a-2.jpg",
+  "images/pages/en-pro-mec-011a-3.jpg",
+  "images/pages/en-pro-mec-011a-4.jpg",
+  "images/pages/en-pro-mec-011a-5.jpg",
+  "images/pages/en-pro-mec-011a-6.jpg",
+  "images/pages/en-pro-mec-011a-7.jpg",
+  "images/pages/en-pro-mec-011a-8.jpg",
+  "images/pages/en-pro-mec-011a-9.jpg",
+  "images/pages/en-pro-mec-011a-10.jpg",
+  "images/pages/en-pro-mec-011a-11.jpg",
+  "images/pages/en-pro-mec-011a-12.jpg"
+ ],
+ "en-pro-mec-sm-001a": [
+  "images/pages/en-pro-mec-sm-001a-1.jpg",
+  "images/pages/en-pro-mec-sm-001a-2.jpg"
+ ],
+ "en-pro-op-cat-416-001a": [
+  "images/pages/en-pro-op-cat-416-001a-1.jpg",
+  "images/pages/en-pro-op-cat-416-001a-2.jpg",
+  "images/pages/en-pro-op-cat-416-001a-3.jpg",
+  "images/pages/en-pro-op-cat-416-001a-4.jpg",
+  "images/pages/en-pro-op-cat-416-001a-5.jpg",
+  "images/pages/en-pro-op-cat-416-001a-6.jpg",
+  "images/pages/en-pro-op-cat-416-001a-7.jpg",
+  "images/pages/en-pro-op-cat-416-001a-8.jpg",
+  "images/pages/en-pro-op-cat-416-001a-9.jpg",
+  "images/pages/en-pro-op-cat-416-001a-10.jpg",
+  "images/pages/en-pro-op-cat-416-001a-11.jpg"
+ ],
+ "en-pro-op-dd-005a": [
+  "images/pages/en-pro-op-dd-005a-1.jpg",
+  "images/pages/en-pro-op-dd-005a-2.jpg",
+  "images/pages/en-pro-op-dd-005a-3.jpg",
+  "images/pages/en-pro-op-dd-005a-4.jpg"
+ ],
+ "en-pro-op-dd-012a": [
+  "images/pages/en-pro-op-dd-012a-1.jpg",
+  "images/pages/en-pro-op-dd-012a-2.jpg",
+  "images/pages/en-pro-op-dd-012a-3.jpg"
+ ],
+ "en-pro-op-ith-001a": [
+  "images/pages/en-pro-op-ith-001a-1.jpg",
+  "images/pages/en-pro-op-ith-001a-2.jpg",
+  "images/pages/en-pro-op-ith-001a-3.jpg",
+  "images/pages/en-pro-op-ith-001a-4.jpg",
+  "images/pages/en-pro-op-ith-001a-5.jpg",
+  "images/pages/en-pro-op-ith-001a-6.jpg",
+  "images/pages/en-pro-op-ith-001a-7.jpg",
+  "images/pages/en-pro-op-ith-001a-8.jpg",
+  "images/pages/en-pro-op-ith-001a-9.jpg"
+ ],
+ "en-pro-op-ith-002a": [
+  "images/pages/en-pro-op-ith-002a-1.jpg",
+  "images/pages/en-pro-op-ith-002a-2.jpg",
+  "images/pages/en-pro-op-ith-002a-3.jpg",
+  "images/pages/en-pro-op-ith-002a-4.jpg",
+  "images/pages/en-pro-op-ith-002a-5.jpg",
+  "images/pages/en-pro-op-ith-002a-6.jpg"
+ ],
+ "en-pro-op-ith-003a": [
+  "images/pages/en-pro-op-ith-003a-1.jpg",
+  "images/pages/en-pro-op-ith-003a-2.jpg",
+  "images/pages/en-pro-op-ith-003a-3.jpg",
+  "images/pages/en-pro-op-ith-003a-4.jpg",
+  "images/pages/en-pro-op-ith-003a-5.jpg"
+ ],
+ "en-pro-op-ith-004a": [
+  "images/pages/en-pro-op-ith-004a-1.jpg",
+  "images/pages/en-pro-op-ith-004a-2.jpg",
+  "images/pages/en-pro-op-ith-004a-3.jpg",
+  "images/pages/en-pro-op-ith-004a-4.jpg",
+  "images/pages/en-pro-op-ith-004a-5.jpg",
+  "images/pages/en-pro-op-ith-004a-6.jpg"
+ ],
+ "en-pro-op-ith-005a": [
+  "images/pages/en-pro-op-ith-005a-1.jpg",
+  "images/pages/en-pro-op-ith-005a-2.jpg",
+  "images/pages/en-pro-op-ith-005a-3.jpg",
+  "images/pages/en-pro-op-ith-005a-4.jpg",
+  "images/pages/en-pro-op-ith-005a-5.jpg",
+  "images/pages/en-pro-op-ith-005a-6.jpg",
+  "images/pages/en-pro-op-ith-005a-7.jpg",
+  "images/pages/en-pro-op-ith-005a-8.jpg",
+  "images/pages/en-pro-op-ith-005a-9.jpg",
+  "images/pages/en-pro-op-ith-005a-10.jpg",
+  "images/pages/en-pro-op-ith-005a-11.jpg"
+ ],
+ "en-pro-op-ith-006a": [
+  "images/pages/en-pro-op-ith-006a-1.jpg",
+  "images/pages/en-pro-op-ith-006a-2.jpg",
+  "images/pages/en-pro-op-ith-006a-3.jpg",
+  "images/pages/en-pro-op-ith-006a-4.jpg",
+  "images/pages/en-pro-op-ith-006a-5.jpg",
+  "images/pages/en-pro-op-ith-006a-6.jpg",
+  "images/pages/en-pro-op-ith-006a-7.jpg",
+  "images/pages/en-pro-op-ith-006a-8.jpg"
+ ],
+ "en-pro-op-ith-007a": [
+  "images/pages/en-pro-op-ith-007a-1.jpg",
+  "images/pages/en-pro-op-ith-007a-2.jpg",
+  "images/pages/en-pro-op-ith-007a-3.jpg",
+  "images/pages/en-pro-op-ith-007a-4.jpg",
+  "images/pages/en-pro-op-ith-007a-5.jpg",
+  "images/pages/en-pro-op-ith-007a-6.jpg",
+  "images/pages/en-pro-op-ith-007a-7.jpg",
+  "images/pages/en-pro-op-ith-007a-8.jpg",
+  "images/pages/en-pro-op-ith-007a-9.jpg",
+  "images/pages/en-pro-op-ith-007a-10.jpg",
+  "images/pages/en-pro-op-ith-007a-11.jpg",
+  "images/pages/en-pro-op-ith-007a-12.jpg",
+  "images/pages/en-pro-op-ith-007a-13.jpg"
+ ],
+ "en-pro-op-ith-008a": [
+  "images/pages/en-pro-op-ith-008a-1.jpg",
+  "images/pages/en-pro-op-ith-008a-2.jpg"
+ ],
+ "en-pro-op-ith-012a": [
+  "images/pages/en-pro-op-ith-012a-1.jpg",
+  "images/pages/en-pro-op-ith-012a-2.jpg",
+  "images/pages/en-pro-op-ith-012a-3.jpg",
+  "images/pages/en-pro-op-ith-012a-4.jpg",
+  "images/pages/en-pro-op-ith-012a-5.jpg"
+ ],
+ "en-pro-op-ith-014a": [
+  "images/pages/en-pro-op-ith-014a-1.jpg",
+  "images/pages/en-pro-op-ith-014a-2.jpg",
+  "images/pages/en-pro-op-ith-014a-3.jpg"
+ ],
+ "en-pro-op-ith-016a": [
+  "images/pages/en-pro-op-ith-016a-1.jpg",
+  "images/pages/en-pro-op-ith-016a-2.jpg",
+  "images/pages/en-pro-op-ith-016a-3.jpg",
+  "images/pages/en-pro-op-ith-016a-4.jpg",
+  "images/pages/en-pro-op-ith-016a-5.jpg",
+  "images/pages/en-pro-op-ith-016a-6.jpg"
+ ],
+ "en-pro-op-sm-001a": [
+  "images/pages/en-pro-op-sm-001a-1.jpg",
+  "images/pages/en-pro-op-sm-001a-2.jpg",
+  "images/pages/en-pro-op-sm-001a-3.jpg"
+ ],
+ "en-pro-op-sm-002a": [
+  "images/pages/en-pro-op-sm-002a-1.jpg",
+  "images/pages/en-pro-op-sm-002a-2.jpg",
+  "images/pages/en-pro-op-sm-002a-3.jpg",
+  "images/pages/en-pro-op-sm-002a-4.jpg",
+  "images/pages/en-pro-op-sm-002a-5.jpg",
+  "images/pages/en-pro-op-sm-002a-6.jpg",
+  "images/pages/en-pro-op-sm-002a-7.jpg",
+  "images/pages/en-pro-op-sm-002a-8.jpg"
+ ],
+ "en-pro-op-sm-003a": [
+  "images/pages/en-pro-op-sm-003a-1.jpg",
+  "images/pages/en-pro-op-sm-003a-2.jpg",
+  "images/pages/en-pro-op-sm-003a-3.jpg",
+  "images/pages/en-pro-op-sm-003a-4.jpg",
+  "images/pages/en-pro-op-sm-003a-5.jpg",
+  "images/pages/en-pro-op-sm-003a-6.jpg"
+ ],
+ "en-pro-op-sm-004a": [
+  "images/pages/en-pro-op-sm-004a-1.jpg",
+  "images/pages/en-pro-op-sm-004a-2.jpg",
+  "images/pages/en-pro-op-sm-004a-3.jpg"
+ ],
+ "en-pro-sec-001a": [
+  "images/pages/en-pro-sec-001a-1.jpg",
+  "images/pages/en-pro-sec-001a-2.jpg",
+  "images/pages/en-pro-sec-001a-3.jpg",
+  "images/pages/en-pro-sec-001a-4.jpg",
+  "images/pages/en-pro-sec-001a-5.jpg",
+  "images/pages/en-pro-sec-001a-6.jpg"
+ ],
+ "en-pro-sec-010a": [
+  "images/pages/en-pro-sec-010a-1.jpg",
+  "images/pages/en-pro-sec-010a-2.jpg"
+ ],
+ "en-san-sec-005a": [
+  "images/pages/en-san-sec-005a-1.jpg",
+  "images/pages/en-san-sec-005a-2.jpg",
+  "images/pages/en-san-sec-005a-3.jpg"
+ ],
+ "en-san-sec-006a": [
+  "images/pages/en-san-sec-006a-1.jpg",
+  "images/pages/en-san-sec-006a-2.jpg",
+  "images/pages/en-san-sec-006a-3.jpg"
+ ],
+ "en-ss-dd-005a": [
+  "images/pages/en-ss-dd-005a-1.jpg",
+  "images/pages/en-ss-dd-005a-2.jpg",
+  "images/pages/en-ss-dd-005a-3.jpg"
+ ],
+ "en-ss-dd-st-001a": [
+  "images/pages/en-ss-dd-st-001a-1.jpg",
+  "images/pages/en-ss-dd-st-001a-2.jpg"
+ ],
+ "pro-op-dd-014": [
+  "images/pages/pro-op-dd-014-1.jpg",
+  "images/pages/pro-op-dd-014-2.jpg",
+  "images/pages/pro-op-dd-014-3.jpg",
+  "images/pages/pro-op-dd-014-4.jpg",
+  "images/pages/pro-op-dd-014-5.jpg",
+  "images/pages/pro-op-dd-014-6.jpg",
+  "images/pages/pro-op-dd-014-7.jpg"
+ ]
 };

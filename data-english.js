@@ -277,42 +277,38 @@
  {
   "id": "en-pro-dd-st-003a",
   "code": "PRO-DD-ST-003A",
-  "titre": "Procedure for constructing a set-up (floor) for an underground diamond drill",
+  "titre": "Procedure for building a floor for an underground diamond drill",
   "categorie": "Installation",
   "machines": [
    "Foreuse au diamant"
   ],
   "famille": "english",
-  "resume": "This procedure defines safe and effective methods for constructing a wooden set-up (floor) for an underground diamond drill, from site inspection and placement of the 8''X8'' or 6''X6'' base structure to leveling, nailing the 3''X8'' boards, and building steps, guardrails and handrails when required. It also covers dismantling of the floor after demobilization of the drill and marking of the site with orange and red ribbons afterwards.",
-  "objectif": "The objective of this procedure is to define safe and effective methods for the construction of a set-up (floor) of an underground diamond drill.",
+  "resume": "This procedure defines safe and efficient methods for building a wooden floor for an underground diamond drill: a full 16'X32' floor built in two 16'X16' sections (6''X6'' base structure at 32'' center, laser leveling, 3''X8'' covering screwed with lag screws), steps, guardrails and mesh when required, a secondary floor next to the tower, dismantling after demobilization, and decision criteria for choosing the floor type based on the metres to drill.",
+  "objectif": "The objective of this procedure is to define safe and efficient methods for building a floor for an underground diamond drill.",
   "application": "This procedure applies to all employees of MACHINES ROGER INTERNATIONAL.",
   "responsabilites": "The worker is responsible for applying this procedure and the supervisor is responsible for ensuring the smooth running of operations and the quality of the work accomplished.",
   "epi": [
-   "Basic PPE required",
-   "Special gloves for chainsaw (if chainsaw used)",
-   "Chainsaw protective pants (if chainsaw used)",
-   "Visor full face"
+   "Mandatory basic equipment"
   ],
   "equipements": [
-   "Rough wood preferably 6'X6' or 8'X8'",
-   "Rough wood 3''X8'' or 3''X6''",
-   "Wooden wedges",
-   "2''X4'' planed or rough timber",
-   "3 1/2'' and 6'' nails",
-   "Crow bar (nail puller)",
-   "Axe",
-   "Hammer",
-   "Wood saw",
-   "Logs clamps",
-   "Jig saw with wood blade",
-   "48'' level",
-   "Chain saw (supervisor approbation)"
+   "Work-in-progress barricade with orange flasher",
+   "Cabinet (first aid kit and eyewash x2)",
+   "Fire extinguisher",
+   "Planed 2''X4'' lumber, rough 6''X6'' and 3''X8'' lumber, wooden wedges",
+   "6'' lag screws",
+   "Bosch laser and 48'' level",
+   "Crowbar (nail puller), sledgehammer, hammer, bucksaw, log tongs",
+   "Scaling bars 6', 8' and 10', muck scoop, ''Sawzall'' with wood blade"
   ],
-  "prerequis": [],
+  "prerequis": [
+   "Supervisor inspection before moving equipment to the drilling location: floor free of debris, flat, and ''bootlegs'' located and marked"
+  ],
   "etapes": [],
   "avertissements": [
-   "ALWAYS CARRY LARGE PIECES OF WOOD WITH TWO WORKER AND HAVING A GOOD COMMUNICATION IS VERY IMPORTANT",
-   "The accumulation of drilling mud under the floor can make movement difficult and unstable"
+   "ALWAYS CARRY LARGE PIECES OF WOOD WITH TWO PEOPLE.",
+   "Adding planed wood on the floors is not tolerated.",
+   "The accumulation of drilling mud under the floor can make movement difficult and unstable",
+   "Always remove the nails and lag screws from the planks as they are removed"
   ],
   "consignes_securite": [
    {
@@ -321,34 +317,44 @@
     "source": "Page 1"
    },
    {
-    "regle": "The chain saw may only be used with supervisor approbation, with special chainsaw gloves and chainsaw protective pants.",
-    "theme": "PPE",
-    "source": "Page 1, Tools / PPE needed"
-   },
-   {
-    "regle": "The supervisor must first inspect the site before moving the equipment to the drilling site: floor free of debris, flat (filled by muck if needed), and bottom holes found, identified and well marked.",
+    "regle": "The supervisor must first inspect the area before moving the equipment to the drilling location: floor free of debris, flat, and ''bootlegs'' located and marked.",
     "theme": "Inspection",
     "source": "Page 2, Procedure"
    },
    {
-    "regle": "At the entrance to the floor, the 3''X8'' should be cut square and even with the edge of the floor so as not to trip over uneven pieces.",
+    "regle": "Always start covering the floor in the direction where you can walk on the surface already covered with 3''X8'', so you do not have to step over the 6''X6'' of the base structure.",
     "theme": "Slips, trips & falls",
     "source": "Step 6"
    },
    {
-    "regle": "If the floor is higher than 12 inches, a step construction must be made (minimum depth 8'', width 36'' minimum, 60'' maximum, maximum height 12 inches).",
-    "theme": "Fall prevention",
-    "source": "Step 7"
+    "regle": "No piece of 6''X6'' or 3''X8'' may stick out: cut them square and even with the edge of the floor so as not to trip over uneven pieces.",
+    "theme": "Slips, trips & falls",
+    "source": "Step 13"
    },
    {
-    "regle": "If the floor is higher than 12 inches, guardrails must be installed, complying with article 12 of the RSST (Quebec) or article 26,3 of the construction regulation of Ontario.",
+    "regle": "If the floor is higher than 12 inches, steps must be built (minimum depth 16'' — two 3''X8'' planks, width 36'' minimum to 60'' maximum, maximum height 12 inches).",
     "theme": "Fall prevention",
-    "source": "Step 8, Page 4"
+    "source": "Step 14"
    },
    {
-    "regle": "If there is more than one step, it should have handrails.",
+    "regle": "If the floor is higher than 12 inches, guardrails must be installed and comply with article 12 of the RSST.",
     "theme": "Fall prevention",
-    "source": "Step 10, Page 4"
+    "source": "Page 16"
+   },
+   {
+    "regle": "If there is more than one step, handrails are required.",
+    "theme": "Fall prevention",
+    "source": "Step 16"
+   },
+   {
+    "regle": "If the gap between the floor and the wall is 12'' or less, add a 24'' high mesh attached to the bottom of the wall to eliminate the risk of stepping in.",
+    "theme": "Fall prevention",
+    "source": "Step 17"
+   },
+   {
+    "regle": "On the secondary floor, the last 2 planks closest to the drill must be screwed with lag screws and readjusted at each change of azimuth, degree or drilling angle; the guardrails must also be adjusted to close the gaps created.",
+    "theme": "Inspection",
+    "source": "Secondary floor"
    },
    {
     "regle": "When dismantling over accumulated drilling mud: position yourself in the most solid and stable part, stay vigilant and keep your feet solid on the ground, start at the end of the drill bay, and slide the pieces of wood on top of each other to get them out.",
@@ -356,76 +362,91 @@
     "source": "Dismantling, step 5, Page 5"
    },
    {
-    "regle": "Always remove nails as boards are removed during dismantling.",
+    "regle": "Always remove the lag screws and nails from the planks as they are removed during dismantling.",
     "theme": "Housekeeping",
-    "source": "Dismantling, step 3, Page 5"
+    "source": "Dismantling, step 3"
    },
    {
-    "regle": "After dismantling, install an orange ribbon and a red ribbon card stating ''UNSURVEYED AND UNCEMENTED HOLE'' with the date of installation and the name of the supervisor.",
+    "regle": "After dismantling, install an orange fence and a red tape card stating that the hole is not surveyed and not cemented, with the installation date and the supervisor's name.",
     "theme": "Signage & marking",
-    "source": "After the dismantling, Page 5"
+    "source": "After dismantling is complete"
    }
   ],
   "valeurs_cles": [
    {
-    "libelle": "Spacing of 8''X8'' base pieces",
-    "valeur": "48''"
+    "libelle": "Spacing of the 6''X6'' base pieces",
+    "valeur": "32'' center"
    },
    {
-    "libelle": "Spacing of 6''X6'' base pieces",
-    "valeur": "36''"
+    "libelle": "Minimum blockings under each 6''X6''",
+    "valeur": "6"
    },
    {
-    "libelle": "Floor height above which steps and guardrails are required",
-    "valeur": "12 inches"
+    "libelle": "Full floor dimensions",
+    "valeur": "16' X 32' (two 16' X 16' sections)"
    },
    {
-    "libelle": "Step minimum depth",
-    "valeur": "8''"
+    "libelle": "Steps (if floor higher than 12 inches)",
+    "valeur": "minimum depth 16'' (two 3''X8'' planks), width 36'' to 60'', maximum height 12''"
    },
    {
-    "libelle": "Step width",
-    "valeur": "36'' minimum, 60'' maximum"
+    "libelle": "Temporary guardrails (RSST art. 12)",
+    "valeur": "horizontal point load 900 N and vertical load 450 N on the top rail; top rail between 1 m and 1.2 m; toe board at least 90 mm"
    },
    {
-    "libelle": "Step maximum height",
-    "valeur": "12 inches"
-   },
-   {
-    "libelle": "Guardrail horizontal point load (RSST art. 12)",
-    "valeur": "0.55 kN on the upper rail"
-   },
-   {
-    "libelle": "Guardrail vertical load (RSST art. 12)",
-    "valeur": "1.5 kN per linear meter on the upper rail"
-   },
-   {
-    "libelle": "Guardrail upper rail height (RSST art. 12)",
-    "valeur": "between 900 mm and 1,100 mm from the floor"
+    "libelle": "Mesh if the floor-to-wall gap is 12'' or less",
+    "valeur": "24'' high, attached to the bottom of the wall"
    },
    {
     "libelle": "Secondary floor next to the tower",
-    "valeur": "minimum 32'' wide by 72'' long, maximum 12'' height"
+    "valeur": "minimum 32'' wide by 72'' long, maximum 12'' height; last plank within 3 inches of the tower"
+   },
+   {
+    "libelle": "Floor choice: 0 to 49 m (no bit change)",
+    "valeur": "10' X 8' floor without upright rods rack"
+   },
+   {
+    "libelle": "Floor choice: 49 to 499 m (or rod pulling expected)",
+    "valeur": "10' X 16' floor with upright rods rack"
+   },
+   {
+    "libelle": "Floor choice: 500 m and more",
+    "valeur": "full 16' X 32' floor"
    }
   ],
   "figures": [],
   "historique": [
    {
     "date": "19-11-2020",
-    "description": "Added floor rail on point #9",
+    "description": "Addition of bottom rail, point 9",
+    "par": "S. Tremblay"
+   },
+   {
+    "date": "1-09-2022",
+    "description": "Addition of the secondary floor section following an ankle sprain event",
     "par": "S. Tremblay"
    },
    {
     "date": "27-09-2024",
     "description": "Added OR rough timber as material needed",
     "par": "S. Tremblay"
+   },
+   {
+    "date": "21-01-2025",
+    "description": "Addition of the ''Floors in special situations'' section",
+    "par": "S. Tremblay, S. Desrosiers"
+   },
+   {
+    "date": "27-07-2026",
+    "description": "Complete revision",
+    "par": "É. Thibeault, F. Croteau"
    }
   ],
   "date_creation": "Avril 2019",
-  "date_revision": "Octobre 2020",
-  "source_pdf": "PRO-DD-ST-003A Procedure for constructing a set-up (floor) for an underground diamond drill sept 2024 fusionnée.pdf",
+  "date_revision": "Juillet 2026",
+  "source_pdf": "PRO-DD-ST-003A Procedure for building a floor for an underground diamond drill Juillet 2026.pdf",
   "langue_source": "en",
-  "notes": ""
+  "notes": "Complete revision of July 2026: 6''X6'' base at 32'' center (laser method in two sections), covering screwed with lag screws, 16''-deep steps, 24'' mesh if gap 12'' or less, floor choice criteria based on metres to drill."
  },
  {
   "id": "en-pro-dd-st-004a",
