@@ -76,10 +76,12 @@ const ALIASES = {
   'cadenassage-dd-stm1500': 'recfECNCJhqJifcWH',     // Cadenassage DD STM-1500
   'procedure-serrage-marteau': 'recFVQsg9Zb2Nwydn',  // Procédure serrage de marteau (4 planches)
   'std-dd-installation': 'recYy8GPM27fEiSDM',        // STANDARD D'INSTALLATION SITES DE FORAGE
-  'pro-op-cat-416-001': 'rec1dgSNCFJogm9gZ',         // PRO-OP-CAT416-001A (fiche FR basée sur le PDF anglais)
+  'cadenassage-dd-dr900-dr1500': 'recrLTqjnY6xoBoKO', // Cadenassage DD DR-900 et DR-1500
+  'centralisateur': 'recsWvFnNUII3qCZG',             // Procédure d'installation du centralisateur (FR, sans code)
   'en-lockout-stopemaster': 'recjv9UUgbC6trIiy',     // Lock-out -STOPEMASTER
   'en-installation-rod-centralizer': 'recYDEqsTxqQhc5ZH', // Operating Procedure Installation of rod centralizer
-  'en-ges-san-sec-001a': 'recVgs1mpm9mxaWUt'         // GES-SAN-SEC-001 (le PDF joint est la version anglaise)
+  'en-ges-san-sec-001a': 'recVgs1mpm9mxaWUt',        // GES-SAN-SEC-001 (le PDF joint est la version anglaise)
+  'en-pro-op-ith-004a': 'recpbKeMNhwDnK2Yl'          // PRO-ITH-004A (code Airtable sans « OP »)
 };
 
 /* trim() : un jeton collé avec une espace ou un retour de ligne casserait
@@ -148,11 +150,15 @@ async function fetchRecords() {
     const atts = (f[F.doc] || []).map(function (a) {
       return { id: a.id, url: a.url, filename: a.filename || '', size: a.size || 0 };
     });
+    // Sélection unique : l'API REST renvoie le NOM de l'option en chaîne ;
+    // d'autres surfaces (MCP…) renvoient un objet { name }. Couvrir les deux,
+    // sinon le garde-fou de langue est silencieusement inopérant.
+    const lv = f[F.langue];
     return {
       id: rec.id,
       code: String(f[F.code] || '').trim(),
       nom: String(f[F.nom] || '').trim(),
-      langue: (f[F.langue] && f[F.langue].name) || '',
+      langue: typeof lv === 'string' ? lv : (lv && lv.name) || '',
       modif: f[F.modif] || '',
       atts: atts,
       fp: atts.map(function (a) { return a.id + ':' + a.size; }).join('|')
