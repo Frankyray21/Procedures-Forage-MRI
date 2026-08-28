@@ -82,7 +82,9 @@ const ALIASES = {
   'en-ges-san-sec-001a': 'recVgs1mpm9mxaWUt'         // GES-SAN-SEC-001 (le PDF joint est la version anglaise)
 };
 
-const TOKEN = process.env.AIRTABLE_TOKEN || '';
+/* trim() : un jeton collé avec une espace ou un retour de ligne casserait
+   l'en-tête Authorization — erreur 401 incompréhensible pour rien. */
+const TOKEN = String(process.env.AIRTABLE_TOKEN || '').trim();
 const DRY = process.env.AIRTABLE_SYNC_DRY === '1';
 const FORCE = String(process.env.FORCE_IDS || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 
@@ -126,6 +128,16 @@ async function fetchRecords() {
     const r = await fetch(url + (offset ? '&offset=' + encodeURIComponent(offset) : ''), {
       headers: { Authorization: 'Bearer ' + TOKEN }
     });
+    if (r.status === 401) {
+      throw new Error('Airtable a répondu 401 (jeton refusé). Le secret AIRTABLE_TOKEN ne contient pas ' +
+        'un jeton valide : recopier la VALEUR COMPLÈTE du jeton (commence par « pat », montré une seule ' +
+        'fois à la création sur https://airtable.com/create/tokens) et recréer le secret.');
+    }
+    if (r.status === 403 || r.status === 404) {
+      throw new Error('Airtable a répondu ' + r.status + ' : le jeton est valide mais n\'a pas accès à la ' +
+        'base « Documents » (ou il lui manque la portée data.records:read). Modifier le jeton sur ' +
+        'https://airtable.com/create/tokens : Scopes → data.records:read, Access → base « Documents ».');
+    }
     if (!r.ok) throw new Error('Airtable a répondu ' + r.status + ' : ' + (await r.text()).slice(0, 300));
     const data = await r.json();
     (data.records || []).forEach(function (rec) { records.push(rec); });
