@@ -57,11 +57,9 @@ ou `all` pour tout).
 
 Le **résumé du job** (onglet Actions) liste à chaque passage :
 - les procédures mises à jour ;
-- les fiches **sans enregistrement Airtable** correspondant (normal pour
-  certaines fiches françaises dont seul le PDF anglais est dans Airtable :
-  `centralisateur`, `pro-mec-004`, `pro-dd-st-001/003/006/008`,
-  `pro-op-dd-005`, `ges-san-sec-001`, `cadenassage-dd-dr900-dr1500`,
-  `programme-maitrise-energies-dangereuses`, `pro-pt-001`) ;
+- les fiches **sans enregistrement Airtable** correspondant (à ce jour, une
+  seule : `programme-maitrise-energies-dangereuses`, dont le PDF n'est pas
+  dans la table « Procédures ») ;
 - les enregistrements Airtable **sans fiche sur le site** → probablement une
   nouvelle procédure à adapter en fiche web.
 
