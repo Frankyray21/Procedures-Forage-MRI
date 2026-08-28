@@ -934,26 +934,6 @@ window.FIGURES = {
    "h": 472
   }
  ],
- "pro-dd-st-003": [
-  {
-   "src": "images/figures/pro-dd-st-003-1.jpg",
-   "page": "2",
-   "w": 772,
-   "h": 289
-  },
-  {
-   "src": "images/figures/pro-dd-st-003-2.jpg",
-   "page": "2",
-   "w": 525,
-   "h": 236
-  },
-  {
-   "src": "images/figures/pro-dd-st-003-3.jpg",
-   "page": "4",
-   "w": 640,
-   "h": 480
-  }
- ],
  "pro-dd-st-004": [
   {
    "src": "images/figures/pro-dd-st-004-1.jpg",
@@ -1814,26 +1794,6 @@ window.FIGURES = {
    "page": "5",
    "w": 608,
    "h": 472
-  }
- ],
- "en-pro-dd-st-003a": [
-  {
-   "src": "images/figures/en-pro-dd-st-003a-1.jpg",
-   "page": "2",
-   "w": 772,
-   "h": 289
-  },
-  {
-   "src": "images/figures/en-pro-dd-st-003a-2.jpg",
-   "page": "2",
-   "w": 525,
-   "h": 236
-  },
-  {
-   "src": "images/figures/en-pro-dd-st-003a-3.jpg",
-   "page": "4",
-   "w": 640,
-   "h": 480
   }
  ],
  "en-pro-dd-st-004a": [

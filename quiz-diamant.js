@@ -11,10 +11,32 @@
         "e": "« Ne jamais regarder dans le tube pour voir s'il est vide, insérer plutôt une tige de métal d'un pied dans l'extrémité et la faire glisser dans le tube. »",
         "img": "images/figures/pro-dd-st-002-2.jpg", "detail": "On insère la tige de métal dans l'extrémité du tube plutôt que d'y regarder." }    ],
     "pro-dd-st-003": [
-      { "q": "À quelle distance mets-tu les 8''X8'' et les 6''X6'' ?",
-        "o": ["Les deux à 24''", "Les 8''X8'' à 48'' et les 6''X6'' à 36''", "Les deux à 48''", "N'importe où"], "a": 1,
-        "e": "« Placer les 8''X8'' à une distance de 48'', et les 6''X6'' à une distance de 36''. »",
-        "img": "images/figures/pro-dd-st-003-1.jpg", "detail": "Disposition des pièces de bois au sol pour le plancher." }
+      { "t": "trou", "q": "Les 6''X6'' de la structure de base se placent à une distance de ______ « centre » chacun.",
+        "o": ["24''", "32''", "48''", "36''"], "a": 1,
+        "e": "« Ensuite positionner les 4 autres 6''X6'' à une distance de 32'' ''centre'' chacun. » (révision juillet 2026)" },
+      { "q": "Combien de blocages faut-il mettre, au minimum, pour soutenir chaque 6''X6'' de la base ?",
+        "o": ["2", "4", "6", "Aucun si le sol est plat"], "a": 2,
+        "e": "« Vous devez positionner les blocages et les coins de bois dans le sens contraire des madriers et vous devez en mettre un minimum de 6 pour soutenir chaque 6''X6''. »" }
+    ],
+    "pro-op-dd-014": [
+      { "t": "vf", "q": "Il est obligatoire d'installer un guide bushing modifié afin de faire passer la core barrel et les shells lors d'un départ de trou.",
+        "vrai": true,
+        "e": "« Il est obligatoire de procéder à l'installation d'un guide bushing modifié afin de faire passer la core barrel et les shells en forage lors d'un départ de trou. »" },
+      { "t": "multi", "q": "Coche les exigences de contrôle des énergies à appliquer lors de TOUT changement de bushing :",
+        "o": ["Aucune tige dans la tête", "Barrer les jaws en position fermée", "Sur un trou descendant, installer la barrure de tête", "Sur un trou ascendant, installer le clam Morissette", "Garder la foreuse en marche pendant le retrait de la bushing"], "a": [0, 1, 2, 3],
+        "e": "« Lors de tout changement de bushing, il est impératif d'appliquer les exigences de contrôle des énergies suivantes : aucune tige dans la tête ; barrer les jaws en position fermée ; sur un trou descendant, installer la barrure de tête ; sur un trou ascendant, installer le clam morissette. » Et la foreuse doit être ARRÊTÉE avant de toucher à la bushing." },
+      { "t": "trou", "q": "Sur un trou descendant, placer le joint des tiges à ______ au-dessus du foot clam à l'aide de la rotation.",
+        "o": ["2 pouces", "6 pouces", "12 pouces", "2 pieds"], "a": 1,
+        "e": "« Placer le joint des tiges à 6 pouces au-dessus du foot clam à l'aide de la rotation […] »" },
+      { "q": "Sur un trou ascendant, où installes-tu le clam Morissette ?",
+        "o": ["Sur la tige en avant du foot clam (entre le mur et la front plate), appuyé sur la front plate", "Sur la tête de la foreuse", "Derrière la rotation, près des poulies", "N'importe où sur la tige"], "a": 0,
+        "e": "« Installer un ''clam morissette'' sur la tige de forage en avant du foot clam (entre le mur et la front plate) et le serrer ; appuyer le ''clam morissette'' sur la front plate de manière à ce qu'il supporte entièrement le poids des tiges. »" },
+      { "t": "vf", "q": "On peut retirer la marguerite et la guide bushing pendant que la foreuse tourne, si on fait vite.",
+        "vrai": false,
+        "e": "« Arrêter la foreuse » (étape 6-7 en descendant, étape 7-8 en ascendant) — le changement de bushing se fait toujours foreuse arrêtée." },
+      { "t": "trou", "q": "Sur un trou ascendant, remonter la rotation près de l'embout de la tige qui est dans le foot clam, à environ ______.",
+        "o": ["1-2 pouces", "4-6 pouces", "12 pouces", "24 pouces"], "a": 1,
+        "e": "« Remonter la rotation près de l'embout de la tige qui est dans le foot clam, à environ 4-6 pouces. »" }
     ],
     "pro-dd-st-004": [
       { "t": "vf", "q": "Il est interdit d'utiliser un pipe wrench pour dévisser la water swivel.",
