@@ -17,6 +17,18 @@ une commande :
 Ne jamais éditer ces numéros à la main (ils doivent bouger ensemble), et un
 seul bump par lot de changements — pas un par commit.
 
+## Synchronisation Airtable (PDF officiels)
+
+Le workflow `.github/workflows/airtable-sync.yml` exécute `sync-airtable.js`
+toutes les heures : si un PDF a été remplacé dans Airtable (base « Documents »,
+table « Procédures »), il met à jour `pdf/`, `images/pages/`, `pages.js`,
+`pdftext.js` et la `date_revision` de la fiche, PUIS fait lui-même le bump de
+version et le redéploiement. Ne pas éditer `.github/airtable/state.json` à la
+main (empreintes des pièces jointes, maintenu par le workflow). L'app affiche
+un badge « Mise à jour » sur toute fiche dont la `date_revision` change — c'est
+donc elle qu'il faut mettre à jour quand on révise une fiche à la main. Voir
+`AIRTABLE-SYNC.md`.
+
 ## Autres vérifications avant de pousser
 
 - `node --check` sur chaque fichier JS modifié.

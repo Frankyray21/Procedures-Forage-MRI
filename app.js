@@ -28,6 +28,49 @@
   var CODE_TO_ID = {};
   DATA.forEach(function (p) { if (p.code) CODE_TO_ID[p.code.toUpperCase()] = p.id; });
 
+  /* ---------- révisions : « constater une mise à jour » ----------
+     À chaque lancement, la date_revision de chaque fiche est comparée à ce que
+     CET APPAREIL avait vu au lancement précédent (localStorage). Toute fiche
+     révisée (par la synchronisation Airtable ou à la main) ou ajoutée reçoit
+     un badge « Mise à jour » / « Nouvelle » dans les listes, qui reste affiché
+     jusqu'à l'ouverture de la fiche ; un toast au démarrage annonce le nombre.
+     Rien au tout premier lancement (aucune référence) — pas de fausse alerte. */
+  var updPending = {};        // id -> 'upd' | 'new' (persisté jusqu'à ouverture)
+  var updFresh = 0;           // détectées à CE lancement (toast de démarrage)
+  (function () {
+    var cur = {};
+    DATA.forEach(function (p) { cur[p.id] = String(p.date_revision || p.date_creation || ''); });
+    var seen = null;
+    try {
+      seen = JSON.parse(localStorage.getItem('rev_seen') || 'null');
+      updPending = JSON.parse(localStorage.getItem('rev_new') || '{}') || {};
+    } catch (e) { seen = null; updPending = {}; }
+    if (seen && typeof seen === 'object') {
+      Object.keys(cur).forEach(function (id) {
+        if (!(id in seen)) { updPending[id] = 'new'; updFresh++; }
+        else if (seen[id] !== cur[id]) { updPending[id] = 'upd'; updFresh++; }
+      });
+      // fiches retirées du site : purge du reliquat
+      Object.keys(updPending).forEach(function (id) { if (!(id in cur)) delete updPending[id]; });
+    }
+    try {
+      localStorage.setItem('rev_seen', JSON.stringify(cur));
+      localStorage.setItem('rev_new', JSON.stringify(updPending));
+    } catch (e) {}
+  })();
+  function updBadge(p) {
+    var k = updPending[p.id];
+    if (!k) return '';
+    var en = p.famille === 'english';
+    return '<span class="pupd' + (k === 'new' ? ' add' : '') + '">' +
+      (k === 'new' ? (en ? 'New' : 'Nouvelle') : (en ? 'Updated' : 'Mise à jour')) + '</span>';
+  }
+  function updMarkSeen(id) {
+    if (!updPending[id]) return;
+    delete updPending[id];
+    try { localStorage.setItem('rev_new', JSON.stringify(updPending)); } catch (e) {}
+  }
+
   /* ---------- utilitaires ---------- */
   function esc(s) {
     return String(s == null ? '' : s)
@@ -1525,6 +1568,7 @@
       '<div class="prow-main">' +
         (p.code ? '<span class="pcode">' + esc(p.code) + '</span>' : '') +
         '<span class="ptitle">' + esc(p.titre) + '</span>' +
+        updBadge(p) +
         '<span class="pcat"><i style="background:' + col + '"></i>' + esc(p.categorie) + '</span>' +
         procState(p) +
       '</div>' +
@@ -1585,6 +1629,7 @@
   function renderProcedure(view, id) {
     var p = DATA.filter(function (x) { return x.id === id; })[0];
     if (!p) { view.innerHTML = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Procédures de forage ITH / CUBEX</a><div class="empty">Procédure introuvable.</div></div>'; return; }
+    updMarkSeen(id);            // fiche ouverte : le badge « Mise à jour » s'éteint
     var col = catColor(p.categorie);
     // Pour une procédure 'commun', le retour suit la section d'où l'on vient.
     var viaDiamant = (p.famille === 'commun') ? (state.fam === 'diamant') : (p.famille === 'diamant');
@@ -3908,6 +3953,15 @@
   }
   document.addEventListener('DOMContentLoaded', function () {
     route(); initInstall(); initChecklistEvents(); initTheme(); initHoverCard();
+    // Contenu révisé depuis la dernière visite : l'annoncer clairement (les
+    // badges « Mise à jour » restent ensuite sur les fiches concernées).
+    if (updFresh) {
+      setTimeout(function () {
+        toast('Contenu mis à jour : ' + updFresh + ' procédure' + (updFresh > 1 ? 's' : '') +
+          (updFresh > 1 ? ' révisées ou ajoutées' : ' révisée ou ajoutée') +
+          ' — repère le badge « Mise à jour » dans la liste.');
+      }, 900);
+    }
     initQuizFeedback();   // pouce 👍/👎 + commentaire sous chaque question de quiz
     aqFlush(true);  // attestations en attente d'envoi (force : onLine peut mentir au réveil du WebView)
     progDirtyFlush(true);   // progression marquée « à pousser » pendant une panne (force : voir aqFlush)

@@ -44,6 +44,15 @@ fiable qu'un mot de passe dans le code d'un site statique.
 
 ## 3. Ajouter ou modifier une procédure
 
+> **Mise à jour automatique depuis Airtable** : quand un PDF est remplacé dans
+> la base Airtable « Documents » (table « Procédures »), le workflow
+> « Synchronisation Airtable » rapatrie tout seul le nouveau PDF, régénère les
+> images de pages et le texte de recherche, met à jour la date de révision,
+> bump la version et redéploie — et l'app affiche un badge « Mise à jour » sur
+> la fiche concernée. Voir **`AIRTABLE-SYNC.md`** (mise en place : un seul
+> secret `AIRTABLE_TOKEN`). Les textes des fiches et les quiz, eux, restent
+> édités à la main (ou via Claude) comme décrit ci-dessous.
+
 Tout le contenu est dans **`data.js`** (`window.PROCEDURES`). Un objet = une procédure :
 
 ```js
