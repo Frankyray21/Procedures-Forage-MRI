@@ -1,0 +1,107 @@
+# Synchronise le site avec Airtable : quand un PDF de procédure est remplacé
+# dans la base « Documents » (table « Procédures »), ce workflow rapatrie le
+# nouveau PDF, régénère les images de pages + le texte de recherche, met à
+# jour la date de révision de la fiche (→ badge « Mis à jour » dans l'app),
+# bump la version du site et redéploie GitHub Pages. Les appareils des
+# travailleurs reçoivent ensuite la mise à jour tout seuls (service worker).
+#
+# SECRET REQUIS (Settings → Secrets and variables → Actions) :
+#   AIRTABLE_TOKEN — jeton d'accès personnel Airtable avec data.records:read
+#                    sur la base « Documents ». (Voir AIRTABLE-SYNC.md.)
+#
+# Déclenchements :
+#   • toutes les heures (cron) — le « tout seul » ;
+#   • à la main (Run workflow), avec au besoin force_ids pour re-synchroniser
+#     des fiches précises même sans changement détecté ;
+#   • instantanément depuis une automatisation Airtable via
+#     repository_dispatch type "airtable-update" (optionnel — AIRTABLE-SYNC.md).
+name: Synchronisation Airtable
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      force_ids:
+        description: "Re-synchroniser ces fiches (ids séparés par des virgules), ou « all »"
+        required: false
+        default: ""
+  repository_dispatch:
+    types: [airtable-update]
+
+permissions:
+  contents: write   # committer PDF / données / version sur main
+  actions: write    # redéclencher le déploiement Pages (static.yml)
+
+# Jamais deux synchronisations en même temps (état + push sur main).
+concurrency:
+  group: "airtable-sync"
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Outils PDF (poppler — pdftoppm / pdftotext)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - name: Synchroniser depuis Airtable
+        id: sync
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          FORCE_IDS: ${{ github.event.inputs.force_ids }}
+        run: node sync-airtable.js
+
+      - name: Committer et pousser (bump de version si contenu servi modifié)
+        id: pub
+        env:
+          SYNCED: ${{ steps.sync.outputs.synced }}
+        run: |
+          # Fichiers SERVIS modifiés (hors .github/) → bump de version
+          # obligatoire (règle du dépôt : cache-busting + service worker).
+          SERVED=$(git status --porcelain -- . ':!.github' | wc -l)
+          ANY=$(git status --porcelain | wc -l)
+          if [ "$ANY" = "0" ]; then
+            echo "Aucun changement — rien à publier."
+            echo "deployed=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$SERVED" != "0" ]; then
+            node gen-sizes.js
+            node bump-version.js
+            node --check service-worker.js
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if [ -n "$SYNCED" ]; then
+            git commit -m "Sync Airtable — procédures mises à jour : $SYNCED"
+          else
+            git commit -m "Sync Airtable — référence des pièces jointes"
+          fi
+          # Poussée avec reprise : un autre commit peut arriver sur main.
+          for i in 1 2 3 4; do
+            git push origin main && break
+            git pull --rebase origin main
+            sleep $((2**i))
+          done
+          echo "deployed=$SERVED" >> "$GITHUB_OUTPUT"
+
+      # La poussée ci-dessus vient du GITHUB_TOKEN : elle ne déclenche PAS
+      # static.yml toute seule (règle GitHub anti-récursion) — on le lance
+      # explicitement, comme le fait déjà build-apk.yml.
+      - name: Redéployer le site (GitHub Pages)
+        if: steps.pub.outputs.deployed != '0'
+        run: gh workflow run static.yml --ref main --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}

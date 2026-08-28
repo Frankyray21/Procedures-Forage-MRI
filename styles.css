@@ -1273,6 +1273,14 @@ footer b{color:var(--muted)}
 .pstate2.mid{color:var(--dim);background:var(--card-2);border:1px solid var(--border)}
 :root[data-theme="light"] .pstate2.ok{color:#047857}
 :root[data-theme="light"] .pstate2.todo{color:#92400e;border-color:rgba(180,83,9,.45);background:rgba(180,83,9,.07)}
+/* badge « Mise à jour » / « Nouvelle » : procédure révisée dans Airtable et
+   pas encore ouverte sur CET appareil (voir updBadge dans app.js) */
+.pupd{display:inline-flex;align-items:center;font-size:.72rem;font-weight:800;letter-spacing:.02em;
+  padding:.14rem .5rem;border-radius:999px;white-space:nowrap;
+  color:#f87171;background:rgba(210,35,37,.12);border:1px solid rgba(210,35,37,.5)}
+.pupd.add{color:#38bdf8;background:rgba(14,165,233,.12);border-color:rgba(14,165,233,.5)}
+:root[data-theme="light"] .pupd{color:#b91c1c}
+:root[data-theme="light"] .pupd.add{color:#0369a1}
 .lgrp .pcat{display:none}  /* la section porte déjà le nom de la tâche */
 .lgrp.bycode .pcat{display:inline-flex}  /* par code : la section nomme la famille, la fiche rappelle sa tâche */
 /* bandeau hors ligne compact (en haut de la liste) */
