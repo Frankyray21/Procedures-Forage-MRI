@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v185';
+const VERSION = 'mri-proc-v186';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -203,7 +203,10 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== VERSION && k !== MEDIA).map((k) => caches.delete(k))))
+      // Ne purger QUE nos propres caches (préfixe « mri- ») : l'origine
+      // frankyray21.github.io est partagée avec les autres sites (Wiki SST, TMS,
+      // RodBot…) — leurs caches hors-ligne ne doivent jamais être touchés.
+      .then((keys) => Promise.all(keys.filter((k) => k.indexOf('mri-') === 0 && k !== VERSION && k !== MEDIA).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
   e.waitUntil(precacheMedia());
