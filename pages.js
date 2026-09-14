@@ -285,7 +285,8 @@ window.PAGES = {
  "san-sec-006": [
   "images/pages/san-sec-006-1.jpg",
   "images/pages/san-sec-006-2.jpg",
-  "images/pages/san-sec-006-3.jpg"
+  "images/pages/san-sec-006-3.jpg",
+  "images/pages/san-sec-006-4.jpg"
  ],
  "san-sec-005": [
   "images/pages/san-sec-005-1.jpg",

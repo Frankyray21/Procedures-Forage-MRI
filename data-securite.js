@@ -19,7 +19,7 @@
   "figures": [],
   "historique": [],
   "date_creation": "Novembre 2021",
-  "date_revision": "Novembre 2025",
+  "date_revision": "14 septembre 2026",
   "source_pdf": "SAN-SEC-006",
   "langue_source": "fr",
   "notes": "Procédure de sécurité — fiche reliée au PDF officiel (visionnable et recherchable)."
