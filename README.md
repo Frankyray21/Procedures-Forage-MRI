@@ -8,9 +8,18 @@ toutes les procédures de travail de forage de M.R.I. :
 - Chaque procédure est **adaptée en page web moderne** (objectif, étapes, avertissements,
   consignes, valeurs clés) **et** conserve son **PDF officiel** consultable et téléchargeable.
 - Un **quiz** par fiche (types variés) débloque l'**attestation de lecture**, envoyée à
-  Airtable via un Worker Cloudflare (avec file d'attente hors ligne : l'attestation part
-  automatiquement au retour du réseau). Deux PDF générés sur l'appareil : attestation du
-  travailleur et fiche gestionnaire.
+  Airtable via un Worker Cloudflare. Le PDF d'attestation est généré sur l'appareil.
+- **Attestation signée hors ligne : rien ne se perd.** Sous terre, une attestation est
+  d'abord *enregistrée* (avant tout envoi, même quand il y a du réseau), sur **deux
+  supports** — IndexedDB et localStorage — avec **écriture relue** : si la mémoire de
+  l'appareil refuse, l'écran le dit au lieu d'afficher « enregistrée ». Son **PDF signé
+  est produit tout de suite** et offert au travailleur (téléchargement / partage) : une
+  preuve qui ne dépend ni du réseau, ni du registre, ni de la survie du téléphone.
+  L'envoi repart tout seul (ouverture de l'app, retour du réseau, retour au premier plan,
+  réessai sans abandon, et **Background Sync** du service worker sur PWA Android — même
+  application fermée). Une pastille « N à envoyer » reste visible dans la barre tant que
+  la file n'est pas vide, et **Mon suivi** permet de relancer l'envoi à la main.
+  Détail : voir la section « file d'attente DURABLE des attestations » dans `app.js`.
 - Une page **Mon suivi** (`#/suivi`) montre la progression (quiz complétés, attestations,
   résultats détaillés) — locale à l'appareil, avec récupération de l'historique par nom.
 - **Thème sombre par défaut** (sous terre) et **thème clair** (bouton dans la barre).

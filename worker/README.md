@@ -71,12 +71,22 @@ téléchargeable par le travailleur), ajoute **une seule fois** un champ à la t
 - **Nom du champ** : `Attestation PDF` (exactement)
 - **Type** : **Attachment** (pièce jointe)
 
-Le PDF est **généré sur l'appareil du travailleur** (même sous terre, sans
-réseau) puis **téléversé à l'envoi** — ou, si l'attestation a été faite
-hors-ligne, **plus tard, dès que le réseau revient** (le PDF part avec
-l'attestation en file d'attente). Tant que le champ n'existe pas, l'attestation
-est enregistrée normalement, mais **sans** la pièce jointe (`pdf:false` dans la
-réponse). Aucune autre configuration : le Worker cible le champ par son nom.
+Le PDF est **généré sur l'appareil du travailleur dès la signature** (même sous
+terre, sans réseau), **rangé avec l'attestation** dans IndexedDB, puis téléversé
+à l'envoi — immédiatement, ou **plus tard, dès que le réseau revient**. Il n'est
+jamais regénéré au moment de l'envoi : une attestation ne peut donc pas partir
+sans sa signature.
+
+Tant que le champ n'existe pas, l'attestation est enregistrée normalement, mais
+**sans** la pièce jointe (`pdf:false` dans la réponse). Le site ne considère
+alors pas l'affaire close : il **retente de joindre le PDF** à l'enregistrement
+existant (le Worker complète la pièce jointe d'un doublon au lieu d'en créer un),
+au plus 3 fois et pas plus d'une fois par 10 min. Après quoi il renonce à la
+pièce jointe : l'attestation reste enregistrée côté Airtable et le PDF signé
+reste téléchargeable depuis « Mon suivi » sur l'appareil. **Créer ce champ est
+donc la seule façon d'archiver les signatures côté bureau.**
+
+Aucune autre configuration : le Worker cible le champ par son nom.
 
 ## Ce qui est envoyé à Airtable
 

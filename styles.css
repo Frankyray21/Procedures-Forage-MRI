@@ -94,6 +94,23 @@ img{max-width:100%}
    faire déborder la rangée ; un touché mène à la carte hors-ligne détaillée. */
 @media(max-width:640px){.packchip{font-size:0;gap:0;padding:0;width:12px;height:12px;min-width:12px;
   border:none;border-radius:50%;background:currentColor}}
+/* Pastille « attestations signées en attente d'envoi ». Toujours visible tant
+   que la file n'est pas vide : dans l'APK et sur iOS, aucun code ne tourne
+   application fermée, donc le rappel EST la garantie qui reste. Ambre = en
+   attente de réseau ; rouge = refusée par le registre (action requise). */
+.appbar .aqchip{display:inline-flex;align-items:center;gap:.3rem;border-radius:50px;padding:.28rem .62rem;
+  font-family:var(--font-display);font-size:.72rem;font-weight:800;letter-spacing:.03em;white-space:nowrap;
+  color:#f5a623;border:1px solid rgba(245,166,35,.5);background:rgba(245,166,35,.12);transition:.2s}
+.appbar .aqchip:hover{background:rgba(245,166,35,.2)}
+.appbar .aqchip.bad{color:#f05252;border-color:rgba(240,82,82,.55);background:rgba(240,82,82,.13)}
+.appbar .aqchip .aqc-num{display:none}
+/* Téléphone : la barre porte déjà 5 liens, la progression, l'état du pack, le
+   travailleur et deux boutons. La pastille se réduit donc à son NOMBRE
+   (pictogramme + chiffre) : l'alerte reste visible sans pousser la rangée. */
+@media(max-width:640px){.appbar .aqchip{padding:.24rem .42rem;font-size:.74rem;gap:.22rem}
+  .appbar .aqchip svg{width:12px;height:12px}
+  .appbar .aqchip .aqc-txt{display:none}
+  .appbar .aqchip .aqc-num{display:inline}}
 /* « Ma progression » dans le bandeau : pastille « n/N · % » avec mini-barre
    (touche → Mon suivi) + filet vert au ras du bandeau qui se remplit avec
    les attestations de la section affichée. */
@@ -634,10 +651,24 @@ footer b{color:var(--muted)}
 }
 @media(max-width:520px){
   .appbar .brand .bt{display:none}
-  .appbar{padding-left:.6rem;padding-right:.4rem;gap:.5rem}
-  .appbar nav a.lbl{font-size:.74rem;padding:.4rem .34rem}
-  .appbar .iconbtn{width:34px;height:34px}
-  .prgchip{padding:.18rem .34rem}
+  /* La rangée doit tenir SANS faire défiler la page horizontalement (règle du
+     projet) : liens plus serrés, nom du travailleur plus court, boutons plus
+     petits. Mesuré à 412 px et 360 px de large. */
+  .appbar{padding-left:.45rem;padding-right:.3rem;gap:.3rem}
+  .appbar nav{gap:.08rem}
+  .appbar nav a.lbl{font-size:.72rem;padding:.4rem .22rem}
+  .appbar .workerchip{max-width:74px;padding:.35rem .4rem;gap:.25rem}
+  .appbar .iconbtn{width:30px;height:30px}
+  .prgchip{padding:.18rem .3rem}
+}
+/* Très petits téléphones (360 px et moins) : dernier cran de serrage pour que
+   la rangée tienne encore, pastille d'attestations comprise. */
+@media(max-width:400px){
+  .appbar{padding-left:.35rem;padding-right:.25rem;gap:.22rem}
+  .appbar nav a.lbl{font-size:.7rem;padding:.4rem .14rem}
+  .appbar .workerchip{max-width:58px}
+  .appbar .iconbtn{width:26px;height:26px}
+  .appbar .brand img{height:30px;padding:2px 4px}
   .pdfbox iframe,.pdfbox object,.pdfbox .pdfpages{height:70vh}
   .stats{gap:1rem}
 }
@@ -1019,6 +1050,24 @@ footer b{color:var(--muted)}
 .attest-pdf-btn:hover{border-color:#34d399;color:#34d399}
 .attest-pdf-hint{flex-basis:100%;font-size:.78rem;color:var(--dim);margin:.1rem 0 0}
 .attest-pdf-msg{flex-basis:100%;font-size:.82rem;color:#fca5a5;min-height:1.1em}
+/* Signature prise mais AUCUN support de stockage n'a accepté l'écriture : état
+   d'alerte, jamais « enregistrée ». Le seul geste utile est d'emporter le PDF. */
+.attest-done.attest-nosave{background:rgba(240,82,82,.1);border-color:rgba(240,82,82,.5)}
+.attest-done.attest-nosave .attest-done-ic{background:#dc2626}
+.aq-acts{margin-top:.7rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.aq-acts .aq-link{color:#f5a623;font-weight:700;font-size:.88rem;display:inline-flex;align-items:center;gap:.3rem}
+/* « Mon suivi » : attestations signées en attente de réseau, et refusées. */
+.sv-aq{margin:0 0 1rem;border-radius:14px;padding:.95rem 1.05rem;
+  background:rgba(245,166,35,.09);border:1px solid rgba(245,166,35,.42)}
+.sv-aq.bad{background:rgba(240,82,82,.09);border-color:rgba(240,82,82,.45)}
+.sv-aq b{display:block;font-size:1rem;margin-bottom:.2rem}
+.sv-aq p{color:var(--muted);font-size:.89rem;line-height:1.45;margin:0 0 .6rem}
+.sv-aq ul{list-style:none;margin:0 0 .7rem;padding:0;display:flex;flex-direction:column;gap:.35rem}
+.sv-aq li{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem;font-size:.88rem}
+.sv-aq li .aqi-proc{font-weight:700}
+.sv-aq li .aqi-meta{color:var(--dim);font-size:.8rem}
+.sv-aq .sv-aq-btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.sv-aq .sv-aq-msg{flex-basis:100%;font-size:.82rem;color:var(--muted);min-height:1.1em;margin-top:.35rem}
 .cbmore{display:none}
 .cbmore.open{display:block}
 /* ---------- Mon suivi (progression + résultats détaillés) ---------- */

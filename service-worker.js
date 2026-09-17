@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v187';
+const VERSION = 'mri-proc-v188';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -377,4 +377,117 @@ self.addEventListener('backgroundfetchclick', (event) => {
     if (cs.length) return cs[0].focus();
     return self.clients.openWindow('./');
   })());
+});
+
+/* ─────────── Attestations : envoi en arrière-plan (Background Sync) ───────────
+   Le trou le plus grave de la file hors-ligne était qu'AUCUN code ne tourne
+   quand l'app est fermée : une attestation signée sous terre attendait que le
+   travailleur rouvre l'app en surface. Ici, le système réveille le service
+   worker dès qu'il y a du réseau — même app fermée, même après un redémarrage
+   du téléphone — et c'est LUI qui poste au Worker Cloudflare.
+
+   Portée réelle : Chrome Android (PWA installée ou onglet). Ni iOS ni le
+   WebView de l'APK ne connaissent cette API — là, l'envoi reste au premier
+   plan, avec la pastille « N à envoyer » comme rappel (voir renderAqChip).
+
+   La file est lue dans IndexedDB (« mri-attest », store 'queue') : un service
+   worker n'a PAS accès à localStorage. Le schéma doit rester identique à celui
+   de la page (voir aqdbOpen dans app.js) — même version, mêmes stores. */
+const AQDB_NAME = 'mri-attest', AQDB_V = 1;
+
+function aqdbOpen() {
+  return new Promise((resolve) => {
+    try {
+      const rq = indexedDB.open(AQDB_NAME, AQDB_V);
+      rq.onupgradeneeded = () => {
+        const db = rq.result;
+        if (!db.objectStoreNames.contains('queue')) db.createObjectStore('queue', { keyPath: 'sig' });
+        if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'k' });
+      };
+      rq.onsuccess = () => resolve(rq.result);
+      rq.onerror = () => resolve(null);
+      rq.onblocked = () => resolve(null);
+    } catch (e) { resolve(null); }
+  });
+}
+function aqdbRun(db, store, mode, fn) {
+  return new Promise((resolve) => {
+    try {
+      const tx = db.transaction(store, mode);
+      const rq = fn(tx.objectStore(store));
+      tx.oncomplete = () => resolve(rq ? rq.result : true);
+      tx.onerror = () => resolve(null);
+      tx.onabort = () => resolve(null);
+    } catch (e) { resolve(null); }
+  });
+}
+
+/* Envoi de la file. Renvoie true s'il reste des éléments à envoyer : le
+   gestionnaire 'sync' rejette alors la promesse pour que le système REPLANIFIE
+   l'événement au lieu de le considérer comme réglé. */
+async function aqSyncAll() {
+  /* Une page visible s'en occupe déjà : poster des deux côtés ferait deux
+     enregistrements (le dédoublonnage du Worker n'est pas atomique). */
+  const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  if (cs.some((c) => c.visibilityState === 'visible')) return false;
+
+  const db = await aqdbOpen();
+  if (!db) return false;
+  const meta = await aqdbRun(db, 'meta', 'readonly', (st) => st.get('endpoint'));
+  const endpoint = meta && meta.v ? String(meta.v).replace(/\/+$/, '') : '';
+  if (!endpoint) return false;
+  const recs = await aqdbRun(db, 'queue', 'readonly', (st) => st.getAll());
+  if (!Array.isArray(recs) || !recs.length) return false;
+
+  let left = 0;
+  for (const rec of recs) {
+    if (!rec || rec.rejected || rec.sentAt || !rec.payload) continue;   // déjà enregistrée ou mise de côté
+    // Le PDF (donc la signature) est déjà rangé avec l'attestation : rien à
+    // générer ici — un service worker n'a ni DOM ni canvas pour le faire.
+    const body = {};
+    Object.keys(rec.payload).forEach((k) => { if (k !== 'signature') body[k] = rec.payload[k]; });
+    if (rec.pdf) {
+      body.pdfBase64 = rec.pdf;
+      body.pdfName = 'attestation-' + String(rec.payload.proc || rec.pid || '').replace(/[^\w.-]+/g, '-') + '.pdf';
+    }
+    let st = 0, j = null;
+    try {
+      const r = await fetch(endpoint, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      });
+      st = r.status;
+      try { j = await r.json(); } catch (e) { j = null; }
+    } catch (e) { left++; continue; }                       // réseau : on réessaiera
+
+    if (st >= 200 && st < 300 && j && j.ok) {
+      /* Enregistré. On ne supprime PAS : on marque, et la page finira le
+         ménage à sa prochaine ouverture (aqReconcile) — c'est ainsi qu'elle
+         apprend que l'attestation est partie et met la fiche à jour. */
+      rec.sentAt = Date.now();
+      rec.needPdf = (j.pdf === false) && !!rec.pdf;
+      await aqdbRun(db, 'queue', 'readwrite', (s2) => s2.put(rec));
+      continue;
+    }
+    // Refus explicite du Worker (corps JSON { ok:false }) : mis de côté, jamais
+    // jeté. Tout autre 4xx/5xx (portail captif, 429, panne) : on réessaiera.
+    if (st >= 400 && st < 500 && j && j.ok === false) {
+      rec.rejected = true; rec.why = (j && j.error) || ('HTTP ' + st);
+      await aqdbRun(db, 'queue', 'readwrite', (s2) => s2.put(rec));
+      continue;
+    }
+    left++;
+  }
+  return left > 0;
+}
+
+self.addEventListener('sync', (e) => {
+  if (e.tag !== 'attest-flush') return;
+  // Une promesse REJETÉE demande au système de replanifier l'événement.
+  e.waitUntil(aqSyncAll().then((left) => { if (left) throw new Error('attest-queue non vide'); }));
+});
+// PWA installée : nouvelle chance périodique (intervalle minimal ~12 h côté
+// Chrome). Sans effet là où l'API n'existe pas — c'est un filet, pas le plan.
+self.addEventListener('periodicsync', (e) => {
+  if (e.tag !== 'attest-flush') return;
+  e.waitUntil(aqSyncAll());
 });

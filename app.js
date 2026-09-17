@@ -214,6 +214,7 @@
     else if (h.indexOf('#/procedures') === 0) { if (state.fam !== '') { state.fam = ''; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('procedures'); if (fromFiche) window.scrollTo(0, listScroll[''] || 0); }
     else { renderPortail(view); setNav(''); }
     updateWorkerChip();
+    renderAqChip();      // « N à envoyer » : visible sur toutes les vues
   }
   function setNav(which) {
     document.querySelectorAll('.appbar nav a[data-nav]').forEach(function (a) {
@@ -1865,21 +1866,24 @@
       '</div></div></div>';
   }
   // Anti-doublon : un même nom + procédure + jour n'est envoyé qu'une fois.
-  function attestSig(pid, name) { return pid + '|' + norm(name).trim() + '|' + new Date().toISOString().slice(0, 10); }
+  function attestSig(pid, name) { return pid + '|' + norm(name).trim() + '|' + localDay(); }
   function initAttestation(p) {
     var sec = document.querySelector('.attest-sec[data-proc="' + p.id + '"]'); if (!sec) return;
     var form = sec.querySelector('.attest-form'); if (!form) return;      // section déjà envoyée (état confirmé)
     var endpoint = attestEndpoint(); if (!endpoint) return;
-    // Une attestation attend déjà son envoi pour cette fiche : pas de re-saisie.
+    /* Une attestation attend déjà son envoi pour cette fiche : pas de re-saisie.
+       L'élément de file porte le payload — l'aperçu et le PDF signé restent donc
+       disponibles en revenant sur la fiche, pas seulement juste après la signature. */
     var pending = '';
     try { pending = localStorage.getItem(pkey('attest_pending_' + p.id)) || ''; } catch (e) {}
-    if (pending && !aqGet().some(function (it) { return it.pid === p.id && (it.u == null || it.u === profSlug(profName())); })) {
+    var qit = aqFind(p.id);
+    if (pending && !qit) {
       // Marqueur orphelin (file corrompue ou écriture échouée) : on rouvre le
       // formulaire plutôt que d'afficher pour toujours « sera envoyée ».
       try { localStorage.removeItem(pkey('attest_pending_' + p.id)); } catch (e) {}
       pending = '';
     }
-    if (pending) { attestQueued(sec, suiviName(), null); return; }
+    if (pending || qit) { attestQueued(sec, suiviName(), qit ? qit.payload : null); return; }
     rosterEnsure();   // rafraîchit l'annuaire local tant qu'on a du réseau
     var input = form.querySelector('.attest-name');
     var sugg = form.querySelector('.attest-sugg');
@@ -1999,7 +2003,7 @@
       var best = pqBestPct(p.id);
       var t = ptSnapshot(p.id);      // temps de consultation + temps de quiz (suivi gestionnaire)
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
-        titre: p.titre || '', date: new Date().toISOString().slice(0, 10),
+        titre: p.titre || '', date: localDay(),
         score: best ? (best.s + '/' + best.n + ' — ' + best.pct + ' %') : '',
         revision: p.date_revision || p.date_creation || '',
         readTime: fmtDuration(t.read), quizTime: fmtDuration(t.quiz),
@@ -2013,47 +2017,304 @@
       try { done = localStorage.getItem(pkey('attest_sent_' + p.id)) || ''; } catch (e) {}
       if (done === sig) { attestSuccess(sec, name, true, payload, ''); return; }
       try { localStorage.setItem('attest_name', name); } catch (e) {}
-      // Hors-ligne (cas normal sous terre) : on met en file d'attente locale,
-      // l'envoi partira tout seul au retour du réseau.
-      if (!navigator.onLine) { aqAdd(p.id, sig, payload); attestQueued(sec, name, payload); return; }
-      sendBtn.disabled = true; msg.className = 'attest-msg'; msg.textContent = 'Envoi…';
-      postAttestation(endpoint, payload)
-        .then(function (res) {
-          sendBtn.disabled = false;
-          if (res && res.st >= 200 && res.st < 300 && res.j && res.j.ok) {
-            try { localStorage.setItem(pkey('attest_sent_' + p.id), sig); } catch (e) {}
-            attestSuccess(sec, name, res.j.linked, payload, res.j.id || '');
-            progPushSoon();
-          } else {
-            msg.className = 'attest-msg no';
-            msg.textContent = 'Enregistrement impossible pour le moment. Réessaie dans un instant.';
-          }
-        })
-        .catch(function () {
-          // Réseau tombé pendant l'envoi : même filet de sécurité que hors-ligne.
-          sendBtn.disabled = false;
-          aqAdd(p.id, sig, payload);
-          attestQueued(sec, name, payload);
-        });
+
+      /* ---- ENREGISTRER D'ABORD, ENVOYER ENSUITE ----
+         Une signature ne part jamais avant d'être rangée sur l'appareil, MÊME
+         quand il y a du réseau : l'envoi peut durer jusqu'à 120 s (le PDF est
+         dans le corps) et, avant, l'attestation n'existait nulle part — app
+         tuée, batterie à plat ou réseau coupé dans cette fenêtre, et tout
+         était perdu sans trace. La file est aussi le filet du cas normal sous
+         terre : l'envoi partira tout seul au retour du réseau. */
+      sendBtn.disabled = true;
+      var st = aqAdd(p.id, sig, payload);
+      attestQueued(sec, name, payload, st);
+      /* Le PDF signé est généré TOUT DE SUITE (hors ligne : jsPDF, le logo et
+         les polices sont dans le cache / l'APK) puis rangé AVEC l'attestation.
+         Il sert de preuve immédiate au travailleur ET de corps à l'envoi : plus
+         rien à régénérer plus tard, donc plus de signature perdue parce que la
+         génération a échoué le jour de l'envoi.
+         L'envoi attend que le PDF soit rangé (~1 s) : c'est lui qui porte la
+         signature, autant qu'il parte du premier coup. Si localStorage avait
+         refusé l'écriture, on réconcilie d'abord — l'attestation n'existe alors
+         que dans IndexedDB, et la file de l'app doit la voir pour l'envoyer. */
+      Promise.all([st.idb, buildPdfBase64(payload)])
+        .then(function (r) { return r[1] ? aqdbSetPdf(sig, r[1]) : null; })
+        ['catch'](function () { return null; })
+        .then(function () { return st.ls ? null : aqReconcile(); })
+        .then(function () { if (navigator.onLine) aqKick(true); });
     };
     setHint(HINT0, false);
   }
 
-  /* ---------- file d'attente hors-ligne des attestations ----------
-     Sous terre, pas de réseau : l'attestation est enregistrée sur l'appareil
-     (attest_queue + marqueur attest_pending_<id>) puis envoyée automatiquement
-     dès que possible : événement online, ouverture de l'app, RETOUR AU PREMIER
-     PLAN (app rouverte depuis les récents en remontant du fond), et réessai
-     périodique sans abandon tant que la file n'est pas vide. */
-  function aqGet() { try { var v = JSON.parse(localStorage.getItem('attest_queue')); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
-  function aqSet(q) { try { localStorage.setItem('attest_queue', JSON.stringify(q)); } catch (e) {} }
-  function aqAdd(pid, sig, payload) {
-    var q = aqGet().filter(function (it) { return it.sig !== sig; });
-    q.push({ pid: pid, sig: sig, payload: payload, u: profSlug(profName()) });
-    aqSet(q);
-    try { localStorage.setItem(pkey('attest_pending_' + pid), payload.date || ''); } catch (e) {}
+  /* ---------- file d'attente DURABLE des attestations ----------------------
+     Sous terre, pas de réseau pendant des heures : une attestation signée doit
+     survivre à tout (app tuée par Android, téléphone à plat, stockage plein,
+     semaines sans réseau) puis partir toute seule. Quatre principes :
+
+     1. ÉCRITURE D'ABORD, ENVOI ENSUITE — même quand il y a du réseau. Rien
+        n'est transmis avant d'être rangé sur l'appareil : sinon une coupure
+        pendant l'envoi (jusqu'à 120 s, le PDF voyage dans le corps) perdrait
+        la signature sans laisser de trace.
+     2. DEUX SUPPORTS, ÉCRITURE RELUE — IndexedDB (durable, gros volumes, SEUL
+        support lisible par le service worker) ET localStorage (lecture
+        synchrone, compatibilité). Chaque écriture est relue pour être
+        confirmée ; si les deux échouent (stockage plein, navigation privée),
+        l'écran le DIT au lieu d'afficher « enregistrée sur l'appareil ».
+     3. PREUVE IMMÉDIATE — le PDF signé est généré tout de suite et rangé avec
+        l'attestation, puis offert au travailleur (téléchargement / partage).
+        Plus rien à régénérer à l'envoi (ni jsPDF, ni logo, ni canvas), et le
+        foreur repart avec sa preuve même si l'appareil ne revoit jamais le
+        réseau.
+     4. AUCUN ABANDON — file TOURNANTE (un élément bloqué ne bloque plus les
+        suivants), réessai sans plafond, rejet du registre CONSERVÉ au lieu
+        d'être jeté, et sur PWA Android un handler 'sync' du service worker qui
+        poste même application fermée (voir service-worker.js).
+
+     Déclencheurs d'envoi : ouverture de l'app, événement 'online', retour au
+     premier plan, réessai programmé (1 → 5 min), bouton « Envoyer maintenant »
+     et Background Sync. Dans l'APK Android, le WebView n'a pas de service
+     worker : l'envoi a donc lieu au premier plan uniquement — d'où la pastille
+     permanente « N à envoyer » dans la barre (voir renderAqChip). */
+
+  // Date LOCALE (fuseau de l'appareil), pas UTC : après 20 h au Québec,
+  // toISOString() renvoie déjà le lendemain — l'attestation serait datée d'un
+  // jour qui n'a pas commencé, sur le PDF comme dans Airtable, et la clé
+  // anti-doublon changerait en pleine soirée.
+  function localDay() {
+    var d = new Date();
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   }
-  var aqBusy = false;
+
+  /* ---- support durable : IndexedDB (base « mri-attest ») ----
+     Store 'queue' (clé = sig) : { sig, pid, u, payload, pdf, t, sentAt, needPdf,
+     pdfTries, rejected, why }. Store 'meta' (clé = k) : endpoint du Worker,
+     pour que le service worker sache où poster sans pouvoir lire config.js.
+     Le service worker crée EXACTEMENT les mêmes stores (même version) : toute
+     modification ici doit être reportée dans service-worker.js. */
+  var AQDB_NAME = 'mri-attest', AQDB_V = 1;
+  var aqdbP = null;
+  /* La connexion est mise en cache, mais JAMAIS un échec : un premier
+     indexedDB.open raté (base momentanément bloquée par une autre connexion —
+     un autre onglet, le service worker — ou erreur passagère) condamnerait
+     sinon la file pour toute la durée de vie de la page, silencieusement : la
+     réconciliation croirait la base vide et l'attestation rescapée ne partirait
+     jamais. On oublie donc la promesse dès qu'elle échoue, et aussi quand la
+     connexion est fermée d'autorité (onclose) — l'appel suivant réouvre. */
+  function aqdbForget() { aqdbP = null; }
+  function aqdbOpen() {
+    if (aqdbP) return aqdbP;
+    var p = new Promise(function (resolve) {
+      try {
+        if (!window.indexedDB) { aqdbForget(); resolve(null); return; }
+        var rq = indexedDB.open(AQDB_NAME, AQDB_V);
+        rq.onupgradeneeded = function () {
+          var db = rq.result;
+          if (!db.objectStoreNames.contains('queue')) db.createObjectStore('queue', { keyPath: 'sig' });
+          if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'k' });
+        };
+        rq.onsuccess = function () {
+          var db = rq.result;
+          // Connexion coupée (base effacée, stockage en erreur) : ne pas rester
+          // accroché à un handle mort, toute transaction échouerait ensuite.
+          db.onclose = aqdbForget;
+          // Une autre page veut changer de version : on libère au lieu de bloquer.
+          db.onversionchange = function () { try { db.close(); } catch (e) {} aqdbForget(); };
+          resolve(db);
+        };
+        rq.onerror = function () { aqdbForget(); resolve(null); };
+        rq.onblocked = function () { aqdbForget(); resolve(null); };
+      } catch (e) { aqdbForget(); resolve(null); }
+    });
+    aqdbP = p;
+    return p;
+  }
+  function aqdbRun(store, mode, fn) {
+    return aqdbOpen().then(function (db) {
+      if (!db) return null;
+      return new Promise(function (resolve) {
+        try {
+          var tx = db.transaction(store, mode);
+          var rq = fn(tx.objectStore(store));
+          tx.oncomplete = function () { resolve(rq ? rq.result : true); };
+          // Transaction refusée : la connexion peut être morte — on l'oublie pour
+          // que l'appel suivant réouvre au lieu de rééchouer à l'identique.
+          tx.onerror = function () { aqdbForget(); resolve(null); };
+          tx.onabort = function () { aqdbForget(); resolve(null); };
+        } catch (e) { aqdbForget(); resolve(null); }
+      });
+    })['catch'](function () { aqdbForget(); return null; });
+  }
+  function aqdbGet(sig) { return aqdbRun('queue', 'readonly', function (st) { return st.get(sig); }); }
+  // Écriture RELUE : on ne se contente pas de l'absence d'exception.
+  function aqdbPut(rec) {
+    return aqdbRun('queue', 'readwrite', function (st) { return st.put(rec); })
+      .then(function (r) { return r === null ? false : aqdbGet(rec.sig).then(function (v) { return !!v; }); })
+      .catch(function () { return false; });
+  }
+  function aqdbAll() {
+    return aqdbRun('queue', 'readonly', function (st) { return st.getAll(); })
+      .then(function (v) { return Array.isArray(v) ? v : []; });
+  }
+  function aqdbDel(sig) { return aqdbRun('queue', 'readwrite', function (st) { return st['delete'](sig); }); }
+  function aqdbMetaPut(k, v) { return aqdbRun('meta', 'readwrite', function (st) { return st.put({ k: k, v: v }); }); }
+  /* Range dans IndexedDB une attestation connue seulement de localStorage, SANS
+     JAMAIS écraser ce qui s'y trouve déjà. Une lecture qui voit la base vide
+     peut être une COURSE avec le disque (voir aqReconcile) : un put aveugle
+     effacerait alors le PDF signé — donc la signature — d'un enregistrement
+     déjà complet. Le pire cas devient : PDF absent, régénéré à l'envoi à
+     partir du payload (qui porte la signature). */
+  function aqdbEnsure(it) {
+    return aqdbGet(it.sig).then(function (rec) {
+      if (rec) return false;                     // déjà rangée : on ne touche à rien
+      return aqdbPut({ sig: it.sig, pid: it.pid, u: it.u, payload: it.payload, pdf: '',
+        t: Date.now(), sentAt: it.sentAt || 0, needPdf: !!it.sentAt,
+        pdfTries: it.pdfTries || 0, rejected: false, why: '' });
+    })['catch'](function () { return false; });
+  }
+  // Complète le PDF d'un élément déjà en file (génération asynchrone après la
+  // mise en file : la file ne doit jamais attendre jsPDF pour exister).
+  function aqdbSetPdf(sig, b64) {
+    if (!b64) return Promise.resolve(false);
+    return aqdbGet(sig).then(function (rec) {
+      if (!rec || rec.pdf) return false;
+      rec.pdf = b64;
+      return aqdbPut(rec);
+    }).catch(function () { return false; });
+  }
+
+  /* ---- support de compatibilité : localStorage (lecture synchrone) ----
+     Les éléments y sont LÉGERS (jamais le PDF) : le plafond de localStorage
+     (≈5 Mo Safari, ≈10 Mio Chromium) est partagé avec les scores, l'annuaire
+     et les retours de quiz. Le PDF vit dans IndexedDB, qui compte en Go. */
+  function aqGet() { try { var v = JSON.parse(localStorage.getItem('attest_queue')); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  // Renvoie true seulement si la file RELUE contient bien ce qu'on a écrit :
+  // un QuotaExceededError avalé ne doit plus jamais passer pour un succès.
+  function aqSet(q) {
+    try {
+      localStorage.setItem('attest_queue', JSON.stringify(q));
+      var back = JSON.parse(localStorage.getItem('attest_queue'));
+      return Array.isArray(back) && back.length === q.length;
+    } catch (e) { return false; }
+  }
+  function aqLight(r) {
+    return { pid: r.pid, sig: r.sig, payload: r.payload, u: r.u,
+      sentAt: r.sentAt || 0, pdfTries: r.pdfTries || 0 };
+  }
+  // Éléments qui attendent ENCORE le registre. Ceux déjà enregistrés et qui ne
+  // repassent que pour joindre leur PDF ne sont plus « en attente ».
+  function aqPending() { return aqGet().filter(function (it) { return !it.sentAt; }); }
+  function aqPendingCount() { return aqPending().length; }
+  function aqFind(pid, uSlug) {
+    var u = (uSlug == null) ? profSlug(profName()) : uSlug;
+    return aqPending().filter(function (it) { return it.pid === pid && (it.u == null || it.u === u); })[0] || null;
+  }
+
+  /* Mise en file d'une attestation signée. Écrit sur les DEUX supports et
+     renvoie { ls, idb } — idb est une promesse (IndexedDB est asynchrone) :
+     l'écran s'affiche d'abord d'après ls, puis se corrige si les deux ont
+     échoué (voir attestQueued). pdfB64 : le PDF déjà généré (preuve locale ET
+     corps de l'envoi ultérieur) ; absent, il sera joint plus tard. */
+  function aqAdd(pid, sig, payload, pdfB64) {
+    var rec = { sig: sig, pid: pid, u: profSlug(profName()), payload: payload,
+      pdf: pdfB64 || '', t: Date.now(), sentAt: 0, needPdf: false, pdfTries: 0,
+      rejected: false, why: '' };
+    var q = aqGet().filter(function (it) { return it.sig !== sig; });
+    q.push(aqLight(rec));
+    var ls = aqSet(q);
+    // Le marqueur « en attente » de la fiche n'est posé que si la file tient :
+    // un marqueur sans file afficherait « sera envoyée » pour toujours.
+    if (ls) { try { localStorage.setItem(pkey('attest_pending_' + pid), payload.date || ''); } catch (e) {} }
+    renderAqChip();
+    var idb = aqdbPut(rec).then(function (ok) {
+      if (ok) { aqdbMetaPut('endpoint', attestEndpoint()); aqSyncRegister(); }
+      return ok;
+    });
+    return { ls: ls, idb: idb };
+  }
+
+  /* Demande au système d'envoyer la file même application fermée (Background
+     Sync — PWA Android ; absent d'iOS et du WebView de l'APK). Le service
+     worker relit IndexedDB et poste lui-même : voir service-worker.js. */
+  function aqSyncRegister() {
+    try {
+      if (window.IS_APK || !('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.ready.then(function (reg) {
+        if (reg && reg.sync) { try { reg.sync.register('attest-flush'); } catch (e) {} }
+      })['catch'](function () {});
+    } catch (e) {}
+  }
+
+  /* Réconciliation — c'est elle qui rend la file increvable. Au démarrage et à
+     chaque retour au premier plan :
+     • IndexedDB → localStorage : restaure les attestations qu'un effacement de
+       localStorage (éviction, « effacer les données du site ») aurait perdues ;
+     • localStorage → IndexedDB : y range celles mises en file par une version
+       précédente de l'app — aucune ne reste sur un seul support ;
+     • éléments envoyés PAR LE SERVICE WORKER (sentAt posé hors de la page) :
+       fiche et suivi mis à jour, puis le doublon local est retiré. */
+  function aqReconcile() {
+    return aqdbAll().then(function (recs) {
+      var q = aqGet(), changed = false;
+      if (!recs.length) {
+        q.forEach(function (it) { aqdbEnsure(it); });   // IndexedDB vide : y pousser la file locale
+        if (q.length) aqdbMetaPut('endpoint', attestEndpoint());
+        return;
+      }
+      var bySig = {};
+      q.forEach(function (it) { bySig[it.sig] = it; });
+      recs.forEach(function (rec) {
+        if (rec.rejected) return;                       // refusé : géré par aqRejectedList
+        var local = bySig[rec.sig];
+        if (rec.sentAt) {
+          // Envoyé (souvent par le service worker, app fermée) : refléter, nettoyer.
+          try {
+            localStorage.removeItem(pkeyFor(rec.u, 'attest_pending_' + rec.pid));
+            localStorage.setItem(pkeyFor(rec.u, 'attest_sent_' + rec.pid), rec.sig);
+          } catch (e) {}
+          if (local && !rec.needPdf) { q = q.filter(function (it) { return it.sig !== rec.sig; }); changed = true; }
+          if (!rec.needPdf) aqdbDel(rec.sig);
+          aqRefreshView(rec.pid, rec.u, rec.payload);
+          return;
+        }
+        if (!local) {                                   // rescapé : localStorage avait été vidé
+          q.push(aqLight(rec)); changed = true;
+          try { localStorage.setItem(pkeyFor(rec.u, 'attest_pending_' + rec.pid), (rec.payload && rec.payload.date) || ''); } catch (e) {}
+        }
+      });
+      var known = {}; recs.forEach(function (r) { known[r.sig] = 1; });
+      q.forEach(function (it) {                         // présent localement, absent d'IndexedDB
+        if (known[it.sig]) return;
+        aqdbEnsure(it);
+      });
+      if (changed) aqSet(q);
+      aqdbMetaPut('endpoint', attestEndpoint());
+      renderAqChip();
+    })['catch'](function () {});
+  }
+
+  /* ---- attestations REFUSÉES par le registre ----
+     Un rejet définitif ne fait plus disparaître l'attestation : elle est mise
+     de côté (son PDF signé reste dans IndexedDB) et affichée dans « Mon suivi »
+     avec la marche à suivre. Une donnée signée ne s'efface jamais toute seule. */
+  function aqRejectedList() { try { var v = JSON.parse(localStorage.getItem('attest_rejected')); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function aqRejectedAdd(it, why) {
+    var l = aqRejectedList().filter(function (x) { return x.sig !== it.sig; });
+    l.push({ sig: it.sig, pid: it.pid, u: it.u, payload: it.payload, why: why || '', t: Date.now() });
+    if (l.length > 40) l = l.slice(l.length - 40);
+    try { localStorage.setItem('attest_rejected', JSON.stringify(l)); } catch (e) {}
+    aqdbGet(it.sig).then(function (rec) {
+      if (!rec) return;
+      rec.rejected = true; rec.why = why || '';
+      aqdbPut(rec);
+    });
+  }
+  function aqRejectedDrop(sig) {
+    try { localStorage.setItem('attest_rejected', JSON.stringify(aqRejectedList().filter(function (x) { return x.sig !== sig; }))); } catch (e) {}
+    aqdbDel(sig);
+    renderAqChip();
+  }
+
+  var aqBusy = false, aqCursor = 0;
   /* force=true : tente l'envoi même si navigator.onLine dit « hors ligne ».
      Dans le WebView Android, onLine peut rester faussement à false après une
      reprise depuis l'arrière-plan — la requête elle-même est le vrai test de
@@ -2062,40 +2323,98 @@
     if (aqBusy || (!force && !navigator.onLine)) return;
     var endpoint = attestEndpoint(); if (!endpoint) return;
     var q = aqGet(); if (!q.length) return;
+    /* File TOURNANTE : on ne repart pas systématiquement du premier élément,
+       sinon un élément durablement refusé par Airtable (502 en boucle)
+       empêcherait toutes les attestations suivantes de l'appareil de partir, en
+       silence. Les attestations DÉJÀ ENREGISTRÉES au registre qui ne repassent
+       que pour joindre leur PDF sont servies en dernier, et pas plus d'une fois
+       par 10 min : elles n'ont rien d'urgent et ne doivent pas tourner en
+       boucle chaude derrière les vraies. */
+    var it = null;
+    var fresh = q.filter(function (x) { return !x.sentAt; });
+    if (fresh.length) {
+      it = fresh[aqCursor % fresh.length];
+    } else {
+      var due = q.filter(function (x) { return Date.now() - (x.sentAt || 0) > 10 * 60000; });
+      if (!due.length) return;
+      it = due[aqCursor % due.length];
+    }
     aqBusy = true;
-    var it = q[0];
-    function aqDrop() { aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; })); }
-    postAttestation(endpoint, it.payload)
+    aqSendItem(endpoint, it)
       .then(function (res) {
         aqBusy = false;
-        if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {          // envoyé
-          aqRetries = 0;        // succès : le prochain cycle d'échecs repart à 1 min
-          aqDrop();
-          var uSlug = (it.u != null) ? it.u : profSlug(profName());
-          try {
-            localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
-            localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
-          } catch (e) {}
-          toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
-          aqRefreshView(it.pid, uSlug, it.payload);
+        if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {
+          aqRetries = 0;                 // succès : le prochain cycle d'échecs repart à 1 min
+          var first = !it.sentAt;
+          aqOnSent(it, res);
+          if (first) toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » envoyée.');
           progPushSoon();
-          aqFlush(true);        // suivante, s'il y en a (l'envoi vient de prouver la connectivité)
+          aqFlush(true);                 // suivante (l'envoi vient de prouver la connectivité)
           return;
         }
-        if (res.st >= 400 && res.st < 500) {
-          // Rejet DÉFINITIF du serveur (donnée invalide) : on retire l'élément
-          // pour ne pas bloquer les attestations suivantes, et on rouvre la
-          // possibilité d'attester cette fiche.
-          aqDrop();
+        /* 4xx : DÉFINITIF seulement si c'est bien NOTRE Worker qui refuse la
+           donnée (corps JSON { ok:false }). Un 4xx sans corps JSON vient
+           presque toujours d'ailleurs — portail captif d'hôtel, proxy
+           d'entreprise, 429 de Cloudflare — et jeter l'attestation là serait
+           une perte pure. Dans ce cas : réessai, comme une panne passagère. */
+        if (res.st >= 400 && res.st < 500 && res.j && res.j.ok === false) {
+          aqRejectedAdd(it, (res.j && res.j.error) || ('HTTP ' + res.st));
+          aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
           try { localStorage.removeItem(pkeyFor((it.u != null) ? it.u : profSlug(profName()), 'attest_pending_' + it.pid)); } catch (e) {}
-          toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » refusée — refais-la depuis la fiche.');
+          toast('Attestation « ' + (it.payload.titre || it.payload.proc) + ' » refusée par le registre — voir « Mon suivi ».');
+          renderAqChip();
           aqFlush(true);
           return;
         }
-        // 5xx / réponse inattendue : panne passagère → réessai programmé.
+        aqCursor++;                      // cet élément coince : le prochain cycle en essaie un autre
         aqRetryLater();
       })
-      .catch(function () { aqBusy = false; aqRetryLater(); });   // réseau : réessai programmé
+      ['catch'](function () { aqBusy = false; aqCursor++; aqRetryLater(); });   // réseau : réessai programmé
+  }
+  /* Envoi d'un élément de la file. Le PDF rangé AVEC l'attestation (IndexedDB)
+     est réutilisé tel quel : aucune régénération (jsPDF, logo, canvas) sur le
+     chemin de l'envoi — c'était à la fois une source de blocage du verrou
+     aqBusy et, en cas d'échec, une attestation transmise SANS sa signature. */
+  function aqSendItem(endpoint, it) {
+    return aqdbGet(it.sig).then(function (rec) {
+      var b64 = (rec && rec.pdf) ? rec.pdf : '';
+      return postAttestation(endpoint, it.payload, b64).then(function (res) {
+        res.b64 = b64 || null;
+        return res;
+      });
+    });
+  }
+  /* Suite d'un envoi accepté. Si le registre a bien créé l'enregistrement mais
+     n'a PAS pris la pièce jointe (pdf:false — colonne « Attestation PDF »
+     absente, ou upload refusé), la signature ne serait nulle part côté
+     serveur : l'élément reste donc en file, marqué « envoyé », et le prochain
+     passage joint le PDF à l'enregistrement existant (le Worker complète un
+     doublon au lieu d'en créer un). Au bout de 3 tentatives on renonce à la
+     pièce jointe — l'attestation est enregistrée, et le PDF signé reste sur
+     l'appareil et téléchargeable depuis « Mon suivi ». */
+  function aqOnSent(it, res) {
+    var uSlug = (it.u != null) ? it.u : profSlug(profName());
+    try {
+      localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
+      localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
+    } catch (e) {}
+    var missingPdf = (res && res.j && res.j.pdf === false) && !!(res && res.b64);
+    var tries = (it.pdfTries || 0) + (missingPdf ? 1 : 0);
+    if (missingPdf && tries < 3) {
+      aqSet(aqGet().map(function (x) {
+        if (x.sig === it.sig) { x.sentAt = Date.now(); x.pdfTries = tries; }
+        return x;
+      }));
+      aqdbGet(it.sig).then(function (rec) {
+        if (!rec) return;
+        rec.sentAt = Date.now(); rec.needPdf = true; rec.pdfTries = tries;
+        aqdbPut(rec);
+      });
+    } else {
+      aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
+      aqdbDel(it.sig);
+    }
+    aqRefreshView(it.pid, uSlug, it.payload);
   }
   // Réessai automatique SANS abandon : tant que la file n'est pas vide, on
   // retente — délai en backoff doux (1 min → 5 min) pour ne pas marteler.
@@ -2108,9 +2427,11 @@
     var delay = Math.min(5 * 60000, 60000 * (aqRetries + 1));
     aqRetries++;
     aqRetryT = setTimeout(function () { aqRetryT = null; aqFlush(true); }, delay);
+    aqSyncRegister();   // si l'app est fermée d'ici là, le système prend le relais
   }
   // Si la fiche ou le suivi de cette attestation est à l'écran, refléter l'envoi.
   function aqRefreshView(pid, uSlug, payload) {
+    renderAqChip();
     if (uSlug != null && uSlug !== profSlug(profName())) return;   // autre profil : rien à rafraîchir
     var h = location.hash || '';
     if (h === '#/p/' + pid) {
@@ -2142,10 +2463,11 @@
      en remontant du fond) : dans le WebView Android, l'événement 'online' émis
      pendant que l'app était gelée est PERDU — c'est ici qu'on rattrape. On
      relance aussi la progression marquée « à pousser » (force : onLine peut
-     mentir après la reprise, la requête est le vrai test de connectivité). */
+     mentir après la reprise, la requête est le vrai test de connectivité) et
+     on réconcilie (le service worker a pu envoyer pendant l'absence). */
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) return;
-    aqKick(true);
+    aqReconcile().then(function () { aqKick(true); });
     progDirtyFlush(true);
   });
 
@@ -2158,27 +2480,48 @@
      vrai même si le timer a été consommé ou annulé pendant cet envoi. */
   function aqRetryNow(pid, cb) {
     var endpoint = attestEndpoint();
-    var it = null, q = aqGet();
-    for (var i = 0; i < q.length; i++) { if (q[i].pid === pid) { it = q[i]; break; } }
+    // Appareil partagé : ne renvoyer que l'attestation DU PROFIL ACTIF, sinon
+    // « Réessayer » expédie celle d'un collègue et l'écran reste figé.
+    var it = aqFind(pid);
     if (!endpoint || !it) { cb(false); return; }
     if (aqBusy) { cb('busy'); return; }
     aqBusy = true;
-    postAttestation(endpoint, it.payload)
+    aqSendItem(endpoint, it)
       .then(function (res) {
         aqBusy = false;
         if (res.st >= 200 && res.st < 300 && res.j && res.j.ok) {
           aqRetries = 0;
-          aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
-          var uSlug = (it.u != null) ? it.u : profSlug(profName());
-          try {
-            localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
-            localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
-          } catch (e) {}
-          aqRefreshView(it.pid, uSlug, it.payload); progPushSoon();
+          aqOnSent(it, res);
+          progPushSoon();
           cb(true);
         } else { aqRetryLater(); cb(false); }   // 4xx/5xx : reste en file, réessai replanifié
       })
-      .catch(function () { aqBusy = false; aqRetryLater(); cb(false); });   // réseau/registre injoignable
+      ['catch'](function () { aqBusy = false; aqRetryLater(); cb(false); });   // réseau/registre injoignable
+  }
+
+  /* ---- pastille « attestations à envoyer » (barre d'application) ----
+     Dans l'APK et sur iOS, aucun code ne tourne application fermée : la seule
+     garantie d'envoi est que le travailleur rouvre l'app là où il y a du
+     réseau. Le compte reste donc visible en permanence, touchable, et mène au
+     suivi où l'envoi peut être relancé à la main. */
+  function renderAqChip() {
+    var chip = $('#aqChip'); if (!chip) return;
+    var n = aqPendingCount(), nr = aqRejectedList().length;
+    if (!n && !nr) { chip.style.display = 'none'; return; }
+    chip.style.display = '';
+    chip.classList.toggle('bad', !n && !!nr);
+    var txt = $('#aqChipTxt');
+    if (txt) txt.textContent = n ? (n + ' à envoyer') : (nr + ' refusée' + (nr > 1 ? 's' : ''));
+    // Sur téléphone la barre est déjà pleine : seul le NOMBRE est affiché (le
+    // libellé complet reste dans l'infobulle et sur grand écran).
+    var num = $('#aqChipNum');
+    if (num) num.textContent = String(n || nr);
+    chip.title = n
+      ? n + ' attestation' + (n > 1 ? 's' : '') + ' signée' + (n > 1 ? 's' : '') +
+        ' et enregistrée' + (n > 1 ? 's' : '') + ' sur l\'appareil, en attente de réseau' +
+        ' — touche pour les voir et relancer l\'envoi'
+      : nr + ' attestation' + (nr > 1 ? 's' : '') + ' refusée' + (nr > 1 ? 's' : '') +
+        ' par le registre — touche pour la marche à suivre';
   }
 
   /* ---------- sauvegarde serveur de la progression ----------
@@ -2274,36 +2617,119 @@
   // État « enregistrée sur l'appareil, envoi au retour du réseau ». Le message
   // dépend de l'état réel : hors-ligne (attente normale) vs. en ligne mais
   // registre injoignable (on le dit honnêtement + bouton « Réessayer »).
-  function attestQueued(sec, name, payload) {
-    var online = navigator.onLine;
-    var pid = sec.getAttribute('data-proc') || '';
-    sec.innerHTML = '<h2>Attestation de lecture</h2>' +
-      '<div class="attest-done attest-wait"><span class="attest-done-ic">…</span>' +
-      '<div><strong>Attestation enregistrée sur l\'appareil</strong>' +
-      '<span class="aq-msg">' + (name ? 'Merci ' + esc(name) + '. ' : '') +
-        (online
-          ? 'Elle n\'a pas encore pu être transmise au registre. Nouvelle tentative automatique — tu peux aussi la relancer maintenant.'
-          : 'Pas de réseau pour le moment : elle sera envoyée automatiquement dès que la connexion revient. Rien d\'autre à faire.') +
-      '</span>' +
-      (online ? '<button type="button" class="btn attest-retry">Réessayer l\'envoi</button>' : '') +
-      '</div></div>';
-    var retry = sec.querySelector('.attest-retry');
-    var msgEl = sec.querySelector('.aq-msg');
-    if (retry) retry.onclick = function () {
-      retry.disabled = true;
-      var lbl = retry.textContent; retry.textContent = 'Envoi…';
-      aqRetryNow(pid, function (ok) {
-        if (ok === true) return;               // succès : aqRefreshView a réaffiché l'état « envoyée »
-        retry.disabled = false; retry.textContent = lbl;
-        if (!msgEl) return;
-        // 'busy' : l'envoi automatique (retour au premier plan / réseau) est
-        // déjà en vol — ce n'est PAS une panne, ne pas l'annoncer comme telle.
-        msgEl.innerHTML = (ok === 'busy')
-          ? 'Un envoi automatique est déjà en cours — laisse l\'app ouverte quelques secondes.'
-          : 'Le registre ne répond toujours pas. Vérifie la connexion Internet ' +
-            'de ce poste ; si le problème persiste, préviens le bureau. Ton attestation reste enregistrée et repartira toute seule.';
+  /* ---- preuve locale immédiate (aperçu + PDF + partage) ----
+     Le PDF signé est la SEULE chose qui ne dépend ni du réseau, ni du registre,
+     ni de la survie de l'appareil : il est donc offert dès la signature, sans
+     attendre l'envoi. Un foreur qui remonte avec son PDF (ou qui l'a partagé à
+     son superviseur) a une preuve de lecture même si le téléphone est perdu,
+     cassé ou effacé avant d'avoir revu le réseau. */
+  function canSharePdf() {
+    try {
+      // WebView de l'APK : le partage de FICHIER exigerait @capacitor/filesystem
+      // (écrire le PDF sur le disque) — non installé. Le téléchargement reste.
+      if (window.IS_APK) return false;
+      if (!navigator.share || !navigator.canShare || typeof File !== 'function') return false;
+      return navigator.canShare({ files: [new File([new Blob(['x'])], 'a.pdf', { type: 'application/pdf' })] });
+    } catch (e) { return false; }
+  }
+  function attestProofHTML() {
+    var share = canSharePdf()
+      ? '<button type="button" class="attest-pdf-btn attest-pdf-share">' + ICON.open + ' Partager</button>'
+      : '';
+    return '<div class="attest-preview"><div class="attest-preview-load">Génération de ton attestation…</div></div>' +
+      '<div class="attest-pdfs">' +
+        '<button type="button" class="attest-pdf-btn attest-pdf-w">' + ICON.doc + ' Télécharger le PDF</button>' +
+        share +
+        '<div class="attest-pdf-msg" aria-live="polite"></div>' +
+      '</div>';
+  }
+  function initAttestProof(sec, payload) {
+    if (!payload) return;
+    var prev = sec.querySelector('.attest-preview');
+    var msgEl = sec.querySelector('.attest-pdf-msg');
+    // Générée une seule fois : réutilisée pour l'aperçu ET le PDF.
+    var imgP = buildAttestImage(payload);
+    imgP.then(function (img) {
+      if (prev) prev.innerHTML = '<img class="attest-doc" alt="Attestation de lecture" src="' + img + '">';
+    })['catch'](function () {
+      if (prev) prev.innerHTML = '<p class="attest-preview-load">Aperçu indisponible — utilise le bouton ci-dessous.</p>';
+    });
+    function withPdf(fn) {
+      if (msgEl) msgEl.textContent = '';
+      return Promise.all([ensureJsPDF(), imgP]).then(function (r) {
+        return fn(buildWorkerPdf(payload, r[1]));
+      })['catch'](function () {
+        if (msgEl) msgEl.textContent = 'PDF indisponible pour le moment — réessaie dans un instant.';
+      });
+    }
+    var dl = sec.querySelector('.attest-pdf-w');
+    if (dl) dl.onclick = function () { withPdf(function (doc) { doc.save(pdfFileName(payload)); }); };
+    var sh = sec.querySelector('.attest-pdf-share');
+    if (sh) sh.onclick = function () {
+      withPdf(function (doc) {
+        var f = new File([doc.output('blob')], pdfFileName(payload), { type: 'application/pdf' });
+        return navigator.share({ files: [f], title: 'Attestation de lecture',
+          text: 'Attestation de lecture — ' + (payload.proc || '') + ' — ' + (payload.name || '') })['catch'](function () {});
       });
     };
+  }
+  /* État « signée, en attente du registre ». state = { ls, idb } renvoyé par
+     aqAdd : si les DEUX supports ont refusé l'écriture (stockage plein,
+     navigation privée), on ne dit JAMAIS « enregistrée » — on affiche l'alerte
+     et on pousse le travailleur à emporter son PDF tout de suite. */
+  function attestQueued(sec, name, payload, state) {
+    var pid = sec.getAttribute('data-proc') || '';
+    if (!payload) { var f = aqFind(pid); if (f) payload = f.payload; }   // retour sur la fiche
+    function render(saved) {
+      var online = navigator.onLine;
+      sec.innerHTML = '<h2>Attestation de lecture</h2>' +
+        (saved
+          ? '<div class="attest-done attest-wait"><span class="attest-done-ic">…</span>' +
+            '<div><strong>Attestation signée et enregistrée sur l\'appareil</strong>' +
+            '<span class="aq-msg">' + (name ? 'Merci ' + esc(name) + '. ' : '') +
+              (online
+                ? 'Envoi au registre en cours — laisse l\'app ouverte quelques secondes. Si ça ne passe pas, elle repartira toute seule.'
+                : 'Pas de réseau pour le moment : elle sera envoyée automatiquement dès que la connexion revient. Rien d\'autre à faire.') +
+            '</span>'
+          : '<div class="attest-done attest-nosave"><span class="attest-done-ic">!</span>' +
+            '<div><strong>Impossible d\'enregistrer sur cet appareil</strong>' +
+            '<span class="aq-msg">' + (name ? esc(name) + ', ton ' : 'Ton ') +
+              'attestation est signée, mais la mémoire de l\'appareil l\'a refusée ' +
+              '(stockage plein ou navigation privée) : elle ne survivra PAS à la fermeture de l\'app. ' +
+              '<b>Télécharge ou partage ton attestation maintenant</b>, et préviens le bureau.' +
+            '</span>') +
+        (payload ? attestProofHTML() : '') +
+        '<div class="aq-acts">' +
+          (online ? '<button type="button" class="btn attest-retry">Réessayer l\'envoi</button>' : '') +
+          '<a class="aq-link" href="#/suivi">Voir mes attestations en attente ' + ICON.arrow + '</a>' +
+        '</div>' +
+        '</div></div>';
+      initAttestProof(sec, payload);
+      var retry = sec.querySelector('.attest-retry');
+      var msgEl = sec.querySelector('.aq-msg');
+      if (retry) retry.onclick = function () {
+        retry.disabled = true;
+        var lbl = retry.textContent; retry.textContent = 'Envoi…';
+        aqRetryNow(pid, function (ok) {
+          if (ok === true) return;               // succès : aqRefreshView a réaffiché l'état « envoyée »
+          retry.disabled = false; retry.textContent = lbl;
+          if (!msgEl) return;
+          // 'busy' : l'envoi automatique (retour au premier plan / réseau) est
+          // déjà en vol — ce n'est PAS une panne, ne pas l'annoncer comme telle.
+          msgEl.innerHTML = (ok === 'busy')
+            ? 'Un envoi automatique est déjà en cours — laisse l\'app ouverte quelques secondes.'
+            : 'Le registre ne répond toujours pas. Vérifie la connexion Internet ' +
+              'de ce poste ; si le problème persiste, préviens le bureau. Ton attestation reste enregistrée et repartira toute seule.';
+        });
+      };
+    }
+    // Écriture localStorage confirmée (ou état restauré) : affichage normal.
+    // Sinon on attend le verdict d'IndexedDB avant de parler d'enregistrement.
+    if (!state || state.ls !== false) { render(true); }
+    else {
+      render(true);
+      state.idb.then(function (ok) { if (!ok) render(false); })['catch'](function () { render(false); });
+    }
   }
   /* ---------- PDF (attestation travailleur) ----------
      Générés dans le navigateur (jsPDF, chargé à la demande seulement) à partir
@@ -2559,8 +2985,12 @@
      fabriquerait des doublons (le serveur peut avoir déjà reçu le corps). Le
      timer reste armé jusqu'à la LECTURE COMPLÈTE de la réponse : des en-têtes
      reçus puis un corps qui gèle libèrent quand même la file (abort). */
-  function postAttestation(endpoint, payload) {
-    return buildPdfBase64(payload).then(function (b64) {
+  function postAttestation(endpoint, payload, preB64) {
+    // preB64 : PDF déjà généré et rangé avec l'attestation (cas normal
+    // désormais) — on ne le reconstruit pas, donc l'envoi ne peut plus partir
+    // sans la signature parce que jsPDF ou le logo manquait ce jour-là.
+    var pdfP = (typeof preB64 === 'string' && preB64) ? Promise.resolve(preB64) : buildPdfBase64(payload);
+    return pdfP.then(function (b64) {
       var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
       var timer = ctl ? setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 120000) : null;
       var req = { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2583,31 +3013,12 @@
       '<div><strong>Attestation enregistrée</strong>' +
       '<span>Merci ' + esc(name) + '. Ta lecture de cette procédure est enregistrée' +
       (linked ? ' et reliée à ton dossier employé' : '') + '.</span>' +
-      (payload ?
-        // Aperçu affiché automatiquement dans la page + bouton de téléchargement.
-        '<div class="attest-preview"><div class="attest-preview-load">Génération de ton attestation…</div></div>' +
-        '<div class="attest-pdfs">' +
-          '<button type="button" class="attest-pdf-btn attest-pdf-w">' + ICON.doc + ' Télécharger le PDF</button>' +
-          '<div class="attest-pdf-msg" aria-live="polite"></div>' +
-        '</div>' : '') +
+      // Aperçu affiché automatiquement dans la page + téléchargement / partage
+      // (même bloc que l'état « en attente » : une seule manière d'emporter sa preuve).
+      (payload ? attestProofHTML() : '') +
       '<p class="attest-next"><a href="#/suivi">Voir mon suivi de formation ' + ICON.arrow + '</a></p>' +
       '</div></div>';
-    if (!payload) return;
-    var prev = sec.querySelector('.attest-preview');
-    var msgEl = sec.querySelector('.attest-pdf-msg');
-    // Génère l'image une seule fois : réutilisée pour l'aperçu ET le PDF.
-    var imgP = buildAttestImage(payload);
-    imgP.then(function (img) {
-      if (prev) prev.innerHTML = '<img class="attest-doc" alt="Attestation de lecture" src="' + img + '">';
-    }).catch(function () {
-      if (prev) prev.innerHTML = '<p class="attest-preview-load">Aperçu indisponible — utilise le bouton ci-dessous.</p>';
-    });
-    sec.querySelector('.attest-pdf-w').onclick = function () {
-      msgEl.textContent = '';
-      Promise.all([ensureJsPDF(), imgP]).then(function (r) {
-        buildWorkerPdf(payload, r[1]).save(pdfFileName(payload));
-      }).catch(function () { msgEl.textContent = 'PDF indisponible pour le moment — réessaie quand tu as du réseau.'; });
-    };
+    initAttestProof(sec, payload);
   }
 
   /* ---------- quiz intégré à la fiche de procédure ---------- */
@@ -2940,6 +3351,10 @@
       if (send) { qrateSend(send); return; }
     });
     window.addEventListener('online', fbFlush);
+    // Retour au premier plan : dans le WebView Android, l'événement 'online'
+    // émis pendant que l'app était gelée est PERDU — même rattrapage que pour
+    // les attestations, sinon un retour de quiz peut attendre des jours.
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) fbFlush(); });
     fbFlush();
   }
 
@@ -3719,6 +4134,7 @@
         '</div>' +
       '</div></section>' +
       '<div class="wrap">' +
+        suiviAqHTML() +
         suiviSyncHTML() +
         '<div class="secwrap"><h2 class="sv-h2">Résultats détaillés</h2>' +
           suiviGroupHTML('Foreuses ITH / CUBEX', ith) +
@@ -3729,6 +4145,7 @@
         '<p class="sv-note">Les résultats affichés ici restent sur ton appareil. Les gestionnaires font le suivi officiel à partir des attestations envoyées.</p>' +
       '</div>';
     initSuiviSync(view);
+    initSuiviAq(view);
     // Téléchargement du PDF d'attestation depuis « Mon suivi ». Délégué sur le
     // conteneur recréé à chaque rendu (pas de fuite d'écouteurs sur #view).
     var wrap = view.querySelector('.secwrap');
@@ -3751,7 +4168,7 @@
       name: suiviName(),
       proc: p.code || p.id,
       titre: p.titre || '',
-      date: att.date || new Date().toISOString().slice(0, 10),
+      date: att.date || localDay(),
       revision: p.date_revision || p.date_creation || '',
       score: att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : ''),
       readTime: rd ? fmtDuration(rd) : '',
@@ -3763,6 +4180,112 @@
       buildWorkerPdf(payload, r[1]).save(pdfFileName(payload));
       btnEl.innerHTML = old;
     }).catch(function () { btnEl.innerHTML = old; toast('PDF indisponible — réessaie dans un instant.'); });
+  }
+  /* ---------- « Mon suivi » : attestations en attente et refusées ----------
+     Le compte de la barre mène ici. Deux cartes, seulement quand il y a lieu :
+     • EN ATTENTE : signées, rangées sur l'appareil, pas encore au registre.
+       Envoi relançable à la main, et PDF signé téléchargeable dès maintenant —
+       c'est la preuve qui ne dépend pas du réseau.
+     • REFUSÉES : le registre les a rejetées (donnée invalide). Elles ne sont
+       plus jetées en silence : la fiche est nommée, le PDF reste disponible et
+       l'attestation peut être refaite. */
+  function aqProcLabel(payload, pid) {
+    var p = DATA.filter(function (x) { return x.id === pid; })[0];
+    return (payload && payload.titre) || (p && p.titre) || (payload && payload.proc) || pid || '';
+  }
+  function suiviAqHTML() {
+    var pend = aqPending(), rej = aqRejectedList();
+    if (!pend.length && !rej.length) return '';
+    var html = '';
+    if (pend.length) {
+      html += '<div class="sv-aq"><b>' + pend.length + ' attestation' + (pend.length > 1 ? 's' : '') +
+        ' signée' + (pend.length > 1 ? 's' : '') + ' en attente de réseau</b>' +
+        '<p>Elle' + (pend.length > 1 ? 's sont' : ' est') + ' enregistrée' + (pend.length > 1 ? 's' : '') +
+        ' sur cet appareil et repart' + (pend.length > 1 ? 'iront' : 'ira') + ' toute seule' +
+        (pend.length > 1 ? 's' : '') + ' dès qu\'il y a du réseau. Rien à refaire.' +
+        ' Tu peux relancer l\'envoi maintenant, et télécharger ta preuve signée sans attendre le registre.</p>' +
+        '<ul>' + pend.map(function (it) {
+          return '<li><span class="aqi-proc">' + esc(aqProcLabel(it.payload, it.pid)) + '</span>' +
+            '<span class="aqi-meta">' + esc((it.payload && it.payload.date) || '') +
+            ((it.payload && it.payload.name) ? ' · ' + esc(it.payload.name) : '') + '</span>' +
+            '<button type="button" class="attest-pdf-btn sv-aq-pdf" data-sig="' + esc(it.sig) + '">' +
+            ICON.doc + ' PDF</button></li>';
+        }).join('') + '</ul>' +
+        (isIOS() && !isStandalone()
+          // iOS efface le stockage d'un site après 7 jours sans visite tant que
+          // l'app n'est pas sur l'écran d'accueil : une attestation en attente
+          // peut donc disparaître. L'ajout à l'écran d'accueil lève la limite.
+          ? '<p><b>iPhone / iPad :</b> ajoute l\'app à ton écran d\'accueil ' +
+            '(Partager → « Sur l\'écran d\'accueil »). Sans ça, iOS peut effacer ' +
+            'une attestation en attente après quelques jours sans ouvrir le site. ' +
+            'Télécharge aussi ton PDF ci-dessus — c\'est ta preuve, elle ne dépend de rien.</p>'
+          : '') +
+        '<div class="sv-aq-btns">' +
+          '<button type="button" class="btn sv-aq-send">Envoyer maintenant</button>' +
+          '<div class="sv-aq-msg" aria-live="polite"></div>' +
+        '</div></div>';
+    }
+    if (rej.length) {
+      html += '<div class="sv-aq bad"><b>' + rej.length + ' attestation' + (rej.length > 1 ? 's' : '') +
+        ' refusée' + (rej.length > 1 ? 's' : '') + ' par le registre</b>' +
+        '<p>Le registre a rejeté ' + (rej.length > 1 ? 'ces envois' : 'cet envoi') +
+        ' (donnée invalide). Rien n\'est perdu : le PDF signé reste ici. Télécharge-le, préviens le bureau,' +
+        ' puis refais l\'attestation depuis la fiche.</p>' +
+        '<ul>' + rej.map(function (it) {
+          return '<li><span class="aqi-proc">' + esc(aqProcLabel(it.payload, it.pid)) + '</span>' +
+            '<span class="aqi-meta">' + esc((it.payload && it.payload.date) || '') +
+            (it.why ? ' · ' + esc(String(it.why).slice(0, 80)) : '') + '</span>' +
+            '<button type="button" class="attest-pdf-btn sv-aq-pdf" data-sig="' + esc(it.sig) + '">' +
+            ICON.doc + ' PDF</button>' +
+            '<button type="button" class="attest-pdf-btn sv-aq-redo" data-sig="' + esc(it.sig) +
+            '" data-pid="' + esc(it.pid) + '">Refaire</button></li>';
+        }).join('') + '</ul></div>';
+    }
+    return html;
+  }
+  // Retrouve le payload d'une attestation en attente ou refusée, par sa clé.
+  function aqPayloadBySig(sig) {
+    var it = aqGet().filter(function (x) { return x.sig === sig; })[0] ||
+      aqRejectedList().filter(function (x) { return x.sig === sig; })[0];
+    return it ? it.payload : null;
+  }
+  function initSuiviAq(view) {
+    view.querySelectorAll('.sv-aq-pdf').forEach(function (b) {
+      b.onclick = function () {
+        var payload = aqPayloadBySig(b.getAttribute('data-sig'));
+        if (!payload) { toast('Attestation introuvable sur cet appareil.'); return; }
+        var old = b.innerHTML; b.innerHTML = '<span>…</span>';
+        Promise.all([ensureJsPDF(), buildAttestImage(payload)]).then(function (r) {
+          buildWorkerPdf(payload, r[1]).save(pdfFileName(payload));
+          b.innerHTML = old;
+        })['catch'](function () { b.innerHTML = old; toast('PDF indisponible — réessaie dans un instant.'); });
+      };
+    });
+    view.querySelectorAll('.sv-aq-redo').forEach(function (b) {
+      b.onclick = function () {
+        var pid = b.getAttribute('data-pid');
+        aqRejectedDrop(b.getAttribute('data-sig'));
+        try { localStorage.removeItem(pkey('attest_pending_' + pid)); } catch (e) {}
+        location.hash = '#/p/' + pid;
+      };
+    });
+    var send = view.querySelector('.sv-aq-send');
+    if (send) send.onclick = function () {
+      var msg = view.querySelector('.sv-aq-msg');
+      var before = aqPendingCount();
+      send.disabled = true;
+      if (msg) { msg.textContent = 'Envoi en cours…'; msg.style.color = ''; }
+      aqKick(true);     // force : navigator.onLine peut mentir, la requête est le vrai test
+      // Le succès réaffiche la page (aqRefreshView) ; sinon on le dit ici.
+      setTimeout(function () {
+        var el = document.querySelector('.sv-aq-msg'); if (!el) return;
+        var btn = document.querySelector('.sv-aq-send'); if (btn) btn.disabled = false;
+        if (aqPendingCount() < before) return;
+        el.textContent = navigator.onLine
+          ? 'Le registre ne répond pas pour le moment. Tes attestations restent enregistrées et repartiront toutes seules.'
+          : 'Toujours pas de réseau. Tes attestations restent enregistrées et repartiront toutes seules.';
+      }, 9000);
+    };
   }
   function suiviSyncHTML() {
     if (!attestEndpoint()) return '';
@@ -3963,7 +4486,18 @@
       }, 900);
     }
     initQuizFeedback();   // pouce 👍/👎 + commentaire sous chaque question de quiz
-    aqFlush(true);  // attestations en attente d'envoi (force : onLine peut mentir au réveil du WebView)
+    /* Attestations en attente. On RÉCONCILIE d'abord les deux supports : une
+       attestation rescapée d'IndexedDB (localStorage évincé ou effacé) ou
+       envoyée par le service worker pendant que l'app était fermée doit être
+       prise en compte avant tout envoi. force : onLine peut mentir au réveil
+       du WebView — la requête est le vrai test de connectivité. */
+    aqReconcile().then(function () { renderAqChip(); aqFlush(true); });
+    aqSyncRegister();   // PWA Android : envoi possible même application fermée
+    /* Le service worker peut avoir envoyé une attestation PENDANT ce démarrage
+       (son événement 'sync' tourne en parallèle de la page) : une seconde passe
+       met la fiche, le suivi et la pastille à jour sans attendre la prochaine
+       ouverture de l'app. Une seule, et bon marché (une lecture locale). */
+    setTimeout(function () { aqReconcile(); }, 6000);
     progDirtyFlush(true);   // progression marquée « à pousser » pendant une panne (force : voir aqFlush)
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
     rosterEnsure();     // annuaire employés mis en cache pour l'autocomplétion hors-ligne
