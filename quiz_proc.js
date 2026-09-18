@@ -345,13 +345,9 @@ window.QUIZ_PROC = {
     "pro-op-ith-006": [
     ],
     "pro-op-ith-007": [
-      { "t": "ordre", "q": "Une tige de forage casse. Remets dans le bon ordre les premières actions à poser.", "d": "difficile",
-        "o": ["Arrêter le forage, fermer l'interrupteur électrique et l'alimentation en air comprimé",
-              "Installer une barricade à l'entrée du chantier pour empêcher tout accès",
-              "Aviser le superviseur — aucun forage tant qu'il n'est pas sur les lieux",
-              "Évaluer la situation avec lui et faire l'analyse de risque avant de retirer la tige",
-              "Opérer la foreuse à la manette à distance, à 5 m de la ligne de forage et hors de la ligne de tir"],
-        "e": "« Advenant un bris de la tige de forage, arrêter immédiatement l'opération de forage, fermer l'interrupteur électrique ainsi que l'alimentation en air comprimé. » ; « Une barricade ou des panneaux adéquats doivent par la suite être installées à l'entrée du chantier » ; « aucun travail de forage est permis avant l'arrivée du superviseur sur les lieux » ; « UNE ANALYSE DE RISQUE DOIT ÊTRE EFFECTUÉE À CE POINT » ; « la manette de contrôle à distance […] à 5 mètres de la ligne de forage et hors de la ligne de tir ». La tige brisée est ensuite étiquetée et retournée au fournisseur, et le contremaître remplit le rapport d'incident." }
+      { "q": "Une tige casse. Que fait-on de la tige cassée ?", "d": "difficile",
+        "o": ["On la jette", "On met une étiquette dessus, on la renvoie au fournisseur et on remplit un rapport", "On la répare", "On la réutilise"], "a": 1,
+        "e": "« Après un bris de tige, retirer et vérifier toutes les autres tiges; étiqueter et retourner la tige brisée au fournisseur; remplir un rapport d'incident. »" }
     ],
     "pro-op-ith-008": [
     ],
