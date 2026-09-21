@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v188';
+const VERSION = 'mri-proc-v189';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -439,43 +439,69 @@ async function aqSyncAll() {
   const recs = await aqdbRun(db, 'queue', 'readonly', (st) => st.getAll());
   if (!Array.isArray(recs) || !recs.length) return false;
 
+  /* Même envoi en DEUX TEMPS que la page (voir aqSendItem dans app.js) :
+     l'attestation seule d'abord (environ 1 Ko, elle passe dans une fenêtre de
+     réseau très courte), le PDF signé ensuite, rattaché à l'enregistrement
+     déjà créé. Deux passes : une attestation peut ainsi franchir ses deux
+     temps dans le même réveil quand la connexion tient. Le PDF est lu tel
+     quel — un service worker n'a ni DOM ni canvas pour le regénérer. */
   let left = 0;
-  for (const rec of recs) {
-    if (!rec || rec.rejected || rec.sentAt || !rec.payload) continue;   // déjà enregistrée ou mise de côté
-    // Le PDF (donc la signature) est déjà rangé avec l'attestation : rien à
-    // générer ici — un service worker n'a ni DOM ni canvas pour le faire.
-    const body = {};
-    Object.keys(rec.payload).forEach((k) => { if (k !== 'signature') body[k] = rec.payload[k]; });
-    if (rec.pdf) {
-      body.pdfBase64 = rec.pdf;
-      body.pdfName = 'attestation-' + String(rec.payload.proc || rec.pid || '').replace(/[^\w.-]+/g, '-') + '.pdf';
-    }
-    let st = 0, j = null;
-    try {
-      const r = await fetch(endpoint, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-      });
-      st = r.status;
-      try { j = await r.json(); } catch (e) { j = null; }
-    } catch (e) { left++; continue; }                       // réseau : on réessaiera
+  for (let passe = 0; passe < 2; passe++) {
+    left = 0;
+    const encore = await aqdbRun(db, 'queue', 'readonly', (st) => st.getAll());
+    if (!Array.isArray(encore) || !encore.length) break;
+    let avance = false;
+    for (const rec of encore) {
+      if (!rec || rec.rejected || !rec.payload) continue;
+      if (rec.sentAt && !rec.needPdf) continue;                  // terminée
+      if (!rec.sentAt) left++;                                   // le temps 1 seul est urgent
+      if (rec.sentAt && rec.pdfNextAt && Date.now() < rec.pdfNextAt) continue;
 
-    if (st >= 200 && st < 300 && j && j.ok) {
-      /* Enregistré. On ne supprime PAS : on marque, et la page finira le
-         ménage à sa prochaine ouverture (aqReconcile) — c'est ainsi qu'elle
-         apprend que l'attestation est partie et met la fiche à jour. */
-      rec.sentAt = Date.now();
-      rec.needPdf = (j.pdf === false) && !!rec.pdf;
-      await aqdbRun(db, 'queue', 'readwrite', (s2) => s2.put(rec));
-      continue;
+      const leger = !rec.sentAt;
+      const body = {};
+      Object.keys(rec.payload).forEach((k) => { if (k !== 'signature') body[k] = rec.payload[k]; });
+      if (!leger && rec.pdf) {
+        body.pdfBase64 = rec.pdf;
+        body.pdfName = 'attestation-' + String(rec.payload.proc || rec.pid || '').replace(/[^\w.-]+/g, '-') + '.pdf';
+      }
+      let st = 0, j = null;
+      try {
+        const r = await fetch(endpoint, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        });
+        st = r.status;
+        try { j = await r.json(); } catch (e) { j = null; }
+      } catch (e) { continue; }                                  // réseau : on réessaiera
+
+      if (st >= 200 && st < 300 && j && j.ok) {
+        /* Enregistré. On ne supprime PAS : on marque, et la page finira le
+           ménage à sa prochaine ouverture (aqReconcile) — c'est ainsi qu'elle
+           apprend que l'attestation est partie et met la fiche à jour. */
+        const at = Date.now();
+        if (j.pdf === true) {
+          rec.sentAt = at; rec.needPdf = false;
+        } else {
+          if (!leger) {
+            rec.pdfTries = (rec.pdfTries || 0) + 1;
+            rec.pdfNextAt = at + (rec.pdfTries >= 3 ? 24 * 3600000 : 10 * 60000);
+          } else {
+            rec.pdfNextAt = 0;                                   // enchaîner le temps 2
+          }
+          rec.sentAt = at; rec.needPdf = true;
+        }
+        await aqdbRun(db, 'queue', 'readwrite', (s2) => s2.put(rec));
+        if (leger) { left--; avance = true; }
+        continue;
+      }
+      // Refus explicite du Worker (corps JSON { ok:false }) : mis de côté, jamais
+      // jeté. Tout autre 4xx/5xx (portail captif, 429, panne) : on réessaiera.
+      if (st >= 400 && st < 500 && j && j.ok === false) {
+        rec.rejected = true; rec.why = (j && j.error) || ('HTTP ' + st);
+        await aqdbRun(db, 'queue', 'readwrite', (s2) => s2.put(rec));
+        if (leger) left--;
+      }
     }
-    // Refus explicite du Worker (corps JSON { ok:false }) : mis de côté, jamais
-    // jeté. Tout autre 4xx/5xx (portail captif, 429, panne) : on réessaiera.
-    if (st >= 400 && st < 500 && j && j.ok === false) {
-      rec.rejected = true; rec.why = (j && j.error) || ('HTTP ' + st);
-      await aqdbRun(db, 'queue', 'readwrite', (s2) => s2.put(rec));
-      continue;
-    }
-    left++;
+    if (!avance) break;                                          // rien n'a bougé : inutile d'insister
   }
   return left > 0;
 }

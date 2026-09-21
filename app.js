@@ -2065,6 +2065,13 @@
         Plus rien à régénérer à l'envoi (ni jsPDF, ni logo, ni canvas), et le
         foreur repart avec sa preuve même si l'appareil ne revoit jamais le
         réseau.
+     3bis. ENVOI EN DEUX TEMPS — l'attestation part SEULE d'abord (environ 0,2 Ko),
+        puis le PDF signé (environ 130 Ko) rejoint l'enregistrement déjà créé.
+        Au fond, la fenêtre de réseau se compte parfois en secondes : la trace
+        au registre ne doit pas dépendre d'un gros téléversement qui n'aurait
+        jamais le temps de finir. Le Worker reconnaît le doublon (nom +
+        procédure + date) et complète sa pièce jointe au lieu de créer une
+        seconde ligne — rien à redéployer côté serveur.
      4. AUCUN ABANDON — file TOURNANTE (un élément bloqué ne bloque plus les
         suivants), réessai sans plafond, rejet du registre CONSERVÉ au lieu
         d'être jeté, et sur PWA Android un handler 'sync' du service worker qui
@@ -2168,7 +2175,7 @@
       if (rec) return false;                     // déjà rangée : on ne touche à rien
       return aqdbPut({ sig: it.sig, pid: it.pid, u: it.u, payload: it.payload, pdf: '',
         t: Date.now(), sentAt: it.sentAt || 0, needPdf: !!it.sentAt,
-        pdfTries: it.pdfTries || 0, rejected: false, why: '' });
+        pdfTries: it.pdfTries || 0, pdfNextAt: it.pdfNextAt || 0, rejected: false, why: '' });
     })['catch'](function () { return false; });
   }
   // Complète le PDF d'un élément déjà en file (génération asynchrone après la
@@ -2198,11 +2205,17 @@
   }
   function aqLight(r) {
     return { pid: r.pid, sig: r.sig, payload: r.payload, u: r.u,
-      sentAt: r.sentAt || 0, pdfTries: r.pdfTries || 0 };
+      sentAt: r.sentAt || 0, pdfTries: r.pdfTries || 0, pdfNextAt: r.pdfNextAt || 0 };
   }
   // Éléments qui attendent ENCORE le registre. Ceux déjà enregistrés et qui ne
   // repassent que pour joindre leur PDF ne sont plus « en attente ».
   function aqPending() { return aqGet().filter(function (it) { return !it.sentAt; }); }
+  /* Enregistrées au registre, mais dont la pièce jointe PDF a été refusée
+     plusieurs fois : presque toujours la colonne « Attestation PDF » qui
+     manque dans Airtable. La signature n'est alors archivée nulle part côté
+     bureau : c'est une action pour le bureau, pas pour le travailleur, mais il
+     faut que quelqu'un le voie. */
+  function aqNoPdf() { return aqGet().filter(function (it) { return it.sentAt && (it.pdfTries || 0) >= 3; }); }
   function aqPendingCount() { return aqPending().length; }
   function aqFind(pid, uSlug) {
     var u = (uSlug == null) ? profSlug(profName()) : uSlug;
@@ -2217,7 +2230,7 @@
   function aqAdd(pid, sig, payload, pdfB64) {
     var rec = { sig: sig, pid: pid, u: profSlug(profName()), payload: payload,
       pdf: pdfB64 || '', t: Date.now(), sentAt: 0, needPdf: false, pdfTries: 0,
-      rejected: false, why: '' };
+      pdfNextAt: 0, rejected: false, why: '' };
     var q = aqGet().filter(function (it) { return it.sig !== sig; });
     q.push(aqLight(rec));
     var ls = aqSet(q);
@@ -2273,6 +2286,9 @@
           } catch (e) {}
           if (local && !rec.needPdf) { q = q.filter(function (it) { return it.sig !== rec.sig; }); changed = true; }
           if (!rec.needPdf) aqdbDel(rec.sig);
+          // Enregistrée au registre par le service worker, mais son PDF reste à
+          // joindre : la file locale doit la voir pour finir le travail.
+          if (!local && rec.needPdf) { q.push(aqLight(rec)); changed = true; }
           aqRefreshView(rec.pid, rec.u, rec.payload);
           return;
         }
@@ -2326,16 +2342,17 @@
     /* File TOURNANTE : on ne repart pas systématiquement du premier élément,
        sinon un élément durablement refusé par Airtable (502 en boucle)
        empêcherait toutes les attestations suivantes de l'appareil de partir, en
-       silence. Les attestations DÉJÀ ENREGISTRÉES au registre qui ne repassent
-       que pour joindre leur PDF sont servies en dernier, et pas plus d'une fois
-       par 10 min : elles n'ont rien d'urgent et ne doivent pas tourner en
-       boucle chaude derrière les vraies. */
+       silence. Les attestations DÉJÀ ENREGISTRÉES au registre, qui ne repassent
+       que pour joindre leur PDF (temps 2), sont servies en dernier et pas avant
+       l'heure inscrite dans pdfNextAt : immédiatement après le temps 1, puis
+       espacées si le registre refuse la pièce jointe. L'attestation elle-même
+       est déjà en sûreté, elles ne doivent donc jamais passer devant. */
     var it = null;
     var fresh = q.filter(function (x) { return !x.sentAt; });
     if (fresh.length) {
       it = fresh[aqCursor % fresh.length];
     } else {
-      var due = q.filter(function (x) { return Date.now() - (x.sentAt || 0) > 10 * 60000; });
+      var due = q.filter(function (x) { return Date.now() >= (x.pdfNextAt || 0); });
       if (!due.length) return;
       it = due[aqCursor % due.length];
     }
@@ -2376,43 +2393,65 @@
      chemin de l'envoi — c'était à la fois une source de blocage du verrou
      aqBusy et, en cas d'échec, une attestation transmise SANS sa signature. */
   function aqSendItem(endpoint, it) {
+    if (!it.sentAt) {
+      /* TEMPS 1 : l'attestation SEULE (environ 1 Ko). Au fond d'une mine, la
+         fenêtre de réseau se compte parfois en secondes — un corps léger
+         passe là où 165 Ko de PDF n'auraient jamais fini de monter, et
+         chaque échec ne recommençait pas à zéro pour rien. L'essentiel,
+         la trace au registre, est donc acquis dès la première seconde. */
+      return postAttestation(endpoint, it.payload, '', true).then(function (res) {
+        res.phase = 1;
+        return res;
+      });
+    }
+    /* TEMPS 2 : le PDF signé, rattaché à l'enregistrement déjà créé. Le
+       Worker reconnaît le doublon (nom + procédure + date) et COMPLÈTE sa
+       pièce jointe au lieu de créer une seconde ligne. Enchaîné tout de
+       suite après le temps 1 quand le réseau tient. */
     return aqdbGet(it.sig).then(function (rec) {
       var b64 = (rec && rec.pdf) ? rec.pdf : '';
       return postAttestation(endpoint, it.payload, b64).then(function (res) {
+        res.phase = 2;
         res.b64 = b64 || null;
         return res;
       });
     });
   }
-  /* Suite d'un envoi accepté. Si le registre a bien créé l'enregistrement mais
-     n'a PAS pris la pièce jointe (pdf:false — colonne « Attestation PDF »
-     absente, ou upload refusé), la signature ne serait nulle part côté
-     serveur : l'élément reste donc en file, marqué « envoyé », et le prochain
-     passage joint le PDF à l'enregistrement existant (le Worker complète un
-     doublon au lieu d'en créer un). Au bout de 3 tentatives on renonce à la
-     pièce jointe — l'attestation est enregistrée, et le PDF signé reste sur
-     l'appareil et téléchargeable depuis « Mon suivi ». */
+  /* Suite d'un envoi accepté par le registre.
+     • Temps 1 réussi : la fiche est ATTESTÉE (la ligne existe au registre), et
+       l'élément reste en file pour son temps 2, enchaîné immédiatement.
+     • Temps 2 réussi (pdf:true) : terminé, l'élément sort de la file.
+     • Temps 2 accepté mais SANS pièce jointe (pdf:false) : la colonne
+       « Attestation PDF » manque probablement côté Airtable. On réessaie à
+       10 min, puis une fois par jour — SANS jamais abandonner — et « Mon
+       suivi » l'affiche comme « PDF non archivé » pour que le bureau soit
+       prévenu. Le PDF signé reste sur l'appareil pendant tout ce temps. */
   function aqOnSent(it, res) {
     var uSlug = (it.u != null) ? it.u : profSlug(profName());
     try {
       localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
       localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
     } catch (e) {}
-    var missingPdf = (res && res.j && res.j.pdf === false) && !!(res && res.b64);
-    var tries = (it.pdfTries || 0) + (missingPdf ? 1 : 0);
-    if (missingPdf && tries < 3) {
+    var j = (res && res.j) || {};
+    var tries = it.pdfTries || 0, wait = 0;
+    if (j.pdf !== true && res && res.phase === 2) {
+      tries += 1;
+      wait = (tries >= 3) ? 24 * 3600000 : 10 * 60000;
+    }
+    if (j.pdf === true) {                     // pièce jointe en place : rien ne reste
+      aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
+      aqdbDel(it.sig);
+    } else {
+      var at = Date.now();
       aqSet(aqGet().map(function (x) {
-        if (x.sig === it.sig) { x.sentAt = Date.now(); x.pdfTries = tries; }
+        if (x.sig === it.sig) { x.sentAt = at; x.pdfTries = tries; x.pdfNextAt = at + wait; }
         return x;
       }));
       aqdbGet(it.sig).then(function (rec) {
         if (!rec) return;
-        rec.sentAt = Date.now(); rec.needPdf = true; rec.pdfTries = tries;
+        rec.sentAt = at; rec.needPdf = true; rec.pdfTries = tries; rec.pdfNextAt = at + wait;
         aqdbPut(rec);
       });
-    } else {
-      aqSet(aqGet().filter(function (x) { return x.sig !== it.sig; }));
-      aqdbDel(it.sig);
     }
     aqRefreshView(it.pid, uSlug, it.payload);
   }
@@ -2494,6 +2533,7 @@
           aqOnSent(it, res);
           progPushSoon();
           cb(true);
+          aqFlush(true);    // enchaîne le temps 2 (le PDF) : le réseau vient de répondre
         } else { aqRetryLater(); cb(false); }   // 4xx/5xx : reste en file, réessai replanifié
       })
       ['catch'](function () { aqBusy = false; aqRetryLater(); cb(false); });   // réseau/registre injoignable
@@ -2889,7 +2929,10 @@
     return getLogo().then(function (logoUrl) {
       return Promise.all([loadImg(logoUrl), loadImg(payload.signature || '')]);
     }).then(function (imgs) {
-      var draw = function () { return drawAttestationCanvas(payload, imgs[0], imgs[1]).toDataURL('image/jpeg', 0.92); };
+      /* Qualité JPEG 0,85 : sur un document de texte et de signature, l'œil ne
+         distingue rien de 0,92, mais le PDF maigrit d'environ 20 % (mesuré :
+         157 Ko → 128 Ko en base64). C'est le corps le plus lourd de l'app. */
+      var draw = function () { return drawAttestationCanvas(payload, imgs[0], imgs[1]).toDataURL('image/jpeg', 0.85); };
       return (document.fonts && document.fonts.ready) ? document.fonts.ready.then(draw, draw) : draw();
     });
   }
@@ -2985,11 +3028,16 @@
      fabriquerait des doublons (le serveur peut avoir déjà reçu le corps). Le
      timer reste armé jusqu'à la LECTURE COMPLÈTE de la réponse : des en-têtes
      reçus puis un corps qui gèle libèrent quand même la file (abort). */
-  function postAttestation(endpoint, payload, preB64) {
-    // preB64 : PDF déjà généré et rangé avec l'attestation (cas normal
-    // désormais) — on ne le reconstruit pas, donc l'envoi ne peut plus partir
-    // sans la signature parce que jsPDF ou le logo manquait ce jour-là.
-    var pdfP = (typeof preB64 === 'string' && preB64) ? Promise.resolve(preB64) : buildPdfBase64(payload);
+  function postAttestation(endpoint, payload, preB64, light) {
+    /* preB64 : PDF déjà généré et rangé avec l'attestation (cas normal
+       désormais) — on ne le reconstruit pas, donc l'envoi ne peut plus partir
+       sans la signature parce que jsPDF ou le logo manquait ce jour-là.
+       light : envoi de l'attestation SEULE, sans pièce jointe (temps 1 de
+       l'envoi en deux temps, voir aqSendItem) — un corps d'environ 1 Ko au
+       lieu de 165 Ko, qui passe dans une fenêtre de réseau de quelques
+       secondes. */
+    var pdfP = light ? Promise.resolve('')
+      : ((typeof preB64 === 'string' && preB64) ? Promise.resolve(preB64) : buildPdfBase64(payload));
     return pdfP.then(function (b64) {
       var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
       var timer = ctl ? setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 120000) : null;
@@ -4195,7 +4243,7 @@
   }
   function suiviAqHTML() {
     var pend = aqPending(), rej = aqRejectedList();
-    if (!pend.length && !rej.length) return '';
+    if (!pend.length && !rej.length && !aqNoPdf().length) return '';
     var html = '';
     if (pend.length) {
       html += '<div class="sv-aq"><b>' + pend.length + ' attestation' + (pend.length > 1 ? 's' : '') +
@@ -4222,6 +4270,25 @@
           : '') +
         '<div class="sv-aq-btns">' +
           '<button type="button" class="btn sv-aq-send">Envoyer maintenant</button>' +
+          '<div class="sv-aq-msg" aria-live="polite"></div>' +
+        '</div></div>';
+    }
+    var nopdf = aqNoPdf();
+    if (nopdf.length) {
+      html += '<div class="sv-aq"><b>' + nopdf.length + ' attestation' + (nopdf.length > 1 ? 's' : '') +
+        ' enregistrée' + (nopdf.length > 1 ? 's' : '') + ', PDF non archivé au bureau</b>' +
+        '<p>Ta lecture est bien enregistrée au registre : rien à refaire. En revanche le PDF signé' +
+        ' n\'a pas pu y être joint (il manque sans doute la colonne « Attestation PDF » côté bureau).' +
+        ' L\'app réessaie toute seule une fois par jour. Télécharge ton PDF pour le garder,' +
+        ' et préviens le bureau.</p>' +
+        '<ul>' + nopdf.map(function (it) {
+          return '<li><span class="aqi-proc">' + esc(aqProcLabel(it.payload, it.pid)) + '</span>' +
+            '<span class="aqi-meta">' + esc((it.payload && it.payload.date) || '') + '</span>' +
+            '<button type="button" class="attest-pdf-btn sv-aq-pdf" data-sig="' + esc(it.sig) + '">' +
+            ICON.doc + ' PDF</button></li>';
+        }).join('') + '</ul>' +
+        '<div class="sv-aq-btns">' +
+          '<button type="button" class="btn sv-aq-arch">Réessayer l\'archivage</button>' +
           '<div class="sv-aq-msg" aria-live="polite"></div>' +
         '</div></div>';
     }
@@ -4269,6 +4336,27 @@
         location.hash = '#/p/' + pid;
       };
     });
+    var arch = view.querySelector('.sv-aq-arch');
+    if (arch) arch.onclick = function () {
+      // Remet les éléments concernés « à l'heure » (pdfNextAt) et relance.
+      var at = 0;
+      aqSet(aqGet().map(function (x) {
+        if (x.sentAt && (x.pdfTries || 0) >= 3) { x.pdfNextAt = at; }
+        return x;
+      }));
+      aqNoPdf().forEach(function (it) {
+        aqdbGet(it.sig).then(function (rec) { if (rec) { rec.pdfNextAt = at; aqdbPut(rec); } });
+      });
+      arch.disabled = true;
+      var m = view.querySelector('.sv-aq .sv-aq-arch') && arch.parentNode.querySelector('.sv-aq-msg');
+      if (m) m.textContent = 'Nouvelle tentative d\'archivage…';
+      aqKick(true);
+      setTimeout(function () {
+        var b2 = document.querySelector('.sv-aq-arch'); if (b2) b2.disabled = false;
+        var m2 = document.querySelector('.sv-aq-arch') && document.querySelector('.sv-aq-arch').parentNode.querySelector('.sv-aq-msg');
+        if (m2 && aqNoPdf().length) m2.textContent = 'Le registre refuse toujours la pièce jointe. Le bureau doit créer la colonne « Attestation PDF ».';
+      }, 9000);
+    };
     var send = view.querySelector('.sv-aq-send');
     if (send) send.onclick = function () {
       var msg = view.querySelector('.sv-aq-msg');

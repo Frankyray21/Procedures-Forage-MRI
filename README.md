@@ -15,7 +15,10 @@ toutes les procédures de travail de forage de M.R.I. :
   l'appareil refuse, l'écran le dit au lieu d'afficher « enregistrée ». Son **PDF signé
   est produit tout de suite** et offert au travailleur (téléchargement / partage) : une
   preuve qui ne dépend ni du réseau, ni du registre, ni de la survie du téléphone.
-  L'envoi repart tout seul (ouverture de l'app, retour du réseau, retour au premier plan,
+  L'envoi se fait **en deux temps** : l'attestation seule d'abord (0,2 Ko, elle passe dans une
+  fenêtre de réseau de quelques secondes), puis le PDF signé (130 Ko) qui rejoint
+  l'enregistrement déjà créé — la trace au registre ne dépend donc jamais d'un gros
+  téléversement. L'envoi repart tout seul (ouverture de l'app, retour du réseau, retour au premier plan,
   réessai sans abandon, et **Background Sync** du service worker sur PWA Android — même
   application fermée). Une pastille « N à envoyer » reste visible dans la barre tant que
   la file n'est pas vide, et **Mon suivi** permet de relancer l'envoi à la main.

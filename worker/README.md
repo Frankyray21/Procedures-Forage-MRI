@@ -73,18 +73,30 @@ téléchargeable par le travailleur), ajoute **une seule fois** un champ à la t
 
 Le PDF est **généré sur l'appareil du travailleur dès la signature** (même sous
 terre, sans réseau), **rangé avec l'attestation** dans IndexedDB, puis téléversé
-à l'envoi — immédiatement, ou **plus tard, dès que le réseau revient**. Il n'est
-jamais regénéré au moment de l'envoi : une attestation ne peut donc pas partir
-sans sa signature.
+à l'envoi. Il n'est jamais regénéré au moment de l'envoi : une attestation ne
+peut donc pas partir sans sa signature.
+
+L'envoi se fait **en DEUX TEMPS**, et c'est l'idempotence du Worker qui le rend
+possible :
+
+1. l'attestation **seule** (~0,2 Ko) crée la ligne. Ce corps minuscule passe
+   dans une fenêtre de réseau de quelques secondes, au collet ou en surface ;
+2. un second POST **identique plus `pdfBase64`** (~130 Ko) arrive ensuite. Le
+   Worker reconnaît le doublon (Nom + Procédure + Date) et **complète la pièce
+   jointe de la ligne existante** au lieu d'en créer une seconde.
+
+Rien à changer côté Worker : ce comportement existe déjà (`findExistingAttestation`
+puis `uploadPdfAttachment` sur le doublon).
 
 Tant que le champ n'existe pas, l'attestation est enregistrée normalement, mais
 **sans** la pièce jointe (`pdf:false` dans la réponse). Le site ne considère
 alors pas l'affaire close : il **retente de joindre le PDF** à l'enregistrement
 existant (le Worker complète la pièce jointe d'un doublon au lieu d'en créer un),
-au plus 3 fois et pas plus d'une fois par 10 min. Après quoi il renonce à la
-pièce jointe : l'attestation reste enregistrée côté Airtable et le PDF signé
-reste téléchargeable depuis « Mon suivi » sur l'appareil. **Créer ce champ est
-donc la seule façon d'archiver les signatures côté bureau.**
+d'abord à 10 min d'intervalle, puis **une fois par jour, sans jamais
+abandonner**. Au bout de 3 refus, « Mon suivi » affiche « PDF non archivé au
+bureau » avec un bouton de relance, pour que quelqu'un s'en aperçoive. Le PDF
+signé reste sur l'appareil pendant tout ce temps. **Créer ce champ est donc la
+seule façon d'archiver les signatures côté bureau.**
 
 Aucune autre configuration : le Worker cible le champ par son nom.
 
