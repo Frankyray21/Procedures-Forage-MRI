@@ -1640,7 +1640,11 @@
     var metaItems = (p.machines || []).slice();
     if (p.date_creation) metaItems.push(p.date_creation);
     if (p.date_revision) metaItems.push('Rév. ' + p.date_revision);
-    var h = '<div class="wrap" style="--cat:' + col + '"><a class="back" href="' + backHref + '">' + ICON.back + backLbl + '</a>' +
+    // Bouton de retour COLLANT et mis en évidence : la fiche est une longue page
+    // (fiche, PDF, quiz, attestation) et le simple lien du haut disparaissait
+    // dès qu'on descendait. Voir .back.backpill dans styles.css.
+    var h = '<div class="wrap" style="--cat:' + col + '"><a class="back backpill" href="' + backHref + '">' + ICON.back +
+      '<span class="bk-t">' + esc(backLbl.trim()) + '</span></a>' +
       '<div class="phead">' +
         '<h1>' + esc(p.titre) + '</h1>' +
         '<div class="tags" style="margin-top:.55rem">' +
@@ -4545,25 +4549,137 @@
     sun: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     moon: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
   };
-  function themeBtnIcon() {
-    var b = $('#themeBtn'); if (!b) return;
-    var light = document.documentElement.getAttribute('data-theme') === 'light';
-    b.innerHTML = light ? THEME_ICONS.moon : THEME_ICONS.sun;
-    b.title = light ? 'Repasser au thème sombre' : 'Passer au thème clair';
+  /* ---------- bouton « Affichage » : taille du texte + thème ----------
+     La barre est déjà pleine à 412 px : un bouton de plus la ferait déborder.
+     L'ancien bouton de thème devient donc « Affichage » (Aa) et ouvre un petit
+     panneau qui regroupe la taille du texte et le thème clair / sombre.
+     Construit ENTIÈREMENT ici, à partir de #themeBtn : dans l'APK, les mises à
+     jour à chaud remplacent le JS et le CSS mais pas l'index.html embarqué,
+     qui peut donc être plus ancien que ce code.
+     La taille agit sur la taille de BASE (html[data-ts]) : tout le contenu en
+     rem grandit, sans zoom — la zone de signature et les bulles d'aperçu
+     gardent des coordonnées justes. La barre, en px, ne bouge pas. */
+  var TEXT_SCALES = [90, 100, 115, 130, 145];
+  function textScaleGet() {
+    var v = 100;
+    try { v = parseInt(localStorage.getItem('text_scale') || '100', 10); } catch (e) {}
+    return TEXT_SCALES.indexOf(v) >= 0 ? v : 100;
   }
-  function initTheme() {
+  function textScaleApply(v) {
+    if (v === 100) document.documentElement.removeAttribute('data-ts');
+    else document.documentElement.setAttribute('data-ts', String(v));
+  }
+  function textScaleSet(v) {
+    textScaleApply(v);
+    try { localStorage.setItem('text_scale', String(v)); } catch (e) {}
+  }
+  // Tout de suite, sans attendre le DOM : moins de saut visuel si le script
+  // en tête d'index.html est absent (APK dont l'index.html est plus ancien).
+  textScaleApply(textScaleGet());
+
+  var DISP_ICON = '<svg width="20" height="17" viewBox="0 0 28 22" fill="none" stroke="currentColor" ' +
+    'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M2 19 8 3h1l6 16M4.4 13h8.2"/><path d="M17.5 19l4-10h.6l4 10M18.9 15.5h5.8"/></svg>';
+  function isLight() { return document.documentElement.getAttribute('data-theme') === 'light'; }
+  function setTheme(light) {
+    if (light) document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+    try { localStorage.setItem('theme', light ? 'light' : 'dark'); } catch (e) {}
+  }
+  function dispPanelHTML() {
+    var v = textScaleGet(), i = TEXT_SCALES.indexOf(v), light = isLight();
+    return '<div class="dp-h">Taille du texte</div>' +
+      '<div class="dp-size">' +
+        '<button type="button" class="dp-step" data-step="-1" aria-label="Texte plus petit"' +
+          (i <= 0 ? ' disabled' : '') + '><span class="dp-a dp-a-s">A</span>−</button>' +
+        '<output class="dp-val" aria-live="polite">' + v + ' %</output>' +
+        '<button type="button" class="dp-step" data-step="1" aria-label="Texte plus grand"' +
+          (i >= TEXT_SCALES.length - 1 ? ' disabled' : '') + '><span class="dp-a dp-a-l">A</span>+</button>' +
+      '</div>' +
+      '<div class="dp-bar" aria-hidden="true">' + TEXT_SCALES.map(function (s) {
+        return '<i class="' + (s <= v ? 'on' : '') + '"></i>';
+      }).join('') + '</div>' +
+      (v !== 100 ? '<button type="button" class="dp-reset">Taille normale (100 %)</button>' : '') +
+      '<div class="dp-h">Thème</div>' +
+      '<div class="dp-theme" role="group" aria-label="Thème">' +
+        '<button type="button" class="dp-th' + (!light ? ' on' : '') + '" data-th="dark" aria-pressed="' + (!light) + '">' +
+          THEME_ICONS.moon + ' Sombre</button>' +
+        '<button type="button" class="dp-th' + (light ? ' on' : '') + '" data-th="light" aria-pressed="' + light + '">' +
+          THEME_ICONS.sun + ' Clair</button>' +
+      '</div>';
+  }
+  function initDisplay() {
     var b = $('#themeBtn'); if (!b) return;
-    themeBtnIcon();
-    b.addEventListener('click', function () {
-      var light = document.documentElement.getAttribute('data-theme') === 'light';
-      if (light) document.documentElement.removeAttribute('data-theme');
-      else document.documentElement.setAttribute('data-theme', 'light');
-      try { localStorage.setItem('theme', light ? 'dark' : 'light'); } catch (e) {}
-      themeBtnIcon();
-    });
+    b.innerHTML = DISP_ICON;
+    b.title = 'Affichage : taille du texte et thème';
+    b.setAttribute('aria-label', 'Affichage : taille du texte et thème');
+    b.setAttribute('aria-haspopup', 'dialog');
+    b.setAttribute('aria-expanded', 'false');
+    b.classList.add('dispbtn');
+    var panel = null;
+    function place() {
+      if (!panel) return;
+      var r = b.getBoundingClientRect();
+      var w = panel.offsetWidth;
+      panel.style.top = Math.round(r.bottom + 8) + 'px';
+      panel.style.left = Math.round(Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8))) + 'px';
+    }
+    function render() { if (panel) { panel.innerHTML = dispPanelHTML(); place(); } }
+    function close() {
+      if (!panel) return;
+      panel.parentNode.removeChild(panel); panel = null;
+      b.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('pointerdown', outside, true);
+      document.removeEventListener('keydown', onKey, true);
+      window.removeEventListener('resize', place);
+    }
+    function outside(e) { if (panel && !panel.contains(e.target) && !b.contains(e.target)) close(); }
+    function onKey(e) { if (e.key === 'Escape') { close(); b.focus(); } }
+    function open() {
+      panel = document.createElement('div');
+      panel.className = 'disppanel';
+      panel.setAttribute('role', 'dialog');
+      panel.setAttribute('aria-label', 'Affichage');
+      document.body.appendChild(panel);
+      render();
+      b.setAttribute('aria-expanded', 'true');
+      document.addEventListener('pointerdown', outside, true);
+      document.addEventListener('keydown', onKey, true);
+      window.addEventListener('resize', place);
+      panel.addEventListener('click', function (e) {
+        var t = e.target.closest ? e.target.closest('button') : null;
+        if (!t || t.disabled) return;
+        if (t.hasAttribute('data-step')) {
+          var i = TEXT_SCALES.indexOf(textScaleGet()) + parseInt(t.getAttribute('data-step'), 10);
+          if (i >= 0 && i < TEXT_SCALES.length) textScaleSet(TEXT_SCALES[i]);
+        } else if (t.classList.contains('dp-reset')) {
+          textScaleSet(100);
+        } else if (t.hasAttribute('data-th')) {
+          setTheme(t.getAttribute('data-th') === 'light');
+        }
+        render();
+        // Le bouton sous le doigt a pu être recréé : on garde le focus au même endroit.
+        var same = t.hasAttribute('data-step') ? panel.querySelector('[data-step="' + t.getAttribute('data-step') + '"]')
+          : (t.hasAttribute('data-th') ? panel.querySelector('[data-th="' + t.getAttribute('data-th') + '"]') : null);
+        if (same && !same.disabled) same.focus();
+      });
+    }
+    b.addEventListener('click', function () { if (panel) close(); else open(); });
+    window.addEventListener('hashchange', close);
+  }
+  /* Hauteur réelle de la barre d'application, exposée en CSS (--appbar-h) : le
+     bouton de retour des fiches se colle JUSTE dessous au défilement. Elle varie
+     avec la largeur de l'écran et les pastilles affichées : un ResizeObserver la
+     suit, avec l'événement resize en repli. */
+  function initAppbarH() {
+    var bar = $('#appbar'); if (!bar) return;
+    function upd() { document.documentElement.style.setProperty('--appbar-h', bar.offsetHeight + 'px'); }
+    upd();
+    if (window.ResizeObserver) { try { new ResizeObserver(upd).observe(bar); } catch (e) {} }
+    window.addEventListener('resize', upd);
   }
   document.addEventListener('DOMContentLoaded', function () {
-    route(); initInstall(); initChecklistEvents(); initTheme(); initHoverCard();
+    route(); initInstall(); initChecklistEvents(); initDisplay(); initHoverCard(); initAppbarH();
     // Contenu révisé depuis la dernière visite : l'annoncer clairement (les
     // badges « Mise à jour » restent ensuite sur les fiches concernées).
     if (updFresh) {
