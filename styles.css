@@ -222,7 +222,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .back svg{color:var(--strong)}
 .back:hover{color:#c4dcff}
 .phead{border-bottom:1px solid var(--border);padding-bottom:1.3rem;margin-bottom:1.4rem}
-.phead h1{font-family:var(--font-display);font-size:clamp(1.875rem,1.1rem+3.4vw,3.25rem);font-weight:800;line-height:1.02;
+.phead h1{font-family:var(--font-display);font-size:2rem;font-weight:800;line-height:1.02;
   text-transform:uppercase;letter-spacing:.005em;margin:.55rem 0 .5rem;text-wrap:balance;color:var(--strong)}
 .phead .tags{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
 .phead .meta{display:flex;gap:.4rem .6rem;flex-wrap:wrap;align-items:center;color:var(--text-muted);font-size:.92rem;font-weight:600;margin-top:.7rem}
@@ -237,7 +237,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 .kv .k b{font-family:var(--font-display);font-size:1.15rem;color:var(--strong);font-weight:700}
 
 .sec{margin:1.7rem 0}
-.sec > h2{font-family:var(--font-display);font-size:clamp(1.375rem,1.15rem+.75vw,1.625rem);font-weight:800;
+.sec > h2{font-family:var(--font-display);font-size:1.5rem;font-weight:800;
   text-transform:uppercase;letter-spacing:.02em;color:var(--strong);
   display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
 .sec > h2::before{content:'';width:5px;height:1.3rem;background:var(--brand);border-radius:2px;flex:none}
@@ -1481,3 +1481,36 @@ footer b{color:var(--muted)}
 .chip[data-cat]:not([data-cat=""]).on::before{background:var(--c)}
 .chip[data-cat]:not([data-cat=""]).on .ct{color:var(--c);opacity:.8}
 :root[data-theme="light"] .chip[data-cat]:not([data-cat=""]).on::before{background:var(--c)}
+
+/* ===== Barre d'app : la marque texte ne tient pas entre 521 et 1039 px =====
+   Mesuré : son sous-titre (« MACHINES ROGER INTERNATIONAL ») chevauchait les
+   liens de navigation jusqu'à 105 px, et le titre était tronqué jusqu'à
+   ~1040 px — dont la tablette Active4 Pro en portrait (800 px). Le logo seul
+   identifie l'app ; la marque texte revient dès qu'elle a la place. */
+@media(max-width:1039px){.appbar .brand .bt{display:none}}
+
+/* ===== Tablette durcie (Samsung Galaxy Tab Active4 Pro) =====
+   Écran de 10,1 po : 800 x 1280 px CSS en portrait, 1280 x 800 en paysage,
+   tenu à bout de bras et utilisé avec des gants. Sans ce bloc, la tablette
+   héritait des tailles de BUREAU : les titres de procédure (15 px) y étaient
+   plus petits que les filtres et les intitulés de section — l'inverse de la
+   hiérarchie voulue, le titre étant ce que le travailleur cherche des yeux.
+   Ciblage : un écran TACTILE (any-pointer:coarse) de 700 à 1400 px de large.
+   Ni les téléphones (moins de 700 px) ni les ordinateurs à souris ne sont
+   touchés ; si la requête ne correspond pas, le rendu actuel s'applique. */
+@media (any-pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  /* listes de procédures */
+  .prow{padding:.66rem .85rem .66rem .95rem;gap:.7rem}
+  .prow .ptitle{font-size:1.18rem;line-height:1.28}
+  .prow .pcode{font-size:.8rem;padding:.16rem .45rem}
+  .prow .pcat{font-size:.78rem}
+  .lgrp-rows{gap:.45rem}
+  .lgrp-h{font-size:1.28rem}
+  .lgrp-h .ct{font-size:.86rem}
+  /* titre de la fiche : 32 px en portrait (les plus longs tiennent sur deux
+     lignes), jusqu'à 36 px en paysage où la largeur le permet */
+  .phead h1{font-size:clamp(2rem, 1.6rem + .8vw, 2.25rem)}
+  /* « Mon suivi » : mêmes titres de procédure, même lisibilité */
+  .sv-t b{font-size:1.1rem}
+  .sv-code{font-size:.8rem}
+}
