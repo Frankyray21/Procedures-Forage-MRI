@@ -88,7 +88,7 @@
      supprime rien : chaque travailleur retrouve ses données en revenant — même
      hors ligne. La progression est aussi sauvegardée dans Airtable (dossier de
      l'employé) pour survivre à un changement d'appareil : voir progPush(). */
-  var P_KEYS = /^(pq_|attest_hist_|attest_sent_|attest_pending_|ck_|pt_read_|pt_quiz_|prog_)/;
+  var P_KEYS = /^(pq_|attest_hist_|attest_sent_|attest_pending_|ck_|pt_read_|pt_quiz_|pt_doc_|prog_)/;
   function profName() { try { return localStorage.getItem('prof_name') || ''; } catch (e) { return ''; } }
   function profSlug(name) { return norm(name).replace(/\s+/g, ' ').trim(); }
   function pkeyFor(slug, base) { return slug ? 'u:' + slug + ':' + base : base; }
@@ -141,7 +141,7 @@
     var cur = profName();
     if (!cur || profSlug(cur) === profSlug(name)) { profSet(name); return; }
     var to = profSlug(name);
-    ['pq_' + pid, 'pq_fail_' + pid, 'pt_read_' + pid, 'pt_quiz_' + pid].forEach(function (base) {
+    ['pq_' + pid, 'pq_fail_' + pid, 'pt_read_' + pid, 'pt_quiz_' + pid, 'pt_doc_' + pid].forEach(function (base) {
       try {
         var v = localStorage.getItem(pkey(base));
         if (v != null) { localStorage.setItem(pkeyFor(to, base), v); localStorage.removeItem(pkey(base)); }
@@ -225,10 +225,12 @@
   /* ---------- chronométrage (consultation fiche + quiz) ----------
      Mesure le temps ACTIF (page visible) passé sur une fiche et sur son quiz.
      Destiné au suivi des GESTIONNAIRES : envoyé à Airtable avec l'attestation,
-     JAMAIS affiché au travailleur. Persisté par procédure (cumule les visites,
+     non affiché au travailleur — SAUF le temps de lecture du DOCUMENT (PDF),
+     qui lui est montré exprès (voir « temps de lecture du document » plus
+     bas). Persisté par procédure (cumule les visites,
      tant que l'attestation n'a pas été envoyée). En pause quand l'app est
      masquée (téléphone verrouillé, autre onglet) pour ne pas gonfler le temps. */
-  var PT = { pid: null, page: null, quiz: null, quizOpen: false };
+  var PT = { pid: null, page: null, quiz: null, quizOpen: false, doc: null, docFs: false, docInline: false };
   function ptGet(k) { try { var v = parseInt(localStorage.getItem(k), 10); return (isFinite(v) && v > 0) ? v : 0; } catch (e) { return 0; } }
   function ptSet(k, ms) { try { localStorage.setItem(k, String(Math.round(ms))); } catch (e) {} }
   function mkClock(base) {
@@ -241,15 +243,23 @@
     if (!PT.pid) return;
     if (PT.page) ptSet(pkey('pt_read_' + PT.pid), PT.page.ms());
     if (PT.quiz) ptSet(pkey('pt_quiz_' + PT.pid), PT.quiz.ms());
+    if (PT.doc) ptSet(pkey('pt_doc_' + PT.pid), PT.doc.ms());
   }
   function ptStartPage(id) {
     ptFlush();
     PT.pid = id; PT.quizOpen = false;
     PT.page = mkClock(ptGet(pkey('pt_read_' + id)));
     PT.quiz = mkClock(ptGet(pkey('pt_quiz_' + id)));
+    PT.doc = mkClock(ptGet(pkey('pt_doc_' + id)));   // démarre à l'OUVERTURE du PDF (ptDocSync)
+    PT.docFs = false; PT.docInline = false;
     if (!document.hidden) PT.page.start();      // le quiz démarre à l'ouverture du quiz
+    ptDocSync();
   }
-  function ptLeavePage() { ptFlush(); if (PT.page) PT.page.pause(); if (PT.quiz) PT.quiz.pause(); PT.pid = null; PT.quizOpen = false; }
+  function ptLeavePage() {
+    ptFlush(); if (PT.page) PT.page.pause(); if (PT.quiz) PT.quiz.pause();
+    PT.docFs = false; PT.docInline = false; ptDocSync();
+    PT.pid = null; PT.quizOpen = false;
+  }
   function ptQuizOpen(open) {
     PT.quizOpen = !!open;
     if (!PT.quiz) return;
@@ -260,12 +270,13 @@
     if (!PT.pid) return;
     if (document.hidden) { if (PT.page) PT.page.pause(); if (PT.quiz) PT.quiz.pause(); ptFlush(); }
     else { if (PT.page) PT.page.start(); if (PT.quizOpen && PT.quiz) PT.quiz.start(); }
+    ptDocSync();
   });
   window.addEventListener('beforeunload', ptFlush);
   // Instantané (ms) sans arrêter les chronos — utilisé au moment d'attester.
   function ptSnapshot(id) {
     if (PT.pid === id) ptFlush();
-    return { read: ptGet(pkey('pt_read_' + id)), quiz: ptGet(pkey('pt_quiz_' + id)) };
+    return { read: ptGet(pkey('pt_read_' + id)), quiz: ptGet(pkey('pt_quiz_' + id)), doc: ptGet(pkey('pt_doc_' + id)) };
   }
   // « 3 min 42 s », « 45 s », « 1 h 05 min ».
   function fmtDuration(ms) {
@@ -275,6 +286,76 @@
     if (m < 60) return m + ' min' + (r ? ' ' + r + ' s' : '');
     var h = Math.floor(m / 60); m = m % 60;
     return h + ' h' + (m ? ' ' + ('0' + m).slice(-2) + ' min' : '');
+  }
+
+  /* ---------- temps de lecture du DOCUMENT officiel (PDF) ----------
+     Le temps de lecture se compte À PARTIR DE L'OUVERTURE du PDF de la
+     procédure, et il est montré au travailleur :
+     • ESTIMÉ — d'après le texte du PDF : 180 mots/min (lecture attentive
+       d'un document technique) + 15 s par page pour les photos et schémas ;
+       sans texte extrait (PDF anglais, cadenassage…) : 76 s par page, soit
+       la moyenne mesurée (184 mots/page). Affiché dès l'ouverture, dans la
+       barre du lecteur : rien n'est posé sur les pages.
+     • MESURÉ — chrono actif seulement quand le document est réellement à
+       l'écran : lecteur plein écran ouvert, ou « Feuilleter » ouvert avec les
+       pages au milieu de l'écran, et l'app visible. Cumulé par fiche et par
+       travailleur (pt_doc_<fiche>), comme les autres chronos.
+     Les deux sont rappelés avant l'attestation, qui exige ensuite de cocher
+     « J'ai bien lu et compris ». Un PDF ouvert HORS de l'app (« Ouvrir »,
+     « Télécharger ») ne peut pas être chronométré. */
+  var RT_WPM = 180, RT_PAGE_S = 15, RT_PAGE_NOTXT_S = 76, rtEstCache = {};
+  function rtEstimateDoc(key) {
+    if (rtEstCache[key] != null) return rtEstCache[key];
+    var pages = ((window.PAGES && window.PAGES[key]) || []).length;
+    var txt = window.PDFTEXT && window.PDFTEXT[key], words = 0;
+    if (txt && txt.length) txt.forEach(function (x) {
+      String((x && x.t) || '').split(/\s+/).forEach(function (w) { if (/[0-9A-Za-zÀ-ÿ]/.test(w)) words++; });
+    });
+    var sec = words ? Math.round(words / RT_WPM * 60 + pages * RT_PAGE_S) : pages * RT_PAGE_NOTXT_S;
+    // Sans le texte (pdftext.js pas encore chargé), on ne fige pas l'estimation.
+    if (words || (window.PDFTEXT && Object.keys(window.PDFTEXT).length)) rtEstCache[key] = sec;
+    return sec;
+  }
+  // Documents officiels d'une fiche (ceux affichés par renderProcedure).
+  function rtDocKeys(pid) {
+    return (pid === 'centralisateur' ? ['centralisateur', 'centralisateur-dessin'] : [pid])
+      .filter(function (k) { return ((window.PAGES && window.PAGES[k]) || []).length; });
+  }
+  function rtEstimateFiche(pid) {
+    return rtDocKeys(pid).reduce(function (t, k) { return t + rtEstimateDoc(k); }, 0);
+  }
+  function rtFmtEst(sec) { return sec ? '≈ ' + Math.max(1, Math.round(sec / 60)) + ' min' : ''; }
+  // Chrono affiché dans le lecteur : « 0:42 », « 12:05 », « 1:02:09 ».
+  function rtClock(ms) {
+    var s = Math.floor((ms || 0) / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60;
+    s = s % 60;
+    return (h ? h + ':' + ('0' + m).slice(-2) : m) + ':' + ('0' + s).slice(-2);
+  }
+  var rtTimer = null;
+  // Démarre / arrête le chrono du document selon ce qui est à l'écran.
+  function ptDocSync() {
+    var on = !!(PT.pid && PT.doc && !document.hidden && (PT.docFs || PT.docInline));
+    if (PT.doc) {
+      if (on) PT.doc.start();
+      else if (PT.doc.on) { PT.doc.pause(); ptFlush(); }
+    }
+    if (on && !rtTimer) rtTimer = setInterval(rtPaint, 1000);
+    if (!on && rtTimer) { clearInterval(rtTimer); rtTimer = null; }
+    rtPaint();
+  }
+  // Met à jour tout ce qui affiche le temps mesuré (lecteur + attestation).
+  function rtPaint() {
+    var ms = (PT.doc && PT.pid) ? PT.doc.ms() : 0;
+    [].forEach.call(document.querySelectorAll('.rt-live'), function (el) {
+      if (el.getAttribute('data-pid') !== PT.pid) return;
+      var t = el.getAttribute('data-fmt') === 'clock' ? rtClock(ms) : (ms >= 1000 ? fmtDuration(ms) : 'pas encore ouvert');
+      if (el.textContent !== t) el.textContent = t;
+    });
+    [].forEach.call(document.querySelectorAll('.attest-rt[data-pid]'), function (box) {
+      if (box.getAttribute('data-pid') !== PT.pid) return;
+      var est = parseInt(box.getAttribute('data-est'), 10) || 0;
+      box.setAttribute('data-state', ms < 1000 ? 'none' : (est && ms < est * 500 ? 'short' : 'ok'));
+    });
   }
 
   /* ---------- vue : accueil ---------- */
@@ -1660,17 +1741,20 @@
         // qu'à l'ouverture. Un APERÇU (première page, rognée) reste visible
         // sous le pli : le toucher ouvre le document en PLEIN ÉCRAN
         // (visionneuse #docfs — voir initDocViewer).
+        var est = rtFmtEst(rtEstimateDoc(key));   // temps de lecture estimé
         var thumb = pages.length
           ? '<button type="button" class="pv-thumb" data-doc="' + esc(key) + '" data-label="' + esc(label) + '">' +
             '<img src="' + esc(withRev(pages[0], key)) + '" alt="Aperçu : ' + esc(label) + ', page 1" loading="lazy">' +
-            '<span class="pv-more">Aperçu — toucher pour lire en plein écran (' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + ')</span></button>'
+            '<span class="pv-more">Aperçu — toucher pour lire en plein écran (' + pages.length + ' page' + (pages.length > 1 ? 's' : '') +
+            (est ? ' · lecture ' + est : '') + ')</span></button>'
           : '';
         return '<div class="pdfbox">' +
           '<div class="bar"><b>' + esc(label) + '</b><span class="sp"></span>' +
             '<a class="dl" href="' + pdf + '" target="_blank" rel="noopener">' + ICON.open + 'Ouvrir</a>' +
             '<a class="dl" href="' + pdf + '" download>' + ICON.dl + 'Télécharger</a></div>' +
           '<details class="pdfview"><summary><span class="pv-chev" aria-hidden="true">' + ICON.chev + '</span>Feuilleter le document ici' +
-            (pages.length ? '<span class="pv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') + '</span>' : '') +
+            (pages.length ? '<span class="pv-n">' + pages.length + ' page' + (pages.length > 1 ? 's' : '') +
+              (est ? ' · ' + est : '') + '</span>' : '') +
           '</summary>' + body + '</details>' +
           thumb + '</div>';
       };
@@ -1740,6 +1824,7 @@
     initChecklistState();
     initGallery(figs, p.id);
     initDocViewer();
+    initDocInlineWatch();
     initProcQuiz(p.id);
     initAttestation(p);
   }
@@ -1829,7 +1914,8 @@
     return head + '<div class="scbody">' +
       '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure.' +
       (scoreTxt ? ' Ton résultat au quiz : <b>' + scoreTxt + '</b>.' : '') +
-      ' Tape ton nom (choisis-le dans la liste) puis valide — ton attestation est enregistrée pour le suivi des formations.</p>' +
+      ' Tape ton nom (choisis-le dans la liste), signe, vérifie ton temps de lecture puis coche « lu et compris » —' +
+      ' ton attestation est enregistrée pour le suivi des formations.</p>' +
       '<div class="attest-form">' +
         '<label class="attest-field"><span>Ton nom complet</span>' +
           '<input type="text" class="attest-name" placeholder="Prénom Nom" autocomplete="off" ' +
@@ -1844,11 +1930,35 @@
             '<button type="button" class="sig-clear" aria-label="Effacer la signature">Effacer</button>' +
           '</div>' +
           '<p class="attest-hint sig-hint">Signe dans le cadre avec ton doigt.</p></div>' +
+        attestReadHTML(p) +
         '<button type="button" class="btn attest-btn attest-send">' +
         '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
         ' Attester la lecture</button>' +
         '<div class="attest-msg" aria-live="polite"></div>' +
       '</div></div></div>';
+  }
+  /* Juste avant de finaliser : le temps de lecture du DOCUMENT (mesuré depuis
+     son ouverture, et l'estimé), puis la case « J'ai bien lu et compris »,
+     obligatoire. Un temps nul ou bien plus court que l'estimé est signalé
+     (sans bloquer : la procédure a pu être lue sur papier). */
+  function attestReadHTML(p) {
+    var est = rtEstimateFiche(p.id), hasDoc = rtDocKeys(p.id).length > 0;
+    var ms = (PT.pid === p.id && PT.doc) ? PT.doc.ms() : ptGet(pkey('pt_doc_' + p.id));
+    var st = ms < 1000 ? 'none' : (est && ms < est * 500 ? 'short' : 'ok');
+    return (hasDoc
+      ? '<div class="attest-rt" data-pid="' + esc(p.id) + '" data-est="' + est + '" data-state="' + st + '">' +
+          '<div class="attest-rt-row"><span class="attest-rt-k">' + ICON.clock + ' Ton temps de lecture du document</span>' +
+            '<b class="rt-live" data-pid="' + esc(p.id) + '">' + (ms >= 1000 ? fmtDuration(ms) : 'pas encore ouvert') + '</b></div>' +
+          (est ? '<div class="attest-rt-row"><span class="attest-rt-k">Temps de lecture estimé</span><b>' + rtFmtEst(est) + '</b></div>' : '') +
+          '<p class="attest-rt-note rt-none">Tu n\'as pas encore lu le document officiel dans l\'app. Lis-le avant d\'attester.</p>' +
+          '<p class="attest-rt-note rt-short">Ton temps de lecture est bien plus court que le temps estimé : ' +
+            'prends le temps de relire le document avant d\'attester.</p>' +
+          '<button type="button" class="attest-rt-open">' + ICON.doc + ' Lire le document</button>' +
+        '</div>'
+      : '') +
+      '<label class="attest-ack"><input type="checkbox" class="attest-ack-cb">' +
+        '<span>J\'ai bien <b>lu et compris</b> la procédure' + (p.code ? ' ' + esc(p.code) : '') + '.</span></label>' +
+      '<p class="attest-hint attest-ack-hint no" hidden>Coche « J\'ai bien lu et compris » pour attester.</p>';
   }
   // Anti-doublon : un même nom + procédure + jour n'est envoyé qu'une fois.
   function attestSig(pid, name) { return pid + '|' + norm(name).trim() + '|' + localDay(); }
@@ -1883,6 +1993,21 @@
       sigPad.clear();
       var sh = form.querySelector('.sig-hint');
       if (sh) { sh.textContent = 'Signe dans le cadre avec ton doigt.'; sh.className = 'attest-hint sig-hint'; }
+    };
+    // Case « J'ai bien lu et compris » (obligatoire) + « Lire le document ».
+    var ack = form.querySelector('.attest-ack-cb'), ackLbl = form.querySelector('.attest-ack');
+    var ackHint = form.querySelector('.attest-ack-hint');
+    if (ack) ack.onchange = function () {
+      if (!ack.checked) return;
+      if (ackHint) ackHint.hidden = true;
+      if (ackLbl) ackLbl.classList.remove('no');
+    };
+    var readBtn = form.querySelector('.attest-rt-open');
+    if (readBtn) readBtn.onclick = function () {
+      var th = document.querySelector('#view .pv-thumb');
+      if (th) { th.click(); return; }
+      var d = document.querySelector('#view details.pdfview');
+      if (d) { d.open = true; if (d.scrollIntoView) d.scrollIntoView({ block: 'start' }); }
     };
     var pickedId = '', pickedName = '';
     var HINT0 = 'Commence à taper, puis choisis ton nom dans la liste.';
@@ -1981,18 +2106,28 @@
         if (sigCanvas && sigCanvas.scrollIntoView) sigCanvas.scrollIntoView({ block: 'center' });
         return;
       }
+      // « Lu et compris » : à cocher, en connaissance de son temps de lecture.
+      if (ack && !ack.checked) {
+        if (ackHint) ackHint.hidden = false;
+        if (ackLbl) { ackLbl.classList.add('no'); if (ackLbl.scrollIntoView) ackLbl.scrollIntoView({ block: 'center' }); }
+        return;
+      }
       var sigDataUrl = sigPad ? sigPad.dataURL() : '';
       // Appareil partagé : ce nom devient le profil actif de l'appareil (le
       // quiz de cette fiche le suit si le nom diffère de l'ancien profil).
       profAdopt(p.id, name);
       var best = pqBestPct(p.id);
-      var t = ptSnapshot(p.id);      // temps de consultation + temps de quiz (suivi gestionnaire)
+      var t = ptSnapshot(p.id);      // temps de consultation, de quiz et de lecture du document
+      var docEst = rtFmtEst(rtEstimateFiche(p.id));
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
         titre: p.titre || '', date: localDay(),
         score: best ? (best.s + '/' + best.n + ' — ' + best.pct + ' %') : '',
         revision: p.date_revision || p.date_creation || '',
         readTime: fmtDuration(t.read), quizTime: fmtDuration(t.quiz),
         readSeconds: Math.round(t.read / 1000), quizSeconds: Math.round(t.quiz / 1000),
+        // Lecture du document (depuis l'ouverture du PDF) — figure sur le PDF signé.
+        docTime: t.doc >= 1000 ? fmtDuration(t.doc) : '', docSeconds: Math.round(t.doc / 1000),
+        docEstimate: docEst, ack: true,
         signature: sigDataUrl };
       // La signature est persistée par fiche pour que le re-téléchargement
       // depuis « Mon suivi » la conserve (elle ne peut pas être régénérée).
@@ -2867,7 +3002,11 @@
     add('Date', fmtDateFR(payload.date));
     add('Révision de la procédure', payload.revision);
     add('Résultat au quiz', payload.score);
-    add('Temps de lecture', payload.readTime);
+    // Lecture du document (depuis l'ouverture du PDF) ; les anciennes
+    // attestations, sans ces champs, gardent leurs seules lignes de temps.
+    add('Lecture du document', payload.docTime || (payload.docEstimate ? 'document non ouvert dans l\'app' : ''));
+    add('Lecture estimée', payload.docEstimate);
+    add('Temps sur la fiche', payload.readTime);
     add('Temps sur le quiz', payload.quizTime);
     var py = 314, rowH = 58, padY = 30;
     var panelH = rows.length * rowH + padY;
@@ -3693,6 +3832,50 @@
     };
   }
 
+  /* ---------- vues plein écran et bouton RETOUR du téléphone ----------
+     La visionneuse de photos (#lightbox) et le document plein écran (#docfs)
+     sont posés sur <body>, par-dessus la page : changer de page ne les ferme
+     pas. Le bouton RETOUR du téléphone (dans l'APK aussi : il appelle
+     history.back()) reculait donc d'une page SOUS l'image restée affichée.
+     À l'ouverture, on ajoute une entrée d'historique à la MÊME adresse
+     (pushState : ni hashchange ni nouveau rendu) ; RETOUR la consomme et
+     ferme la vue, la fiche reste où elle était. Fermer autrement (✕, Échap,
+     toucher le fond) retire nous-mêmes cette entrée : le RETOUR suivant
+     ramène bien à la page précédente, sans appui « à vide ». */
+  var fsvEl = null, fsvSeq = 0;
+  // Masque une vue (sans toucher à l'historique), libère ses images et le
+  // signale ('fsvhide') — le chrono de lecture du document s'y arrête.
+  function fsvHide(el) {
+    var was = el.classList.contains('on');
+    el.classList.remove('on');
+    var im = el.querySelector('.lb-img'); if (im) im.src = '';
+    var pg = el.querySelector('.docfs-pages'); if (pg) pg.innerHTML = '';
+    if (was) { try { el.dispatchEvent(new Event('fsvhide')); } catch (e) {} }
+  }
+  function fsvShow(el) {
+    el.classList.add('on');
+    if (fsvEl) { if (fsvEl !== el) fsvHide(fsvEl); fsvEl = el; return; }   // entrée déjà posée
+    fsvEl = el;
+    try { history.pushState({ mriFs: ++fsvSeq }, ''); } catch (e) {}
+  }
+  // ✕, Échap, fond : on masque, puis on retire NOTRE entrée si elle est
+  // encore au sommet (son popstate ne trouvera alors plus rien à fermer).
+  function fsvClose(el) {
+    fsvHide(el);
+    if (fsvEl !== el) return;
+    fsvEl = null;
+    try { if (history.state && history.state.mriFs === fsvSeq) history.back(); } catch (e) {}
+  }
+  // RETOUR (popstate) ou changement de page : l'entrée est déjà consommée,
+  // on masque seulement.
+  function fsvDrop() { var el = fsvEl; fsvEl = null; if (el) fsvHide(el); }
+  window.addEventListener('popstate', fsvDrop);
+  window.addEventListener('hashchange', fsvDrop);
+  // Page rechargée (ou restaurée par Android) pendant qu'une vue était
+  // ouverte : l'entrée est restée, pas la vue. On revient sur l'entrée de la
+  // page, sinon le premier RETOUR ne ferait rien de visible.
+  try { if (history.state && history.state.mriFs) history.back(); } catch (e) {}
+
   /* ---------- document officiel : lecture en plein écran ----------
      Ouverte en touchant l'aperçu (première page) de la fiche : toutes les
      pages du document, à pleine largeur, avec barre de titre et « Fermer ».
@@ -3707,13 +3890,17 @@
       fs.className = 'docfs';
       fs.innerHTML =
         '<div class="docfs-bar"><b class="docfs-t"></b><span class="docfs-n"></span>' +
-          '<button class="docfs-close" type="button">' + ICON.close + ' Fermer</button></div>' +
+          '<button class="docfs-close" type="button">' + ICON.close + ' Fermer</button>' +
+          // Temps de lecture : dans la barre, jamais sur les pages.
+          '<div class="docfs-rt" aria-live="off">' +
+            '<span class="docfs-rt-i">' + ICON.clock + ' Temps de lecture <b class="rt-live" data-fmt="clock">0:00</b></span>' +
+            '<span class="docfs-rt-i docfs-rt-est">Estimé <b class="docfs-est"></b></span>' +
+          '</div></div>' +
         '<div class="docfs-pages"></div>';
       document.body.appendChild(fs);
-      fs.querySelector('.docfs-close').onclick = function () {
-        fs.classList.remove('on');
-        fs.querySelector('.docfs-pages').innerHTML = '';   // libère les images
-      };
+      fs.querySelector('.docfs-close').onclick = function () { fsvClose(fs); };   // libère aussi les images
+      // Lecteur refermé (Fermer, RETOUR, changement de page) : chrono en pause.
+      fs.addEventListener('fsvhide', function () { PT.docFs = false; ptDocSync(); });
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && fs.classList.contains('on')) fs.querySelector('.docfs-close').click();
       });
@@ -3730,8 +3917,49 @@
           return '<img src="' + esc(withRev(src, key)) + '" alt="' + esc(label) + ' — page ' + (i + 1) + '" loading="lazy">';
         }).join('');
         box.scrollTop = 0;
-        fs.classList.add('on');
+        var est = rtFmtEst(rtEstimateDoc(key));
+        fs.querySelector('.docfs-est').textContent = est;
+        fs.querySelector('.docfs-rt-est').style.display = est ? '' : 'none';
+        fs.querySelector('.rt-live').setAttribute('data-pid', PT.pid || '');
+        var rt = fs.querySelector('.docfs-rt');      // petit signal à l'ouverture
+        rt.classList.remove('flash'); void rt.offsetWidth; rt.classList.add('flash');
+        fsvShow(fs);
+        PT.docFs = true; ptDocSync();                // le chrono part à l'OUVERTURE du PDF
       };
+    });
+  }
+
+  /* « Feuilleter le document ici » (pages dans la fiche) : le chrono du
+     document tourne tant que les pages occupent le MILIEU de l'écran (bande
+     centrale de 30 %). Ouvert puis laissé là en descendant au quiz, il
+     s'arrête. Sans IntersectionObserver : ouvert = en lecture. */
+  var rtIO = null, rtSeen = [];
+  function initDocInlineWatch() {
+    if (rtIO) { rtIO.disconnect(); rtIO = null; }
+    rtSeen = []; PT.docInline = false; ptDocSync();
+    var dets = document.querySelectorAll('#view details.pdfview');
+    if (!dets.length) return;
+    function upd() { PT.docInline = rtSeen.length > 0; ptDocSync(); }
+    if (window.IntersectionObserver) {
+      var io = rtIO = new IntersectionObserver(function (entries) {
+        if (io !== rtIO) return;                 // fiche déjà quittée
+        entries.forEach(function (e) {
+          var i = rtSeen.indexOf(e.target);
+          if (e.isIntersecting && i < 0) rtSeen.push(e.target);
+          else if (!e.isIntersecting && i >= 0) rtSeen.splice(i, 1);
+        });
+        upd();
+      }, { rootMargin: '-35% 0px -35% 0px' });
+    }
+    [].forEach.call(dets, function (d) {
+      var body = d.querySelector('.pdfpages, iframe'); if (!body) return;
+      d.addEventListener('toggle', function () {
+        if (!rtIO) {
+          rtSeen = [].filter.call(dets, function (x) { return x.open; }); upd(); return;
+        }
+        if (d.open) rtIO.observe(body);
+        else { rtIO.unobserve(body); var i = rtSeen.indexOf(body); if (i >= 0) rtSeen.splice(i, 1); upd(); }
+      });
     });
   }
 
@@ -3758,8 +3986,8 @@
       img.alt = 'Photo ou schéma agrandi, page ' + figs[cur].page;
       count.textContent = (cur + 1) + ' / ' + figs.length + '  ·  p. ' + figs[cur].page;
     }
-    function open(i) { show(i); lb.classList.add('on'); }
-    function close() { lb.classList.remove('on'); img.src = ''; }
+    function open(i) { show(i); fsvShow(lb); }
+    function close() { fsvClose(lb); }
     var gal = document.querySelector('.gallery');
     if (gal) gal.onclick = function (e) {
       var b = e.target.closest ? e.target.closest('.gfig') : null;
@@ -4196,7 +4424,7 @@
     var best = pqBestPct(pid);
     var sig = '';
     try { sig = localStorage.getItem(pkey('attest_sig_' + pid)) || ''; } catch (e) {}
-    var rd = ptGet(pkey('pt_read_' + pid)), qz = ptGet(pkey('pt_quiz_' + pid));
+    var rd = ptGet(pkey('pt_read_' + pid)), qz = ptGet(pkey('pt_quiz_' + pid)), dc = ptGet(pkey('pt_doc_' + pid));
     var payload = {
       name: suiviName(),
       proc: p.code || p.id,
@@ -4206,6 +4434,10 @@
       score: att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : ''),
       readTime: rd ? fmtDuration(rd) : '',
       quizTime: qz ? fmtDuration(qz) : '',
+      // Seulement si le document a été lu dans l'app : une attestation
+      // antérieure à ce chrono ne doit pas afficher « non ouvert ».
+      docTime: dc >= 1000 ? fmtDuration(dc) : '',
+      docEstimate: dc >= 1000 ? rtFmtEst(rtEstimateFiche(pid)) : '',
       signature: sig
     };
     var old = btnEl.innerHTML; btnEl.innerHTML = '<span>…</span>';

@@ -331,16 +331,30 @@ main{padding-bottom:5rem;animation:fade .4s ease}
 /* z-index au-dessus du bouton d'assistant (1100) : rien ne flotte sur le document */
 .docfs{position:fixed;inset:0;z-index:1200;display:none;flex-direction:column;background:#30343b}
 .docfs.on{display:flex}
-.docfs-bar{flex:none;display:flex;align-items:center;gap:.6rem;
+.docfs-bar{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;
   padding:calc(.55rem + env(safe-area-inset-top)) .9rem .55rem;
   background:#0a0e17;color:#fff;border-bottom:1px solid rgba(255,255,255,.14)}
-.docfs-bar b{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:.9rem;
+.docfs-bar b.docfs-t{flex:1 1 0;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:.9rem;
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .docfs-n{flex:none;font-size:.78rem;font-weight:700;color:#9aa7bd}
 .docfs-close{flex:none;margin-left:auto;display:inline-flex;align-items:center;gap:.35rem;
   border:1px solid rgba(255,255,255,.3);background:none;color:#fff;font:inherit;font-size:.85rem;
   font-weight:700;padding:.42rem .75rem;border-radius:9px;cursor:pointer}
 .docfs-close svg{width:15px;height:15px}
+/* Temps de lecture : 2e ligne de la barre, jamais posé sur les pages. */
+.docfs-rt{flex:1 1 100%;order:3;display:flex;flex-wrap:wrap;align-items:center;gap:.25rem 1rem;
+  margin:0 -.9rem -.55rem;padding:.38rem .9rem;border-top:1px solid rgba(255,255,255,.1);
+  background:#111827;font-size:min(.8rem,13.5px);font-weight:600;color:#cbd5e1}
+/* Plafonnée en px : en très grand texte, cette ligne resterait sur deux
+   rangées et mangerait la hauteur du document sur téléphone. */
+.docfs-rt-i{display:inline-flex;align-items:center;gap:.35rem;white-space:nowrap}
+.docfs-rt-i svg{width:14px;height:14px;flex:none;color:var(--amber)}
+.docfs-rt b{font-family:var(--font-body);font-size:min(.88rem,15px);font-weight:800;letter-spacing:0;color:#fff;
+  font-variant-numeric:tabular-nums}
+.docfs-rt-est b{color:var(--amber)}
+.docfs-rt.flash{animation:rtFlash 1.6s ease-out}
+@keyframes rtFlash{0%,35%{background:#3a2a05}100%{background:#111827}}
+@media (prefers-reduced-motion:reduce){.docfs-rt.flash{animation:none}}
 .docfs-pages{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   padding:12px 12px calc(12px + env(safe-area-inset-bottom));
   display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -1021,6 +1035,29 @@ footer b{color:var(--muted)}
   padding:.2rem .55rem;cursor:pointer}
 .sig-clear:hover{color:#0f172a;border-color:var(--brand)}
 .sig-hint{margin:.3rem 0 .5rem}
+/* Avant de finaliser : temps de lecture du document + « lu et compris ». */
+.attest-rt{margin:.55rem 0 .35rem;padding:.7rem .85rem;border:1px solid var(--border);border-radius:12px;
+  background:var(--card-2);display:flex;flex-direction:column;gap:.35rem}
+.attest-rt-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.15rem .8rem}
+.attest-rt-k{display:inline-flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:700;color:var(--muted)}
+.attest-rt-k svg{width:15px;height:15px;flex:none;color:var(--amber)}
+.attest-rt-row b{font-size:1.02rem;font-weight:800;color:var(--strong);font-variant-numeric:tabular-nums}
+.attest-rt-note{display:none;margin:.15rem 0 0;font-size:.86rem;line-height:1.45;font-weight:600;color:#fbbf24}
+.attest-rt[data-state="none"] .rt-none,.attest-rt[data-state="short"] .rt-short{display:block}
+.attest-rt-open{align-self:flex-start;display:inline-flex;align-items:center;gap:.4rem;min-height:44px;margin-top:.15rem;
+  padding:.45rem .9rem;font:inherit;font-size:.9rem;font-weight:700;color:var(--text);background:transparent;
+  border:1px solid var(--border);border-radius:10px;cursor:pointer}
+.attest-rt-open svg{width:16px;height:16px}
+.attest-rt-open:hover{border-color:var(--brand)}
+.attest-rt[data-state="ok"] .attest-rt-open{display:none}
+.attest-ack{display:flex;align-items:flex-start;gap:.7rem;margin:.45rem 0 .2rem;padding:.75rem .85rem;min-height:48px;
+  border:1.5px solid var(--border);border-radius:12px;cursor:pointer;font-size:1rem;line-height:1.45;color:var(--text)}
+.attest-ack input{flex:none;width:1.5rem;height:1.5rem;margin:.05rem 0 0;accent-color:var(--brand);cursor:pointer}
+.attest-ack:has(input:checked){border-color:#10b981;background:rgba(16,185,129,.08)}
+.attest-ack.no{border-color:#ef4444;background:rgba(239,68,68,.08)}
+.attest-ack-hint{margin:.1rem 0 .5rem}
+:root[data-theme="light"] .attest-rt-note{color:#92400e}
+:root[data-theme="light"] .attest-ack-hint.no{color:#b91c1c}
 /* Aperçu de l'attestation affiché automatiquement après l'envoi. */
 .attest-preview{margin:.9rem 0 .3rem}
 .attest-preview-load{color:var(--muted);font-size:.9rem;padding:.6rem 0}
