@@ -1495,10 +1495,11 @@ footer b{color:var(--muted)}
    héritait des tailles de BUREAU : les titres de procédure (15 px) y étaient
    plus petits que les filtres et les intitulés de section — l'inverse de la
    hiérarchie voulue, le titre étant ce que le travailleur cherche des yeux.
-   Ciblage : un écran TACTILE (any-pointer:coarse) de 700 à 1400 px de large.
-   Ni les téléphones (moins de 700 px) ni les ordinateurs à souris ne sont
-   touchés ; si la requête ne correspond pas, le rendu actuel s'applique. */
-@media (any-pointer:coarse) and (min-width:700px) and (max-width:1400px){
+   Ciblage : pointeur PRINCIPAL tactile (pointer:coarse), 700 à 1400 px de
+   large ET au moins 500 px de haut. Exclus : téléphones (y compris tenus en
+   paysage, moins de 500 px de haut), ordinateurs à souris et portables à
+   écran tactile (leur pointeur principal reste la souris ou le pavé). */
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px) and (min-height:500px){
   /* listes de procédures */
   .prow{padding:.66rem .85rem .66rem .95rem;gap:.7rem}
   .prow .ptitle{font-size:1.18rem;line-height:1.28}
@@ -1641,39 +1642,67 @@ html[data-ts="145"]{font-size:145%}
    cibles tactiles de 34 à 38 px — trop petit pour un écran de 10 po tenu à
    bout de bras et utilisé avec des gants (cible conseillée : 48 px).
    En px, comme le reste de la barre : elle ne suit pas le réglage « taille du
-   texte », pour ne jamais déborder. Ciblage : écran TACTILE de 700 à 1400 px ;
-   téléphones et ordinateurs à souris ne sont pas touchés. */
-@media (any-pointer:coarse) and (min-width:700px) and (max-width:1400px){
+   texte », pour ne jamais déborder. Même ciblage que le bloc des titres :
+   pointeur principal tactile, 700 à 1400 px de large, au moins 500 px de haut. */
+.appbar-tools{display:contents}   /* regroupement fait par app.js : neutre partout ailleurs */
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px) and (min-height:500px){
   .appbar{gap:12px;min-height:68px}
-  /* la marque texte cède sa place à des cibles plus grandes ; le logo reste */
+  /* la marque texte cède sa place à des cibles plus grandes ; le logo reste
+     et ne se laisse plus écraser (il tombait à 14 px de large) */
   .appbar .brand .bt{display:none}
+  .appbar .brand,.appbar .brand img{flex:none}
   .appbar .brand img{height:44px;padding:4px 7px}
   .appbar nav{gap:6px}
-  .appbar nav a{display:inline-flex;align-items:center;min-height:48px;padding:10px 14px;font-size:16.5px}
+  /* onglets seulement : .appbar nav a touchait aussi les pastilles, qui sont des liens */
+  .appbar nav a.lbl{display:inline-flex;align-items:center;min-height:48px;padding:10px 14px;font-size:16.5px}
   .appbar .workerchip{min-height:48px;padding:8px 14px;gap:8px;font-size:15.5px;max-width:230px}
-  .appbar .workerchip svg{width:18px;height:18px}
+  .appbar .workerchip svg{flex:none;width:18px;height:18px}
   .appbar .iconbtn{width:48px;height:48px}
   .appbar .iconbtn svg{width:22px;height:22px}
-  .prgchip{min-height:48px;justify-content:center;padding:7px 13px;gap:5px;font-size:14px}
+  .appbar nav a.prgchip{min-height:48px;justify-content:center;padding:7px 13px;gap:5px;font-size:14px}
   .prgchip .pc-bar{height:4px;min-width:70px}
-  .packchip{min-height:48px;padding:8px 13px;font-size:13.5px}
+  /* .appbar .packchip.warn (plus spécifique, voir plus haut) doit suivre aussi */
+  .packchip,.appbar .packchip.warn{min-height:48px;padding:8px 13px;font-size:13.5px}
   .appbar .aqchip{min-height:48px;padding:8px 13px;gap:6px;font-size:14px}
   .appbar .aqchip svg{width:16px;height:16px}
+  /* recherche collante des listes : juste sous la barre, quelle que soit sa hauteur
+     (elle restait à top:60px et passait entièrement sous la barre agrandie) */
+  .srchbar{top:var(--appbar-h, 60px)}
 }
-/* Tablette en PORTRAIT (moins de 1040 px) : les cinq onglets passent sur leur
-   propre rangée, larges et répartis sur toute la largeur ; logo et outils
-   (progression, état hors ligne, travailleur, Aa) restent sur la première.
-   Une seule rangée ne tenait pas : elle débordait dès qu'une pastille
-   d'attente apparaissait. La nav passe en display:contents pour que ses
-   enfants se répartissent sur les deux rangées ; ::after force le saut de
-   ligne. La hauteur de la barre est suivie par app.js (--appbar-h). */
-@media (any-pointer:coarse) and (min-width:700px) and (max-width:1039px){
+/* Tablette jusqu'à 1279 px (portrait, et paysage étroit) : les cinq onglets passent
+   sur leur propre rangée, larges et répartis sur toute la largeur ; logo et
+   outils restent sur la première. Sur une seule rangée, la barre débordait
+   (bouton Aa hors écran) entre 1040 et 1180 px. La Tab Active4 Pro en paysage
+   (1280 px) garde une rangée unique, qui tient même avec toutes les pastilles.
+   La nav passe en display:contents pour répartir ses enfants ; ::after force le
+   saut de ligne ; les outils forment une rangée qui ne se replie JAMAIS : le
+   nom du travailleur se raccourcit (points de suspension) si la place manque.
+   La hauteur de la barre est suivie par app.js (--appbar-h). */
+@media (pointer:coarse) and (min-width:700px) and (max-width:1279px) and (min-height:500px){
   .appbar{flex-wrap:wrap;row-gap:6px;padding-top:10px;padding-bottom:8px}
   .appbar nav{display:contents}
-  .appbar .brand{order:0;margin-right:auto}
-  .appbar nav > *{order:1}
+  .appbar .brand{order:0}
+  .appbar-tools{order:1;display:flex;align-items:center;justify-content:flex-end;gap:8px;
+    flex:1 1 0;min-width:0;flex-wrap:nowrap}
+  .appbar-tools > *{flex:none}
+  .appbar-tools > .workerchip{flex:0 1 auto;min-width:48px}
   .appbar::after{content:'';order:2;flex-basis:100%;height:0}
   .appbar nav > a.lbl{order:3;flex:1 1 0;justify-content:center;text-align:center;
     font-size:17.5px;padding:10px 6px;min-height:50px;border-radius:10px}
   .appbar nav > a.lbl.active{box-shadow:inset 0 -3px 0 var(--brand)}
+}
+
+/* Avis de l'APK sur téléphone (moins de 641 px). Déplié : icône et bouton en haut,
+   texte sur TOUTE la largeur dessous — en rangée unique, le texte était coincé
+   dans une colonne de 96 px et la carte montait à 682 px (85 % de l'écran) à
+   145 %. Réduit : une vraie ligne — le bouton ne garde que son chevron (son nom
+   « Afficher » reste lu par les lecteurs d'écran) et le titre se tronque. */
+@media(max-width:640px){
+  #apkBanner:not(.apkn-min){flex-wrap:wrap}
+  #apkBanner:not(.apkn-min) .apkn-ic{margin-right:auto}
+  #apkBanner .apkn-body{order:3;flex:1 1 100%}
+  #apkBanner.apkn-min .apkn-tog{font-size:0;gap:0;padding:.3rem .6rem;min-width:44px;justify-content:center}
+  #apkBanner.apkn-min .apkn-sum{flex-wrap:nowrap}
+  #apkBanner.apkn-min .apkn-sum b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #apkBanner.apkn-min .apkn-apply{flex:none}
 }

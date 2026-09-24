@@ -4597,7 +4597,7 @@
     b.setAttribute('aria-haspopup', 'dialog');
     b.setAttribute('aria-expanded', 'false');
     b.classList.add('dispbtn');
-    var panel = null;
+    var panel = null, barObs = null;
     function place() {
       if (!panel) return;
       var r = b.getBoundingClientRect();
@@ -4613,6 +4613,7 @@
       document.removeEventListener('pointerdown', outside, true);
       document.removeEventListener('keydown', onKey, true);
       window.removeEventListener('resize', place);
+      if (barObs) { cancelAnimationFrame(barObs); barObs = null; }
     }
     function outside(e) { if (panel && !panel.contains(e.target) && !b.contains(e.target)) close(); }
     function onKey(e) { if (e.key === 'Escape') { close(); b.focus(); } }
@@ -4627,6 +4628,18 @@
       document.addEventListener('pointerdown', outside, true);
       document.addEventListener('keydown', onKey, true);
       window.addEventListener('resize', place);
+      /* Le bouton Aa peut bouger panneau ouvert (une pastille apparaît, la barre
+         change de hauteur ou de rembourrage) : le panneau le suit au lieu de
+         rester suspendu à l'ancienne place. Un observateur de taille ne voit pas
+         tous ces cas (un simple décalage ne change aucune taille) : on compare
+         la position du bouton à chaque image, seulement tant que c'est ouvert. */
+      var last = '';
+      (function suivre() {
+        if (!panel) return;
+        var r = b.getBoundingClientRect(), k = Math.round(r.bottom) + ':' + Math.round(r.right);
+        if (k !== last) { last = k; place(); }
+        barObs = requestAnimationFrame(suivre);
+      })();
       panel.addEventListener('click', function (e) {
         var t = e.target.closest ? e.target.closest('button') : null;
         if (!t || t.disabled) return;
@@ -4693,7 +4706,7 @@
       ic.innerHTML = kind === 'upd' ? ICON.info : ICON.dl;
       var sum = document.createElement('div');
       sum.className = 'apkn-sum';
-      sum.innerHTML = '<b>' + (kind === 'upd' ? 'Mise à jour du contenu prête' : 'Nouvel APK disponible') + '</b>' +
+      sum.innerHTML = '<b>' + (kind === 'upd' ? 'Mise à jour prête' : 'Nouvel APK disponible') + '</b>' +
         (kind === 'upd' ? '<button type="button" class="apkn-apply">Appliquer</button>' : '');
       var tog = document.createElement('button');
       tog.type = 'button'; tog.className = 'apkn-tog'; tog.setAttribute('aria-controls', 'apknBody');
@@ -4724,18 +4737,52 @@
       if (obs) obs.observe(bn, { childList: true });
     }
     function attach(el) {
+      if (el === bn) return;
+      if (obs) obs.disconnect();
       bn = el;
       obs = new MutationObserver(enhance);
       enhance();
       obs.observe(bn, { childList: true });
     }
+    // On garde l'œil sur le body : si l'avis est retiré puis recréé (nouvel
+    // élément), il est équipé à son tour. Rien d'autre n'est observé : coût nul.
     var el = document.getElementById('apkBanner');
-    if (el) { attach(el); return; }
-    var mo = new MutationObserver(function () {
+    if (el) attach(el);
+    new MutationObserver(function () {
       var e2 = document.getElementById('apkBanner');
-      if (e2) { mo.disconnect(); attach(e2); }
-    });
-    mo.observe(document.body, { childList: true });
+      if (e2 && e2 !== bn) attach(e2);
+    }).observe(document.body, { childList: true });
+  }
+  /* Outils de la barre (progression, état hors ligne, avis, travailleur, Aa,
+     installer) regroupés dans un conteneur .appbar-tools. Partout ailleurs il
+     est NEUTRE (display:contents, rendu identique). Sur tablette en portrait,
+     c'est une rangée qui ne passe jamais à la ligne : quand la place manque,
+     le nom du travailleur se raccourcit au lieu d'envoyer les outils sur une
+     troisième rangée — ce qu'aucune règle CSS ne peut obtenir dans une rangée
+     qui, elle, doit passer à la ligne pour les onglets. Fait ici, en JS, pour
+     valoir aussi dans l'APK, dont l'index.html embarqué n'est pas mis à jour. */
+  function initAppbarTools() {
+    var nav = document.querySelector('.appbar nav');
+    if (!nav || nav.querySelector(':scope > .appbar-tools')) return;
+    /* Pastille « N à envoyer » : déclarée dans index.html depuis la v2.127, mais
+       l'APK garde son index.html EMBARQUÉ, plus ancien — sans elle, l'appareil
+       principal du terrain n'affichait jamais le rappel des attestations en
+       attente. On la crée ici si elle manque, avant le bouton du travailleur. */
+    if (!document.getElementById('aqChip')) {
+      var aq = document.createElement('a');
+      aq.href = '#/suivi'; aq.className = 'aqchip'; aq.id = 'aqChip'; aq.style.display = 'none';
+      aq.title = 'Attestations en attente d\'envoi'; aq.setAttribute('aria-label', 'Attestations en attente d\'envoi');
+      aq.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>' +
+        '<span class="aqc-txt" id="aqChipTxt"></span><span class="aqc-num" id="aqChipNum"></span>';
+      var wk = document.getElementById('workerChip');
+      nav.insertBefore(aq, wk && wk.parentNode === nav ? wk : null);
+    }
+    var box = document.createElement('div');
+    box.className = 'appbar-tools';
+    var outils = Array.prototype.filter.call(nav.children, function (el) { return !el.classList.contains('lbl'); });
+    outils.forEach(function (el) { box.appendChild(el); });
+    nav.appendChild(box);
   }
   /* Hauteur réelle de la barre d'application, exposée en CSS (--appbar-h) : le
      bouton de retour des fiches se colle JUSTE dessous au défilement. Elle varie
@@ -4745,10 +4792,14 @@
     var bar = $('#appbar'); if (!bar) return;
     function upd() { document.documentElement.style.setProperty('--appbar-h', bar.offsetHeight + 'px'); }
     upd();
-    if (window.ResizeObserver) { try { new ResizeObserver(upd).observe(bar); } catch (e) {} }
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(upd);
+      try { ro.observe(bar, { box: 'border-box' }); } catch (e) { try { ro.observe(bar); } catch (e2) {} }
+    }
     window.addEventListener('resize', upd);
   }
   document.addEventListener('DOMContentLoaded', function () {
+    initAppbarTools();   // avant tout le reste : la barre doit avoir sa structure définitive
     route(); initInstall(); initChecklistEvents(); initDisplay(); initHoverCard(); initAppbarH(); initApkNotice();
     // Contenu révisé depuis la dernière visite : l'annoncer clairement (les
     // badges « Mise à jour » restent ensuite sur les fiches concernées).
