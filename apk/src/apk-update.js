@@ -43,15 +43,17 @@
     toast._t = setTimeout(function () { t.classList.remove('show'); }, 6000);
   }
 
-  /* Bandeau discret sous la barre : « nouveaux médias → installe le nouvel
-     APK » ou « mise à jour prête → redémarre ». Un seul à la fois. */
+  /* Avis sous la barre : « nouveaux médias → installe le nouvel APK » ou
+     « mise à jour prête → redémarre ». Un seul à la fois.
+     Plus de style en ligne ni de position:sticky : l'ancien bandeau collant
+     recouvrait la barre de navigation au défilement. L'apparence est dans
+     styles.css (#apkBanner) et le bouton « Réduire » dans app.js
+     (initApkNotice) — deux fichiers mis à jour à chaud, contrairement à celui-ci. */
   function banner(html) {
     var b = document.getElementById('apkBanner');
     if (!b) {
       b = document.createElement('div');
       b.id = 'apkBanner';
-      b.style.cssText = 'position:sticky;top:0;z-index:60;padding:.55rem .9rem;text-align:center;' +
-        'font-size:.85rem;font-weight:600;background:#173042;color:#cfe3f5;border-bottom:1px solid #295072';
       var bar = document.getElementById('appbar');
       if (bar && bar.parentNode) bar.parentNode.insertBefore(b, bar.nextSibling);
       else document.body.insertBefore(b, document.body.firstChild);

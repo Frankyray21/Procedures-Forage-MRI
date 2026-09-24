@@ -736,28 +736,6 @@
       (p && p.totalBytes ? pct + ' % · ' + fmtMo(p.bytes) + ' / ' + fmtMo(p.totalBytes) : '…') + '</span></span>' +
       '<span class="dl-bar"><i id="offauto" style="width:' + pct + '%"></i></span></div>';
   }
-  /* Partage de l'app Android : plugin natif Share dans l'APK, Web Share API
-     dans le navigateur, copie du lien en dernier recours. Le lien envoyé est
-     la page apk.html (QR + marche à suivre), pas le fichier de 180 Mo. */
-  var APK_PAGE_URL = 'https://frankyray21.github.io/Procedures-Forage-MRI/apk.html';
-  function shareApp() {
-    var payload = {
-      title: 'Procédures de forage MRI',
-      text: 'App Procédures de forage MRI — tout le contenu hors-ligne intégré, fonctionne sous terre. Installation : ',
-      url: APK_PAGE_URL
-    };
-    var ShareP = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Share;
-    if (window.IS_APK && ShareP && ShareP.share) {
-      try { ShareP.share({ title: payload.title, text: payload.text + payload.url, dialogTitle: 'Partager l\'app' }); } catch (e) {}
-      return;
-    }
-    if (navigator.share) { try { navigator.share(payload)['catch'](function () {}); } catch (e) {} return; }
-    try {
-      navigator.clipboard.writeText(APK_PAGE_URL).then(function () {
-        toast('Lien copié — colle-le dans un texto ou un courriel.');
-      });
-    } catch (e) {}
-  }
   function renderOffline() {
     renderPackBadge();                       // la pastille du haut suit chaque changement d'état
     var box = $('#offline'); if (!box) return;
@@ -767,15 +745,14 @@
     var top = $('#offTop');
     if (top) top.innerHTML = '';
     if (window.IS_APK) {
-      // App Android : rien à télécharger — carte informative + partage.
+      // App Android : rien à télécharger, carte informative seule. Le bouton
+      // « Partager l'app » a été retiré.
       var vName = (window.__APK_OVERRIDE && window.__APK_OVERRIDE.name) ||
         (window.APK_BUILD && window.APK_BUILD.name) || '';
       box.innerHTML = '<div class="offline-line"><span class="ol-chk" aria-hidden="true">' + ICON.check + '</span>' +
         '<span><b>Disponible hors ligne</b> — tout le contenu est intégré dans l\'app' +
         (vName ? ' (contenu ' + esc(vName) + ')' : '') +
-        ' et se met à jour tout seul quand il y a du réseau.</span>' +
-        '<button type="button" class="ol-btn" id="shareAppBtn" title="Envoyer le lien d\'installation à un collègue">📤 Partager l\'app</button></div>';
-      var sb = $('#shareAppBtn'); if (sb) sb.onclick = shareApp;
+        ' et se met à jour tout seul quand il y a du réseau.</span></div>';
       return;
     }
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
@@ -1629,14 +1606,18 @@
   /* ---------- vue : procédure ---------- */
   function renderProcedure(view, id) {
     var p = DATA.filter(function (x) { return x.id === id; })[0];
-    if (!p) { view.innerHTML = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Procédures de forage ITH / CUBEX</a><div class="empty">Procédure introuvable.</div></div>'; return; }
+    if (!p) { view.innerHTML = '<div class="wrap"><a class="back" href="#/procedures">' + ICON.back + ' Retour aux procédures</a><div class="empty">Procédure introuvable.</div></div>'; return; }
     updMarkSeen(id);            // fiche ouverte : le badge « Mise à jour » s'éteint
     var col = catColor(p.categorie);
     // Pour une procédure 'commun', le retour suit la section d'où l'on vient.
     var viaDiamant = (p.famille === 'commun') ? (state.fam === 'diamant') : (p.famille === 'diamant');
     var viaEnglish = p.famille === 'english';
     var backHref = viaEnglish ? (enDD(p) ? '#/english-dd' : '#/english') : viaDiamant ? '#/diamant' : '#/procedures';
-    var backLbl = viaEnglish ? (enDD(p) ? ' English — Diamond drilling' : ' English — ITH / CUBEX') : viaDiamant ? ' Forage au diamant' : ' Procédures de forage ITH / CUBEX';
+    /* Libellé d'ACTION, le même dans toutes les sections : le bouton rouge
+       affichait le nom de la section (« Forage au diamant », « Procédures de
+       forage ITH / CUBEX »), qui se lisait comme un titre et non comme un
+       retour. La destination, elle, reste la liste de la section d'origine. */
+    var backLbl = viaEnglish ? ' Back to procedures' : ' Retour aux procédures';
     var metaItems = (p.machines || []).slice();
     if (p.date_creation) metaItems.push(p.date_creation);
     if (p.date_revision) metaItems.push('Rév. ' + p.date_revision);
@@ -4667,6 +4648,95 @@
     b.addEventListener('click', function () { if (panel) close(); else open(); });
     window.addEventListener('hashchange', close);
   }
+  /* ---------- avis de l'APK : carte réductible au lieu d'un bandeau collant ----------
+     apk/src/apk-update.js crée #apkBanner juste sous la barre (« nouvel APK
+     disponible », « mise à jour prête ») et en REMPLACE le contenu à chaque
+     nouvel avis. Ce fichier-là n'est JAMAIS mis à jour à chaud : l'APK garde
+     sa version embarquée. C'est donc ici (app.js, mis à jour à chaud) que
+     l'avis devient une carte RÉDUCTIBLE : bouton « Réduire », une seule ligne
+     de rappel une fois réduite, et choix MÉMORISÉ pour l'APK installé — un
+     nouvel APK installé remet tout à zéro, pour qu'un avis suivant soit vu.
+     Le positionnement (plus de sticky) est dans styles.css, #apkBanner. */
+  function initApkNotice() {
+    if (!window.IS_APK || !window.MutationObserver) return;
+    var KEY = 'apk_notice_min';
+    var build = String((window.APK_BUILD && window.APK_BUILD.v) || '');
+    function load() {
+      try {
+        var v = JSON.parse(localStorage.getItem(KEY) || 'null');
+        return (v && v.b === build && Array.isArray(v.sigs)) ? v.sigs : [];
+      } catch (e) { return []; }
+    }
+    function save(sigs) { try { localStorage.setItem(KEY, JSON.stringify({ b: build, sigs: sigs.slice(-12) })); } catch (e) {} }
+    // Deux avis possibles. « upd » porte sa version dans son texte : une
+    // mise à jour plus récente réapparaît dépliée (on ne rate pas « Appliquer »).
+    function kindOf(el) { return el.querySelector('#apkReload') ? 'upd' : 'apk'; }
+    function sigOf(el, kind) {
+      if (kind === 'apk') return 'apk';
+      var m = (el.textContent || '').match(/\((v[\d.]+)\)/);
+      return 'upd:' + (m ? m[1] : (el.textContent || '').slice(0, 60));
+    }
+    function enhanced(el) {
+      for (var c = el.firstElementChild; c; c = c.nextElementSibling) if (c.classList.contains('apkn-body')) return true;
+      return false;
+    }
+    var bn = null, obs = null;
+    function enhance() {
+      if (!bn || enhanced(bn) || !bn.firstChild) return;
+      if (obs) obs.disconnect();                 // nos propres changements ne doivent pas boucler
+      var body = document.createElement('div');
+      body.className = 'apkn-body'; body.id = 'apknBody';
+      while (bn.firstChild) body.appendChild(bn.firstChild);   // DÉPLACÉS : les clics d'apk-update.js suivent
+      var kind = kindOf(body), sig = sigOf(body, kind);
+      var ic = document.createElement('span');
+      ic.className = 'apkn-ic'; ic.setAttribute('aria-hidden', 'true');
+      ic.innerHTML = kind === 'upd' ? ICON.info : ICON.dl;
+      var sum = document.createElement('div');
+      sum.className = 'apkn-sum';
+      sum.innerHTML = '<b>' + (kind === 'upd' ? 'Mise à jour du contenu prête' : 'Nouvel APK disponible') + '</b>' +
+        (kind === 'upd' ? '<button type="button" class="apkn-apply">Appliquer</button>' : '');
+      var tog = document.createElement('button');
+      tog.type = 'button'; tog.className = 'apkn-tog'; tog.setAttribute('aria-controls', 'apknBody');
+      bn.appendChild(ic); bn.appendChild(sum); bn.appendChild(body); bn.appendChild(tog);
+      bn.setAttribute('role', 'region');
+      bn.setAttribute('aria-label', 'Avis de l\'application');
+      function paint(min) {
+        bn.classList.toggle('apkn-min', min);
+        tog.setAttribute('aria-expanded', String(!min));
+        tog.innerHTML = (min ? 'Afficher' : 'Réduire') + '<span class="apkn-chev" aria-hidden="true">' + ICON.chev + '</span>';
+      }
+      paint(load().indexOf(sig) >= 0);
+      tog.onclick = function () {
+        var min = !bn.classList.contains('apkn-min');
+        var sigs = load().filter(function (x) { return x !== sig; });
+        if (min) sigs.push(sig);
+        save(sigs);
+        paint(min);
+      };
+      // Réduite, toute la ligne rouvre l'avis : une cible plus grande pour les gants.
+      sum.onclick = function () { if (bn.classList.contains('apkn-min')) tog.click(); };
+      var ap = sum.querySelector('.apkn-apply');
+      if (ap) ap.onclick = function (e) {
+        e.stopPropagation();
+        var a = body.querySelector('#apkReload');
+        if (a) a.click(); else location.reload();
+      };
+      if (obs) obs.observe(bn, { childList: true });
+    }
+    function attach(el) {
+      bn = el;
+      obs = new MutationObserver(enhance);
+      enhance();
+      obs.observe(bn, { childList: true });
+    }
+    var el = document.getElementById('apkBanner');
+    if (el) { attach(el); return; }
+    var mo = new MutationObserver(function () {
+      var e2 = document.getElementById('apkBanner');
+      if (e2) { mo.disconnect(); attach(e2); }
+    });
+    mo.observe(document.body, { childList: true });
+  }
   /* Hauteur réelle de la barre d'application, exposée en CSS (--appbar-h) : le
      bouton de retour des fiches se colle JUSTE dessous au défilement. Elle varie
      avec la largeur de l'écran et les pastilles affichées : un ResizeObserver la
@@ -4679,7 +4749,7 @@
     window.addEventListener('resize', upd);
   }
   document.addEventListener('DOMContentLoaded', function () {
-    route(); initInstall(); initChecklistEvents(); initDisplay(); initHoverCard(); initAppbarH();
+    route(); initInstall(); initChecklistEvents(); initDisplay(); initHoverCard(); initAppbarH(); initApkNotice();
     // Contenu révisé depuis la dernière visite : l'annoncer clairement (les
     // badges « Mise à jour » restent ensuite sur les fiches concernées).
     if (updFresh) {

@@ -1594,3 +1594,86 @@ html[data-ts="145"]{font-size:145%}
 .back.backpill:hover,.back.backpill:focus-visible{color:#fff;background:#b91c1e}
 .back.backpill:focus-visible{outline:2px solid #fff;outline-offset:2px}
 :root[data-theme="light"] .back.backpill,:root[data-theme="light"] .back.backpill:hover{color:#fff}
+
+/* ===== Avis de l'APK (« nouvel APK disponible », « mise à jour prête ») =====
+   Créé par apk/src/apk-update.js, qui n'est JAMAIS mis à jour à chaud : l'APK
+   garde sa version embarquée, avec un style en ligne position:sticky;top:0.
+   Mesuré : un bandeau de 63 px (tablette) à 108 px (téléphone) qui, dès qu'on
+   faisait défiler, se collait tout en haut et RECOUVRAIT la barre de
+   navigation — à chaque lancement tant que des médias manquaient.
+   D'où les !important : cette feuille, elle, arrive par mise à jour à chaud et
+   doit l'emporter sur le style en ligne de l'ancien APK. L'avis devient une
+   carte dans le flux (elle défile avec la page) que l'on peut RÉDUIRE à une
+   ligne ; app.js (initApkNotice) ajoute le bouton et mémorise le choix. */
+#apkBanner{position:relative!important;top:auto!important;z-index:1!important;box-sizing:border-box;
+  width:calc(100% - 2 * clamp(16px,3vw,24px));max-width:calc(var(--maxw) - 2 * clamp(16px,3vw,24px));
+  margin:.75rem auto 0;display:flex;align-items:flex-start;gap:.7rem;
+  padding:.75rem .75rem .75rem .95rem!important;text-align:left!important;
+  font-size:.92rem!important;font-weight:600!important;line-height:1.45;
+  background:#13293a!important;color:#d5e8f7!important;
+  border:1px solid #2c5a80!important;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+#apkBanner .apkn-ic{flex:none;display:flex;align-items:center;justify-content:center;width:34px;height:34px;
+  border-radius:9px;background:#1d4262;color:#8fd0ff}
+#apkBanner .apkn-ic svg{width:18px;height:18px}
+#apkBanner .apkn-body{flex:1;min-width:0;align-self:center}
+#apkBanner .apkn-body a{color:#8fd0ff!important;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+/* le lien de téléchargement de l'APK : un vrai bouton, facile à toucher avec des gants */
+#apkBanner .apkn-body a[href$=".apk"]{display:inline-flex;align-items:center;min-height:40px;margin:.35rem .35rem .1rem 0;
+  padding:.35rem .9rem;border-radius:10px;background:#1f6fb2;color:#fff!important;text-decoration:none}
+#apkBanner .apkn-sum{display:none;flex:1;min-width:0;align-items:center;gap:.6rem;flex-wrap:wrap;cursor:pointer;align-self:center}
+#apkBanner .apkn-sum b{font-weight:800;color:#e6f2fb}
+#apkBanner button{font:inherit;cursor:pointer}
+#apkBanner .apkn-tog{flex:none;display:inline-flex;align-items:center;gap:.3rem;min-height:40px;padding:.3rem .7rem;
+  border-radius:10px;border:1px solid #2c5a80;background:transparent;color:#bcd9ef;font-size:.84rem;font-weight:700}
+#apkBanner .apkn-tog:hover,#apkBanner .apkn-tog:focus-visible{color:#fff;border-color:#8fd0ff}
+#apkBanner .apkn-tog:focus-visible,#apkBanner .apkn-apply:focus-visible{outline:2px solid #8fd0ff;outline-offset:2px}
+#apkBanner .apkn-chev{display:flex;transition:transform .2s;transform:rotate(180deg)}
+#apkBanner .apkn-apply{min-height:34px;padding:.2rem .8rem;border-radius:9px;border:none;background:#1f6fb2;color:#fff;font-weight:800;font-size:.84rem}
+/* réduite : une seule ligne, discrète ; toucher la ligne rouvre l'avis */
+#apkBanner.apkn-min{align-items:center;padding-top:.4rem!important;padding-bottom:.4rem!important;box-shadow:none}
+#apkBanner.apkn-min .apkn-body{display:none}
+#apkBanner.apkn-min .apkn-sum{display:flex}
+#apkBanner.apkn-min .apkn-ic{width:28px;height:28px}
+#apkBanner.apkn-min .apkn-chev{transform:none}
+
+/* ===== Barre d'application sur tablette (Galaxy Tab Active4 Pro) : plus grande =====
+   Mesuré avant : 70 px de haut, liens de 12,8 px en portrait (14,4 en paysage),
+   cibles tactiles de 34 à 38 px — trop petit pour un écran de 10 po tenu à
+   bout de bras et utilisé avec des gants (cible conseillée : 48 px).
+   En px, comme le reste de la barre : elle ne suit pas le réglage « taille du
+   texte », pour ne jamais déborder. Ciblage : écran TACTILE de 700 à 1400 px ;
+   téléphones et ordinateurs à souris ne sont pas touchés. */
+@media (any-pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .appbar{gap:12px;min-height:68px}
+  /* la marque texte cède sa place à des cibles plus grandes ; le logo reste */
+  .appbar .brand .bt{display:none}
+  .appbar .brand img{height:44px;padding:4px 7px}
+  .appbar nav{gap:6px}
+  .appbar nav a{display:inline-flex;align-items:center;min-height:48px;padding:10px 14px;font-size:16.5px}
+  .appbar .workerchip{min-height:48px;padding:8px 14px;gap:8px;font-size:15.5px;max-width:230px}
+  .appbar .workerchip svg{width:18px;height:18px}
+  .appbar .iconbtn{width:48px;height:48px}
+  .appbar .iconbtn svg{width:22px;height:22px}
+  .prgchip{min-height:48px;justify-content:center;padding:7px 13px;gap:5px;font-size:14px}
+  .prgchip .pc-bar{height:4px;min-width:70px}
+  .packchip{min-height:48px;padding:8px 13px;font-size:13.5px}
+  .appbar .aqchip{min-height:48px;padding:8px 13px;gap:6px;font-size:14px}
+  .appbar .aqchip svg{width:16px;height:16px}
+}
+/* Tablette en PORTRAIT (moins de 1040 px) : les cinq onglets passent sur leur
+   propre rangée, larges et répartis sur toute la largeur ; logo et outils
+   (progression, état hors ligne, travailleur, Aa) restent sur la première.
+   Une seule rangée ne tenait pas : elle débordait dès qu'une pastille
+   d'attente apparaissait. La nav passe en display:contents pour que ses
+   enfants se répartissent sur les deux rangées ; ::after force le saut de
+   ligne. La hauteur de la barre est suivie par app.js (--appbar-h). */
+@media (any-pointer:coarse) and (min-width:700px) and (max-width:1039px){
+  .appbar{flex-wrap:wrap;row-gap:6px;padding-top:10px;padding-bottom:8px}
+  .appbar nav{display:contents}
+  .appbar .brand{order:0;margin-right:auto}
+  .appbar nav > *{order:1}
+  .appbar::after{content:'';order:2;flex-basis:100%;height:0}
+  .appbar nav > a.lbl{order:3;flex:1 1 0;justify-content:center;text-align:center;
+    font-size:17.5px;padding:10px 6px;min-height:50px;border-radius:10px}
+  .appbar nav > a.lbl.active{box-shadow:inset 0 -3px 0 var(--brand)}
+}
