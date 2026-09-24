@@ -306,7 +306,7 @@ main{padding-bottom:5rem;animation:fade .4s ease}
   padding:.55rem .5rem;margin:-.35rem 0;border-radius:5px}
 .pdfbox a.dl:hover{color:#cfe3ff}
 .pdfbox a.dl:focus-visible{outline-color:#fff}
-.pdfview>summary{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;cursor:pointer;list-style:none;
+.pdfview>summary{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.75rem 1rem;cursor:pointer;list-style:none;
   color:var(--text-main);font-weight:700;font-size:.98rem;user-select:none}
 .pdfview>summary::-webkit-details-marker{display:none}
 .pdfview>summary .pv-chev{display:inline-flex;flex:none;transition:transform .15s}
@@ -697,7 +697,9 @@ footer b{color:var(--muted)}
   color:#fff;background:rgba(10,14,23,.82);padding:.12rem .45rem;border-radius:6px}
 
 /* ===== visionneuse plein écran (lightbox) ===== */
-.lightbox{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;
+/* z-index au-dessus de l'assistant (1100), comme le document plein écran :
+   rien ne flotte sur la photo (un lien suivi par-dessus brouillait RETOUR). */
+.lightbox{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;
   background:rgba(5,8,14,.94);backdrop-filter:blur(3px);padding:1rem}
 .lightbox.on{display:flex}
 .lightbox .lb-img{max-width:94vw;max-height:88vh;object-fit:contain;border-radius:8px;background:#fff}

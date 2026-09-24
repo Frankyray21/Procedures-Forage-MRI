@@ -88,7 +88,7 @@
      supprime rien : chaque travailleur retrouve ses données en revenant — même
      hors ligne. La progression est aussi sauvegardée dans Airtable (dossier de
      l'employé) pour survivre à un changement d'appareil : voir progPush(). */
-  var P_KEYS = /^(pq_|attest_hist_|attest_sent_|attest_pending_|ck_|pt_read_|pt_quiz_|pt_doc_|prog_)/;
+  var P_KEYS = /^(pq_|attest_hist_|attest_sent_|attest_pending_|attest_doc_|ck_|pt_read_|pt_quiz_|pt_doc_|prog_)/;
   function profName() { try { return localStorage.getItem('prof_name') || ''; } catch (e) { return ''; } }
   function profSlug(name) { return norm(name).replace(/\s+/g, ' ').trim(); }
   function pkeyFor(slug, base) { return slug ? 'u:' + slug + ':' + base : base; }
@@ -141,7 +141,7 @@
     var cur = profName();
     if (!cur || profSlug(cur) === profSlug(name)) { profSet(name); return; }
     var to = profSlug(name);
-    ['pq_' + pid, 'pq_fail_' + pid, 'pt_read_' + pid, 'pt_quiz_' + pid, 'pt_doc_' + pid].forEach(function (base) {
+    ['pq_' + pid, 'pq_fail_' + pid, 'pt_read_' + pid, 'pt_quiz_' + pid, 'pt_doc_' + pid, 'pt_doc_rev_' + pid].forEach(function (base) {
       try {
         var v = localStorage.getItem(pkey(base));
         if (v != null) { localStorage.setItem(pkeyFor(to, base), v); localStorage.removeItem(pkey(base)); }
@@ -250,6 +250,7 @@
     PT.pid = id; PT.quizOpen = false;
     PT.page = mkClock(ptGet(pkey('pt_read_' + id)));
     PT.quiz = mkClock(ptGet(pkey('pt_quiz_' + id)));
+    ptDocRevCheck(id);
     PT.doc = mkClock(ptGet(pkey('pt_doc_' + id)));   // démarre à l'OUVERTURE du PDF (ptDocSync)
     PT.docFs = false; PT.docInline = false;
     if (!document.hidden) PT.page.start();      // le quiz démarre à l'ouverture du quiz
@@ -330,6 +331,30 @@
     var s = Math.floor((ms || 0) / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60;
     s = s % 60;
     return (h ? h + ':' + ('0' + m).slice(-2) : m) + ':' + ('0' + s).slice(-2);
+  }
+  /* Le temps de lecture vaut pour UNE révision du document et UNE
+     attestation : une nouvelle révision (date_revision changée) ou une
+     attestation signée le remettent à zéro — sinon la prochaine attestation
+     reprendrait un temps de lecture d'un autre document ou d'une autre fois. */
+  function ptDocRevOf(id) {
+    var p = DATA.filter(function (x) { return x.id === id; })[0];
+    return p ? String(p.date_revision || p.date_creation || '') : '';
+  }
+  function ptDocRevCheck(id) {
+    try {
+      var rev = ptDocRevOf(id), k = pkey('pt_doc_rev_' + id), was = localStorage.getItem(k);
+      if (was !== null && was !== rev) localStorage.removeItem(pkey('pt_doc_' + id));
+      if (was !== rev) localStorage.setItem(k, rev);
+    } catch (e) {}
+  }
+  function ptDocReset(id) {
+    try { localStorage.removeItem(pkey('pt_doc_' + id)); } catch (e) {}
+    if (PT.pid === id && PT.doc) {
+      var run = PT.doc.on;
+      PT.doc = mkClock(0);
+      if (run) PT.doc.start();
+    }
+    rtPaint();
   }
   var rtTimer = null;
   // Démarre / arrête le chrono du document selon ce qui est à l'écran.
@@ -2132,6 +2157,10 @@
       // La signature est persistée par fiche pour que le re-téléchargement
       // depuis « Mon suivi » la conserve (elle ne peut pas être régénérée).
       try { if (sigDataUrl) localStorage.setItem(pkey('attest_sig_' + p.id), sigDataUrl); } catch (e) {}
+      // Lecture du document figée AVEC l'attestation (re-téléchargement depuis
+      // « Mon suivi »), puis chrono remis à zéro pour la prochaine fois.
+      try { localStorage.setItem(pkey('attest_doc_' + p.id), JSON.stringify({ t: payload.docTime, e: payload.docEstimate })); } catch (e) {}
+      ptDocReset(p.id);
       var sig = attestSig(p.id, name);
       var done = '';
       try { done = localStorage.getItem(pkey('attest_sent_' + p.id)) || ''; } catch (e) {}
@@ -2957,6 +2986,16 @@
     if (line) g.fillText(line, x, yy);
     return yy;
   }
+  // Nombre de lignes que wrapText utiliserait (même découpage), sans dessiner.
+  function wrapLines(g, text, maxW) {
+    var words = String(text || '').split(' '), line = '', n = 1;
+    for (var i = 0; i < words.length; i++) {
+      var test = line ? line + ' ' + words[i] : words[i];
+      if (g.measureText(test).width > maxW && line) { line = words[i]; n++; }
+      else line = test;
+    }
+    return n;
+  }
   function drawAttestationCanvas(payload, logoImg, sigImg) {
     var W = 1000, H = 1414, M = 74;
     var c = document.createElement('canvas'); c.width = W; c.height = H;
@@ -3008,17 +3047,21 @@
     add('Lecture estimée', payload.docEstimate);
     add('Temps sur la fiche', payload.readTime);
     add('Temps sur le quiz', payload.quizTime);
-    var py = 314, rowH = 58, padY = 30;
-    var panelH = rows.length * rowH + padY;
+    var py = 314, rowH = 58, padY = 30, labelX = M + 32, valX = M + 300, valW = W - M - 32 - valX;
+    // Hauteur de chaque ligne selon la valeur : un long titre de procédure
+    // passe sur 2-3 lignes sans chevaucher la ligne suivante (« Date »).
+    g.font = '600 21px ' + body;
+    var extra = rows.map(function (row) { return (wrapLines(g, row[1], valW) - 1) * 26; });
+    var panelH = rows.length * rowH + padY + extra.reduce(function (a, b) { return a + b; }, 0);
     g.fillStyle = PANEL; rr(M, py, W - 2 * M, panelH, 18); g.fill();
     g.strokeStyle = LINE; g.lineWidth = 2; rr(M, py, W - 2 * M, panelH, 18); g.stroke();
-    var ry = py + padY + 14, labelX = M + 32, valX = M + 300;
+    var ry = py + padY + 14;
     rows.forEach(function (row, i) {
       if (i) { g.strokeStyle = '#eef1f6'; g.lineWidth = 1; g.beginPath(); g.moveTo(M + 22, ry - 30); g.lineTo(W - M - 22, ry - 30); g.stroke(); }
       g.fillStyle = SLATE; g.font = '700 20px ' + body; g.fillText(row[0], labelX, ry);
       g.fillStyle = INK; g.font = '600 21px ' + body;
-      wrapText(g, row[1], valX, ry, W - M - 32 - valX, 26);
-      ry += rowH;
+      wrapText(g, row[1], valX, ry, valW, 26);
+      ry += rowH + extra[i];
     });
     g.fillStyle = SLATE; g.font = '400 20px ' + body;
     var pend = wrapText(g, 'Je confirme avoir lu et compris cette procédure de travail, et complété le quiz ' +
@@ -3869,7 +3912,15 @@
   // RETOUR (popstate) ou changement de page : l'entrée est déjà consommée,
   // on masque seulement.
   function fsvDrop() { var el = fsvEl; fsvEl = null; if (el) fsvHide(el); }
-  window.addEventListener('popstate', fsvDrop);
+  /* Arrivé sur une de NOS entrées sans vue ouverte (lien suivi alors qu'une
+     vue était affichée — même fiche, ou retour vers l'entrée restée entre
+     deux pages) : on la saute, sinon le RETOUR suivant ne ferait rien. Pas
+     dans hashchange : popstate et hashchange arrivent pour le même passage,
+     le saut serait fait deux fois. */
+  window.addEventListener('popstate', function () {
+    fsvDrop();
+    try { if (history.state && history.state.mriFs) history.back(); } catch (e) {}
+  });
   window.addEventListener('hashchange', fsvDrop);
   // Page rechargée (ou restaurée par Android) pendant qu'une vue était
   // ouverte : l'entrée est restée, pas la vue. On revient sur l'entrée de la
@@ -3917,7 +3968,8 @@
           return '<img src="' + esc(withRev(src, key)) + '" alt="' + esc(label) + ' — page ' + (i + 1) + '" loading="lazy">';
         }).join('');
         box.scrollTop = 0;
-        var est = rtFmtEst(rtEstimateDoc(key));
+        // Le chrono cumule les documents de la fiche : l'estimé aussi.
+        var est = rtFmtEst(PT.pid && rtDocKeys(PT.pid).indexOf(key) >= 0 ? rtEstimateFiche(PT.pid) : rtEstimateDoc(key));
         fs.querySelector('.docfs-est').textContent = est;
         fs.querySelector('.docfs-rt-est').style.display = est ? '' : 'none';
         fs.querySelector('.rt-live').setAttribute('data-pid', PT.pid || '');
@@ -4424,7 +4476,11 @@
     var best = pqBestPct(pid);
     var sig = '';
     try { sig = localStorage.getItem(pkey('attest_sig_' + pid)) || ''; } catch (e) {}
-    var rd = ptGet(pkey('pt_read_' + pid)), qz = ptGet(pkey('pt_quiz_' + pid)), dc = ptGet(pkey('pt_doc_' + pid));
+    var rd = ptGet(pkey('pt_read_' + pid)), qz = ptGet(pkey('pt_quiz_' + pid));
+    // Lecture du document telle que figée à la signature (absente pour une
+    // attestation antérieure à ce chrono : aucune ligne, plutôt qu'un faux).
+    var dk = null;
+    try { dk = JSON.parse(localStorage.getItem(pkey('attest_doc_' + pid)) || 'null'); } catch (e) {}
     var payload = {
       name: suiviName(),
       proc: p.code || p.id,
@@ -4434,10 +4490,8 @@
       score: att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : ''),
       readTime: rd ? fmtDuration(rd) : '',
       quizTime: qz ? fmtDuration(qz) : '',
-      // Seulement si le document a été lu dans l'app : une attestation
-      // antérieure à ce chrono ne doit pas afficher « non ouvert ».
-      docTime: dc >= 1000 ? fmtDuration(dc) : '',
-      docEstimate: dc >= 1000 ? rtFmtEst(rtEstimateFiche(pid)) : '',
+      docTime: (dk && dk.t) || '',
+      docEstimate: (dk && dk.e) || '',
       signature: sig
     };
     var old = btnEl.innerHTML; btnEl.innerHTML = '<span>…</span>';
