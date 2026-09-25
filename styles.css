@@ -1133,7 +1133,14 @@ footer b{color:var(--muted)}
 .sv-sync .btn:hover{background:#059669}
 .sv-sync b{font-size:.95rem}
 .sv-sync p{color:var(--muted);font-size:.88rem;line-height:1.5;margin:.35rem 0 .7rem;max-width:560px}
-.sv-form{display:flex;flex-wrap:wrap;gap:.5rem}
+.sv-form{position:relative;display:flex;flex-wrap:wrap;gap:.5rem}
+/* Champ de nom amené à l'écran (focus, clavier) : jamais sous la barre
+   collante — ni, dans la fiche, sous le bouton « Retour » collant —, sinon
+   la liste des noms s'ouvrirait cachée. */
+.sv-name{scroll-margin-top:calc(var(--appbar-h, 60px) + 16px)}
+.attest-name{scroll-margin-top:calc(var(--appbar-h, 60px) + 80px)}
+.sv-msg.warn{color:#fbbf24}
+:root[data-theme="light"] .sv-msg.warn{color:#92400e}
 .sv-name{flex:1;min-width:200px;max-width:320px;background:var(--card-2);border:1px solid var(--border);
   border-radius:10px;color:var(--text);font:inherit;font-size:.95rem;padding:.55rem .75rem}
 .sv-name:focus{outline:none;border-color:var(--accent)}

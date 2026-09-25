@@ -1920,6 +1920,85 @@
       .slice(0, 8);
   }
   window.addEventListener('online', function () { rosterEnsure(); });
+  /* ---------- liste des noms d'employés (autocomplétion) ----------
+     Partagée par l'attestation et par « Récupérer ma progression » (Mon
+     suivi). 1) Résultats immédiats depuis l'annuaire en cache — fonctionne
+     hors ligne, sous terre. 2) Avec du réseau, le serveur affine (source de
+     vérité). La liste se place sous le champ, dans son parent positionné.
+     cb : pick(it) nom choisi · picked() déjà relié ? · input() à chaque
+     frappe · none() nom absent de l'annuaire · unavailable() ni annuaire
+     en cache ni serveur. */
+  function initNameCombo(input, sugg, cb) {
+    var endpoint = attestEndpoint();
+    function db(s) { try { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { return s; } }
+    function hideSugg() { sugg.hidden = true; sugg.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); }
+    function hl(name, term) {
+      var t = db(name.toLowerCase()), qd = db((term || '').toLowerCase()), k = qd ? t.indexOf(qd) : -1;
+      if (k < 0) return esc(name);
+      return esc(name.slice(0, k)) + '<b>' + esc(name.slice(k, k + qd.length)) + '</b>' + esc(name.slice(k + qd.length));
+    }
+    function renderSugg(list, term) {
+      if (!list.length) { hideSugg(); if (cb.none) cb.none(); return; }
+      // Juste sous le champ (et non sous tout le formulaire), à sa largeur.
+      sugg.style.top = (input.offsetTop + input.offsetHeight + 4) + 'px';
+      sugg.style.left = input.offsetLeft + 'px';
+      sugg.style.width = input.offsetWidth + 'px';
+      sugg.style.right = 'auto';
+      sugg.innerHTML = '';
+      list.forEach(function (it) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'attest-item'; b.setAttribute('role', 'option');
+        b.innerHTML = hl(it.name, term);
+        b.addEventListener('mousedown', function (e) { e.preventDefault(); hideSugg(); cb.pick(it); });
+        sugg.appendChild(b);
+      });
+      sugg.hidden = false; input.setAttribute('aria-expanded', 'true');
+    }
+    function unavailable() { hideSugg(); if (cb.unavailable) cb.unavailable(); }
+    var tmr = null, lastReq = 0;
+    function doSearch() {
+      var v = (input.value || '').trim();
+      if (v.length < 2) { hideSugg(); return; }
+      var local = rosterSearch(v);
+      if (local.length) renderSugg(local, v);
+      // Hors ligne : on s'en tient au cache local. Rien trouvé → « pas dans
+      // la liste » si l'annuaire est chargé, sinon « liste indisponible ».
+      if (!navigator.onLine || !endpoint) {
+        if (!local.length) { if (rosterList().length) renderSugg([], v); else unavailable(); }
+        return;
+      }
+      var myReq = ++lastReq;
+      fetch(endpoint + '?q=' + encodeURIComponent(v), { method: 'GET' })
+        .then(function (r) { return r && r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (myReq !== lastReq || document.activeElement !== input) return;
+          if (d && d.ok) {
+            var res = d.results || [];
+            if (res.length || !local.length) renderSugg(res, v);   // sinon on garde le local
+          } else if (!local.length) {
+            unavailable();                                         // registre en erreur, aucun cache
+          }
+        })
+        .catch(function () {
+          // Réseau tombé / registre injoignable : on garde le local, sinon on
+          // affiche « liste indisponible » plutôt que de rester muet.
+          if (myReq === lastReq && !local.length) unavailable();
+        });
+    }
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', 'false');
+    input.addEventListener('input', function () {
+      if (cb.input) cb.input();
+      if (tmr) clearTimeout(tmr); tmr = setTimeout(doSearch, 220);
+    });
+    input.addEventListener('focus', function () {
+      if (!(cb.picked && cb.picked()) && (input.value || '').trim().length >= 2) doSearch();
+    });
+    input.addEventListener('blur', function () { setTimeout(hideSugg, 150); });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideSugg(); });
+    return { hide: hideSugg };
+  }
   function attestationHTML(p) {
     if (!attestEndpoint()) return '';
     var head = '<div class="sec seccard sc-lock attest-sec" data-proc="' + esc(p.id) + '"><h2>Attestation de lecture</h2>';
@@ -2038,88 +2117,30 @@
     var HINT0 = 'Commence à taper, puis choisis ton nom dans la liste.';
     try { input.value = profName() || localStorage.getItem('attest_name') || ''; } catch (e) {}
 
-    function db(s) { try { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { return s; } }
     function setHint(t, ok) { hint.textContent = t; hint.className = 'attest-hint' + (ok ? ' ok' : ''); }
-    function hideSugg() { sugg.hidden = true; sugg.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); }
     function clearPick() { if (pickedId) { pickedId = ''; pickedName = ''; setHint(HINT0, false); } }
     function pick(it) {
       pickedId = it.id; pickedName = it.name; input.value = it.name;
-      setHint('✓ Relié à ton dossier employé.', true); hideSugg();
+      setHint('✓ Relié à ton dossier employé.', true);
     }
-    function hl(name, term) {
-      var t = db(name.toLowerCase()), qd = db((term || '').toLowerCase()), k = qd ? t.indexOf(qd) : -1;
-      if (k < 0) return esc(name);
-      return esc(name.slice(0, k)) + '<b>' + esc(name.slice(k, k + qd.length)) + '</b>' + esc(name.slice(k + qd.length));
-    }
-    function renderSugg(list, term) {
-      if (!list.length) {
-        hideSugg();
+    initNameCombo(input, sugg, {
+      pick: pick,
+      picked: function () { return !!pickedId; },
+      input: function () { if (pickedId && input.value.toLowerCase() !== pickedName.toLowerCase()) clearPick(); },
+      none: function () {
         hint.innerHTML = '<b>Ton nom n\'est pas encore dans la liste des employés.</b> ' +
           'Tu peux quand même attester : écris ton nom au complet et envoie — ' +
           'le bureau le reliera à ton dossier.';
         hint.className = 'attest-hint warn';
-        return;
+      },
+      // Registre injoignable ET aucun annuaire en cache : on le dit clairement
+      // au lieu de laisser le champ muet — écrire le nom au complet fonctionne.
+      unavailable: function () {
+        hint.innerHTML = '<b>La liste des noms est momentanément indisponible.</b> ' +
+          'Écris ton nom au complet et envoie — le bureau le reliera à ton dossier.';
+        hint.className = 'attest-hint warn';
       }
-      // Positionne la liste juste sous le champ (et non sous tout le formulaire).
-      sugg.style.top = (input.offsetTop + input.offsetHeight + 4) + 'px';
-      sugg.innerHTML = '';
-      list.forEach(function (it) {
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'attest-item'; b.setAttribute('role', 'option');
-        b.innerHTML = hl(it.name, term);
-        b.addEventListener('mousedown', function (e) { e.preventDefault(); pick(it); });
-        sugg.appendChild(b);
-      });
-      sugg.hidden = false; input.setAttribute('aria-expanded', 'true');
-    }
-    var tmr = null, lastReq = 0;
-    // Registre injoignable ET aucun annuaire en cache : on le dit clairement
-    // au lieu de laisser le champ muet — écrire le nom au complet fonctionne.
-    function suggUnavailable() {
-      hideSugg();
-      hint.innerHTML = '<b>La liste des noms est momentanément indisponible.</b> ' +
-        'Écris ton nom au complet et envoie — le bureau le reliera à ton dossier.';
-      hint.className = 'attest-hint warn';
-    }
-    function doSearch() {
-      var v = (input.value || '').trim();
-      if (v.length < 2) { hideSugg(); return; }
-      // 1) Résultats immédiats depuis l'annuaire local — fonctionne hors-ligne
-      //    (sous terre). C'est le correctif du « nom absent de la liste ».
-      var local = rosterSearch(v);
-      if (local.length) renderSugg(local, v);
-      // 2) Hors-ligne : on s'en tient au cache local. Rien trouvé → « pas dans
-      //    la liste » si l'annuaire est chargé, sinon « liste indisponible ».
-      if (!navigator.onLine) {
-        if (!local.length) { if (rosterList().length) renderSugg([], v); else suggUnavailable(); }
-        return;
-      }
-      // 3) Réseau présent : on affine avec le serveur (source de vérité).
-      var myReq = ++lastReq;
-      fetch(endpoint + '?q=' + encodeURIComponent(v), { method: 'GET' })
-        .then(function (r) { return r && r.ok ? r.json() : null; })
-        .then(function (d) {
-          if (myReq !== lastReq || document.activeElement !== input) return;
-          if (d && d.ok) {
-            var res = d.results || [];
-            if (res.length || !local.length) renderSugg(res, v);   // sinon on garde le local
-          } else if (!local.length) {
-            suggUnavailable();                                     // registre en erreur, aucun cache
-          }
-        })
-        .catch(function () {
-          // Réseau tombé / registre injoignable : on garde le local, sinon on
-          // affiche « liste indisponible » plutôt que de rester muet.
-          if (myReq === lastReq && !local.length) suggUnavailable();
-        });
-    }
-    input.addEventListener('input', function () {
-      if (pickedId && input.value.toLowerCase() !== pickedName.toLowerCase()) clearPick();
-      if (tmr) clearTimeout(tmr); tmr = setTimeout(doSearch, 220);
     });
-    input.addEventListener('focus', function () { if (!pickedId && (input.value || '').trim().length >= 2) doSearch(); });
-    input.addEventListener('blur', function () { setTimeout(hideSugg, 150); });
-    input.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideSugg(); });
 
     sendBtn.onclick = function () {
       var name = (input.value || '').trim();
@@ -4652,8 +4673,9 @@
       '<b>Nouveau téléphone ou appareil partagé ?</b>' +
       '<p>Ta progression (quiz et attestations) est sauvegardée avec ton nom. Entre ton nom exact pour la retrouver ici — sur un appareil partagé, chaque travailleur retrouve ses propres résultats en entrant le sien.</p>' +
       '<div class="sv-form">' +
-        '<input type="text" class="sv-name" placeholder="Prénom Nom" autocomplete="off" value="' + esc(suiviName()) + '">' +
+        '<input type="text" class="sv-name" placeholder="Prénom Nom" autocomplete="off" aria-label="Ton nom complet" value="' + esc(suiviName()) + '">' +
         '<button type="button" class="btn sv-fetch">Récupérer ma progression</button>' +
+        '<div class="attest-sugg sv-sugg" role="listbox" hidden></div>' +
       '</div><div class="sv-msg" aria-live="polite"></div></div>';
   }
   function initSuiviSync(view) {
@@ -4661,6 +4683,15 @@
     var input = box.querySelector('.sv-name');
     var btn = box.querySelector('.sv-fetch');
     var msg = box.querySelector('.sv-msg');
+    // Même liste de noms d'employés que l'attestation (hors ligne comprise).
+    rosterEnsure();
+    function comboMsg(t) { msg.className = 'sv-msg' + (t ? ' warn' : ''); msg.innerHTML = t; }
+    initNameCombo(input, box.querySelector('.sv-sugg'), {
+      pick: function (it) { input.value = it.name; comboMsg(''); btn.focus(); },
+      input: function () { if (msg.classList.contains('warn')) comboMsg(''); },
+      none: function () { comboMsg('<b>Ce nom n\'est pas dans la liste des employés.</b> Vérifie l\'orthographe exacte (Prénom Nom).'); },
+      unavailable: function () { comboMsg('<b>La liste des noms est momentanément indisponible.</b> Écris ton nom au complet.'); }
+    });
     btn.onclick = function () {
       var name = (input.value || '').replace(/\s+/g, ' ').trim();
       if (name.length < 2) { msg.className = 'sv-msg no'; msg.textContent = 'Entre ton nom complet.'; input.focus(); return; }
