@@ -15,8 +15,6 @@
 (function () {
   var T = {
     "centralisateur": [
-      { "t": "vf", "q": "On pose le centralisateur sur le bout femelle de la tige.", "vrai": true,
-        "e": "« Le centralisateur de tige est installé sur l'extrémité femelle de la tige conformément au dessin ci-joint »" },
       { "t": "trou", "q": "Pour monter le centralisateur, il faut 12 boulons ½ de ______ de long.",
         "o": ["1 pouce 3/8", "2 pouces", "1 pouce", "1/2 pouce"], "a": 0,
         "e": "« 12 boulons ½ X 1'' 3/8 de long » — les boulons requis mesurent 1 pouce 3/8." },
@@ -28,12 +26,8 @@
         "e": "« Le centralisateur de tiges est principalement utilisé pour le forage de trous de V-30 pour empêcher l'oscillement des tiges et pour maintenir le V-30 correctement alignée » ; « Faites la procédure contraire lors du démantèlement du centralisateur. » ; « 2 Clés ¾ ou, 1 clé ¾ et 1 box ¾ avec 1 ratchet ou 1 impact » (les clés sont des ¾, et la tige doit être mise sur le train de tige AVANT d'installer le centralisateur)." },
       { "t": "ordre", "q": "Remets ces étapes de la pose du centralisateur dans le bon ordre.",
         "o": ["Mettre la tige sur le train de tige", "Aligner l'accouplement du bas d'une pièce sur les coches du slip plate", "Approcher l'autre pièce et l'aligner sur la première", "Mettre les boulons dans les trous", "Serrer tous les boulons avec une clé ou un box"],
-        "e": "Étapes 3 à 11 de la procédure : « Avant d'installer le centralisateur, la tige doit être mise sur le train de tige » … « Serrer tous les boulons en maintenant une tension sur les lockwashers à l'aide de l'outil adéquat (clé ou box) »" },
-      { "t": "assoc", "q": "Associe chaque élément à sa bonne valeur.",
-        "pairs": [{ "l": "Poids d'une pièce du centralisateur", "r": "46 livres chacune (2 pièces)" },
-                  { "l": "Poids du centralisateur au complet", "r": "93,0 lbs" },
-                  { "l": "Nombre de travailleurs requis", "r": "2" }],
-        "e": "« Poids de chaque pièce du centralisateur : 46 livres chacune (2 pièces) » ; « Poids total du centralisateur (dessin technique) : 93,0 lbs » ; « Nombre de travailleurs requis : 2 »" }    ],
+        "e": "Étapes 3 à 11 de la procédure : « Avant d'installer le centralisateur, la tige doit être mise sur le train de tige » … « Serrer tous les boulons en maintenant une tension sur les lockwashers à l'aide de l'outil adéquat (clé ou box) »" }
+    ],
     "dr600-op-002": [
       { "t": "vf", "q": "Pendant le pliage et le dépliage, la foreuse reste branchée au 600 volts.", "vrai": true,
         "e": "« LA FOREUSE DOIT RESTER CONNECTÉE AU 600 VOLTS POUR TOUTE LA DURÉE DES OPÉRATIONS DE PLIAGE-DÉPLIAGE »" },
