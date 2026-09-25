@@ -11,11 +11,7 @@
         "e": "« Les cales de roues doivent être en place en tout temps lorsque la fiche de cadenassage est appliquée. »" },
       { "q": "Que doit-on cadenasser si l'interrupteur principal ne peut être cadenassé ?",
         "o": ["Rien, on annule le travail", "La poignée du panneau", "Le klaxon", "Le capot"], "a": 1,
-        "e": "« Si l'interrupteur principal ne peut être cadenassé, cadenasser la poignée du panneau. »",
-        "img": "images/figures/cadenassage-cat-416-3.jpg", "detail": "La Caterpillar 416 et son panneau de commande." },
-      { "q": "Seules quelles pinces sont conformes aux exigences à la mine Odyssey ?",
-        "o": ["N'importe quelle pince", "Les pinces avec crochet intégré", "Les pinces en plastique", "Les pinces à ressort"], "a": 1,
-        "e": "« À la mine Odyssey, seules les pinces avec crochet intégré sont conformes aux exigences. »" }
+        "e": "« Si l'interrupteur principal ne peut être cadenassé, cadenasser la poignée du panneau. »" }
     ],
     "cadenassage-cubex": [
       { "q": "Sur quoi doit se faire le cadenassage simple de la CUBEX ?",

@@ -25,11 +25,9 @@
       { "q": "Sur l'adapteur, que signifient 2 lignes dans le bas ?",
         "o": ["2 brins", "2 pouces", "2 sertissages requis", "Rien de particulier"], "a": 0,
         "e": "« 2 lignes dans le bas de l'adapteur égale 2 brins »" },
-      { "q": "Combien d'options de sertissage la sertisseuse propose-t-elle ?",
-        "o": ["4", "6", "8", "10"], "a": 2,
-        "e": "« Sélectionner une des 8 options selon la grosseur du boyau et le nombre de brins. »" },
-      { "t": "vf", "q": "En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coupe-boyau.", "vrai": true,
-        "e": "« En tout temps, appuyer sur le bouton d'arrêt d'urgence arrêtera le coup-boyau »" }
+      { "t": "erreur", "q": "Un collègue sertit un adapteur sur un boyau. Quelle action est une ERREUR ?",
+        "o": ["Il insère l'adapteur approprié au bout du boyau.", "Il choisit les mâchoires appropriées et les glisse dans la sertisseuse.", "Il ferme le garde avant de sertir.", "Il enfonce l'adapteur plus loin que le bord des mâchoires, pour être sûr qu'il tienne."], "a": 3,
+        "e": "Page 3 du PDF : « Insérer l'adapteur en alignant la ligne avec le bord des mâchoires de la sertisseuse » — l'enfoncer plus loin est donc une erreur. Les autres actions : « Insérer l'adapteur approprié aux extrémités du boyau » ; « Choisir les mâchoires appropriées et les glisser dans la sertisseuse » ; « Fermer le garde »." }
     ],
     "atelier-mec-003": [
       { "t": "trou", "q": "La presse ENERPAC IPR 5075 opère à une pression maximum de ______.",
