@@ -56,9 +56,9 @@
       { "t": "trou", "q": "Les tiges tournent. Tu dois toujours te tenir à l'écart, soit à ______, des tiges rotatives.",
         "o": ["1 mètre", "2,4 mètres", "5 mètres", "Pas de distance fixe"], "a": 1,
         "e": "« Tenez-vous toujours à l'écart (2,4 mètres) des tiges rotatives. »" },
-      { "q": "Un trou a besoin de plusieurs forets. Dans quel ordre les utiliser ?",
+      { "q": "Un trou a besoin de plusieurs forets (bits). Dans quel ordre les utiliser ?",
         "o": ["Les plus usés d'abord", "Les neufs d'abord, puis les usés", "Peu importe", "Alterner neuf et usé"], "a": 1,
-        "e": "« Si vous utilisez plus d'un foret dans un même trou : toujours utiliser les forets neufs au début en allant vers les plus usés. »" }    ],
+        "e": "« Si le forage d'un trou nécessite l'utilisation de plusieurs bits, s'assurer de commencer avec les plus neuves » ; « Si vous utilisez plus d'un foret dans un même trou : toujours utiliser les forets neufs au début en allant vers les plus usés. »" }    ],
     "pro-op-sm-003": [
       { "q": "Quand la foreuse se déplace, quelle distance minimum garder entre toi et elle ?",
         "o": ["1 mètre", "2,4 mètres", "5 mètres", "Aucune"], "a": 1,

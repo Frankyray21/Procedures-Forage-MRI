@@ -145,9 +145,9 @@ window.QUIZ_PROC = {
       "e": "« Si l'extension doit être manipulée sous tension, utiliser le crochet de plastique. »" },
     { "t": "vf", "q": "Le câble électrique doit être accroché au mur au niveau de la poitrine, soit à 4 à 5 pieds du banc.", "vrai": true,
       "e": "« Accrocher le câble électrique au mur au niveau de la poitrine (4 à 5 pieds du banc). »" },
-    { "q": "Où tu poses un whip check sur les boyaux d'air ?",
-      "o": ["À chaque joint", "Juste au compresseur", "Au bout du boyau", "Nulle part"], "a": 0,
-      "e": "« Installer les dispositifs de retenue (whip check) à chaque joint des boyaux d'air. »" },
+    { "q": "Sur les boyaux d'air, où installes-tu les dispositifs de retenue (whip check) ?",
+      "o": ["À chaque joint", "Seulement au raccord du compresseur", "Seulement au raccord de la foreuse", "Seulement sur le boyau haute pression"], "a": 0,
+      "e": "« Les dispositifs de retenues (whip check) sont installés à chaque joint (s'il y en a un). »" },
     { "q": "Où tu accroches les boyaux par rapport au câble électrique ?",
       "o": ["Au-dessus du câble", "Sous le câble électrique", "Enroulés autour du câble", "Au sol"], "a": 1,
       "e": "« Suspendre tous les boyaux en-dessous du câble électrique pour éliminer tout contact avec roches branlantes ou équipement minier. »" },
@@ -286,9 +286,6 @@ window.QUIZ_PROC = {
     "pro-op-ith-005": [
     ],
     "pro-op-ith-006": [
-      { "q": "À quoi sert le raccord entre la V-30 et la tige ?", "d": "difficile",
-        "o": ["À serrer le plus fort possible", "À éviter le serrage pour dévisser facile", "À rien, c'est décoratif", "À ajouter de l'eau"], "a": 1,
-        "e": "« Utiliser obligatoirement le raccord situé entre la V-30 et la tige pour empêcher le serrage et permettre le désaccouplement facile. »" },
       { "q": "L'alésage débouche. Comment tu protèges les travailleurs du trou ?", "d": "difficile",
         "o": ["Tu ne fais rien", "Tu laisses un pilier de couronne, ou tu poses une plaque d'acier marquée sur le trou", "Tu tends une corde", "Tu remplis le trou d'eau"], "a": 1,
         "e": "« Protéger les travailleurs contre le trou en laissant un pilier de couronne en place ou en installant une plaque d'acier identifiée sur le trou. »" }
