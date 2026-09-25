@@ -1927,7 +1927,9 @@
      vérité). La liste se place sous le champ, dans son parent positionné.
      cb : pick(it) nom choisi · picked() déjà relié ? · input() à chaque
      frappe · none() nom absent de l'annuaire · unavailable() ni annuaire
-     en cache ni serveur. */
+     en cache ni serveur · searching() recherche serveur en cours (rien en
+     cache) · found() une liste est affichée. Jamais muet : la recherche
+     serveur est bornée à 8 s. */
   function initNameCombo(input, sugg, cb) {
     var endpoint = attestEndpoint();
     function db(s) { try { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { return s; } }
@@ -1939,6 +1941,7 @@
     }
     function renderSugg(list, term) {
       if (!list.length) { hideSugg(); if (cb.none) cb.none(); return; }
+      if (cb.found) cb.found();
       // Juste sous le champ (et non sous tout le formulaire), à sa largeur.
       sugg.style.top = (input.offsetTop + input.offsetHeight + 4) + 'px';
       sugg.style.left = input.offsetLeft + 'px';
@@ -1968,8 +1971,11 @@
         return;
       }
       var myReq = ++lastReq;
-      fetch(endpoint + '?q=' + encodeURIComponent(v), { method: 'GET' })
-        .then(function (r) { return r && r.ok ? r.json() : null; })
+      if (!local.length && cb.searching) cb.searching();
+      var ctl = window.AbortController ? new AbortController() : null;
+      var tmo = setTimeout(function () { if (ctl) ctl.abort(); else if (myReq === lastReq && !local.length) unavailable(); }, 8000);
+      fetch(endpoint + '?q=' + encodeURIComponent(v), ctl ? { method: 'GET', signal: ctl.signal } : { method: 'GET' })
+        .then(function (r) { clearTimeout(tmo); return r && r.ok ? r.json() : null; })
         .then(function (d) {
           if (myReq !== lastReq || document.activeElement !== input) return;
           if (d && d.ok) {
@@ -1980,8 +1986,9 @@
           }
         })
         .catch(function () {
-          // Réseau tombé / registre injoignable : on garde le local, sinon on
-          // affiche « liste indisponible » plutôt que de rester muet.
+          // Réseau tombé / registre injoignable / trop lent : on garde le
+          // local, sinon « liste indisponible » plutôt que de rester muet.
+          clearTimeout(tmo);
           if (myReq === lastReq && !local.length) unavailable();
         });
     }
@@ -2126,6 +2133,8 @@
     initNameCombo(input, sugg, {
       pick: pick,
       picked: function () { return !!pickedId; },
+      searching: function () { setHint('Recherche des noms…', false); },
+      found: function () { if (!pickedId) setHint(HINT0, false); },
       input: function () { if (pickedId && input.value.toLowerCase() !== pickedName.toLowerCase()) clearPick(); },
       none: function () {
         hint.innerHTML = '<b>Ton nom n\'est pas encore dans la liste des employés.</b> ' +
@@ -4689,6 +4698,8 @@
     initNameCombo(input, box.querySelector('.sv-sugg'), {
       pick: function (it) { input.value = it.name; comboMsg(''); btn.focus(); },
       input: function () { if (msg.classList.contains('warn')) comboMsg(''); },
+      searching: function () { msg.className = 'sv-msg'; msg.textContent = 'Recherche des noms…'; },
+      found: function () { if (msg.textContent === 'Recherche des noms…' || msg.classList.contains('warn')) comboMsg(''); },
       none: function () { comboMsg('<b>Ce nom n\'est pas dans la liste des employés.</b> Vérifie l\'orthographe exacte (Prénom Nom).'); },
       unavailable: function () { comboMsg('<b>La liste des noms est momentanément indisponible.</b> Écris ton nom au complet.'); }
     });
@@ -5115,9 +5126,52 @@
     }
     window.addEventListener('resize', upd);
   }
+  /* ---------- nouvelle version publiée pendant que l'app est ouverte ----------
+     Un onglet (ou l'app installée) laissé ouvert garde le code chargé à son
+     ouverture : une correction publiée entre-temps n'y apparaît qu'au
+     rechargement — « ça marche pas » alors que c'est corrigé. On compare le
+     ?v= de l'index.html en ligne à celui de la page ; plus récent → un avis
+     « Recharger ». Jamais de rechargement imposé : une attestation peut être
+     en cours de saisie. Pas de requête hors ligne ; au plus une vérification
+     toutes les 5 min (au retour sur l'app) et toutes les 30 min. L'APK a ses
+     propres mises à jour à chaud et son propre avis. */
+  function initNewVersionCheck() {
+    if (window.IS_APK || DEMO || !window.fetch) return;
+    var tag = document.querySelector('script[src*="app.js?v="]');
+    var cur = tag ? parseInt((tag.getAttribute('src').match(/\?v=(\d+)/) || [])[1], 10) : 0;
+    if (!cur) return;
+    var last = 0, shown = false;
+    function show() {
+      shown = true;
+      var bar = document.createElement('div');
+      bar.className = 'newver'; bar.setAttribute('role', 'status');
+      bar.innerHTML = '<span class="newver-t">' + ICON.info + ' Nouvelle version du site disponible.</span>' +
+        '<button type="button" class="newver-go">Recharger</button>' +
+        '<button type="button" class="newver-x" aria-label="Plus tard">' + ICON.close + '</button>';
+      document.body.appendChild(bar);
+      bar.querySelector('.newver-go').onclick = function () { location.reload(); };
+      bar.querySelector('.newver-x').onclick = function () { bar.parentNode.removeChild(bar); };
+    }
+    function check() {
+      if (shown || document.hidden || !navigator.onLine || Date.now() - last < 5 * 60 * 1000) return;
+      last = Date.now();
+      // Sans paramètre : le service worker range la réponse sous ./index.html
+      // (cache rafraîchi au passage) au lieu d'accumuler une entrée par appel.
+      fetch('./index.html', { cache: 'no-store' })
+        .then(function (r) { return r && r.ok ? r.text() : ''; })
+        .then(function (t) {
+          var v = parseInt((String(t).match(/\?v=(\d+)/) || [])[1], 10);
+          if (v > cur && !shown) show();
+        })['catch'](function () {});
+    }
+    setTimeout(check, 15000);
+    document.addEventListener('visibilitychange', check);
+    setInterval(check, 30 * 60 * 1000);
+  }
   document.addEventListener('DOMContentLoaded', function () {
     initAppbarTools();   // avant tout le reste : la barre doit avoir sa structure définitive
     route(); initInstall(); initChecklistEvents(); initDisplay(); initHoverCard(); initAppbarH(); initApkNotice();
+    initNewVersionCheck();
     // Contenu révisé depuis la dernière visite : l'annoncer clairement (les
     // badges « Mise à jour » restent ensuite sur les fiches concernées).
     if (updFresh) {
