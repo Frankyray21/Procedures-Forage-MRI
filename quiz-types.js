@@ -246,19 +246,9 @@
         "e": "« Risque d'écrasement : privilégier le transport dans le godet de la chargeuse plutôt que d'attacher la remorque derrière un véhicule. » ; « Toujours verrouiller la barre de tir avec son boulon quand elle est rabaissée pour un déplacement. » ; « …déplacer la foreuse sans remorque (barre de tir) seulement sur courte distance, à plat; interdit dans la rampe. »" },
     ],
     "pro-op-ith-004": [
-      { "t": "vf", "q": "Le boyau à eau fait 2 ½ po de large.", "vrai": false,
-        "e": "« Diamètre du boyau à eau : 1 po » — le 2 ½ po correspond aux boyaux à air (basse et haute pression)." },
-      { "t": "vf", "q": "Les trous de production vont de 3 7/8 po à 6 ½ po.", "vrai": true,
-        "e": "« Diamètre des trous de production visés : 3 7/8'' à 6 ½'' »" },
       { "t": "multi", "q": "Coche les phrases vraies pour le forage en longtrou (ITH / CUBEX).",
         "o": ["Au-dessus de 6 ½ po, on lève les marteaux et forets avec le chariot ou la cloche et une chaîne", "Le boyau à air basse pression fait 1 po de large", "On accroche le câble au mur à hauteur des genoux", "On ajoute un 2e travailleur pour les trous de 200 pieds et plus"], "a": [0, 3],
-        "e": "« Seuil de diamètre exigeant chariot ou cloche et chaîne : plus de 6 ½ po » ; « Diamètre du boyau à air basse pression : 2 ½ po » ; « Hauteur d'accrochage du câble électrique au mur : 4 à 5 pieds du banc (niveau de la poitrine) » ; « Profondeur de trou à partir de laquelle un 2e travailleur est privilégié : 200 pieds et plus »" },
-      { "t": "assoc", "q": "Relie chaque élément à sa bonne valeur.",
-        "pairs": [{ "l": "Largeur des trous de production", "r": "3 7/8\" à 6 ½\"" },
-                  { "l": "Largeur du boyau à air basse pression", "r": "2 ½ po" },
-                  { "l": "Distance minimale mât → console", "r": "1,5 mètre" },
-                  { "l": "Largeur en dessous de laquelle on place les marteaux/forets/tiges à la main", "r": "moins de 6 1/2 po" }],
-        "e": "« Diamètre des trous de production visés : 3 7/8\" à 6 ½\" » ; « Diamètre du boyau à air basse pression : 2 ½ po » ; « Distance mini mât ↔ console : 1,5 mètre » ; « Seuil de diamètre pour positionnement manuel des marteaux/forets/tiges : moins de 6 1/2 po »" }
+        "e": "« Seuil de diamètre exigeant chariot ou cloche et chaîne : plus de 6 ½ po » ; « Diamètre du boyau à air basse pression : 2 ½ po » ; « Hauteur d'accrochage du câble électrique au mur : 4 à 5 pieds du banc (niveau de la poitrine) » ; « Profondeur de trou à partir de laquelle un 2e travailleur est privilégié : 200 pieds et plus »" }
     ],
     "pro-op-ith-005": [
       { "t": "vf", "q": "Le trou pilote fait 10 pouces de large.", "vrai": false,
