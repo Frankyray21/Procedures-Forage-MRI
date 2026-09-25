@@ -437,8 +437,8 @@
         "e": "« Insérer le boyau de cimentation deux pieds à l'intérieur du trou » ; les autres actions : « Insérer le tube jaune de ventilation coupé en biseau au collet du trou sur la longueur à cimenter » ; « Insérer la jute à 1 pied du collet » ; « Attendre le délai de cure de la résine/bâtons de ciment (indications sur la boîte) avant d'injecter »" }
     ],
     "pro-op-dd-005": [
-      { "t": "vf", "q": "Tu remets les 3 boulons du cône sans leurs bushings pour empêcher le cône d'être projeté.", "vrai": true,
-        "e": "« Enlever les 3 boulons 1/2 avec une clé 3/4 avec les bushing sur le cône et les remettre sans les bushing pour empêcher la projection du cône. »" },
+      { "t": "vf", "q": "Au remontage du piston, tu peux visser chaque boulon au complet, un après l'autre : l'ordre de l'étape 7 et le « 1 tour à la fois » ne servent qu'au démontage.", "vrai": false,
+        "e": "« 11. Pour remettre le piston, il est important de remettre ces 3 boulons au début et ensuite suivre l'ordre de revissage de l'étape #7, en vissant 1 tour à la fois, pour ne pas écraser les ressorts juste un côté à la fois »" },
       { "t": "multi", "q": "Coche les phrases VRAIES sur le démontage et le remontage d'un clam ou d'un chuck :",
         "o": ["Les jaws du clam ou du chuck sont fermées avant le démontage.", "Au remontage, on remet les 9 boulons ½ avant les 3 boulons du cône.", "On nettoie bien les deux côtés du couvercle avant de le remettre.", "Les pièces à changer peuvent être les ressorts, le chuck bowl et le piston."], "a": [0, 2, 3],
         "e": "« S'assurer que les jaws (mâchoires) dans le clam ou le chuck (mandrin) soient en position fermée. » ; « Bien nettoyer les deux côtés du couvercle avant de le remettre en place » ; « Changer les pièces à changer (ex : ressorts, chuck bowl, piston) » ; au remontage du piston : « il est important de remettre ces 3 boulons au début »." },
@@ -453,7 +453,11 @@
         "e": "« Dès que les 9 boulons ½ de 2'' ¼ sont enlevés sur un chuck, vous devez en remettre des neufs » — les remettre après inspection est donc une erreur. Les autres actions sont conformes aux étapes 3, 6 et 7 du PDF." },
       { "t": "trou", "q": "Tu dévisses les 6 derniers boulons ½ seulement 1 tour à la fois, dans l'ordre de la photo : les ressorts sont écrasés de ______.",
         "o": ["1/8 pouce", "1/4 pouce", "1/2 pouce", "1 pouce"], "a": 1,
-        "e": "Étape 7 du PDF : « Il est important de dévisser les boulons seulement 1 tour à la fois, en suivant l'ordre sur la photo, les ressorts sont écrasés de 1/4 pouces. »" }
+        "e": "Étape 7 du PDF : « Il est important de dévisser les boulons seulement 1 tour à la fois, en suivant l'ordre sur la photo, les ressorts sont écrasés de 1/4 pouces. »" },
+      { "q": "Sur la photo, tu enlèves les 6 derniers boulons ½ du chuck. Comment dois-tu les dévisser ?",
+        "o": ["Seulement 1 tour à la fois, en suivant l'ordre 1 à 6 de la photo", "Chaque boulon au complet, un après l'autre, en faisant le tour", "Tous ensemble, à l'impact, le plus vite possible", "Dans n'importe quel ordre, pourvu que ce soit 1 tour à la fois"], "a": 0,
+        "e": "« 7. Enlever les 6 derniers boulons ½ avec une clé 3/4 en suivant l'ordre sur la photo. Il est important de dévisser les boulons seulement 1 tour à la fois, en suivant l'ordre sur la photo, les ressorts sont écrasés de 1/4 pouces. »",
+        "img": "images/figures/pro-op-dd-005-6.jpg", "imgEssentiel": true, "detail": "Étape 7 : les 6 derniers boulons ½ du chuck, numérotés comme sur la photo du PDF." }
     ],
     "pro-op-dd-012": [
       { "t": "vf", "q": "Avant de forer à distance, on met la procédure dans un sac étanche sur les clôtures de tous les accès. Le foreur la signe au début de chaque quart.", "vrai": true,

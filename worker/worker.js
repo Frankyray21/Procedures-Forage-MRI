@@ -55,6 +55,7 @@
          "score":"12/13 — 92 %", "revision":"Juin 2024", "date":"AAAA-MM-JJ",
          "readTime":"3 min 42 s", "quizTime":"2 min 10 s",
          "readSeconds":222, "quizSeconds":130,
+         "docTime":"4 min 05 s", "docSeconds":245, "docEstimate":"≈ 4 min",
          "pdfBase64":"(opt) PDF de l'attestation en base64",
          "pdfName":"(opt) nom du fichier .pdf" }
        Le PDF (généré sur l'appareil, même hors-ligne) est joint au champ
@@ -64,8 +65,12 @@
    SUIVI DU TEMPS (pour les gestionnaires) : le site mesure le temps ACTIF passé
    sur la fiche et sur le quiz (écran visible), NON affiché au travailleur. Écrit
    dans « Temps sur la fiche » / « Temps sur le quiz » (lisible) et « Secondes
-   fiche » / « Secondes quiz » (nombres, pour tri/analyse). Si ces colonnes
-   manquent, le Worker réessaie sans elles : l'attestation est enregistrée quand même.
+   fiche » / « Secondes quiz » (nombres, pour tri/analyse). Le temps de lecture
+   du DOCUMENT officiel (PDF ouvert dans l'app), lui montré au travailleur
+   avant d'attester, va dans « Temps de lecture du document » / « Secondes
+   document », et l'estimé affiché dans « Lecture estimée ». Si ces colonnes
+   manquent, le Worker réessaie sans elles (celles du document d'abord, puis
+   toutes) : l'attestation est enregistrée quand même.
    ───────────────────────────────────────────────────────────────────────── */
 
 const AIRTABLE_BASE  = "appmq82YjvEUglYZU";   // base « Formations »
@@ -174,6 +179,9 @@ export default {
     const quizTime = clean(body.quizTime, 40);   // ex. « 2 min 10 s »
     const readSec  = intOrNull(body.readSeconds);
     const quizSec  = intOrNull(body.quizSeconds);
+    const docTime  = clean(body.docTime, 40);    // ex. « 4 min 05 s » (PDF lu dans l'app)
+    const docSec   = intOrNull(body.docSeconds); // 0 = document jamais ouvert dans l'app
+    const docEst   = clean(body.docEstimate, 40);// ex. « ≈ 4 min »
     let empId = validRecId(body.employeeId);     // lien vers la liste d'employés
 
     if (!env.AIRTABLE_TOKEN) {
@@ -227,8 +235,17 @@ export default {
     if (quizTime)       timeFields["Temps sur le quiz"] = quizTime;
     if (readSec != null) timeFields["Secondes fiche"] = readSec;
     if (quizSec != null) timeFields["Secondes quiz"] = quizSec;
+    // Lecture du document officiel (colonnes ajoutées le 25 septembre 2026) :
+    // repli séparé, pour ne pas perdre les autres temps si elles manquaient.
+    const docFields = {};
+    if (docTime)        docFields["Temps de lecture du document"] = docTime;
+    if (docSec != null) docFields["Secondes document"] = docSec;
+    if (docEst)         docFields["Lecture estimée"] = docEst;
 
-    let at = await postRecord({ ...fields, ...timeFields }, env);
+    let at = await postRecord({ ...fields, ...timeFields, ...docFields }, env);
+    if (at && !at.ok && Object.keys(docFields).length) {
+      at = await postRecord({ ...fields, ...timeFields }, env);   // repli sans les colonnes du document
+    }
     if (at && !at.ok && Object.keys(timeFields).length) {
       at = await postRecord(fields, env);   // repli sans les colonnes de temps
     }

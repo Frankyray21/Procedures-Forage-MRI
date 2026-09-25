@@ -115,6 +115,9 @@ Aucune autre configuration : le Worker cible le champ par son nom.
 | Temps sur le quiz   | `2 min 10 s`                     | temps actif sur le quiz (gestion.)      |
 | Secondes fiche      | `222`                            | idem en secondes (tri / analyse)        |
 | Secondes quiz       | `130`                            | idem en secondes (tri / analyse)        |
+| Temps de lecture du document | `4 min 05 s`            | temps actif de lecture du PDF dans l'app, montré au travailleur avant d'attester |
+| Secondes document   | `245`                            | idem en secondes (0 = PDF jamais ouvert dans l'app) |
+| Lecture estimée     | `≈ 4 min`                        | temps de lecture estimé du PDF (180 mots/min + 15 s par page) |
 | Statut              | `Reçu` / `À relier`              | selon que l'employé a été trouvé        |
 | Source              | `site procédures`                | fixe                                    |
 | Attestation PDF     | *(pièce jointe .pdf)*            | PDF généré sur l'appareil, téléversé    |

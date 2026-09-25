@@ -376,7 +376,7 @@
       var t = el.getAttribute('data-fmt') === 'clock' ? rtClock(ms) : (ms >= 1000 ? fmtDuration(ms) : 'pas encore ouvert');
       if (el.textContent !== t) el.textContent = t;
     });
-    [].forEach.call(document.querySelectorAll('.attest-rt[data-pid]'), function (box) {
+    [].forEach.call(document.querySelectorAll('.attestcf-rt[data-pid]'), function (box) {
       if (box.getAttribute('data-pid') !== PT.pid) return;
       var est = parseInt(box.getAttribute('data-est'), 10) || 0;
       box.setAttribute('data-state', ms < 1000 ? 'none' : (est && ms < est * 500 ? 'short' : 'ok'));
@@ -2069,8 +2069,8 @@
     return head + '<div class="scbody">' +
       '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure.' +
       (scoreTxt ? ' Ton résultat au quiz : <b>' + scoreTxt + '</b>.' : '') +
-      ' Tape ton nom (choisis-le dans la liste), signe, vérifie ton temps de lecture puis coche « lu et compris » —' +
-      ' ton attestation est enregistrée pour le suivi des formations.</p>' +
+      ' Tape ton nom (choisis-le dans la liste) et signe. En appuyant sur « Attester la lecture », ton temps de lecture' +
+      ' du document s\'affiche et tu confirmes l\'avoir lu et compris — ton attestation est enregistrée pour le suivi des formations.</p>' +
       '<div class="attest-form">' +
         '<label class="attest-field"><span>Ton nom complet</span>' +
           '<input type="text" class="attest-name" placeholder="Prénom Nom" autocomplete="off" ' +
@@ -2085,35 +2085,105 @@
             '<button type="button" class="sig-clear" aria-label="Effacer la signature">Effacer</button>' +
           '</div>' +
           '<p class="attest-hint sig-hint">Signe dans le cadre avec ton doigt.</p></div>' +
-        attestReadHTML(p) +
         '<button type="button" class="btn attest-btn attest-send">' +
         '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
         ' Attester la lecture</button>' +
         '<div class="attest-msg" aria-live="polite"></div>' +
       '</div></div></div>';
   }
-  /* Juste avant de finaliser : le temps de lecture du DOCUMENT (mesuré depuis
-     son ouverture, et l'estimé), puis la case « J'ai bien lu et compris »,
-     obligatoire. Un temps nul ou bien plus court que l'estimé est signalé
-     (sans bloquer : la procédure a pu être lue sur papier). */
-  function attestReadHTML(p) {
+  /* ---------- confirmation avant d'attester : temps de lecture + « lu et compris »
+     Au toucher de « Attester la lecture » (nom et signature déjà vérifiés),
+     une fenêtre par-dessus la fiche met en ÉVIDENCE le temps de lecture du
+     DOCUMENT officiel (mesuré depuis son ouverture) face au temps estimé,
+     rappelle pourquoi lire la procédure compte, puis exige de cocher « J'ai
+     bien lu et compris » avant de confirmer. Un temps nul ou bien plus court
+     que l'estimé est signalé et « Lire le document » ouvre le lecteur — sans
+     bloquer : la procédure a pu être lue sur papier. Posée sur <body> comme
+     le lecteur plein écran : le bouton RETOUR du téléphone la ferme
+     (fsvShow / fsvClose). */
+  function attestConfirmEl() {
+    var el = document.getElementById('attestcf');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'attestcf';
+    el.className = 'attestcf';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-labelledby', 'attestcf-t');
+    el.innerHTML =
+      '<div class="attestcf-box">' +
+        '<button type="button" class="attestcf-x" aria-label="Fermer">' + ICON.close + '</button>' +
+        '<h3 id="attestcf-t">Avant d\'attester</h3>' +
+        '<div class="attestcf-rt" data-pid="" data-est="0" data-state="none">' +
+          '<span class="attestcf-k">' + ICON.clock + ' Ton temps de lecture du document</span>' +
+          '<b class="attestcf-v rt-live" data-pid="">—</b>' +
+          '<span class="attestcf-est">Temps de lecture estimé : <b class="attestcf-estv"></b></span>' +
+          '<p class="attest-rt-note rt-none">Tu n\'as pas encore ouvert le document officiel dans l\'app.</p>' +
+          '<p class="attest-rt-note rt-short">C\'est bien plus court que le temps estimé : prends le temps de relire le document.</p>' +
+          '<p class="attest-rt-note rt-ok">Tu as pris le temps de lire le document.</p>' +
+          '<button type="button" class="attest-rt-open attestcf-read">' + ICON.doc + ' Lire le document maintenant</button>' +
+        '</div>' +
+        '<p class="attestcf-why">Lire la procédure au complet, c\'est ce qui te protège, toi et ton équipe. ' +
+          'En attestant, tu confirmes l\'avoir lue et comprise ; ton temps de lecture est enregistré avec ton attestation.</p>' +
+        '<label class="attest-ack"><input type="checkbox" class="attest-ack-cb">' +
+          '<span>J\'ai bien <b>lu et compris</b> la procédure <span class="attestcf-code"></span>.</span></label>' +
+        '<p class="attest-hint attest-ack-hint no" hidden>Coche « J\'ai bien lu et compris » pour attester.</p>' +
+        '<div class="attestcf-actions">' +
+          '<button type="button" class="btn ghost attestcf-cancel">Annuler</button>' +
+          '<button type="button" class="btn attest-btn attestcf-ok">' + ICON.check + ' Confirmer et attester</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(el);
+    el.querySelector('.attestcf-x').onclick = el.querySelector('.attestcf-cancel').onclick = function () { fsvClose(el); };
+    el.addEventListener('click', function (e) { if (e.target === el) fsvClose(el); });   // toucher le fond
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && el.classList.contains('on')) fsvClose(el);
+    });
+    return el;
+  }
+  // Ouvre la fenêtre pour la fiche p ; onConfirm() n'est appelé qu'une fois
+  // « J'ai bien lu et compris » coché et « Confirmer et attester » touché.
+  function attestConfirm(p, onConfirm) {
+    var el = attestConfirmEl();
     var est = rtEstimateFiche(p.id), hasDoc = rtDocKeys(p.id).length > 0;
     var ms = (PT.pid === p.id && PT.doc) ? PT.doc.ms() : ptGet(pkey('pt_doc_' + p.id));
-    var st = ms < 1000 ? 'none' : (est && ms < est * 500 ? 'short' : 'ok');
-    return (hasDoc
-      ? '<div class="attest-rt" data-pid="' + esc(p.id) + '" data-est="' + est + '" data-state="' + st + '">' +
-          '<div class="attest-rt-row"><span class="attest-rt-k">' + ICON.clock + ' Ton temps de lecture du document</span>' +
-            '<b class="rt-live" data-pid="' + esc(p.id) + '">' + (ms >= 1000 ? fmtDuration(ms) : 'pas encore ouvert') + '</b></div>' +
-          (est ? '<div class="attest-rt-row"><span class="attest-rt-k">Temps de lecture estimé</span><b>' + rtFmtEst(est) + '</b></div>' : '') +
-          '<p class="attest-rt-note rt-none">Tu n\'as pas encore lu le document officiel dans l\'app. Lis-le avant d\'attester.</p>' +
-          '<p class="attest-rt-note rt-short">Ton temps de lecture est bien plus court que le temps estimé : ' +
-            'prends le temps de relire le document avant d\'attester.</p>' +
-          '<button type="button" class="attest-rt-open">' + ICON.doc + ' Lire le document</button>' +
-        '</div>'
-      : '') +
-      '<label class="attest-ack"><input type="checkbox" class="attest-ack-cb">' +
-        '<span>J\'ai bien <b>lu et compris</b> la procédure' + (p.code ? ' ' + esc(p.code) : '') + '.</span></label>' +
-      '<p class="attest-hint attest-ack-hint no" hidden>Coche « J\'ai bien lu et compris » pour attester.</p>';
+    var box = el.querySelector('.attestcf-rt');
+    box.setAttribute('data-pid', p.id);
+    box.setAttribute('data-est', est);
+    box.setAttribute('data-state', ms < 1000 ? 'none' : (est && ms < est * 500 ? 'short' : 'ok'));
+    box.style.display = hasDoc ? '' : 'none';
+    var v = el.querySelector('.attestcf-v');
+    v.setAttribute('data-pid', p.id);
+    v.textContent = ms >= 1000 ? fmtDuration(ms) : 'pas encore ouvert';
+    el.querySelector('.attestcf-estv').textContent = rtFmtEst(est);
+    el.querySelector('.attestcf-est').style.display = est ? '' : 'none';
+    el.querySelector('.attestcf-code').textContent = p.code || p.titre || '';
+    var ack = el.querySelector('.attest-ack-cb'), ackLbl = el.querySelector('.attest-ack'), ackHint = el.querySelector('.attest-ack-hint');
+    ack.checked = false; ackLbl.classList.remove('no'); ackHint.hidden = true;
+    ack.onchange = function () { if (ack.checked) { ackHint.hidden = true; ackLbl.classList.remove('no'); } };
+    // « Lire le document » : la fenêtre est masquée SANS toucher à l'historique
+    // et le lecteur plein écran reprend l'entrée déjà posée (fsvShow) — un
+    // seul RETOUR le referme, sans appui à vide. Sans aperçu (pas d'images de
+    // pages), on ferme pour de bon et on déplie « Feuilleter le document ».
+    el.querySelector('.attestcf-read').onclick = function () {
+      var th = document.querySelector('#view .pv-thumb');
+      if (th) { fsvHide(el); th.click(); return; }
+      fsvClose(el);
+      var d = document.querySelector('#view details.pdfview');
+      if (d) { d.open = true; if (d.scrollIntoView) d.scrollIntoView({ block: 'start' }); }
+    };
+    el.querySelector('.attestcf-ok').onclick = function () {
+      if (!ack.checked) {
+        ackHint.hidden = false; ackLbl.classList.add('no');
+        if (ackLbl.scrollIntoView) ackLbl.scrollIntoView({ block: 'center' });
+        return;
+      }
+      fsvClose(el);
+      onConfirm();
+    };
+    el.scrollTop = 0;
+    fsvShow(el);
+    try { ack.focus({ preventScroll: true }); } catch (e) {}
   }
   // Anti-doublon : un même nom + procédure + jour n'est envoyé qu'une fois.
   function attestSig(pid, name) { return pid + '|' + norm(name).trim() + '|' + localDay(); }
@@ -2148,21 +2218,6 @@
       sigPad.clear();
       var sh = form.querySelector('.sig-hint');
       if (sh) { sh.textContent = 'Signe dans le cadre avec ton doigt.'; sh.className = 'attest-hint sig-hint'; }
-    };
-    // Case « J'ai bien lu et compris » (obligatoire) + « Lire le document ».
-    var ack = form.querySelector('.attest-ack-cb'), ackLbl = form.querySelector('.attest-ack');
-    var ackHint = form.querySelector('.attest-ack-hint');
-    if (ack) ack.onchange = function () {
-      if (!ack.checked) return;
-      if (ackHint) ackHint.hidden = true;
-      if (ackLbl) ackLbl.classList.remove('no');
-    };
-    var readBtn = form.querySelector('.attest-rt-open');
-    if (readBtn) readBtn.onclick = function () {
-      var th = document.querySelector('#view .pv-thumb');
-      if (th) { th.click(); return; }
-      var d = document.querySelector('#view details.pdfview');
-      if (d) { d.open = true; if (d.scrollIntoView) d.scrollIntoView({ block: 'start' }); }
     };
     var pickedId = '', pickedName = '';
     var HINT0 = 'Commence à taper, puis choisis ton nom dans la liste.';
@@ -2207,13 +2262,13 @@
         if (sigCanvas && sigCanvas.scrollIntoView) sigCanvas.scrollIntoView({ block: 'center' });
         return;
       }
-      // « Lu et compris » : à cocher, en connaissance de son temps de lecture.
-      if (ack && !ack.checked) {
-        if (ackHint) ackHint.hidden = false;
-        if (ackLbl) { ackLbl.classList.add('no'); if (ackLbl.scrollIntoView) ackLbl.scrollIntoView({ block: 'center' }); }
-        return;
-      }
-      var sigDataUrl = sigPad ? sigPad.dataURL() : '';
+      // Temps de lecture du document mis en évidence + « J'ai bien lu et
+      // compris » à cocher, dans une fenêtre de confirmation par-dessus la
+      // fiche (attestConfirm) ; l'attestation ne part qu'une fois confirmée.
+      attestConfirm(p, function () { finalize(name, sigPad ? sigPad.dataURL() : ''); });
+    };
+    // Après confirmation : enregistrement sur l'appareil, PDF signé, envoi.
+    function finalize(name, sigDataUrl) {
       // Appareil partagé : ce nom devient le profil actif de l'appareil (le
       // quiz de cette fiche le suit si le nom diffère de l'ancien profil).
       profAdopt(p.id, name);
@@ -2267,7 +2322,7 @@
         ['catch'](function () { return null; })
         .then(function () { return st.ls ? null : aqReconcile(); })
         .then(function () { if (navigator.onLine) aqKick(true); });
-    };
+    }
     setHint(HINT0, false);
   }
 

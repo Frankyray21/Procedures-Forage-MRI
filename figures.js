@@ -1144,6 +1144,12 @@ window.FIGURES = {
    "page": "3",
    "w": 640,
    "h": 480
+  },
+  {
+   "src": "images/figures/pro-op-dd-005-6.jpg",
+   "page": "3",
+   "w": 829,
+   "h": 622
   }
  ],
  "pro-op-dd-013": [

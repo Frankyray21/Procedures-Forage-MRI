@@ -1,7 +1,7 @@
 /* Tailles (octets) des fichiers du site — généré par `node gen-sizes.js`.
    Sert à estimer le volume et le temps du téléchargement hors-ligne. */
 window.ASSET_SIZES = {
- "app.js":236096,
+ "app.js":315074,
  "chatbot.js":29863,
  "config.js":4232,
  "data-diamant.js":29289,
@@ -10,7 +10,7 @@ window.ASSET_SIZES = {
  "data-securite.js":4733,
  "data.js":269751,
  "essentiel.js":20081,
- "figures.js":37737,
+ "figures.js":37835,
  "icons/icon-192.png":1409,
  "icons/icon-512.png":4501,
  "icons/icon-maskable-512.png":4501,
@@ -302,6 +302,7 @@ window.ASSET_SIZES = {
  "images/figures/pro-op-dd-005-3.jpg":35181,
  "images/figures/pro-op-dd-005-4.jpg":49299,
  "images/figures/pro-op-dd-005-5.jpg":53035,
+ "images/figures/pro-op-dd-005-6.jpg":90730,
  "images/figures/pro-op-dd-013-1.jpg":15834,
  "images/figures/pro-op-ith-001-1.jpg":29633,
  "images/figures/pro-op-ith-001-10.jpg":31035,
@@ -1042,7 +1043,7 @@ window.ASSET_SIZES = {
  "images/pages/ss-dd-st-001-1.jpg":113074,
  "images/pages/ss-dd-st-001-2.jpg":63849,
  "images/pages/std-dd-installation-1.jpg":68962,
- "index.html":6635,
+ "index.html":7534,
  "llm.js":12237,
  "manifest.webmanifest":828,
  "pages.js":30442,
@@ -1183,9 +1184,9 @@ window.ASSET_SIZES = {
  "quiz-hard3.js":3853,
  "quiz-ith-new.js":20915,
  "quiz-securite.js":3909,
- "quiz-types.js":110472,
+ "quiz-types.js":112932,
  "quiz.js":26650,
  "quiz_proc.js":32418,
- "sizes.js":53966,
- "styles.css":99894
+ "sizes.js":54007,
+ "styles.css":126652
 };
