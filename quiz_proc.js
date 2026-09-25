@@ -49,8 +49,9 @@ window.QUIZ_PROC = {
       "e": "« Clé ALLEN pour barrure coupling de la pompe : 5/16. »" }
   ],
   "pro-op-ith-002": [
-    { "t": "vf", "q": "On ne doit utiliser qu'un seul tire-fort, dont les crochets sont munis de linguet.", "vrai": true,
-      "e": "« N'utiliser qu'un tire-fort dont les crochets sont munis de linguet. »" },
+    { "t": "erreur", "q": "Un collègue dévisse une tige coincée avec les clés et le tire-fort. Quelle action est une ERREUR ?",
+      "o": ["Il applique la procédure de cadenassage avant d'installer la clé.", "Il installe un crochet du tire-fort sur l'ancrage du mât et l'autre sur la manille du manche de la clé.", "Il donne un coup de masse sur le manche de la clé pendant qu'un collègue se tient dans la ligne de la masse.", "Il s'assure d'avoir les pieds sur une surface solide avant de donner un coup de masse."], "a": 2,
+      "e": "« Il sera peut-être nécessaire de donner un coup de masse sur le manche de la clé pour que les tiges se séparent. Dans ce cas, assurez-vous que vos pieds soient sur une surface solide et que personne ne soit dans la ligne advenant que la masse soit échappée. » Les autres actions sont les étapes 2 et 4 de la procédure." },
     { "q": "Que doivent avoir les crochets du tire-fort ?",
       "o": ["Être rouges", "Un linguet", "Être neufs", "Être doublés"], "a": 1,
       "e": "« Les crochets doivent être munis de linguet. »",
@@ -208,8 +209,8 @@ window.QUIZ_PROC = {
     { "t": "trou", "q": "Une distance minimum de ______ entre le mât et la console doit obligatoirement être respectée.",
       "o": ["0,5 m", "1 m", "1,5 m", "3 m"], "a": 2,
       "e": "« Une distance minimum de 1,5 mètre entre le mât et la console doit obligatoirement être respectée. »" },
-    { "q": "Une pièce bouge. Où ne dois-tu pas te placer ?",
-      "o": ["Derrière la console", "Entre la console et le mât, ou à moins de 1,5 m du mât", "Près du tubage", "Au sol"], "a": 1,
+    { "q": "Une pièce est en mouvement sur la foreuse (tige/rod, marteau, tête de forage). Où ne dois-tu pas te placer ?",
+      "o": ["Derrière la console, aux commandes", "Entre la console et le mât, ou à moins de 1,5 m du mât", "À plus de 1,5 m du mât, de n'importe quel côté", "Sur le plancher, loin du mât et des tubages qui dépassent"], "a": 1,
       "e": "« Quand une pièce est en mouvement, aucun travailleur ne peut se placer entre la console et le mât, ni à moins de 1,5 mètre du mât de tous les côtés. »" },
     { "q": "Avant de nettoyer, que fais-tu du marteau et de la slip-plate ?",
       "o": ["Rien", "Monter le marteau au-dessus des tables, fermer la slip-plate, poser la bit dessus et fermer l'interrupteur", "Baisser le marteau", "Ouvrir la slip-plate"], "a": 1,
@@ -329,9 +330,6 @@ window.QUIZ_PROC = {
     "pro-op-ith-004": [
     ],
     "pro-op-ith-005": [
-      { "q": "Quelle est la largeur du trou fini (la monterie) ?", "d": "difficile",
-        "o": ["6½ pouces", "10 pouces", "30 pouces", "40 pouces"], "a": 2,
-        "e": "« Diamètre du trou final (monterie) : 30 pouces. »" }
     ],
     "pro-op-ith-006": [
     ],

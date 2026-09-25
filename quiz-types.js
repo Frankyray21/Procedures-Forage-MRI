@@ -263,18 +263,12 @@
     "pro-op-ith-005": [
       { "t": "vf", "q": "Le trou pilote fait 10 pouces de large.", "vrai": false,
         "e": "« Diamètre trou pilote : 6½ po. » — le 10 po est le diamètre d'alésage pour le centralisateur (nez) de la V-30." },
-      { "t": "vf", "q": "On place la foreuse dans l'axe de la V-30, à environ 15 pieds.", "vrai": true,
-        "e": "« Distance de positionnement foreuse dans l'axe de la V-30 : environ 15 pieds »" },
       { "t": "multi", "q": "Coche les phrases vraies pour la V-30.",
-        "o": ["La chaîne entre le gear box et le drive shaft est en grade 80 et fait 12 pieds", "La tête V-30 entre d'environ 6 pieds dans le roc avant de poser le couvert", "Il faut un centralisateur quand le trou dépasse 40 pieds", "Le marteau de déblocage fait 8 pouces", "Le mât penche vers l'arrière à environ 45 degrés pour poser la V-30"], "a": [0, 1, 2],
-        "e": "« Chaîne entre gear box et drive shaft : grade 80, 12 pieds » ; « Profondeur d'entrée de la tête V-30 dans le roc avant installation du couvert : environ 6 pieds » ; « Seuil d'installation d'un centralisateur (monterie) : plus de 40 pieds » ; « Diamètre du marteau de déblocage : 6 pouces » ; « Angle d'inclinaison du mât vers l'arrière (installation V-30) : environ 60 degrés »" },
-      { "t": "assoc", "q": "Relie chaque élément à sa bonne valeur.",
-        "pairs": [{ "l": "Distance entre la barricade et les premières pièces de matériel", "r": "3 mètres (10 pieds)" },
-                  { "l": "Largeur du boyau d'air basse pression", "r": "2½ po." },
-                  { "l": "Distance entre la console et le mât", "r": "1,5 mètre" },
-                  { "l": "Largeur du trou fini (monterie)", "r": "30 pouces" },
-                  { "l": "Angle du mât penché vers l'arrière (pose de la V-30)", "r": "environ 60 degrés" }],
-        "e": "« Distance mini barricade↔premières pièces de matériel : 3 mètres (10 pieds) » ; « Diamètre boyau d'air basse pression : 2½ po. » ; « Distance console foreuse↔mât : 1,5 mètre » ; « Diamètre du trou final (monterie) : 30 pouces » ; « Angle d'inclinaison du mât vers l'arrière (installation V-30) : environ 60 degrés »" }
+        "o": ["La chaîne entre le gear box et le drive shaft est en grade 80 et fait 12 pieds", "La tête V-30 entre d'environ 6 pieds dans le roc avant de poser le couvert", "Il faut un centralisateur quand le trou dépasse 40 pieds", "Le marteau de déblocage fait 8 pouces", "Le couvert peut rester enlevé pendant le forage de la V-30 si un travailleur surveille le trou"], "a": [0, 1, 2],
+        "e": "« Chaîne entre gear box et drive shaft : grade 80, 12 pieds » ; « Profondeur d'entrée de la tête V-30 dans le roc avant installation du couvert : environ 6 pieds » ; « Si les monteries sont planifiées pour plus de 40 pieds de forage, le foreur de M.R.I. doit installer un centralisateur » ; « aligner le marteau de 6 pouces jusqu'à ce que le trou soit débloqué » ; « L'installation du couvert fourni par M.R.I. ou le client sur la monterie est obligatoire en tout temps lors du forage de V-30 en descendant »." },
+      { "t": "trou", "q": "Pour poser la V-30, tu inclines le mât vers l'arrière à un angle d'environ ______, en gardant la base du mât au sol.",
+        "o": ["30 degrés", "45 degrés", "60 degrés", "75 degrés"], "a": 2,
+        "e": "« 2. Incliner le mât à un angle d'environ 60 degrés vers l'arrière en gardant la base du mât au sol. »" }
     ],
     "pro-op-ith-006": [
       { "t": "vf", "q": "Le trou pour recevoir le guide de la V-30 se fait à 10 po.", "vrai": true,
@@ -307,18 +301,9 @@
     "pro-op-ith-012": [
     ],
     "pro-op-ith-014": [
-      { "t": "vf", "q": "Un casing de 10 po : le 1er forage se fait à 8 po.", "vrai": false,
-        "e": "« Casing 10 pouces — 1er forage : 6 pouces 1/2 (selon les besoins) »" },
       { "t": "multi", "q": "Coche les phrases vraies sur l'installation du tubage (casing).",
         "o": ["Casing de 4 po : le 1er forage se fait à 3 7/8 po", "Casing de 10 po : le 2e forage se fait à 10 po", "Casing de 6 po : le 2e forage se fait à 8 po", "La procédure de forage de référence est PRO-OP-ITH-012"], "a": [0, 1],
-        "e": "« Casing 4 pouces — 1er forage : 3 pouces 7/8 » ; « Casing 10 pouces — 2e forage : 10 pouces, 1 pied dans le roc solide » ; « Casing 6 pouces — 2e forage : 6 pouces… » ; « Procédure de forage de référence : PRO-OP-ITH-004 »" },
-      { "t": "assoc", "q": "Associe chaque élément à sa bonne valeur.",
-        "pairs": [{ "l": "Distance min. entre mât et console", "r": "1,5 m" },
-                  { "l": "Casing 4 po : 1er forage", "r": "3 pouces 7/8 (selon les besoins)" },
-                  { "l": "Casing 4 po : 2e forage", "r": "4 pouces, 1 pied dans le roc solide" },
-                  { "l": "Casing 6 po : 1er forage", "r": "4 pouces 1/2 (selon les besoins)" },
-                  { "l": "Casing 6 po : 2e forage", "r": "6 pouces, 1 pied dans le roc solide" }],
-        "e": "« Distance minimum mât ↔ console : 1,5 m » ; « Casing 4 pouces — 1er forage : 3 pouces 7/8 (selon les besoins) » ; « Casing 4 pouces — 2e forage : 4 pouces, 1 pied dans le roc solide » ; « Casing 6 pouces — 1er forage : 4 pouces 1/2 (selon les besoins) » ; « Casing 6 pouces — 2e forage : 6 pouces, 1 pied dans le roc solide »" }
+        "e": "« Casing 4 pouces — 1er forage : 3 pouces 7/8 » ; « Casing 10 pouces — 2e forage : 10 pouces, 1 pied dans le roc solide » ; « Casing 6 pouces — 2e forage : 6 pouces… » ; « Procédure de forage de référence : PRO-OP-ITH-004 »" }
     ],
     "pro-op-ith-016": [
       { "t": "vf", "q": "Le marteau de 4 po pèse 89 lbs.", "vrai": true,
