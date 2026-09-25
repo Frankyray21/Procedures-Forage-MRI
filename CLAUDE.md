@@ -29,6 +29,14 @@ un badge « Mise à jour » sur toute fiche dont la `date_revision` change — c
 donc elle qu'il faut mettre à jour quand on révise une fiche à la main. Voir
 `AIRTABLE-SYNC.md`.
 
+## Publication : automatique (demande du propriétaire)
+
+Une fois un lot terminé et vérifié (`node --check`, tests, bump de version),
+le fusionner dans `main` et pousser SANS redemander : c'est ce qui publie le
+site (GitHub Pages). Si `main` a avancé (commits « Sync Airtable »), fusionner
+d'abord `main` dans la branche. Vérifier ensuite que le workflow « Deploy
+static content to Pages » se termine en succès, et le dire.
+
 ## Autres vérifications avant de pousser
 
 - `node --check` sur chaque fichier JS modifié.
