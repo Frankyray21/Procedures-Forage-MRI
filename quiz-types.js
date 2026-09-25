@@ -450,7 +450,10 @@
         "e": "« Les 9 boulons doivent être serrés avec la clé dynamométrique à 105 lbs/pied »" },
       { "t": "erreur", "q": "Un collègue démonte le chuck pour changer les ressorts. Quelle action est une ERREUR ?",
         "o": ["Il cadenasse la foreuse avant de démonter.", "Il remet les 3 boulons du cône sans les bushings, pour empêcher le cône d'être projeté.", "Il dévisse les 6 derniers boulons ½ un tour à la fois, dans l'ordre de la photo.", "Il remet les 9 boulons ½ de 2'' ¼ d'origine après les avoir vérifiés."], "a": 3,
-        "e": "« Dès que les 9 boulons ½ de 2'' ¼ sont enlevés sur un chuck, vous devez en remettre des neufs » — les remettre après inspection est donc une erreur. Les autres actions sont conformes aux étapes 3, 6 et 7 du PDF." }
+        "e": "« Dès que les 9 boulons ½ de 2'' ¼ sont enlevés sur un chuck, vous devez en remettre des neufs » — les remettre après inspection est donc une erreur. Les autres actions sont conformes aux étapes 3, 6 et 7 du PDF." },
+      { "t": "trou", "q": "Tu dévisses les 6 derniers boulons ½ seulement 1 tour à la fois, dans l'ordre de la photo : les ressorts sont écrasés de ______.",
+        "o": ["1/8 pouce", "1/4 pouce", "1/2 pouce", "1 pouce"], "a": 1,
+        "e": "Étape 7 du PDF : « Il est important de dévisser les boulons seulement 1 tour à la fois, en suivant l'ordre sur la photo, les ressorts sont écrasés de 1/4 pouces. »" }
     ],
     "pro-op-dd-012": [
       { "t": "vf", "q": "Avant de forer à distance, on met la procédure dans un sac étanche sur les clôtures de tous les accès. Le foreur la signe au début de chaque quart.", "vrai": true,
