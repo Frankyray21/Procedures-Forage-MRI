@@ -381,6 +381,21 @@
       var est = parseInt(box.getAttribute('data-est'), 10) || 0;
       box.setAttribute('data-state', ms < 1000 ? 'none' : (est && ms < est * 500 ? 'short' : 'ok'));
     });
+    [].forEach.call(document.querySelectorAll('.rt-prog[data-pid]'), function (el) {
+      if (el.getAttribute('data-pid') !== PT.pid) return;
+      rtProgPaint(el, ms, parseInt(el.getAttribute('data-est'), 10) || 0);
+    });
+  }
+  // Barre de progression de la lecture (lecteur plein écran et fenêtre
+  // d'attestation) : temps mesuré sur temps estimé, plafonnée à 100 %
+  // (data-done="1" une fois l'estimé atteint). Cachée sans estimation.
+  function rtProgPaint(el, ms, est) {
+    var pct = est ? Math.min(100, Math.round(ms / (est * 1000) * 100)) : 0;
+    el.style.display = est ? '' : 'none';
+    el.setAttribute('aria-valuenow', pct);
+    el.setAttribute('data-done', pct >= 100 ? '1' : '0');
+    var bar = el.firstElementChild;
+    if (bar) bar.style.width = pct + '%';
   }
 
   /* ---------- vue : accueil ---------- */
@@ -2118,6 +2133,7 @@
           '<span class="attestcf-k">' + ICON.clock + ' Ton temps de lecture du document</span>' +
           '<b class="attestcf-v rt-live" data-pid="">—</b>' +
           '<span class="attestcf-est">Temps de lecture estimé : <b class="attestcf-estv"></b></span>' +
+          '<div class="rt-prog" data-pid="" data-est="0" role="progressbar" aria-label="Progression de la lecture" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>' +
           '<p class="attest-rt-note rt-none">Tu n\'as pas encore ouvert le document officiel dans l\'app.</p>' +
           '<p class="attest-rt-note rt-short">C\'est bien plus court que le temps estimé : prends le temps de relire le document.</p>' +
           '<p class="attest-rt-note rt-ok">Tu as pris le temps de lire le document.</p>' +
@@ -2157,6 +2173,9 @@
     v.textContent = ms >= 1000 ? fmtDuration(ms) : 'pas encore ouvert';
     el.querySelector('.attestcf-estv').textContent = rtFmtEst(est);
     el.querySelector('.attestcf-est').style.display = est ? '' : 'none';
+    var prog = el.querySelector('.attestcf-rt .rt-prog');
+    prog.setAttribute('data-pid', p.id); prog.setAttribute('data-est', est);
+    rtProgPaint(prog, ms, est);
     el.querySelector('.attestcf-code').textContent = p.code || p.titre || '';
     var ack = el.querySelector('.attest-ack-cb'), ackLbl = el.querySelector('.attest-ack'), ackHint = el.querySelector('.attest-ack-hint');
     ack.checked = false; ackLbl.classList.remove('no'); ackHint.hidden = true;
@@ -4086,6 +4105,8 @@
           '<div class="docfs-rt" aria-live="off">' +
             '<span class="docfs-rt-i">' + ICON.clock + ' Temps de lecture <b class="rt-live" data-fmt="clock">0:00</b></span>' +
             '<span class="docfs-rt-i docfs-rt-est">Estimé <b class="docfs-est"></b></span>' +
+            // Barre de progression : temps mesuré sur temps estimé (verte une fois l'estimé atteint).
+            '<div class="rt-prog" data-pid="" data-est="0" role="progressbar" aria-label="Progression de la lecture" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>' +
           '</div></div>' +
         '<div class="docfs-pages"></div>';
       document.body.appendChild(fs);
@@ -4109,10 +4130,14 @@
         }).join('');
         box.scrollTop = 0;
         // Le chrono cumule les documents de la fiche : l'estimé aussi.
-        var est = rtFmtEst(PT.pid && rtDocKeys(PT.pid).indexOf(key) >= 0 ? rtEstimateFiche(PT.pid) : rtEstimateDoc(key));
+        var estSec = PT.pid && rtDocKeys(PT.pid).indexOf(key) >= 0 ? rtEstimateFiche(PT.pid) : rtEstimateDoc(key);
+        var est = rtFmtEst(estSec);
         fs.querySelector('.docfs-est').textContent = est;
         fs.querySelector('.docfs-rt-est').style.display = est ? '' : 'none';
         fs.querySelector('.rt-live').setAttribute('data-pid', PT.pid || '');
+        var prog = fs.querySelector('.rt-prog');
+        prog.setAttribute('data-pid', PT.pid || ''); prog.setAttribute('data-est', estSec);
+        rtProgPaint(prog, PT.doc ? PT.doc.ms() : 0, estSec);
         var rt = fs.querySelector('.docfs-rt');      // petit signal à l'ouverture
         rt.classList.remove('flash'); void rt.offsetWidth; rt.classList.add('flash');
         fsvShow(fs);
