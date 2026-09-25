@@ -783,10 +783,14 @@
      complet (vert), en cours de téléchargement (orange) ou incomplet (rouge). */
   function renderPackBadge() {
     var b = document.getElementById('packChip'); if (!b) return;
+    var noNames = 'La liste des employés (choisir ton nom à l\'attestation) n\'est pas encore sur cet appareil — ' +
+      'reste sur un réseau Internet quelques secondes, elle se télécharge toute seule';
     if (window.IS_APK) {
-      // App Android : tout est embarqué à l'installation — toujours prêt.
-      b.className = 'packchip ok'; b.textContent = 'Hors-ligne ✓';
-      b.title = 'Tout le contenu est intégré dans l\'app — fonctionne sous terre';
+      // App Android : le contenu est embarqué à l'installation ; seule la
+      // liste des employés doit venir du serveur.
+      var ok = rosterReady();
+      b.className = 'packchip ' + (ok ? 'ok' : 'warn'); b.textContent = ok ? 'Hors-ligne ✓' : 'Hors-ligne ?';
+      b.title = ok ? 'Tout le contenu est intégré dans l\'app — fonctionne sous terre' : noNames;
       b.style.display = '';
       return;
     }
@@ -802,8 +806,10 @@
       // vérification réelle (verifyAll ou audit) et l'audit le retire dès
       // qu'un fichier manque — alors que packMissing, lui, n'est rafraîchi
       // que par l'audit et peut dater d'avant une réparation réussie.
-      cls += ' ok'; txt = 'Hors-ligne ✓';
-      title = 'Tout le contenu est sur cet appareil — l\'app fonctionne sous terre';
+      if (rosterReady()) {
+        cls += ' ok'; txt = 'Hors-ligne ✓';
+        title = 'Tout le contenu est sur cet appareil — l\'app fonctionne sous terre';
+      } else { cls += ' warn'; txt = 'Hors-ligne ?'; title = noNames; }
     } else if (packMissing > 0) {
       cls += ' warn'; txt = packMissing + ' manquant' + (packMissing > 1 ? 's' : '');
       title = packMissing + ' fichier(s) absent(s) de l\'appareil — reste sur le réseau, le téléchargement reprend tout seul';
@@ -858,7 +864,8 @@
       box.innerHTML = '<div class="offline-line"><span class="ol-chk" aria-hidden="true">' + ICON.check + '</span>' +
         '<span><b>Disponible hors ligne</b> — tout le contenu est intégré dans l\'app' +
         (vName ? ' (contenu ' + esc(vName) + ')' : '') +
-        ' et se met à jour tout seul quand il y a du réseau.</span></div>';
+        ' et se met à jour tout seul quand il y a du réseau.</span></div>' + rosterLineHTML();
+      initRosterLine(box);
       return;
     }
     if (DEMO || !('serviceWorker' in navigator)) { box.innerHTML = ''; return; }
@@ -873,6 +880,7 @@
       } else {
         box.innerHTML = '';
         (top || box).innerHTML = autoCardHTML();
+        if (!rosterReady()) { box.insertAdjacentHTML('beforeend', rosterLineHTML()); initRosterLine(box); }
       }
       return;
     }
@@ -891,6 +899,7 @@
         '<span class="dl-txt"><b>Mise en cache hors-ligne</b> en arrière-plan · <span>' + seen + '</span></span>' +
         '<span class="dl-bar"><i style="width:' + bpc + '%"></i></span>' +
         '<button type="button" class="ol-btn" id="offNow" title="Annuler l\'arrière-plan et télécharger maintenant, app ouverte — sinon le téléchargement continue même app fermée ; une notification t\'avertit à la fin">Télécharger ici</button></div>';
+      if (!rosterReady()) { box.insertAdjacentHTML('beforeend', rosterLineHTML()); initRosterLine(box); }
       var nowBtn = $('#offNow');
       if (nowBtn) nowBtn.onclick = function () { bgAbortThenForeground(); };
       return;
@@ -901,7 +910,7 @@
         '<span><b>Disponible hors ligne</b> — toutes les fiches' +
         (includePdfs() ? ', les ' + nPdf + ' PDF' : '') + ' et les figures (' + fmtMo(totalBytes) +
         ') sont sur cet appareil.</span>' +
-        '<button type="button" class="ol-btn" id="offBtn">Mettre à jour</button></div>';
+        '<button type="button" class="ol-btn" id="offBtn">Mettre à jour</button></div>' + rosterLineHTML();
     } else {
       box.innerHTML = '<div class="offcard slim"><span class="offic">' + DL_ICON + '</span>' +
         '<div class="offtxt"><b>Consulter sans réseau (sous terre)</b>' +
@@ -912,7 +921,7 @@
           'Inclure aussi les ' + nPdf + ' fichiers PDF officiels (chaque page est déjà incluse en image)</label>' +
         '</details>' +
         offlineListHTML() + '</div>' +
-        '<button class="btn" id="offBtn">Tout télécharger</button></div>';
+        '<button class="btn" id="offBtn">Tout télécharger</button></div>' + rosterLineHTML();
       var pdfCb = $('#offPdf');
       if (pdfCb) pdfCb.onchange = function () {
         try { localStorage.setItem('offline_pdfs', pdfCb.checked ? '1' : '0'); } catch (e) {}
@@ -920,6 +929,26 @@
       };
     }
     $('#offBtn').onclick = function () { startPrecache(offlineReady()); };
+    initRosterLine(box);
+  }
+  /* État de la liste des employés sous la carte hors-ligne : prête (N noms),
+     ou manquante avec « Réessayer » — c'est elle qui permet de choisir son nom
+     à l'attestation sous terre. */
+  function rosterLineHTML() {
+    if (!attestEndpoint()) return '';
+    var n = rosterList().length;
+    if (n) return '<div class="offline-line roster-line"><span class="ol-chk" aria-hidden="true">' + ICON.check + '</span>' +
+      '<span><b>Liste des employés</b> — ' + n + ' noms sur cet appareil : ton nom se choisit aussi sous terre.</span></div>';
+    return '<div class="offline-line roster-line warn"><span class="ol-chk" aria-hidden="true">!</span>' +
+      '<span><b>Liste des employés pas encore sur cet appareil</b> — ' +
+      (navigator.onLine ? (rosterBusy ? 'téléchargement en cours…' : 'le serveur des attestations ne répond pas depuis ce réseau.')
+        : 'connecte-toi à Internet avant de descendre.') +
+      ' Sans elle, sous terre, il faudra écrire ton nom au complet.</span>' +
+      (navigator.onLine && !rosterBusy ? '<button type="button" class="ol-btn" id="rosterRetry">Réessayer</button>' : '') + '</div>';
+  }
+  function initRosterLine(box) {
+    var r = box.querySelector('#rosterRetry');
+    if (r) r.onclick = function () { rosterEnsure(true); renderOffline(); };
   }
   /* Téléchargement : 4 fichiers en parallèle ; les fichiers déjà sur
      l'appareil sont sautés (reprise après interruption) sauf en mode
@@ -1887,25 +1916,40 @@
     try { var v = JSON.parse(localStorage.getItem('attest_roster')); return (v && Array.isArray(v.list)) ? v : null; } catch (e) { return null; }
   }
   function rosterList() { var v = rosterGet(); return v ? v.list : []; }
-  var rosterBusy = false;
+  /* La liste des noms fait partie de ce qu'il faut AVANT de descendre : la
+     pastille « Hors-ligne ✓ » l'exige (voir renderPackBadge). Elle vient du
+     serveur des attestations, pas du site : un premier essai raté (réseau lent,
+     serveur injoignable depuis le réseau de la mine) est donc retenté — au
+     retour sur l'app et toutes les 2 min tant qu'elle manque —, borné à 20 s. */
+  function rosterReady() { return !attestEndpoint() || rosterList().length > 0; }
+  var rosterBusy = false, rosterFailAt = 0;
   function rosterEnsure(force) {
     if (rosterBusy || !navigator.onLine) return;
     var endpoint = attestEndpoint(); if (!endpoint) return;
     var v = rosterGet();
     if (v && !force && Date.now() - (v.t || 0) < 12 * 3600 * 1000) return;   // valable 12 h
+    if (!force && Date.now() - rosterFailAt < 60 * 1000) return;              // échec récent : pas d'acharnement
     rosterBusy = true;
-    fetch(endpoint + '?roster=1', { method: 'GET' })
+    var ctl = window.AbortController ? new AbortController() : null;
+    var tmo = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
+    function fail() { clearTimeout(tmo); rosterBusy = false; rosterFailAt = Date.now(); rosterChanged(); }
+    fetch(endpoint + '?roster=1', ctl ? { method: 'GET', signal: ctl.signal } : { method: 'GET' })
       .then(function (r) { return r && r.ok ? r.json() : null; })
       .then(function (d) {
-        rosterBusy = false;
-        if (!d || !d.ok || !Array.isArray(d.results)) return;
+        if (!d || !d.ok || !Array.isArray(d.results) || !d.results.length) { fail(); return; }
+        clearTimeout(tmo); rosterBusy = false; rosterFailAt = 0;
         try { localStorage.setItem('attest_roster', JSON.stringify({ t: Date.now(), list: d.results })); } catch (e) {}
+        rosterChanged();
         // Rafraîchit une liste de suggestions ouverte, le cas échéant.
-        var input = document.querySelector('.attest-name');
+        var input = document.querySelector('.attest-name, .sv-name');
         if (input && document.activeElement === input) input.dispatchEvent(new Event('input'));
       })
-      .catch(function () { rosterBusy = false; });
+      ['catch'](fail);
   }
+  // Pastille « Hors-ligne » et carte hors-ligne suivent l'état de la liste.
+  function rosterChanged() { try { renderOffline(); } catch (e) {} }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) rosterEnsure(); });
+  setInterval(function () { if (!rosterList().length) rosterEnsure(); }, 2 * 60 * 1000);
   /* Recherche locale dans l'annuaire mis en cache (même tri que le serveur : les
      noms qui COMMENCENT par le terme d'abord, puis alphabétique, max 8). */
   function rosterSearch(term) {
@@ -1957,7 +2001,7 @@
       });
       sugg.hidden = false; input.setAttribute('aria-expanded', 'true');
     }
-    function unavailable() { hideSugg(); if (cb.unavailable) cb.unavailable(); }
+    function unavailable() { hideSugg(); if (cb.unavailable) cb.unavailable(!navigator.onLine && !rosterList().length); }
     var tmr = null, lastReq = 0;
     function doSearch() {
       var v = (input.value || '').trim();
@@ -2144,8 +2188,10 @@
       },
       // Registre injoignable ET aucun annuaire en cache : on le dit clairement
       // au lieu de laisser le champ muet — écrire le nom au complet fonctionne.
-      unavailable: function () {
-        hint.innerHTML = '<b>La liste des noms est momentanément indisponible.</b> ' +
+      unavailable: function (offline) {
+        hint.innerHTML = (offline
+          ? '<b>Hors ligne : la liste des noms n\'a pas encore été téléchargée sur cet appareil.</b> '
+          : '<b>La liste des noms est momentanément indisponible.</b> ') +
           'Écris ton nom au complet et envoie — le bureau le reliera à ton dossier.';
         hint.className = 'attest-hint warn';
       }
@@ -3474,15 +3520,24 @@
     };
   }
 
-  // POST au Worker. cb(res) : res = { ok, id } si réussi, sinon null.
+  /* POST au Worker. cb(res) : res = { ok, id } si réussi, sinon null (→ file).
+     Hors ligne : directement en file, sans attendre un échec réseau. Borné à
+     10 s : sous terre, un réseau de mine SANS accès Internet laisse la requête
+     pendue (parfois des minutes) — le pouce et « Envoyer » restaient alors
+     bloqués sur « Envoi… » au lieu de passer en file. */
   function fbPost(payload, cb) {
-    var endpoint = fbEndpoint(); if (!endpoint) { cb(null); return; }
+    var endpoint = fbEndpoint(); if (!endpoint || !navigator.onLine) { cb(null); return; }
     var body = {}; for (var k in payload) if (payload.hasOwnProperty(k)) body[k] = payload[k];
     body.type = 'feedback';
-    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    var done = false, ctl = window.AbortController ? new AbortController() : null;
+    function fin(d) { if (done) return; done = true; clearTimeout(tmo); cb(d); }
+    var tmo = setTimeout(function () { if (ctl) ctl.abort(); fin(null); }, 10000);
+    var opt = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
+    if (ctl) opt.signal = ctl.signal;
+    fetch(endpoint, opt)
       .then(function (r) { return r.json(); })
-      .then(function (d) { cb(d && d.ok ? d : null); })
-      .catch(function () { cb(null); });
+      .then(function (d) { fin(d && d.ok ? d : null); })
+      ['catch'](function () { fin(null); });
   }
 
   // Met une évaluation en file (fusion par cid : jamais deux lignes pour la même).
@@ -4701,7 +4756,10 @@
       searching: function () { msg.className = 'sv-msg'; msg.textContent = 'Recherche des noms…'; },
       found: function () { if (msg.textContent === 'Recherche des noms…' || msg.classList.contains('warn')) comboMsg(''); },
       none: function () { comboMsg('<b>Ce nom n\'est pas dans la liste des employés.</b> Vérifie l\'orthographe exacte (Prénom Nom).'); },
-      unavailable: function () { comboMsg('<b>La liste des noms est momentanément indisponible.</b> Écris ton nom au complet.'); }
+      unavailable: function (offline) {
+        comboMsg(offline ? '<b>Hors ligne : la liste des noms n\'a pas encore été téléchargée sur cet appareil.</b> Écris ton nom au complet.'
+          : '<b>La liste des noms est momentanément indisponible.</b> Écris ton nom au complet.');
+      }
     });
     btn.onclick = function () {
       var name = (input.value || '').replace(/\s+/g, ' ').trim();
@@ -5243,6 +5301,11 @@
       if (window.IS_APK) {
         var vName = (window.__APK_OVERRIDE && window.__APK_OVERRIDE.name) ||
           (window.APK_BUILD && window.APK_BUILD.name) || '';
+        if (!rosterReady()) {
+          rosterEnsure(true);
+          toast('Contenu intégré, mais la liste des employés n\'est pas encore sur l\'appareil : reste sur un réseau Internet quelques secondes avant de descendre.');
+          return;
+        }
         toast('Tout le contenu' + (vName ? ' (' + vName + ')' : '') + ' est intégré dans l\'app — les mises à jour arrivent toutes seules quand il y a du réseau.');
         return;
       }

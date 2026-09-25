@@ -1311,6 +1311,12 @@ footer b{color:var(--muted)}
   font-weight:700;color:var(--text-muted);text-decoration:underline;cursor:pointer}
 .offline-line .ol-btn:hover{color:var(--strong)}
 :root[data-theme="light"] .offline-line .ol-chk{color:#047857}
+/* Liste des employés absente de l'appareil : à régler AVANT de descendre. */
+.offline-line.roster-line.warn{color:#fbbf24}
+.offline-line.roster-line.warn b{color:#fbbf24}
+.offline-line.roster-line.warn .ol-chk{color:#fbbf24;font-weight:900}
+:root[data-theme="light"] .offline-line.roster-line.warn,:root[data-theme="light"] .offline-line.roster-line.warn b,
+:root[data-theme="light"] .offline-line.roster-line.warn .ol-chk{color:#92400e}
 @media(max-width:640px){
   /* la ligne coule comme du texte : coche, phrase et lien enchaînés */
   .offline-line{display:block}
