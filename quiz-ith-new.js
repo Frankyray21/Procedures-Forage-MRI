@@ -71,9 +71,6 @@
         "e": "« Installer des câbles anti-fouets (whipcheck) sur les tuyaux de plus d'un (1) pouce. »" }
     ],
     "pro-op-sm-004": [
-      { "t": "trou", "q": "Au Québec, le plancher du chantier à forer doit être soufflé selon l'______ du RSSTM.",
-        "o": ["Article 12", "Article 437", "Article 136", "Article 439"], "a": 1,
-        "e": "« Le plancher du chantier à forer doit être soufflé selon l'article 437 du Règlement sur la santé et la sécurité du travail dans les mines (RSSTM Québec)… »" },
       { "q": "Le casing doit mesurer quelle longueur ?",
         "o": ["Aussi long que le trou", "Environ 2 pouces de plus que la partie alésée", "2 pieds de plus", "Peu importe"], "a": 1,
         "e": "« Retirez la tige et insérez un casing d'environ 2 pouces plus long que la longueur alésée. »" }

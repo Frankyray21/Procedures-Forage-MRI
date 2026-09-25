@@ -539,13 +539,6 @@
         "e": "« Engager les leviers ''TRAM'' en position ''FORWARD'' pendant 5 secondes, [...] en position ''REVERSE'' pendant 5 secondes » (p. 6, Effectuer les tests de freins, étapes 5-6)" }
     ],
     "pro-op-sm-004": [
-      { "t": "trou", "q": "En Ontario, le plancher du chantier à forer doit être soufflé selon l'article ______ de la loi sur la SST.",
-        "o": ["136", "112", "150", "98"], "a": 0,
-        "e": "« Le plancher du chantier à forer doit être soufflé selon […] l'article 136 de la loi sur la SST en Ontario »" },
-      { "t": "vf", "q": "Pour souffler le plancher au trou, tu ouvres l'eau et un peu d'air.", "vrai": false,
-        "e": "« Pour souffler le plancher à l'endroit du trou, ouvrez l'air et un peu d'eau »" },
-      { "t": "vf", "q": "C'est le superviseur qui commande cette procédure. Tu lui demandes tout changement.", "vrai": false,
-        "e": "« La personne ayant l'autorité sur ce document est le Directeur des opérations. Toute demande pour des changements, corrections ou modifications doit être faite à cette personne. »" },
       { "t": "multi", "q": "Coche les phrases VRAIES sur la pose du casing avec le STOPEMASTER.",
         "o": ["Ferme les mâchoires du centralisateur, mais laisse la tige tourner librement", "On commence le trou avec le REAMER, puis on continue avec la PILOT BIT", "En terrain fracturé, fore le trou de casing dans la roche solide, aussi creux que le terrain fracturé", "Nettoie le trou de bas en haut avec de l'air seulement", "Ne mets jamais tes mains sous les jaws ni sous une tige"], "a": [0, 2, 4],
         "e": "« Fermez les mâchoires du centralisateur autour des tiges en laissant juste assez de jeu pour que la tige puisse tourner librement » ; « En présence de terrain mauvais (fracturé), forer un trou de casing dans la roche solide à au moins la même profondeur que le terrain fracturé » ; « Ne mettez jamais vos mains sous les jaws ou d'une tige de forage »" },
@@ -619,14 +612,9 @@
     "san-sec-005": [
       { "t": "vf", "q": "Au ruban jaune, le visiteur fait un appel de lumière pour dire qu'il est là. Puis il attend le foreur ou l'aide-foreur.", "vrai": true,
         "e": "« Lorsque les visiteurs sont arrivés au ruban jaune, ils doivent faire connaître leur présence aux travailleurs sur le site de forage par un appel de lumière et attendre l'arrivée du foreur ou de l'aide-foreur. »" },
-      { "t": "vf", "q": "Après avoir traversé le ruban, le visiteur reste sous la responsabilité du foreur qui l'a accueilli.", "vrai": false,
-        "e": "« Les visiteurs peuvent ensuite traverser le ruban et le superviseur est responsable des visiteurs. »" },
       { "t": "multi", "q": "Coche les phrases VRAIES sur l'accueil d'un visiteur :",
-        "o": ["La lumière bleue se porte derrière le casque du visiteur.", "Le visiteur doit porter une protection pour les oreilles.", "Le foreur se présente avec son nom et le numéro du site.", "Le visiteur traverse le ruban dès que ses ÉPI sont vérifiés, avant les explications."], "a": [0, 1, 2],
-        "e": "« - Chapeau de sécurité - Lunette de sécurité - Lumière bleue derrière le casque - Bottes de sécurité - Gants - Protection auditive » ; « Bonjour mon nom est ______. Je suis foreur ou aide-foreur et bienvenue au site de forage # ______. » ; le visiteur traverse le ruban seulement après les explications." },
-      { "t": "ordre", "q": "Mets dans le bon ordre les étapes de l'accueil d'un visiteur :",
-        "o": ["Le visiteur arrive au ruban jaune et fait un appel de lumière", "Le foreur ou l'aide-foreur le rejoint et se présente (nom et numéro du site)", "Le travailleur montre les extincteurs, les premiers soins et le refuge", "Le travailleur explique les travaux en cours, puis les conditions autour", "Le visiteur traverse le ruban et le superviseur devient responsable de lui"],
-        "e": "SAN-SEC-005, Procédure d'accueil : « Lorsque les visiteurs sont arrivés au ruban jaune, ils doivent faire connaître leur présence [...] par un appel de lumière » ; « Le foreur ou l'aide-foreur viendra les rejoindre au ruban » ; « Le travailleur donnera ensuite les informations suivantes » ; « Les visiteurs peuvent ensuite traverser le ruban »." },
+        "o": ["Tu lui montres où est le bouton d'arrêt d'urgence.", "Tu lui indiques le refuge le plus près.", "Tu lui expliques la communication radio en cas d'urgence.", "Les gants ne sont pas obligatoires pour un visiteur qui ne touche à rien.", "L'état des accès et du plancher ne concerne que les travailleurs, pas le visiteur."], "a": [0, 1, 2],
+        "e": "Informations générales à donner : « - Communication radio en cas d'urgence - Bouton d'arrêt d'urgence - Localisation du refuge le plus près » ; ÉPI du visiteur : « […] - Bottes de sécurité - Gants - Protection auditive » ; « Sur les conditions environnementales : […] - Condition des accès et du plancher »." },
       { "t": "erreur", "q": "Un foreur accueille un visiteur sur un site où un cadenassage est en cours. Quelle action est une ERREUR ?",
         "o": ["Il rejoint le visiteur au ruban et se présente (nom et numéro du site).", "Il vérifie que le visiteur porte une lumière bleue derrière son casque.", "Il montre les extincteurs, la trousse de premiers soins et la douche oculaire.", "Il prête son propre cadenas au visiteur pour traverser le ruban."], "a": 3,
         "e": "« Cadenassage (Si c'est le cas, les visiteurs doivent avoir un cadenas personnel en leur possession et l'apposer pour traverser le ruban) »" }
