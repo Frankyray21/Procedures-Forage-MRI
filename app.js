@@ -303,7 +303,8 @@
        travailleur (pt_doc_<fiche>), comme les autres chronos.
      Les deux sont rappelés avant l'attestation, qui exige ensuite de cocher
      « J'ai bien lu et compris ». Un PDF ouvert HORS de l'app (« Ouvrir »,
-     « Télécharger ») ne peut pas être chronométré. */
+     « Télécharger ») compte aussi, de l'ouverture jusqu'au retour dans l'app
+     (plafonné — voir ptExt), et figure à part sur le PDF signé. */
   var RT_WPM = 180, RT_PAGE_S = 15, RT_PAGE_NOTXT_S = 76, rtEstCache = {};
   function rtEstimateDoc(key) {
     if (rtEstCache[key] != null) return rtEstCache[key];
@@ -343,12 +344,18 @@
   function ptDocRevCheck(id) {
     try {
       var rev = ptDocRevOf(id), k = pkey('pt_doc_rev_' + id), was = localStorage.getItem(k);
-      if (was !== null && was !== rev) localStorage.removeItem(pkey('pt_doc_' + id));
+      if (was !== null && was !== rev) {
+        localStorage.removeItem(pkey('pt_doc_' + id));
+        localStorage.removeItem(pkey('pt_docx_' + id));
+      }
       if (was !== rev) localStorage.setItem(k, rev);
     } catch (e) {}
   }
   function ptDocReset(id) {
-    try { localStorage.removeItem(pkey('pt_doc_' + id)); } catch (e) {}
+    try {
+      localStorage.removeItem(pkey('pt_doc_' + id));
+      localStorage.removeItem(pkey('pt_docx_' + id));
+    } catch (e) {}
     if (PT.pid === id && PT.doc) {
       var run = PT.doc.on;
       PT.doc = mkClock(0);
@@ -385,6 +392,58 @@
       if (el.getAttribute('data-pid') !== PT.pid) return;
       rtProgPaint(el, ms, parseInt(el.getAttribute('data-est'), 10) || 0);
     });
+  }
+  /* ---- PDF ouvert HORS de l'app (« Ouvrir », « Télécharger ») ----
+     Le toucher note l'heure d'ouverture ; si l'app passe alors en arrière-plan
+     (visionneuse PDF du téléphone, nouvel onglet), le temps jusqu'au RETOUR
+     dans l'app est ajouté au temps de lecture du document. Plafonné par
+     ouverture au double du temps estimé (10 min au moins) : un téléphone
+     laissé de côté ne gonfle pas la lecture. Cumulé à part (pt_docx_<fiche>)
+     pour que le PDF signé dise quelle part a été lue hors de l'app.
+     Mémorisé dans localStorage : si Android ferme l'app pendant la lecture,
+     le temps est repris au redémarrage. Pas de passage en arrière-plan dans
+     les 5 s (simple téléchargement sur ordinateur) : rien n'est compté. */
+  var PTX_KEY = 'pt_ext', PTX_WAIT = 5000, PTX_MIN_S = 600, PTX_MAX_AGE = 12 * 3600000;
+  var ptx = null;
+  function ptxSave() {
+    try {
+      if (ptx) localStorage.setItem(pkey(PTX_KEY), JSON.stringify(ptx));
+      else localStorage.removeItem(pkey(PTX_KEY));
+    } catch (e) {}
+  }
+  function ptxOpen(pid) {
+    ptx = { pid: pid, t0: Date.now(), away: false };
+    ptxSave();
+    var mine = ptx;
+    setTimeout(function () {
+      if (ptx === mine && !ptx.away && !document.hidden) { ptx = null; ptxSave(); }
+    }, PTX_WAIT);
+  }
+  function ptxCredit() {
+    var x = ptx; ptx = null; ptxSave();
+    if (!x || !x.pid) return;
+    var el = Date.now() - x.t0;
+    if (!(el >= 1000) || el > PTX_MAX_AGE) return;
+    var ms = Math.min(el, Math.max(rtEstimateFiche(x.pid) * 2, PTX_MIN_S) * 1000);
+    if (PT.pid === x.pid && PT.doc) { PT.doc.acc += ms; ptFlush(); }
+    else ptSet(pkey('pt_doc_' + x.pid), ptGet(pkey('pt_doc_' + x.pid)) + ms);
+    ptSet(pkey('pt_docx_' + x.pid), ptGet(pkey('pt_docx_' + x.pid)) + ms);
+    rtPaint();
+    toast('Lecture du PDF ajoutée à ton temps de lecture : ' + fmtDuration(ms) + '.');
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('#view .pdfbox a.dl');
+    if (a && PT.pid) ptxOpen(PT.pid);
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (!ptx) return;
+    if (document.hidden) { ptx.away = true; ptxSave(); }
+    else if (ptx.away) ptxCredit();
+  });
+  // Au démarrage : l'app a été fermée pendant la lecture hors de l'app.
+  function ptxResume() {
+    try { ptx = JSON.parse(localStorage.getItem(pkey(PTX_KEY)) || 'null'); } catch (e) { ptx = null; }
+    if (ptx) ptxCredit();
   }
   // Barre de progression de la lecture (lecteur plein écran et fenêtre
   // d'attestation) : temps mesuré sur temps estimé, plafonnée à 100 %
@@ -2293,6 +2352,7 @@
       profAdopt(p.id, name);
       var best = pqBestPct(p.id);
       var t = ptSnapshot(p.id);      // temps de consultation, de quiz et de lecture du document
+      var docx = ptGet(pkey('pt_docx_' + p.id));   // dont lu hors de l'app (« Ouvrir »)
       var docEst = rtFmtEst(rtEstimateFiche(p.id));
       var payload = { name: name, employeeId: pickedId || '', proc: p.code || p.id,
         titre: p.titre || '', date: localDay(),
@@ -2302,6 +2362,7 @@
         readSeconds: Math.round(t.read / 1000), quizSeconds: Math.round(t.quiz / 1000),
         // Lecture du document (depuis l'ouverture du PDF) — figure sur le PDF signé.
         docTime: t.doc >= 1000 ? fmtDuration(t.doc) : '', docSeconds: Math.round(t.doc / 1000),
+        docExtTime: docx >= 1000 ? fmtDuration(docx) : '',
         docEstimate: docEst, ack: true,
         signature: sigDataUrl };
       // La signature est persistée par fiche pour que le re-téléchargement
@@ -2309,7 +2370,7 @@
       try { if (sigDataUrl) localStorage.setItem(pkey('attest_sig_' + p.id), sigDataUrl); } catch (e) {}
       // Lecture du document figée AVEC l'attestation (re-téléchargement depuis
       // « Mon suivi »), puis chrono remis à zéro pour la prochaine fois.
-      try { localStorage.setItem(pkey('attest_doc_' + p.id), JSON.stringify({ t: payload.docTime, e: payload.docEstimate })); } catch (e) {}
+      try { localStorage.setItem(pkey('attest_doc_' + p.id), JSON.stringify({ t: payload.docTime, e: payload.docEstimate, x: payload.docExtTime })); } catch (e) {}
       ptDocReset(p.id);
       var sig = attestSig(p.id, name);
       var done = '';
@@ -3193,7 +3254,10 @@
     add('Résultat au quiz', payload.score);
     // Lecture du document (depuis l'ouverture du PDF) ; les anciennes
     // attestations, sans ces champs, gardent leurs seules lignes de temps.
-    add('Lecture du document', payload.docTime || (payload.docEstimate ? 'document non ouvert dans l\'app' : ''));
+    // « dont … hors de l'app » : part lue dans la visionneuse PDF du téléphone.
+    add('Lecture du document', payload.docTime
+      ? payload.docTime + (payload.docExtTime ? ' (dont ' + payload.docExtTime + ' hors de l\'app)' : '')
+      : (payload.docEstimate ? 'document non ouvert' : ''));
     add('Lecture estimée', payload.docEstimate);
     add('Temps sur la fiche', payload.readTime);
     add('Temps sur le quiz', payload.quizTime);
@@ -4657,6 +4721,7 @@
       quizTime: qz ? fmtDuration(qz) : '',
       docTime: (dk && dk.t) || '',
       docEstimate: (dk && dk.e) || '',
+      docExtTime: (dk && dk.x) || '',
       signature: sig
     };
     var old = btnEl.innerHTML; btnEl.innerHTML = '<span>…</span>';
@@ -5334,6 +5399,7 @@
     setTimeout(function () { aqReconcile(); }, 6000);
     progDirtyFlush(true);   // progression marquée « à pousser » pendant une panne (force : voir aqFlush)
     progPullAuto();     // et relecture serveur (profil actif, au plus toutes les 6 h)
+    ptxResume();        // PDF lu hors de l'app pendant que l'app était fermée
     rosterEnsure();     // annuaire employés mis en cache pour l'autocomplétion hors-ligne
     // ---- pack hors-ligne complet, automatique et persistant ----
     // À un nouveau déploiement (?v= changé), on rouvre la vérification : le
