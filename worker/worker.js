@@ -202,14 +202,62 @@ export default {
        attestation → on renvoie l'enregistrement existant au lieu d'un doublon,
        en complétant sa pièce jointe PDF si elle manquait. Si la recherche
        échoue (Airtable grognon), on crée quand même : ne jamais bloquer. */
+    // Colonnes de suivi du temps (gestionnaires). Envoyées d'abord ; si Airtable
+    // les refuse (colonnes absentes), on réessaie SANS elles pour ne jamais
+    // bloquer l'enregistrement de l'attestation.
+    const timeFields = {};
+    if (readTime)       timeFields["Temps sur la fiche"] = readTime;
+    if (quizTime)       timeFields["Temps sur le quiz"] = quizTime;
+    if (readSec != null) timeFields["Secondes fiche"] = readSec;
+    if (quizSec != null) timeFields["Secondes quiz"] = quizSec;
+    // Lecture du document officiel (colonnes ajoutées le 25 septembre 2026) :
+    // repli séparé, pour ne pas perdre les autres temps si elles manquaient.
+    // Une mise à jour (revise) vide aussi les colonnes absentes du nouvel
+    // envoi : un ancien temps ne doit pas survivre à côté de la nouvelle note.
+    const revise = body.revise === true;
+    const docFields = {};
+    if (docTime || revise)        docFields["Temps de lecture du document"] = docTime || "";
+    if (docSec != null)           docFields["Secondes document"] = docSec;
+    if (docEst || revise)         docFields["Lecture estimée"] = docEst || "";
+
     const dup = await findExistingAttestation(name, proc, date, empId, env);
     if (dup) {
+      /* MISE À JOUR (revise) : le travailleur a refait le quiz et attesté de
+         nouveau le même jour. La ligne du jour prend la nouvelle note, les
+         nouveaux temps et le nouveau PDF signé (l'ancien PDF est retiré).
+         Rejouée (réessai réseau), elle réécrit les mêmes valeurs : sans effet.
+         Temps 1 (sans PDF) : l'ancien PDF est retiré ; temps 2 : le nouveau
+         est joint. */
+      if (revise) {
+        const upd = { "Score quiz": score || "" };
+        if (titre)    upd["Titre procédure"] = titre;
+        if (revision) upd["Révision procédure"] = revision;
+        let pr = await patchRecord(AIRTABLE_TABLE, dup.id, { ...upd, ...timeFields, ...docFields }, env);
+        if (pr && !pr.ok && Object.keys(docFields).length) {
+          pr = await patchRecord(AIRTABLE_TABLE, dup.id, { ...upd, ...timeFields }, env);
+        }
+        if (pr && !pr.ok && Object.keys(timeFields).length) {
+          pr = await patchRecord(AIRTABLE_TABLE, dup.id, upd, env);
+        }
+        if (!pr || !pr.ok) {
+          return json({ ok: false, error: "Airtable a refusé la mise à jour de l'attestation." }, 502, cors);
+        }
+        await patchRecord(AIRTABLE_TABLE, dup.id, { [ATTACH_FIELD]: [] }, env);
+        let pdf = false;
+        if (typeof body.pdfBase64 === "string" && body.pdfBase64) {
+          pdf = await uploadPdfAttachment(dup.id, body.pdfBase64, clean(body.pdfName, 120), env);
+        }
+        return json({ ok: true, id: dup.id, linked: !!empId, pdf, dup: true, revised: true }, 200, cors);
+      }
       let pdf = dup.hasPdf;
       if (!pdf && typeof body.pdfBase64 === "string" && body.pdfBase64) {
         pdf = await uploadPdfAttachment(dup.id, body.pdfBase64, clean(body.pdfName, 120), env);
       }
       return json({ ok: true, id: dup.id, linked: !!empId, pdf, dup: true }, 200, cors);
     }
+    // Création : pas de colonne vide à écrire.
+    if (!docTime) delete docFields["Temps de lecture du document"];
+    if (!docEst)  delete docFields["Lecture estimée"];
 
     // Champs envoyés à Airtable (les noms correspondent exactement aux colonnes).
     // typecast:true → Airtable crée automatiquement l'option « Procédure »
@@ -226,21 +274,6 @@ export default {
     if (score)    fields["Score quiz"] = score;
     if (revision) fields["Révision procédure"] = revision;
     if (empId)    fields["Employé"] = [empId];
-
-    // Colonnes de suivi du temps (gestionnaires). Envoyées d'abord ; si Airtable
-    // les refuse (colonnes absentes), on réessaie SANS elles pour ne jamais
-    // bloquer l'enregistrement de l'attestation.
-    const timeFields = {};
-    if (readTime)       timeFields["Temps sur la fiche"] = readTime;
-    if (quizTime)       timeFields["Temps sur le quiz"] = quizTime;
-    if (readSec != null) timeFields["Secondes fiche"] = readSec;
-    if (quizSec != null) timeFields["Secondes quiz"] = quizSec;
-    // Lecture du document officiel (colonnes ajoutées le 25 septembre 2026) :
-    // repli séparé, pour ne pas perdre les autres temps si elles manquaient.
-    const docFields = {};
-    if (docTime)        docFields["Temps de lecture du document"] = docTime;
-    if (docSec != null) docFields["Secondes document"] = docSec;
-    if (docEst)         docFields["Lecture estimée"] = docEst;
 
     let at = await postRecord({ ...fields, ...timeFields, ...docFields }, env);
     if (at && !at.ok && Object.keys(docFields).length) {

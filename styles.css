@@ -1011,6 +1011,12 @@ footer b{color:var(--muted)}
   padding:.32rem .75rem;white-space:nowrap}
 .attest-lead{flex:1;min-width:230px;color:var(--text-main);font-size:1.05rem;line-height:1.6;margin:0}
 .scbody>.attest-lead{margin:.1rem 0 .9rem}
+/* déjà attestée : refaire le quiz puis attester de nouveau met l'attestation à jour */
+.attest-again{display:flex;align-items:flex-start;gap:.55rem;margin:0 0 .8rem;padding:.6rem .75rem;
+  border:1px solid var(--blue-dark);background:var(--blue-surface);border-radius:8px;
+  color:var(--text-main);font-size:.94rem;line-height:1.5}
+.attest-again svg{flex:none;width:18px;height:18px;margin-top:.12rem;color:var(--blue)}
+.attest-again span{min-width:0}
 .attest-btn{display:inline-flex;align-items:center;gap:.5rem;background:#047857;border-radius:5px}
 .attest-btn:hover{background:#059669}
 .attest-btn:disabled{cursor:default}
@@ -1097,6 +1103,8 @@ footer b{color:var(--muted)}
 .attestcf-actions .attestcf-ok{flex:1 1 auto;justify-content:center}
 .attestcf-ok svg{width:18px;height:18px}
 :root[data-theme="light"] .attest-rt-note{color:#92400e}
+:root[data-theme="light"] .attest-again{background:#eff6ff;border-color:#bfdbfe}
+:root[data-theme="light"] .attest-again svg{color:#1d4ed8}
 :root[data-theme="light"] .attest-rt-note.rt-ok{color:#047857}
 :root[data-theme="light"] .attestcf-rt[data-state="none"] .attestcf-v,
 :root[data-theme="light"] .attestcf-rt[data-state="short"] .attestcf-v{color:#92400e}

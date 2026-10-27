@@ -141,7 +141,7 @@
     var cur = profName();
     if (!cur || profSlug(cur) === profSlug(name)) { profSet(name); return; }
     var to = profSlug(name);
-    ['pq_' + pid, 'pq_fail_' + pid, 'pt_read_' + pid, 'pt_quiz_' + pid, 'pt_doc_' + pid, 'pt_doc_rev_' + pid].forEach(function (base) {
+    ['pq_' + pid, 'pq_last_' + pid, 'pq_fail_' + pid, 'pt_read_' + pid, 'pt_quiz_' + pid, 'pt_doc_' + pid, 'pt_docx_' + pid, 'pt_doc_rev_' + pid].forEach(function (base) {
       try {
         var v = localStorage.getItem(pkey(base));
         if (v != null) { localStorage.setItem(pkeyFor(to, base), v); localStorage.removeItem(pkey(base)); }
@@ -362,6 +362,23 @@
       if (run) PT.doc.start();
     }
     rtPaint();
+  }
+  /* Après une attestation, les temps de consultation de la fiche et du quiz
+     repartent aussi de zéro (figés avec l'attestation, voir attest_doc_) :
+     une NOUVELLE attestation — quiz refait — porte les temps de cette
+     reprise, pas le cumul de toutes les visites depuis la première fois. */
+  function ptAttestReset(id) {
+    ptDocReset(id);
+    try {
+      localStorage.removeItem(pkey('pt_read_' + id));
+      localStorage.removeItem(pkey('pt_quiz_' + id));
+    } catch (e) {}
+    if (PT.pid === id) {
+      var pr = PT.page && PT.page.on, qr = PT.quiz && PT.quiz.on;
+      PT.page = mkClock(0); PT.quiz = mkClock(0);
+      if (pr) PT.page.start();
+      if (qr) PT.quiz.start();
+    }
   }
   var rtTimer = null;
   // Démarre / arrête le chrono du document selon ce qui est à l'écran.
@@ -1966,6 +1983,17 @@
     var c = (window.SITE_CONFIG && window.SITE_CONFIG.attestation) || null;
     return (c && typeof c.endpoint === 'string' && c.endpoint) ? c.endpoint.replace(/\/+$/, '') : '';
   }
+  /* Note portée par l'attestation : celle de la DERNIÈRE tentative complète
+     du quiz (« Recommencer » → la nouvelle note), repli sur le meilleur score
+     pour une tentative antérieure à cet enregistrement (pq_last_ absent) ou
+     faite sur une ancienne version du quiz (nombre de questions différent). */
+  function pqGetLast(id) { try { var v = JSON.parse(localStorage.getItem(pkey('pq_last_' + id))); return (v && typeof v.s === 'number' && v.n > 0) ? v : null; } catch (e) { return null; } }
+  function attestScore(id) {
+    var b = pqGetBest(id), l = pqGetLast(id);
+    var r = (l && (!b || l.n === b.n)) ? l : b;
+    return (r && r.n > 0) ? { s: r.s, n: r.n, pct: Math.round(r.s / r.n * 100) } : null;
+  }
+  function attestScoreTxt(id) { var b = attestScore(id); return b ? b.s + '/' + b.n + ' — ' + b.pct + ' %' : ''; }
   // Meilleur score exprimé en % (ou null si jamais joué).
   function pqBestPct(id) {
     var b = pqGetBest(id);
@@ -2138,11 +2166,15 @@
         '<button type="button" class="btn attest-btn attest-locked" disabled>' +
         'Attester la lecture (complète d\'abord le quiz)</button></div></div>';
     }
-    var best = pqBestPct(p.id);
-    var scoreTxt = best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : '';
-    return head + '<div class="scbody">' +
+    var scoreTxt = attestScoreTxt(p.id);
+    // Déjà attestée : refaire le quiz puis attester de nouveau REMPLACE
+    // l'attestation du jour (nouvelle note, nouveaux temps de lecture).
+    var again = attestInfo(p.id) ? '<p class="attest-again">' + ICON.info +
+      ' <span>Tu as déjà attesté cette procédure. Si tu as refait le quiz, atteste de nouveau : ' +
+      'ton attestation sera mise à jour avec ta nouvelle note et ton temps de lecture.</span></p>' : '';
+    return head + '<div class="scbody">' + again +
       '<p class="attest-lead">Confirme que tu as <b>lu et compris</b> cette procédure.' +
-      (scoreTxt ? ' Ton résultat au quiz : <b>' + scoreTxt + '</b>.' : '') +
+      (scoreTxt ? ' Ton résultat au quiz : <b class="attest-score">' + scoreTxt + '</b>.' : '') +
       ' Tape ton nom (choisis-le dans la liste) et signe. En appuyant sur « Attester la lecture », ton temps de lecture' +
       ' du document s\'affiche et tu confirmes l\'avoir lu et compris — ton attestation est enregistrée pour le suivi des formations.</p>' +
       '<div class="attest-form">' +
@@ -2281,7 +2313,11 @@
       try { localStorage.removeItem(pkey('attest_pending_' + p.id)); } catch (e) {}
       pending = '';
     }
-    if (pending || qit) { attestQueued(sec, suiviName(), qit ? qit.payload : null); return; }
+    // Quiz refait APRÈS la signature : on rouvre le formulaire pour une
+    // nouvelle attestation (elle remplacera celle en attente, voir finalize).
+    var last = pqGetLast(p.id);
+    var stale = !!(last && last.at && (!qit || !qit.payload || !(qit.payload.signedAt >= last.at)));
+    if ((pending || qit) && !stale) { attestQueued(sec, suiviName(), qit ? qit.payload : null); return; }
     rosterEnsure();   // rafraîchit l'annuaire local tant qu'on a du réseau
     var input = form.querySelector('.attest-name');
     var sugg = form.querySelector('.attest-sugg');
@@ -2350,7 +2386,7 @@
       // Appareil partagé : ce nom devient le profil actif de l'appareil (le
       // quiz de cette fiche le suit si le nom diffère de l'ancien profil).
       profAdopt(p.id, name);
-      var best = pqBestPct(p.id);
+      var best = attestScore(p.id);
       var t = ptSnapshot(p.id);      // temps de consultation, de quiz et de lecture du document
       var docx = ptGet(pkey('pt_docx_' + p.id));   // dont lu hors de l'app (« Ouvrir »)
       var docEst = rtFmtEst(rtEstimateFiche(p.id));
@@ -2364,18 +2400,35 @@
         docTime: t.doc >= 1000 ? fmtDuration(t.doc) : '', docSeconds: Math.round(t.doc / 1000),
         docExtTime: docx >= 1000 ? fmtDuration(docx) : '',
         docEstimate: docEst, ack: true,
+        signedAt: Date.now(),
         signature: sigDataUrl };
+      /* Déjà attestée AUJOURD'HUI (envoyée ou en attente) : c'est une
+         MISE À JOUR. Le registre remplace la note, les temps et le PDF de
+         l'enregistrement du jour au lieu de garder l'ancien comme doublon. */
+      var uS = profSlug(profName()), prevSame = aqGet().filter(function (it) {
+        return it.pid === p.id && (it.u == null || it.u === uS) && it.payload && it.payload.date === payload.date;
+      });
+      var ai = attestInfo(p.id);
+      if (prevSame.length || (ai && ai.date === payload.date)) payload.revise = true;
       // La signature est persistée par fiche pour que le re-téléchargement
       // depuis « Mon suivi » la conserve (elle ne peut pas être régénérée).
       try { if (sigDataUrl) localStorage.setItem(pkey('attest_sig_' + p.id), sigDataUrl); } catch (e) {}
       // Lecture du document figée AVEC l'attestation (re-téléchargement depuis
       // « Mon suivi »), puis chrono remis à zéro pour la prochaine fois.
-      try { localStorage.setItem(pkey('attest_doc_' + p.id), JSON.stringify({ t: payload.docTime, e: payload.docEstimate, x: payload.docExtTime })); } catch (e) {}
-      ptDocReset(p.id);
-      var sig = attestSig(p.id, name);
-      var done = '';
-      try { done = localStorage.getItem(pkey('attest_sent_' + p.id)) || ''; } catch (e) {}
-      if (done === sig) { attestSuccess(sec, name, true, payload, ''); return; }
+      // Note et temps de la fiche / du quiz figés aussi (« Mon suivi »).
+      try { localStorage.setItem(pkey('attest_doc_' + p.id), JSON.stringify({ t: payload.docTime, e: payload.docEstimate, x: payload.docExtTime,
+        s: payload.score, r: payload.readTime, q: payload.quizTime })); } catch (e) {}
+      ptAttestReset(p.id);
+      /* Signature d'envoi UNIQUE par attestation (horodatée) : une nouvelle
+         attestation le même jour n'est plus prise pour la précédente — avant,
+         elle était affichée « enregistrée » sans jamais partir. La plus
+         ancienne, si elle attendait encore, est retirée de la file : la
+         nouvelle la remplace. */
+      var sig = attestSig(p.id, name) + '|' + payload.signedAt;
+      if (prevSame.length) {
+        var gone = {}; prevSame.forEach(function (it) { gone[it.sig] = 1; aqdbDel(it.sig); });
+        aqSet(aqGet().filter(function (it) { return !gone[it.sig]; }));
+      }
       try { localStorage.setItem('attest_name', name); } catch (e) {}
 
       /* ---- ENREGISTRER D'ABORD, ENVOYER ENSUITE ----
@@ -2788,6 +2841,10 @@
        prévenu. Le PDF signé reste sur l'appareil pendant tout ce temps. */
   function aqOnSent(it, res) {
     var uSlug = (it.u != null) ? it.u : profSlug(profName());
+    // Envoi parti AVANT d'être remplacé par une attestation plus récente de la
+    // même fiche (quiz refait) : c'est la nouvelle qui fait foi — ne pas
+    // afficher l'ancienne comme « enregistrée » ni lever son marqueur.
+    if (!aqGet().some(function (x) { return x.sig === it.sig; }) && aqFind(it.pid, uSlug)) return;
     try {
       localStorage.removeItem(pkeyFor(uSlug, 'attest_pending_' + it.pid));
       localStorage.setItem(pkeyFor(uSlug, 'attest_sent_' + it.pid), it.sig);
@@ -3455,10 +3512,18 @@
   function pqGetFails(id) { try { var v = JSON.parse(localStorage.getItem(pkey('pq_fail_' + id))); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
   function pqSetFails(id, arr) { try { localStorage.setItem(pkey('pq_fail_' + id), JSON.stringify(arr)); } catch (e) {} }
   // Re-rend la section attestation (déblocage en direct quand le quiz est réussi).
+  // Après « Recommencer » : formulaire ouvert → seule la note affichée change
+  // (nom et signature déjà saisis restent) ; attestation déjà faite (écran
+  // « enregistrée » / « en attente ») → le formulaire revient pour attester
+  // de nouveau avec la nouvelle note et le nouveau temps de lecture.
   function updateAttestGate(id) {
     var sec = document.querySelector('.attest-sec[data-proc="' + id + '"]'); if (!sec) return;
-    if (sec.querySelector('.attest-form') || sec.querySelector('.attest-done')) return;  // déjà débloquée
     var p = DATA.filter(function (x) { return x.id === id; })[0]; if (!p) return;
+    if (sec.querySelector('.attest-form')) {
+      var sc = sec.querySelector('.attest-score');
+      if (sc) sc.textContent = attestScoreTxt(id);
+      return;
+    }
     var html = attestationHTML(p); if (!html) return;
     var d = document.createElement('div'); d.innerHTML = html;
     sec.parentNode.replaceChild(d.firstElementChild, sec);
@@ -3884,6 +3949,8 @@
           }
           pqSetBest(id, correct, n);
           pqSetBestPts(id, pts, maxPts);
+          // Dernière tentative complète : c'est elle que porte l'attestation.
+          try { localStorage.setItem(pkey('pq_last_' + id), JSON.stringify({ s: correct, n: n, pts: pts, max: maxPts, at: Date.now() })); } catch (e) {}
           var sb = box.querySelector('.pqs-b'); var nb = pqGetBest(id);
           if (sb && nb) sb.textContent = 'Meilleur : ' + nb.s + '/' + nb.n;
           updateAttestGate(id);
@@ -4716,9 +4783,9 @@
       titre: p.titre || '',
       date: att.date || localDay(),
       revision: p.date_revision || p.date_creation || '',
-      score: att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : ''),
-      readTime: rd ? fmtDuration(rd) : '',
-      quizTime: qz ? fmtDuration(qz) : '',
+      score: (dk && dk.s) || att.score || (best ? best.s + '/' + best.n + ' — ' + best.pct + ' %' : ''),
+      readTime: (dk && dk.r) || (rd ? fmtDuration(rd) : ''),
+      quizTime: (dk && dk.q) || (qz ? fmtDuration(qz) : ''),
       docTime: (dk && dk.t) || '',
       docEstimate: (dk && dk.e) || '',
       docExtTime: (dk && dk.x) || '',
