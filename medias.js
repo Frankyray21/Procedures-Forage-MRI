@@ -29,7 +29,7 @@ window.MEDIAS = {
    {
     "id": "ddst002a1",
     "src": "audio/pro-dd-st-002.mp3",
-    "titre": "Déjouer les pièges du tube carottier",
+    "titre": "Tube carottier : les pièges qui ne pardonnent pas",
     "duree": "25 min 18 s",
     "genre": "podcast",
     "desc": "Podcast : une discussion qui parle de la procédure PRO-DD-ST-002 (vider le tube carottier) et des pièges à éviter — à écouter en complément du document officiel."
