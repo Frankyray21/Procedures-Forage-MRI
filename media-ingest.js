@@ -98,6 +98,7 @@ function addJob(meta, dir, M) {
   const base = proc + '-' + meta.id;
   const titre = clean(meta.titre, 160) || clean(meta.name, 160).replace(/\.[^.]+$/, '').replace(/_+/g, ' ').trim() || 'Média de formation';
   const entry = { id: meta.id, titre: titre, duree: info.dur ? fmtDur(info.dur) : '' };
+  if (meta.genre === 'podcast') entry.genre = 'podcast';   // pastille « Podcast » sur la fiche
   if (kind === 'video') {
     fs.mkdirSync(path.join(ROOT, 'videos'), { recursive: true });
     fs.mkdirSync(path.join(ROOT, 'images', 'videos'), { recursive: true });

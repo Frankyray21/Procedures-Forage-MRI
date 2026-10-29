@@ -2,7 +2,8 @@
    Tenu à jour par le workflow « Médias » (.github/workflows/media-ingest.yml,
    script media-ingest.js) à partir des envois faits dans l'app (#/medias).
    Format : { "<id fiche>": { "videos": [{id, src, poster, titre, duree}],
-                               "audios": [{id, src, titre, duree}] } } */
+                               "audios": [{id, src, titre, duree, genre?, desc?}] } }
+   genre "podcast" → pastille « Podcast » ; desc → phrase sous le titre. */
 window.MEDIAS = {
  "pro-op-dd-005": {
   "videos": [
@@ -29,7 +30,9 @@ window.MEDIAS = {
     "id": "ddst002a1",
     "src": "audio/pro-dd-st-002.mp3",
     "titre": "Déjouer les pièges du tube carottier",
-    "duree": "25 min 18 s"
+    "duree": "25 min 18 s",
+    "genre": "podcast",
+    "desc": "Podcast : une discussion qui parle de la procédure PRO-DD-ST-002 (vider le tube carottier) et des pièges à éviter — à écouter en complément du document officiel."
    }
   ]
  }

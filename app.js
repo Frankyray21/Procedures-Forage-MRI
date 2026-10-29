@@ -1920,7 +1920,8 @@
         '<div class="pvids">' + fm.videos.map(videoHTML).join('') + '</div></div>';
     }
     if (fm.audios.length) {
-      h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.audio + '</span>Audio de formation</h2>' +
+      h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.audio + '</span>' +
+        (fm.audios.every(function (a) { return a.genre === 'podcast'; }) ? 'Podcast sur la procédure' : 'Audio de formation') + '</h2>' +
         '<div class="pvids">' + fm.audios.map(audioHTML).join('') + '</div></div>';
     }
     // Appareil du gestionnaire (jeton GitHub enregistré) : raccourci d'ajout.
@@ -2016,9 +2017,15 @@
       '</figcaption></figure>';
   }
   // Même mécanique pour l'audio (dossier audio/, mêmes replis hors ligne / APK).
+  // genre « podcast » : pastille + phrase qui dit que c'est une discussion
+  // sur la procédure (pas la lecture du document) ; desc la remplace au besoin.
   function audioHTML(v) {
+    var pod = v.genre === 'podcast';
+    var desc = v.desc || (pod ? 'Podcast : une discussion qui parle de cette procédure — à écouter en complément du document officiel.' : '');
     return '<figure class="pvid paud">' +
-      (v.titre ? '<figcaption><b>' + esc(v.titre) + '</b>' + (v.duree ? '<span class="pvid-d">' + esc(v.duree) + '</span>' : '') + '</figcaption>' : '') +
+      '<figcaption>' + (pod ? '<span class="pvid-tag">Podcast</span>' : '') +
+        (v.titre ? '<b>' + esc(v.titre) + '</b>' : '') + (v.duree ? '<span class="pvid-d">' + esc(v.duree) + '</span>' : '') +
+        (desc ? '<span class="pvid-desc">' + esc(desc) + '</span>' : '') + '</figcaption>' +
       '<audio controls preload="none" src="' + esc(v.src) + '" data-src="' + esc(v.src) + '"' +
         (v.titre ? ' aria-label="' + esc(v.titre) + '"' : '') + '></audio>' +
       '<span class="pvid-off" hidden>Audio non disponible pour le moment : il demande une connexion Internet. Reviens-y quand tu as du réseau.</span>' +
@@ -4837,6 +4844,7 @@
           '<label class="md-f"><span>Fichier vidéo ou audio</span><input type="file" class="md-file" accept="video/*,audio/*,.mp4,.mov,.m4v,.mp3,.m4a,.aac,.wav"></label>' +
           '<p class="md-finfo"></p>' +
           '<label class="md-f"><span>Titre affiché sur la fiche</span><input type="text" class="f md-title" maxlength="160" placeholder="ex. Démontage du chuck — étape par étape"></label>' +
+          '<label class="md-chk"><input type="checkbox" class="md-pod"> <span>C\'est un <b>podcast</b> (une discussion qui parle de la procédure)</span></label>' +
           '<p class="md-note">Vidéo ou audio jusqu\'à 1 Go : il est compressé automatiquement pour les téléphones.</p>' +
           '<button type="button" class="btn md-send">' + ICON.play + ' Envoyer et ajouter à la fiche</button>' +
           '<div class="md-prog" hidden><i></i></div>' +
@@ -4882,7 +4890,7 @@
       var fm = ficheMedias(p), all = fm.videos.map(function (v) { return ['Vidéo', v]; }).concat(fm.audios.map(function (a) { return ['Audio', a]; }));
       box.innerHTML = all.length
         ? '<p class="md-curh">Déjà sur cette fiche :</p><ul class="md-curl">' + all.map(function (x) {
-            return '<li><span><b>' + x[0] + '</b> · ' + esc(x[1].titre || x[1].src) + (x[1].duree ? ' <i>(' + esc(x[1].duree) + ')</i>' : '') + '</span>' +
+            return '<li><span><b>' + (x[1].genre === 'podcast' ? 'Podcast' : x[0]) + '</b> · ' + esc(x[1].titre || x[1].src) + (x[1].duree ? ' <i>(' + esc(x[1].duree) + ')</i>' : '') + '</span>' +
               '<button type="button" class="linkbtn md-del" data-src="' + esc(x[1].src) + '" data-t="' + esc(x[1].titre || '') + '">Retirer</button></li>';
           }).join('') + '</ul>'
         : '<p class="md-curh">Aucun média sur cette fiche pour l\'instant.</p>';
@@ -4917,6 +4925,8 @@
       var kind = /^audio\//.test(f.type) || /\.(mp3|m4a|aac|wav|ogg|opus)$/i.test(f.name) ? 'audio' : 'video';
       var job = { id: 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), action: 'add', proc: pid, kind: kind,
         titre: (titleIn.value || '').trim(), name: f.name, size: f.size, at: new Date().toISOString() };
+      var podIn = view.querySelector('.md-pod');
+      if (podIn && podIn.checked) job.genre = 'podcast';
       sendBtn.disabled = procSel.disabled = fileIn.disabled = titleIn.disabled = true;
       prog.hidden = false; prog.firstChild.style.width = '0%';
       setMsg(msg, 'Envoi en cours… garde cette page ouverte.');
@@ -4927,6 +4937,7 @@
         mjSet(mjGet().concat([{ id: job.id, action: 'add', proc: pid, code: p.code || '', titre: job.titre || f.name, at: job.at, state: 'sent' }]));
         setMsg(msg, 'Fichier envoyé. Traitement en cours sur GitHub — tu peux quitter cette page.', true);
         fileIn.value = ''; titleIn.value = ''; view.querySelector('.md-finfo').textContent = '';
+        if (view.querySelector('.md-pod')) view.querySelector('.md-pod').checked = false;
         sendBtn.disabled = procSel.disabled = fileIn.disabled = titleIn.disabled = false;
         paintJobs(); poll(20000);
       })['catch'](function (e) {
