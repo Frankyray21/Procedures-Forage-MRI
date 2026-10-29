@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v210';
+const VERSION = 'mri-proc-v211';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -32,6 +32,7 @@ const CORE = [
   './data-english.js',
   './pdftext.js',
   './chatbot.js',
+  './medias.js',
   './llm.js',
   './quiz.js',
   './essentiel.js',

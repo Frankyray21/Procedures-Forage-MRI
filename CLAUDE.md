@@ -29,6 +29,17 @@ un badge « Mise à jour » sur toute fiche dont la `date_revision` change — c
 donc elle qu'il faut mettre à jour quand on révise une fiche à la main. Voir
 `AIRTABLE-SYNC.md`.
 
+## Vidéos et audios de formation
+
+Registre : `medias.js` (`window.MEDIAS`, par id de fiche) ; fichiers dans
+`videos/`, `audio/` (aperçus `images/videos/`). Le propriétaire en ajoute
+depuis l'app (page `#/medias`, jeton GitHub sur son appareil) : l'envoi est
+déposé sur la branche `media-incoming`, puis le workflow
+`.github/workflows/media-ingest.yml` (`media-ingest.js`, ffmpeg) compresse,
+met à jour `medias.js`, bump la version et redéploie. Ne pas éditer
+`.github/media/log.json` à la main. Un média ajouté ici à la main va aussi
+dans `medias.js` (pas dans les data*.js).
+
 ## Publication : automatique (demande du propriétaire)
 
 Une fois un lot terminé et vérifié (`node --check`, tests, bump de version),

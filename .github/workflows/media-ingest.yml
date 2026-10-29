@@ -1,0 +1,95 @@
+# Médias (vidéo / audio) ajoutés ou retirés depuis l'app (page #/medias).
+#
+# L'app dépose l'envoi, découpé en morceaux, sur la branche « media-incoming »
+# (API GitHub, avec le jeton saisi dans l'app). Ce workflow :
+#   1. recolle et réencode chaque envoi pour le web (media-ingest.js, ffmpeg) ;
+#   2. l'ajoute à la fiche choisie (medias.js) — ou retire un média ;
+#   3. bump la version du site, pousse sur main et redéploie GitHub Pages ;
+#   4. supprime la branche media-incoming (les gros morceaux ne restent pas
+#      dans l'historique de main).
+# Le résultat de chaque envoi est noté dans .github/media/log.json, que l'app
+# relit pour afficher « ajouté » ou l'erreur.
+name: Médias ajoutés depuis l'app
+
+on:
+  push:
+    branches: [media-incoming]
+
+permissions:
+  contents: write   # committer le média sur main, supprimer media-incoming
+  actions: write    # redéclencher le déploiement Pages (static.yml)
+
+concurrency:
+  group: "media-ingest"
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Envois en attente (branche media-incoming, dossier incoming/)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: _incoming
+          sparse-checkout: incoming
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: Traiter les envois
+        env:
+          INCOMING: ${{ github.workspace }}/_incoming/incoming
+        run: node media-ingest.js
+
+      - name: Committer et pousser (bump de version si contenu servi modifié)
+        id: pub
+        run: |
+          rm -rf _incoming
+          SERVED=$(git status --porcelain -- . ':!.github' | wc -l)
+          ANY=$(git status --porcelain | wc -l)
+          if [ "$ANY" = "0" ]; then
+            echo "Aucun changement."
+            echo "deployed=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$SERVED" != "0" ]; then
+            node gen-sizes.js
+            node bump-version.js
+            node --check service-worker.js
+            node --check medias.js
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Médias ajoutés depuis l'app"
+          for i in 1 2 3 4; do
+            git push origin main && break
+            git pull --rebase origin main
+            sleep $((2**i))
+          done
+          echo "deployed=$SERVED" >> "$GITHUB_OUTPUT"
+
+      # Poussée faite avec le GITHUB_TOKEN : elle ne déclenche pas static.yml.
+      - name: Redéployer le site (GitHub Pages)
+        if: steps.pub.outputs.deployed != '0'
+        run: gh workflow run static.yml --ref main --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Seulement après un traitement réussi (en cas de panne, la branche reste
+      # pour relancer ce workflow) et si personne n'a envoyé autre chose
+      # entre-temps (ce nouvel envoi a sa propre exécution, qui la supprimera).
+      - name: Supprimer la branche media-incoming
+        if: success()
+        run: git push --force-with-lease=refs/heads/media-incoming:${{ github.sha }} origin :refs/heads/media-incoming || true

@@ -208,6 +208,7 @@
     if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : (pp && pp.famille === 'english' ? 'english' : 'procedures')); }
     else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
     else if (h.indexOf('#/suivi') === 0) { renderSuivi(view); setNav('suivi'); }
+    else if (h.indexOf('#/medias') === 0) { renderMedias(view, decodeURIComponent(h.slice(9))); setNav(''); }
     // Code de sécurité : retiré du site (non publié) — anciens liens redirigés.
     else if (h.indexOf('#/code') === 0) { location.replace('#/procedures'); return; }
     else if (h.indexOf('#/diamant') === 0) { if (state.fam !== 'diamant') { state.fam = 'diamant'; state.cat = ''; state.mach = ''; state.q = ''; } renderHome(view); setNav('diamant'); if (fromFiche) window.scrollTo(0, listScroll.diamant || 0); }
@@ -668,7 +669,7 @@
     'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'data-english.js', 'quiz.js', 'essentiel.js',
     'figures.js', 'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
     'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-atelier-sec.js', 'quiz-cadenassage.js', 'quiz-english.js', 'quiz-types.js',
-    'pdftext.js', 'llm.js', 'chatbot.js', 'app.js', 'sizes.js'];
+    'pdftext.js', 'llm.js', 'chatbot.js', 'medias.js', 'app.js', 'sizes.js'];
   var BRAND_FILES = ['images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
   /* Suffixe ?r=<révision> sur les URLs de médias : quand un PDF officiel est
@@ -1912,15 +1913,19 @@
       h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.doc + '</span>Document officiel (PDF)</h2>' + pdfInner + '</div>';
     }
 
-    // Vidéo(s) de formation de la fiche (champ « videos » des données).
-    if (p.videos && p.videos.length) {
+    // Vidéo(s) et audio(s) de formation de la fiche (medias.js).
+    var fm = ficheMedias(p);
+    if (fm.videos.length) {
       h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.play + '</span>Vidéo de formation</h2>' +
-        p.videos.map(videoHTML).join('') + '</div>';
+        '<div class="pvids">' + fm.videos.map(videoHTML).join('') + '</div></div>';
     }
-    // Audio de formation (champ « audios ») : à écouter, par exemple en route.
-    if (p.audios && p.audios.length) {
+    if (fm.audios.length) {
       h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.audio + '</span>Audio de formation</h2>' +
-        p.audios.map(audioHTML).join('') + '</div>';
+        '<div class="pvids">' + fm.audios.map(audioHTML).join('') + '</div></div>';
+    }
+    // Appareil du gestionnaire (jeton GitHub enregistré) : raccourci d'ajout.
+    if (ghTok()) {
+      h += '<p class="pvid-add"><a href="#/medias/' + esc(p.id) + '">' + ICON.play + ' Ajouter une vidéo ou un audio à cette fiche</a></p>';
     }
 
     // Photos et schémas — galerie visuelle (extraits des PDF)
@@ -1997,6 +2002,11 @@
      un APK plus ancien qui ne l'a pas encore la lit depuis le site. Échec
      (hors ligne) : un message le dit au lieu d'un cadre noir muet. */
   var VIDEO_SITE = 'https://frankyray21.github.io/Procedures-Forage-MRI/';
+  // Médias d'une fiche : ceux des données (champs videos / audios) + medias.js.
+  function ficheMedias(p) {
+    var m = (window.MEDIAS && window.MEDIAS[p.id]) || {};
+    return { videos: (p.videos || []).concat(m.videos || []), audios: (p.audios || []).concat(m.audios || []) };
+  }
   function videoHTML(v) {
     return '<figure class="pvid">' +
       '<video controls preload="none" playsinline' + (v.poster ? ' poster="' + esc(v.poster) + '"' : '') +
@@ -4685,6 +4695,273 @@
       '<div class="qacts"><button class="btn" id="qAgain">Recommencer</button>' +
         '<a class="btn ghost" href="#/procedures">Procédures de forage ITH / CUBEX</a></div></div></div>';
     $('#qAgain').onclick = function () { renderQuiz(view); };
+  }
+
+  /* ---------- vue : ajouter une vidéo / un audio (#/medias[/<fiche>]) ----------
+     Pour les GESTIONNAIRES. Le site étant statique, l'envoi passe par GitHub,
+     avec un jeton personnel enregistré sur CET appareil seulement :
+       1. le fichier est découpé en morceaux de 8 Mo envoyés un à un à l'API
+          GitHub (un morceau raté est réessayé, pas tout le fichier) ;
+       2. un commit les dépose sur la branche « media-incoming » avec la fiche
+          choisie (incoming/<envoi>/meta.json) ;
+       3. le workflow « Médias ajoutés depuis l'app » (media-ingest.yml) les
+          recolle, compresse pour le web, ajoute le média à la fiche
+          (medias.js) et republie le site — quelques minutes ;
+       4. cette page relit .github/media/log.json pour annoncer le résultat.
+     Retirer un média suit le même chemin (envoi sans fichier, action delete). */
+  var GH_REPO = 'Frankyray21/Procedures-Forage-MRI', GH_TOK_KEY = 'gh_media_token', MJ_KEY = 'media_jobs';
+  var MEDIA_CHUNK = 8 * 1024 * 1024, MEDIA_MAX = 1024 * 1024 * 1024;
+  function ghTok() { try { return localStorage.getItem(GH_TOK_KEY) || ''; } catch (e) { return ''; } }
+  function gh(method, p, body) {
+    var hd = { 'Authorization': 'Bearer ' + ghTok(), 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    if (body) hd['Content-Type'] = 'application/json';
+    return fetch('https://api.github.com/repos/' + GH_REPO + p, { method: method, headers: hd, cache: 'no-store',
+      body: body ? JSON.stringify(body) : undefined }).then(function (r) {
+      return r.text().then(function (t) {
+        var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
+        if (!r.ok) { var er = new Error((j && j.message) || ('HTTP ' + r.status)); er.status = r.status; throw er; }
+        return j;
+      });
+    });
+  }
+  function ghErrTxt(e) {
+    if (e && e.status === 401) return 'Jeton GitHub refusé (expiré ou mal copié). Enregistre un nouveau jeton.';
+    if (e && (e.status === 403 || e.status === 404)) return 'Ce jeton n\'a pas le droit d\'écrire dans le dépôt (permission « Contents : Read and write » sur Procedures-Forage-MRI).';
+    if (!navigator.onLine) return 'Pas de connexion Internet.';
+    return 'Erreur GitHub : ' + ((e && e.message) || 'inconnue') + '.';
+  }
+  function mjGet() { try { var v = JSON.parse(localStorage.getItem(MJ_KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function mjSet(a) { try { localStorage.setItem(MJ_KEY, JSON.stringify(a.slice(-30))); } catch (e) {} }
+  function mjUpd(id, o) { mjSet(mjGet().map(function (j) { return j.id === id ? Object.assign(j, o) : j; })); }
+  function readB64(blob) {
+    return new Promise(function (res, rej) {
+      var fr = new FileReader();
+      fr.onload = function () { var r = String(fr.result); res(r.slice(r.indexOf(',') + 1)); };
+      fr.onerror = function () { rej(fr.error || new Error('Lecture du fichier impossible')); };
+      fr.readAsDataURL(blob);
+    });
+  }
+  function ghRetry(fn, n) {
+    return fn()['catch'](function (e) {
+      if (n > 1 && !(e && (e.status === 401 || e.status === 403 || e.status === 404))) {
+        return new Promise(function (r) { setTimeout(r, 3000); }).then(function () { return ghRetry(fn, n - 1); });
+      }
+      throw e;
+    });
+  }
+  // Dépose l'envoi (morceaux déjà créés : shas) sur media-incoming. Branche
+  // modifiée entre-temps (autre envoi, traitement terminé) → on recommence
+  // à partir de son nouvel état ; les morceaux, eux, restent valables.
+  function mediaCommit(job, shas, tries) {
+    var exists = true, base;
+    return gh('GET', '/git/ref/heads/media-incoming')['catch'](function (e) {
+      if (e.status !== 404) throw e;
+      exists = false; return gh('GET', '/git/ref/heads/main');
+    }).then(function (ref) {
+      base = ref.object.sha; return gh('GET', '/git/commits/' + base);
+    }).then(function (c) {
+      var dir = 'incoming/' + job.id + '/';
+      var tree = shas.map(function (sha, k) { return { path: dir + 'part-' + ('00' + k).slice(-3), mode: '100644', type: 'blob', sha: sha }; });
+      tree.push({ path: dir + 'meta.json', mode: '100644', type: 'blob', content: JSON.stringify(job, null, 1) });
+      return gh('POST', '/git/trees', { base_tree: c.tree.sha, tree: tree });
+    }).then(function (t) {
+      return gh('POST', '/git/commits', { tree: t.sha, parents: [base],
+        message: (job.action === 'delete' ? 'Média à retirer' : 'Média envoyé') + ' depuis l\'app : ' + job.proc + ' — ' + (job.titre || job.src || '') });
+    }).then(function (cm) {
+      return exists ? gh('PATCH', '/git/refs/heads/media-incoming', { sha: cm.sha, force: false })
+        : gh('POST', '/git/refs', { ref: 'refs/heads/media-incoming', sha: cm.sha });
+    })['catch'](function (e) {
+      if (tries > 1 && e && (e.status === 422 || e.status === 409)) return mediaCommit(job, shas, tries - 1);
+      throw e;
+    });
+  }
+  function mediaSend(job, file, onProg) {
+    var n = file ? Math.ceil(file.size / MEDIA_CHUNK) : 0, shas = [], k = 0;
+    job.parts = n;
+    function next() {
+      if (k >= n) return Promise.resolve();
+      var i = k++;
+      return ghRetry(function () {
+        return readB64(file.slice(i * MEDIA_CHUNK, Math.min(file.size, (i + 1) * MEDIA_CHUNK)))
+          .then(function (b64) { return gh('POST', '/git/blobs', { content: b64, encoding: 'base64' }); });
+      }, 4).then(function (r) { shas[i] = r.sha; onProg((i + 1) / n); return next(); });
+    }
+    return next().then(function () { return mediaCommit(job, shas, 4); });
+  }
+  // Résultats du traitement (.github/media/log.json sur main).
+  function mediaLog() {
+    return gh('GET', '/contents/.github/media/log.json?ref=main').then(function (c) {
+      var bin = atob(String(c.content || '').replace(/\s/g, '')), u = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+      return JSON.parse(new TextDecoder().decode(u)).jobs || {};
+    })['catch'](function (e) { if (e && e.status === 404) return {}; throw e; });
+  }
+  var mediaPollT = null;
+  function renderMedias(view, pre) {
+    if (mediaPollT) { clearTimeout(mediaPollT); mediaPollT = null; }
+    var tok = ghTok();
+    var groups = [['', 'Foreuses ITH / CUBEX / V-30'], ['diamant', 'Forage au diamant'], ['english', 'English — ITH / CUBEX'], ['english-dd', 'English — Diamond drilling']];
+    var seen = {};
+    var opts = '<option value="">— Choisis la procédure —</option>' + groups.map(function (g) {
+      var list = DATA.filter(function (p) { return !seen[p.id] && inSection(p, g[0]); }).sort(cmpCode);
+      list.forEach(function (p) { seen[p.id] = 1; });
+      return list.length ? '<optgroup label="' + esc(g[1]) + '">' + list.map(function (p) {
+        return '<option value="' + esc(p.id) + '"' + (p.id === pre ? ' selected' : '') + '>' + esc((p.code ? p.code + ' — ' : '') + p.titre) + '</option>';
+      }).join('') + '</optgroup>' : '';
+    }).join('');
+    view.innerHTML =
+      '<section class="hero herosm"><div class="wrap">' +
+        '<span class="eyebrow">Gestion du contenu</span>' +
+        '<h1>Ajouter une <span class="hl">vidéo ou un audio</span></h1>' +
+        '<p class="lead">Choisis la procédure et le fichier : il est envoyé, compressé pour les téléphones, puis ajouté à la fiche. ' +
+          'Fichiers jusqu\'à 1 Go (MP4, MOV, MP3, M4A…).</p>' +
+      '</div></section>' +
+      '<div class="wrap mdwrap">' +
+        (tok ? '' :
+        '<div class="mdcard md-tok"><h2>Connexion à GitHub (une seule fois par appareil)</h2>' +
+          '<p>Le site n\'a pas de serveur : les médias sont déposés dans le dépôt GitHub du site. Il faut un <b>jeton personnel</b> :</p>' +
+          '<ol class="md-steps">' +
+            '<li>Sur github.com (compte Frankyray21) : <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings → Developer settings → Fine-grained tokens → Generate new token</a>.</li>' +
+            '<li><b>Repository access</b> : <i>Only select repositories</i> → <b>Procedures-Forage-MRI</b>.</li>' +
+            '<li><b>Permissions</b> → <b>Contents</b> : <i>Read and write</i>. Rien d\'autre.</li>' +
+            '<li>Choisis une expiration (ex. 1 an), <b>Generate token</b>, copie-le et colle-le ici.</li>' +
+          '</ol>' +
+          '<div class="md-row"><input type="password" class="f md-tokin" placeholder="github_pat_…" autocomplete="off">' +
+          '<button type="button" class="btn md-toksave">Enregistrer</button></div>' +
+          '<p class="md-msg md-tokmsg" aria-live="polite"></p>' +
+          '<p class="md-note">Le jeton reste sur cet appareil seulement. Ne le donne à personne.</p>' +
+        '</div>') +
+        '<div class="mdcard md-form"' + (tok ? '' : ' hidden') + '>' +
+          '<label class="md-f"><span>Procédure</span><select class="f md-proc">' + opts + '</select></label>' +
+          '<div class="md-cur"></div>' +
+          '<label class="md-f"><span>Fichier vidéo ou audio</span><input type="file" class="md-file" accept="video/*,audio/*,.mp4,.mov,.m4v,.mp3,.m4a,.aac,.wav"></label>' +
+          '<p class="md-finfo"></p>' +
+          '<label class="md-f"><span>Titre affiché sur la fiche</span><input type="text" class="f md-title" maxlength="160" placeholder="ex. Démontage du chuck — étape par étape"></label>' +
+          '<p class="md-note">Vidéo ou audio jusqu\'à 1 Go : il est compressé automatiquement pour les téléphones.</p>' +
+          '<button type="button" class="btn md-send">' + ICON.play + ' Envoyer et ajouter à la fiche</button>' +
+          '<div class="md-prog" hidden><i></i></div>' +
+          '<p class="md-msg md-sendmsg" aria-live="polite"></p>' +
+        '</div>' +
+        '<div class="mdcard md-jobs-sec"' + (tok ? '' : ' hidden') + '><h2>Envois récents (cet appareil)</h2><div class="md-jobs"></div>' +
+          '<p class="md-note">Le traitement prend quelques minutes (plus pour une longue vidéo). Le média apparaît ensuite sur la fiche ' +
+          'dès que l\'app se met à jour (avis « nouvelle version »).' +
+          (tok ? ' · <button type="button" class="linkbtn md-forget">Oublier le jeton de cet appareil</button>' : '') + '</p></div>' +
+      '</div>';
+
+    var procSel = view.querySelector('.md-proc'), fileIn = view.querySelector('.md-file'), titleIn = view.querySelector('.md-title');
+    var sendBtn = view.querySelector('.md-send'), msg = view.querySelector('.md-sendmsg'), prog = view.querySelector('.md-prog');
+    function setMsg(el, t, ok) { el.textContent = t; el.className = el.className.replace(/ (ok|no)$/, '') + (ok == null ? '' : ok ? ' ok' : ' no'); }
+
+    var saveBtn = view.querySelector('.md-toksave');
+    if (saveBtn) saveBtn.onclick = function () {
+      var v = (view.querySelector('.md-tokin').value || '').trim(), m = view.querySelector('.md-tokmsg');
+      if (!v) { setMsg(m, 'Colle le jeton d\'abord.', false); return; }
+      saveBtn.disabled = true; setMsg(m, 'Vérification…');
+      try { localStorage.setItem(GH_TOK_KEY, v); } catch (e) {}
+      gh('GET', '').then(function (r) {
+        if (!r || !r.permissions || !r.permissions.push) { var er = new Error('no push'); er.status = 403; throw er; }
+        toast('Jeton enregistré sur cet appareil.');
+        renderMedias(view, procSel ? procSel.value : pre);
+      })['catch'](function (e) {
+        try { localStorage.removeItem(GH_TOK_KEY); } catch (x) {}
+        saveBtn.disabled = false; setMsg(m, ghErrTxt(e), false);
+      });
+    };
+    var forget = view.querySelector('.md-forget');
+    if (forget) forget.onclick = function () {
+      if (!confirm('Retirer le jeton GitHub de cet appareil ?')) return;
+      try { localStorage.removeItem(GH_TOK_KEY); } catch (e) {}
+      renderMedias(view, procSel.value);
+    };
+
+    // Médias déjà sur la fiche choisie (avec « Retirer »).
+    function paintCur() {
+      var box = view.querySelector('.md-cur'), pid = procSel.value;
+      var p = DATA.filter(function (x) { return x.id === pid; })[0];
+      if (!p) { box.innerHTML = ''; return; }
+      var fm = ficheMedias(p), all = fm.videos.map(function (v) { return ['Vidéo', v]; }).concat(fm.audios.map(function (a) { return ['Audio', a]; }));
+      box.innerHTML = all.length
+        ? '<p class="md-curh">Déjà sur cette fiche :</p><ul class="md-curl">' + all.map(function (x) {
+            return '<li><span><b>' + x[0] + '</b> · ' + esc(x[1].titre || x[1].src) + (x[1].duree ? ' <i>(' + esc(x[1].duree) + ')</i>' : '') + '</span>' +
+              '<button type="button" class="linkbtn md-del" data-src="' + esc(x[1].src) + '" data-t="' + esc(x[1].titre || '') + '">Retirer</button></li>';
+          }).join('') + '</ul>'
+        : '<p class="md-curh">Aucun média sur cette fiche pour l\'instant.</p>';
+      [].forEach.call(box.querySelectorAll('.md-del'), function (b) {
+        b.onclick = function () {
+          if (!confirm('Retirer « ' + (b.getAttribute('data-t') || b.getAttribute('data-src')) + ' » de la fiche ' + (p.code || p.titre) + ' ?')) return;
+          b.disabled = true;
+          var job = { id: 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), action: 'delete', proc: pid,
+            src: b.getAttribute('data-src'), titre: b.getAttribute('data-t') || '', at: new Date().toISOString() };
+          mediaCommit(job, [], 4).then(function () {
+            mjSet(mjGet().concat([{ id: job.id, action: 'delete', proc: pid, code: p.code || '', titre: job.titre, at: job.at, state: 'sent' }]));
+            b.textContent = 'Retrait demandé'; paintJobs(); poll(5000);
+          })['catch'](function (e) { b.disabled = false; toast(ghErrTxt(e)); });
+        };
+      });
+    }
+    if (procSel) { procSel.onchange = paintCur; paintCur(); }
+
+    if (fileIn) fileIn.onchange = function () {
+      var f = fileIn.files && fileIn.files[0], info = view.querySelector('.md-finfo');
+      if (!f) { info.textContent = ''; return; }
+      var mo = Math.round(f.size / 1048576 * 10) / 10;
+      info.textContent = f.name + ' · ' + mo + ' Mo' + (f.size > MEDIA_MAX ? ' — trop gros (1 Go max).' : '');
+      if (!titleIn.value) titleIn.value = f.name.replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').trim();
+    };
+    if (sendBtn) sendBtn.onclick = function () {
+      var pid = procSel.value, f = fileIn.files && fileIn.files[0];
+      var p = DATA.filter(function (x) { return x.id === pid; })[0];
+      if (!p) { setMsg(msg, 'Choisis la procédure.', false); procSel.focus(); return; }
+      if (!f) { setMsg(msg, 'Choisis le fichier.', false); return; }
+      if (f.size > MEDIA_MAX) { setMsg(msg, 'Fichier trop gros (1 Go max). Coupe-le en plusieurs parties.', false); return; }
+      var kind = /^audio\//.test(f.type) || /\.(mp3|m4a|aac|wav|ogg|opus)$/i.test(f.name) ? 'audio' : 'video';
+      var job = { id: 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), action: 'add', proc: pid, kind: kind,
+        titre: (titleIn.value || '').trim(), name: f.name, size: f.size, at: new Date().toISOString() };
+      sendBtn.disabled = procSel.disabled = fileIn.disabled = titleIn.disabled = true;
+      prog.hidden = false; prog.firstChild.style.width = '0%';
+      setMsg(msg, 'Envoi en cours… garde cette page ouverte.');
+      mediaSend(job, f, function (r) {
+        prog.firstChild.style.width = Math.round(r * 100) + '%';
+        setMsg(msg, 'Envoi en cours… ' + Math.round(r * 100) + ' % (garde cette page ouverte)');
+      }).then(function () {
+        mjSet(mjGet().concat([{ id: job.id, action: 'add', proc: pid, code: p.code || '', titre: job.titre || f.name, at: job.at, state: 'sent' }]));
+        setMsg(msg, 'Fichier envoyé. Traitement en cours sur GitHub — tu peux quitter cette page.', true);
+        fileIn.value = ''; titleIn.value = ''; view.querySelector('.md-finfo').textContent = '';
+        sendBtn.disabled = procSel.disabled = fileIn.disabled = titleIn.disabled = false;
+        paintJobs(); poll(20000);
+      })['catch'](function (e) {
+        sendBtn.disabled = procSel.disabled = fileIn.disabled = titleIn.disabled = false;
+        setMsg(msg, ghErrTxt(e) + ' Rien n\'a été ajouté : réessaie.', false);
+      });
+    };
+
+    function paintJobs() {
+      var box = view.querySelector('.md-jobs'); if (!box) return;
+      var js = mjGet().slice().reverse();
+      box.innerHTML = js.length ? '<ul class="md-jl">' + js.map(function (j) {
+        var st = j.state === 'ok' ? '<span class="md-st ok">' + (j.action === 'delete' ? 'Retiré' : 'Ajouté') + '</span>'
+          : j.state === 'err' ? '<span class="md-st no">Échec</span>' : '<span class="md-st wait">En traitement…</span>';
+        return '<li>' + st + '<span><b>' + esc(j.code || j.proc) + '</b> · ' + (j.action === 'delete' ? 'retrait : ' : '') + esc(j.titre || '') +
+          (j.msg ? '<br><small>' + esc(j.msg) + '</small>' : '') + '</span></li>';
+      }).join('') + '</ul>' : '<p class="md-note">Aucun envoi depuis cet appareil.</p>';
+    }
+    function poll(delay) {
+      if (mediaPollT) clearTimeout(mediaPollT);
+      if (!mjGet().some(function (j) { return j.state === 'sent'; })) return;
+      mediaPollT = setTimeout(function () {
+        mediaPollT = null;
+        if ((location.hash || '').indexOf('#/medias') !== 0) return;
+        mediaLog().then(function (log) {
+          mjGet().forEach(function (j) {
+            var r = log[j.id]; if (!r || j.state !== 'sent') return;
+            mjUpd(j.id, r.ok ? { state: 'ok', msg: r.action === 'delete' ? '' : ('Compressé : ' + (r.mo || '?') + ' Mo' + (r.duree ? ', ' + r.duree : '') + '. Site republié dans 1 à 2 min.') }
+              : { state: 'err', msg: r.error || 'Erreur de traitement.' });
+          });
+          paintJobs(); poll(20000);
+        })['catch'](function () { poll(30000); });
+      }, delay);
+    }
+    paintJobs(); poll(1000);
   }
 
   /* ---------- vue : Mon suivi (progression + résultats détaillés) ----------

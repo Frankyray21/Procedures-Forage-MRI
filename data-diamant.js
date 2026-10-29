@@ -406,21 +406,6 @@
   "date_creation": "juin 2018",
   "date_revision": "Mai 2021",
   "source_pdf": "PRO-OP-DD-005",
-  "videos": [
-   {
-    "src": "videos/pro-op-dd-005.mp4",
-    "poster": "images/videos/pro-op-dd-005.jpg",
-    "titre": "Démonter le cône d'un mandrin (chuck) — étape par étape",
-    "duree": "6 min 34 s"
-   }
-  ],
-  "audios": [
-   {
-    "src": "audio/pro-op-dd-005.m4a",
-    "titre": "Démontage sécuritaire d'un chuck de foreuse",
-    "duree": "13 min 20 s"
-   }
-  ],
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
