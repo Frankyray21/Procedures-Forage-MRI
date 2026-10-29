@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v209';
+const VERSION = 'mri-proc-v210';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -218,9 +218,9 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   const path = url.pathname;
-  // Vidéos : jamais interceptées (lecture en continu par plages « Range »,
-  // trop lourdes pour le cache) — le navigateur les sert directement.
-  if (path.includes('/videos/')) return;
+  // Vidéos et audio : jamais interceptés (lecture en continu par plages
+  // « Range », trop lourds pour le cache) — le navigateur les sert directement.
+  if (path.includes('/videos/') || path.includes('/audio/')) return;
   const isMedia = path.includes('/pdf/') || path.includes('/images/pages/') || path.includes('/images/figures/');
   const cacheName = isMedia ? MEDIA : VERSION;
 

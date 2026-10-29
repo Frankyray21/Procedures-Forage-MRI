@@ -1830,3 +1830,7 @@ html[data-ts="145"]{font-size:145%}
 .pvid-d{color:var(--muted);font-size:.88rem}
 .pvid-off{flex-basis:100%;color:var(--warn);font-size:.9rem}
 .pvid-off[hidden]{display:none}
+.paud audio{display:block;width:100%;margin-top:.5rem}
+.paud figcaption{margin-top:0}
+.paud .pvid-off{display:block;margin-top:.4rem}
+.paud .pvid-off[hidden]{display:none}

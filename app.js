@@ -153,6 +153,7 @@
   // avec les utilitaires du quiz éclair — une 2e déclaration ici créait deux
   // sémantiques concurrentes (en place vs copie) départagées par le hoisting.
   var ICON = {
+    audio: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="2.5" y="14" width="5" height="7" rx="1.5"/><rect x="16.5" y="14" width="5" height="7" rx="1.5"/></svg>',
     play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>',
     arrow: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
     back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6 6l-6-6 6-6"/></svg>',
@@ -1916,6 +1917,11 @@
       h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.play + '</span>Vidéo de formation</h2>' +
         p.videos.map(videoHTML).join('') + '</div>';
     }
+    // Audio de formation (champ « audios ») : à écouter, par exemple en route.
+    if (p.audios && p.audios.length) {
+      h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.audio + '</span>Audio de formation</h2>' +
+        p.audios.map(audioHTML).join('') + '</div>';
+    }
 
     // Photos et schémas — galerie visuelle (extraits des PDF)
     var figs = (window.FIGURES && window.FIGURES[p.id]) || [];
@@ -1984,7 +1990,7 @@
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
 
   /* ---------- vidéos de formation ----------
-     Lues en continu depuis le site (videos/, hors du cache hors-ligne : une
+     Lues en continu depuis le site (videos/ et audio/, hors du cache hors-ligne : une
      vidéo pèse des dizaines de Mo — le service worker les laisse passer pour
      que l'avance rapide fonctionne). preload="none" : rien n'est téléchargé
      tant qu'on n'appuie pas sur Lecture. Dans l'APK, la vidéo est embarquée ;
@@ -1999,8 +2005,17 @@
         '<span class="pvid-off" hidden>Vidéo non disponible pour le moment : elle demande une connexion Internet. Reviens-y quand tu as du réseau.</span>' +
       '</figcaption></figure>';
   }
+  // Même mécanique pour l'audio (dossier audio/, mêmes replis hors ligne / APK).
+  function audioHTML(v) {
+    return '<figure class="pvid paud">' +
+      (v.titre ? '<figcaption><b>' + esc(v.titre) + '</b>' + (v.duree ? '<span class="pvid-d">' + esc(v.duree) + '</span>' : '') + '</figcaption>' : '') +
+      '<audio controls preload="none" src="' + esc(v.src) + '" data-src="' + esc(v.src) + '"' +
+        (v.titre ? ' aria-label="' + esc(v.titre) + '"' : '') + '></audio>' +
+      '<span class="pvid-off" hidden>Audio non disponible pour le moment : il demande une connexion Internet. Reviens-y quand tu as du réseau.</span>' +
+      '</figure>';
+  }
   function initVideos() {
-    [].forEach.call(document.querySelectorAll('#view .pvid video'), function (vd) {
+    [].forEach.call(document.querySelectorAll('#view .pvid video, #view .pvid audio'), function (vd) {
       vd.addEventListener('error', function () {
         var rel = vd.getAttribute('data-src') || '';
         if (window.IS_APK && rel && !vd.getAttribute('data-remote')) {
@@ -2009,11 +2024,11 @@
           vd.load(); vd.play()['catch'](function () {});
           return;
         }
-        var off = vd.parentNode.querySelector('.pvid-off');
+        var off = vd.closest('.pvid').querySelector('.pvid-off');
         if (off) off.hidden = false;
       });
       vd.addEventListener('playing', function () {
-        var off = vd.parentNode.querySelector('.pvid-off');
+        var off = vd.closest('.pvid').querySelector('.pvid-off');
         if (off) off.hidden = true;
       });
     });

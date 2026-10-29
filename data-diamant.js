@@ -414,6 +414,13 @@
     "duree": "6 min 34 s"
    }
   ],
+  "audios": [
+   {
+    "src": "audio/pro-op-dd-005.m4a",
+    "titre": "Démontage sécuritaire d'un chuck de foreuse",
+    "duree": "13 min 20 s"
+   }
+  ],
   "langue_source": "fr",
   "notes": "Forage au diamant — fiche reliée au PDF officiel (visionnable et recherchable)."
  },
