@@ -153,6 +153,7 @@
   // avec les utilitaires du quiz éclair — une 2e déclaration ici créait deux
   // sémantiques concurrentes (en place vs copie) départagées par le hoisting.
   var ICON = {
+    play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>',
     arrow: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
     back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6 6l-6-6 6-6"/></svg>',
     search: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
@@ -1910,6 +1911,12 @@
       h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.doc + '</span>Document officiel (PDF)</h2>' + pdfInner + '</div>';
     }
 
+    // Vidéo(s) de formation de la fiche (champ « videos » des données).
+    if (p.videos && p.videos.length) {
+      h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.play + '</span>Vidéo de formation</h2>' +
+        p.videos.map(videoHTML).join('') + '</div>';
+    }
+
     // Photos et schémas — galerie visuelle (extraits des PDF)
     var figs = (window.FIGURES && window.FIGURES[p.id]) || [];
     if (figs.length) {
@@ -1969,11 +1976,48 @@
     initChecklistState();
     initGallery(figs, p.id);
     initDocViewer();
+    initVideos();
     initDocInlineWatch();
     initProcQuiz(p.id);
     initAttestation(p);
   }
   function sec(title, inner) { return '<div class="sec"><h2>' + esc(title) + '</h2>' + inner + '</div>'; }
+
+  /* ---------- vidéos de formation ----------
+     Lues en continu depuis le site (videos/, hors du cache hors-ligne : une
+     vidéo pèse des dizaines de Mo — le service worker les laisse passer pour
+     que l'avance rapide fonctionne). preload="none" : rien n'est téléchargé
+     tant qu'on n'appuie pas sur Lecture. Dans l'APK, la vidéo est embarquée ;
+     un APK plus ancien qui ne l'a pas encore la lit depuis le site. Échec
+     (hors ligne) : un message le dit au lieu d'un cadre noir muet. */
+  var VIDEO_SITE = 'https://frankyray21.github.io/Procedures-Forage-MRI/';
+  function videoHTML(v) {
+    return '<figure class="pvid">' +
+      '<video controls preload="none" playsinline' + (v.poster ? ' poster="' + esc(v.poster) + '"' : '') +
+        ' src="' + esc(v.src) + '" data-src="' + esc(v.src) + '"' + (v.titre ? ' aria-label="' + esc(v.titre) + '"' : '') + '></video>' +
+      '<figcaption>' + (v.titre ? '<b>' + esc(v.titre) + '</b>' : '') + (v.duree ? '<span class="pvid-d">' + esc(v.duree) + '</span>' : '') +
+        '<span class="pvid-off" hidden>Vidéo non disponible pour le moment : elle demande une connexion Internet. Reviens-y quand tu as du réseau.</span>' +
+      '</figcaption></figure>';
+  }
+  function initVideos() {
+    [].forEach.call(document.querySelectorAll('#view .pvid video'), function (vd) {
+      vd.addEventListener('error', function () {
+        var rel = vd.getAttribute('data-src') || '';
+        if (window.IS_APK && rel && !vd.getAttribute('data-remote')) {
+          vd.setAttribute('data-remote', '1');
+          vd.src = VIDEO_SITE + rel;
+          vd.load(); vd.play()['catch'](function () {});
+          return;
+        }
+        var off = vd.parentNode.querySelector('.pvid-off');
+        if (off) off.hidden = false;
+      });
+      vd.addEventListener('playing', function () {
+        var off = vd.parentNode.querySelector('.pvid-off');
+        if (off) off.hidden = true;
+      });
+    });
+  }
 
   /* ---------- Attestation de lecture par procédure ----------
      Ouvre un formulaire Airtable pré-rempli (procédure verrouillée). Le bouton

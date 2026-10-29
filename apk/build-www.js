@@ -98,7 +98,8 @@ for (const f of scripts.concat(extraFiles)) copyFile(f);
 }
 
 /* ---- médias et ressources ---- */
-for (const d of ['vendor', 'icons', 'images', 'pdf']) copyDir(d);
+// videos/ : vidéos de formation embarquées (lues hors ligne sous terre).
+for (const d of ['vendor', 'icons', 'images', 'pdf', 'videos']) copyDir(d);
 
 /* ---- couche APK ---- */
 copySrc('apk-boot.js');

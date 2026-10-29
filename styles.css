@@ -1822,3 +1822,11 @@ html[data-ts="145"]{font-size:145%}
   #apkBanner.apkn-min .apkn-sum b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #apkBanner.apkn-min .apkn-apply{flex:none}
 }
+
+/* vidéo de formation (fiche de procédure) */
+.pvid{margin:0}
+.pvid video{display:block;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;border:1px solid var(--border)}
+.pvid figcaption{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .6rem;margin-top:.5rem;color:var(--text-main);font-size:.95rem;line-height:1.45}
+.pvid-d{color:var(--muted);font-size:.88rem}
+.pvid-off{flex-basis:100%;color:var(--warn);font-size:.9rem}
+.pvid-off[hidden]{display:none}
