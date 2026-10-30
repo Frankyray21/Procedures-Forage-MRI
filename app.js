@@ -672,7 +672,7 @@
   // (La liste CORE du service-worker.js doit rester synchronisée.)
   var APP_FILES = ['index.html', 'styles.css', 'manifest.webmanifest', 'config.js', 'data.js',
     'data-diamant.js', 'data-securite.js', 'data-ith-new.js', 'data-english.js', 'quiz.js', 'essentiel.js',
-    'figures.js', 'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
+    'pages.js', 'quiz_proc.js', 'quiz-diamant.js', 'quiz-diamant2.js',
     'quiz-hard3.js', 'quiz-dd-equip.js', 'quiz-securite.js', 'quiz-ith-new.js', 'quiz-atelier-sec.js', 'quiz-cadenassage.js', 'quiz-english.js', 'quiz-types.js',
     'pdftext.js', 'llm.js', 'chatbot.js', 'medias.js', 'app.js', 'sizes.js'];
   var BRAND_FILES = ['images/logo_roger.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
@@ -701,17 +701,12 @@
   }
   function withRev(u, id) { var r = mediaRev(id); return r ? u + '?r=' + encodeURIComponent(r) : u; }
   function offlineGroups() {
-    var pdfs = [], pages = [], figs = [];
+    var pdfs = [], pages = [];
     DATA.forEach(function (p) { pdfs.push(withRev('pdf/' + encodeURIComponent(p.id) + '.pdf', p.id)); });
     pdfs.push('pdf/centralisateur-dessin.pdf');
     if (window.PAGES) {
       Object.keys(window.PAGES).forEach(function (key) {
         (window.PAGES[key] || []).forEach(function (src) { if (src) pages.push(withRev(src, key)); });
-      });
-    }
-    if (window.FIGURES) {
-      Object.keys(window.FIGURES).forEach(function (id) {
-        (window.FIGURES[id] || []).forEach(function (f) { if (f && f.src) figs.push(withRev(f.src, id)); });
       });
     }
     return [
@@ -722,7 +717,6 @@
       // worker quand le réseau le permet).
       { label: 'PDF officiels', files: pdfs, media: true, optional: true },
       { label: 'Pages des PDF (images)', files: pages, media: true },
-      { label: 'Photos et schémas', files: figs, media: true },
       { label: 'Logo et icônes', files: BRAND_FILES }
     ];
   }
@@ -1940,20 +1934,12 @@
       h += '<p class="pvid-add"><a href="#/medias/' + esc(p.id) + '">' + ICON.play + ' Ajouter une vidéo ou un audio à cette fiche</a></p>';
     }
 
-    // Photos et schémas — galerie visuelle (extraits des PDF)
-    var figs = (window.FIGURES && window.FIGURES[p.id]) || [];
-    if (figs.length) {
-      h += '<div class="sec"><h2>Photos et schémas</h2>' +
-        '<div class="gallery">' + figs.map(function (f, i) {
-          return '<button class="gfig" type="button" data-i="' + i + '">' +
-            '<img src="' + esc(withRev(f.src, p.id)) + '" alt="Photo ou schéma, page ' + esc(f.page) + '" loading="lazy">' +
-            '<span class="gpage">p. ' + esc(f.page) + '</span></button>';
-        }).join('') + '</div></div>';
-    }
+    // (Section « Photos et schémas » retirée à la demande : les pages du PDF
+    // officiel les montrent déjà.)
 
     // (Section « Objectif » retirée à la demande.)
 
-    if (p.epi && p.epi.length) h += sec('Équipements de protection', pills(p.epi, 'epi'));
+    // (Section « Équipements de protection » retirée à la demande.)
 
     // Quiz de la procédure (couvre l'information importante) — questions et
     // types mélangés (choix de réponse, vrai/faux, plusieurs réponses, ordre).
@@ -1997,7 +1983,6 @@
     ptStartPage(p.id);          // démarre le chrono de consultation (suivi gestionnaire)
     try { localStorage.setItem(pkey('last_proc'), p.id); } catch (e) {}
     initChecklistState();
-    initGallery(figs, p.id);
     initDocViewer();
     initVideos();
     initDocInlineWatch();
@@ -4292,7 +4277,7 @@
   }
 
   /* ---------- vues plein écran et bouton RETOUR du téléphone ----------
-     La visionneuse de photos (#lightbox) et le document plein écran (#docfs)
+     Le document plein écran (#docfs) et les autres vues plein écran
      sont posés sur <body>, par-dessus la page : changer de page ne les ferme
      pas. Le bouton RETOUR du téléphone (dans l'APK aussi : il appelle
      history.back()) reculait donc d'une page SOUS l'image restée affichée.
@@ -4437,57 +4422,6 @@
     });
   }
 
-  /* ---------- galerie photos / schémas + visionneuse plein écran ---------- */
-  function initGallery(figs, pid) {
-    if (!figs || !figs.length) return;
-    var lb = document.getElementById('lightbox');
-    if (!lb) {
-      lb = document.createElement('div');
-      lb.id = 'lightbox';
-      lb.className = 'lightbox';
-      lb.innerHTML =
-        '<button class="lb-close" type="button" aria-label="Fermer">' + ICON.close + '</button>' +
-        '<button class="lb-nav lb-prev" type="button" aria-label="Précédent">' + ICON.back + '</button>' +
-        '<img class="lb-img" alt="">' +
-        '<button class="lb-nav lb-next" type="button" aria-label="Suivant">' + ICON.fwd + '</button>' +
-        '<span class="lb-count"></span>';
-      document.body.appendChild(lb);
-    }
-    var img = lb.querySelector('.lb-img'), count = lb.querySelector('.lb-count'), cur = 0;
-    function show(i) {
-      cur = (i + figs.length) % figs.length;
-      img.src = withRev(figs[cur].src, pid);
-      img.alt = 'Photo ou schéma agrandi, page ' + figs[cur].page;
-      count.textContent = (cur + 1) + ' / ' + figs.length + '  ·  p. ' + figs[cur].page;
-    }
-    function open(i) { show(i); fsvShow(lb); }
-    function close() { fsvClose(lb); }
-    var gal = document.querySelector('.gallery');
-    if (gal) gal.onclick = function (e) {
-      var b = e.target.closest ? e.target.closest('.gfig') : null;
-      if (b) open(parseInt(b.getAttribute('data-i'), 10));
-    };
-    lb.querySelector('.lb-close').onclick = close;
-    lb.querySelector('.lb-prev').onclick = function (e) { e.stopPropagation(); show(cur - 1); };
-    lb.querySelector('.lb-next').onclick = function (e) { e.stopPropagation(); show(cur + 1); };
-    lb.onclick = function (e) { if (e.target === lb) close(); };
-    // Un seul écouteur clavier global, posé une fois (document.onkeydown
-    // écrasait tout autre gestionnaire et survivait à la fiche).
-    lbKeys.show = show; lbKeys.close = close;
-    if (!lbKeys.bound) {
-      lbKeys.bound = true;
-      document.addEventListener('keydown', function (e) {
-        var box = document.getElementById('lightbox');
-        if (!box || !box.classList.contains('on')) return;
-        if (e.key === 'Escape') lbKeys.close();
-        else if (e.key === 'ArrowLeft') lbKeys.show(lbKeys.cur() - 1);
-        else if (e.key === 'ArrowRight') lbKeys.show(lbKeys.cur() + 1);
-      });
-    }
-    lbKeys.cur = function () { return cur; };
-  }
-  var lbKeys = { bound: false, show: null, close: null, cur: function () { return 0; } };
-
   /* ---------- liste de vérification (checklist) ---------- */
   function ckGet(id) { try { return JSON.parse(localStorage.getItem(pkey('ck_' + id)) || '[]'); } catch (e) { return []; } }
   function ckSet(id, a) { try { localStorage.setItem(pkey('ck_' + id), JSON.stringify(a)); } catch (e) {} }
@@ -4543,9 +4477,6 @@
       pos = nextAt;
     });
     return out + '</ul>';
-  }
-  function pills(arr, cls) {
-    return '<div class="pill-list">' + arr.map(function (x) { return '<span class="pill ' + cls + '">' + esc(x) + '</span>'; }).join('') + '</div>';
   }
 
   /* (Vue « Code de sécurité » retirée du site — données conservées dans

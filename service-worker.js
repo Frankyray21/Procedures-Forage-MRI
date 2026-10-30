@@ -18,7 +18,7 @@
      déjà (voir packOwnedByPage) : elle télécharge les mêmes URLs, et les deux
      à la fois doublerait la facture de données. Le bouton « Tout télécharger »
      de l'accueil affiche la liste des fichiers, le volume et le temps estimé. */
-const VERSION = 'mri-proc-v214';
+const VERSION = 'mri-proc-v215';
 const MEDIA = 'mri-media-v1';
 const CORE = [
   './',
@@ -36,7 +36,6 @@ const CORE = [
   './llm.js',
   './quiz.js',
   './essentiel.js',
-  './figures.js',
   './pages.js',
   './quiz_proc.js',
   './quiz-diamant.js',
@@ -81,7 +80,7 @@ const CORE = [
 function mediaAssets() {
   try {
     self.window = self;
-    importScripts('./data.js', './data-diamant.js', './data-securite.js', './data-ith-new.js', './data-english.js', './figures.js', './pages.js');
+    importScripts('./data.js', './data-diamant.js', './data-securite.js', './data-ith-new.js', './data-english.js', './pages.js');
     // Suffixe ?r=<révision> : un PDF révisé change d'URL → re-téléchargé, et
     // l'ancienne copie est purgée (voir purgeOldRevs). Mêmes URLs que la page.
     const REV = {};
@@ -91,10 +90,6 @@ function mediaAssets() {
       (p) => withRev('./pdf/' + encodeURIComponent(p.id) + '.pdf', p.id)
     );
     list.push('./pdf/centralisateur-dessin.pdf');
-    const figs = self.FIGURES || {};
-    Object.keys(figs).forEach((id) => {
-      (figs[id] || []).forEach((f) => { if (f && f.src) list.push(withRev('./' + f.src, id)); });
-    });
     const pages = self.PAGES || {};
     Object.keys(pages).forEach((key) => {
       (pages[key] || []).forEach((src) => { if (src) list.push(withRev('./' + src, key)); });
