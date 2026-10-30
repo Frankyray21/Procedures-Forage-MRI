@@ -153,6 +153,7 @@
   // avec les utilitaires du quiz éclair — une 2e déclaration ici créait deux
   // sémantiques concurrentes (en place vs copie) départagées par le hoisting.
   var ICON = {
+    cube: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>',
     audio: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="2.5" y="14" width="5" height="7" rx="1.5"/><rect x="16.5" y="14" width="5" height="7" rx="1.5"/></svg>',
     play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>',
     arrow: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>',
@@ -193,6 +194,7 @@
   // (sinon l'utilisateur repart toujours du haut de la liste).
   var listScroll = {};
   var prevHash = location.hash || '#/';
+  var prevFiche3D = '';             // vue précédente (retour de l'outil 3D)
   function route() {
     var h = location.hash || '#/';
     var view = $('#view');
@@ -202,10 +204,13 @@
     else if (prevHash.indexOf('#/english') === 0) listScroll.english = window.scrollY;
     else if (prevHash.indexOf('#/procedures') === 0) listScroll[''] = window.scrollY;
     var fromFiche = prevHash.indexOf('#/p/') === 0;
+    prevFiche3D = prevHash;
     prevHash = h;
     window.scrollTo(0, 0);
     if (h.indexOf('#/p/') !== 0) ptLeavePage();      // quitte une fiche → fige le temps de consultation
-    if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : (pp && pp.famille === 'english' ? 'english' : 'procedures')); }
+    if (h.indexOf('#/3d/') !== 0) fermer3D();
+    if (h.indexOf('#/3d/') === 0) { render3D(view, h.slice(5)); setNav(''); }
+    else if (h.indexOf('#/p/') === 0) { var pid = h.slice(4); renderProcedure(view, pid); var pp = DATA.filter(function (x) { return x.id === pid; })[0]; setNav(pp && pp.famille === 'diamant' ? 'diamant' : (pp && pp.famille === 'english' ? 'english' : 'procedures')); }
     else if (h.indexOf('#/quiz') === 0) { renderQuiz(view); setNav('quiz'); }
     else if (h.indexOf('#/suivi') === 0) { renderSuivi(view); setNav('suivi'); }
     else if (h.indexOf('#/medias') === 0) { renderMedias(view, decodeURIComponent(h.slice(9))); setNav(''); }
@@ -1924,6 +1929,12 @@
         (fm.audios.every(function (a) { return a.genre === 'podcast'; }) ? 'Podcast sur la procédure' : 'Audio de formation') + '</h2>' +
         '<div class="pvids">' + fm.audios.map(audioHTML).join('') + '</div></div>';
     }
+    // Outil 3D du plancher (PRO-DD-ST-003) : étapes de construction une à une.
+    if (P3D[p.id]) {
+      h += '<div class="sec"><h2><span class="h2ic h2ic-doc" aria-hidden="true">' + ICON.cube + '</span>Plancher en 3D</h2>' +
+        '<a class="p3d-open" href="#/3d/' + esc(p.id) + '">' + ICON.cube + '<span><b>Voir en 3D</b>' +
+        '<small>Les étapes de construction une à une, à consulter pendant qu\'on bâtit le plancher</small></span></a></div>';
+    }
     // Appareil du gestionnaire (jeton GitHub enregistré) : raccourci d'ajout.
     if (ghTok()) {
       h += '<p class="pvid-add"><a href="#/medias/' + esc(p.id) + '">' + ICON.play + ' Ajouter une vidéo ou un audio à cette fiche</a></p>';
@@ -2004,6 +2015,45 @@
      (hors ligne) : un message le dit au lieu d'un cadre noir muet. */
   var VIDEO_SITE = 'https://frankyray21.github.io/Procedures-Forage-MRI/';
   // Médias d'une fiche : ceux des données (champs videos / audios) + medias.js.
+  /* ---------- vue : outil 3D (#/3d/<fiche>) ----------
+     Module chargé à la demande (plancher-3d/outil.js et three.js dans
+     vendor/three) : rien de tout ça n'alourdit le démarrage de l'app. Le
+     service worker garde ces fichiers sur l'appareil dès le premier affichage,
+     pour la consultation hors ligne sous terre. */
+  var P3D = { 'pro-dd-st-003': 'plancher-3d/outil.js' };
+  var p3dFin = null, p3dJeton = 0;
+  function fermer3D() {
+    p3dJeton++;
+    if (p3dFin) { try { p3dFin(); } catch (e) {} p3dFin = null; }
+    document.documentElement.classList.remove('p3d-on');
+  }
+  function render3D(view, id) {
+    fermer3D();
+    var src = P3D[id];
+    if (!src) { location.replace('#/procedures'); return; }
+    var retour = '#/p/' + id;
+    var quitter = function () {
+      // Retour à la fiche : par l'historique si on en vient (garde sa position).
+      if (prevFiche3D === retour) history.back(); else location.hash = retour;
+    };
+    document.documentElement.classList.add('p3d-on');
+    view.innerHTML = '<div class="p3d-hote"><div class="p3d"><div class="p3d-vue"><div class="p3d-msg">Chargement de la 3D…</div></div></div></div>';
+    var hote = view.firstChild, jeton = ++p3dJeton;
+    var sc = document.querySelector('script[src*="app.js?v="]');
+    var av = (sc && (sc.src.match(/[?&]v=(\d+)/) || [])[1]) || '0';
+    import('./' + src + '?v=' + av).then(function (m) {
+      if (jeton !== p3dJeton) return;
+      p3dFin = m.ouvrir(hote, { fermer: quitter });
+    }).catch(function () {
+      if (jeton !== p3dJeton) return;
+      hote.innerHTML = '<div class="p3d"><div class="p3d-vue"><div class="p3d-msg err">' +
+        (navigator.onLine === false
+          ? 'La 3D n\'est pas encore sur cet appareil. Ouvre-la une fois avec du réseau : elle restera ensuite disponible hors ligne.'
+          : 'La 3D n\'a pas pu être chargée. Réessaie dans un moment.') +
+        '</div><a class="p3d-fermer" href="' + retour + '" aria-label="Fermer la 3D">&times;</a></div></div>';
+    });
+  }
+
   function ficheMedias(p) {
     var m = (window.MEDIAS && window.MEDIAS[p.id]) || {};
     return { videos: (p.videos || []).concat(m.videos || []), audios: (p.audios || []).concat(m.audios || []) };

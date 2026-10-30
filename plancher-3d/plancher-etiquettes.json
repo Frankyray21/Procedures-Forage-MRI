@@ -1,0 +1,606 @@
+[
+ {
+  "steps": [
+   1
+  ],
+  "pos": [
+   0,
+   0.05,
+   -1.2
+  ],
+  "text": "Ligne de référence en peinture",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   2
+  ],
+  "pos": [
+   0.1,
+   0.45,
+   -1.288
+  ],
+  "text": "Point le plus haut : le 1er madrier repose sur le sol",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   2,
+   9
+  ],
+  "pos": [
+   0.25,
+   0.25,
+   -1.838
+  ],
+  "text": "Niveau au laser Bosch",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   3
+  ],
+  "pos": [
+   1.2,
+   0.202,
+   -2.362
+  ],
+  "text": "1er madrier 6 × 6 sur la ligne de peinture",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   4
+  ],
+  "pos": [
+   1.2,
+   0.202,
+   2.362
+  ],
+  "text": "Madrier à 16 pi du premier",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   5
+  ],
+  "pos": [
+   1.76,
+   -0.02,
+   -1.325
+  ],
+  "text": "Blocage + coin, en sens contraire",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   5
+  ],
+  "pos": [
+   4.877,
+   -0.02,
+   0
+  ],
+  "text": "Blocage de jonction",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   6
+  ],
+  "pos": [
+   3.759,
+   0.279,
+   1.2
+  ],
+  "text": "Avancer sur la surface couverte",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   6
+  ],
+  "pos": [
+   4.369,
+   0.279,
+   -2.362
+  ],
+  "text": "1re planche : tire-fonds aux 2 bouts",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   7
+  ],
+  "pos": [
+   2.235,
+   0.529,
+   0.5
+  ],
+  "text": "Coins enfoncés : planches en tension",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   8
+  ],
+  "pos": [
+   4.674,
+   0.252,
+   0
+  ],
+  "text": "2 planches laissées libres, à la jonction",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   9
+  ],
+  "pos": [
+   7.315,
+   0.05,
+   0
+  ],
+  "text": "Le sol descend : hauteur à soutenir",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   10
+  ],
+  "pos": [
+   6.477,
+   -0.102,
+   -1.575
+  ],
+  "text": "Soutiens 6 × 6 de 16 pi en sens contraire",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   10
+  ],
+  "pos": [
+   9.677,
+   0.02,
+   -0.6
+  ],
+  "text": "Madrier guide",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   11
+  ],
+  "pos": [
+   5.177,
+   0.202,
+   -0.787
+  ],
+  "text": "Madriers dans le prolongement de la section 1",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   11
+  ],
+  "pos": [
+   7.277,
+   -0.102,
+   0.787
+  ],
+  "text": "Soutiens enlignés aux croisements",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   10,
+   11
+  ],
+  "pos": [
+   8.877,
+   -0.3,
+   1.575
+  ],
+  "text": "Cage : pièces de 24 à 36 po",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   12
+  ],
+  "pos": [
+   4.674,
+   0.279,
+   0
+  ],
+  "text": "Planches de jonction vissées",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   13
+  ],
+  "pos": [
+   9.154,
+   0.279,
+   2.438
+  ],
+  "text": "Bouts coupés carrés, au ras",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   15
+  ],
+  "pos": [
+   9.804,
+   0.349,
+   -0.1
+  ],
+  "text": "Plinthe : 2 × 4 brut sur chant (4 po)",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   16
+  ],
+  "pos": [
+   10.254,
+   1.179,
+   0.3
+  ],
+  "text": "Main courante de chaque côté",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   1
+  ],
+  "pos": [
+   4.877,
+   0.03,
+   2.888
+  ],
+  "text": "32 pi",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   1
+  ],
+  "pos": [
+   -0.45,
+   0.03,
+   0
+  ],
+  "text": "16 pi",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   3
+  ],
+  "pos": [
+   1.188,
+   0.322,
+   0.6
+  ],
+  "text": "Sens du forage",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   3
+  ],
+  "pos": [
+   -0.3,
+   0.076,
+   -2.538
+  ],
+  "text": "6 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   4
+  ],
+  "pos": [
+   -0.45,
+   0.152,
+   0
+  ],
+  "text": "16 pi",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   4
+  ],
+  "pos": [
+   2.438,
+   0.152,
+   2.888
+  ],
+  "text": "16 pi",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   4
+  ],
+  "pos": [
+   2,
+   0.292,
+   -0.394
+  ],
+  "text": "≈ 32 po c/c",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   5
+  ],
+  "pos": [
+   2.3,
+   0.469,
+   -0.4
+  ],
+  "text": "Niveau 48 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   5
+  ],
+  "pos": [
+   2.58,
+   0.229,
+   -0.4
+  ],
+  "text": "3 × 8 de 8 pi min.",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   5
+  ],
+  "pos": [
+   2.96,
+   0,
+   0.3
+  ],
+  "text": "≈ 31 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   5
+  ],
+  "pos": [
+   2.4,
+   0.202,
+   0.787
+  ],
+  "text": "6 appuis min. par madrier",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   6
+  ],
+  "pos": [
+   -0.35,
+   0.076,
+   2.538
+  ],
+  "text": "6 × 6",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   6
+  ],
+  "pos": [
+   -0.35,
+   0.26,
+   2.538
+  ],
+  "text": "3 × 8",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   6
+  ],
+  "pos": [
+   -0.85,
+   0.114,
+   2.538
+  ],
+  "text": "Plancher 9 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   6
+  ],
+  "pos": [
+   0.102,
+   0.229,
+   -2.788
+  ],
+  "text": "8 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   7
+  ],
+  "pos": [
+   3.353,
+   0.229,
+   -2.838
+  ],
+  "text": "≈ 50 % de la section",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   8
+  ],
+  "pos": [
+   4.674,
+   0.152,
+   2.838
+  ],
+  "text": "2 planches = 16 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   9,
+   10
+  ],
+  "pos": [
+   10.054,
+   -0.184,
+   2.688
+  ],
+  "text": "Hauteur à soutenir ≈ 14 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   10
+  ],
+  "pos": [
+   7.315,
+   0,
+   -2.888
+  ],
+  "text": "16 pi",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   14
+  ],
+  "pos": [
+   9.957,
+   0,
+   1.869
+  ],
+  "text": "Giron 16 po min.",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   14
+  ],
+  "pos": [
+   9.774,
+   0.114,
+   0.05
+  ],
+  "text": "Hauteur 9 po (12 po max.)",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   14
+  ],
+  "pos": [
+   10.866,
+   -0.229,
+   0.96
+  ],
+  "text": "Largeur 48 po (36 à 60 po)",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   14,
+   15
+  ],
+  "pos": [
+   10.204,
+   -0.054,
+   -2.25
+  ],
+  "text": "22 po : plus de 12 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   15
+  ],
+  "pos": [
+   10.104,
+   0.764,
+   -1.5
+  ],
+  "text": "1 m à 1,2 m",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   17
+  ],
+  "pos": [
+   6,
+   0.499,
+   -2.591
+  ],
+  "text": "Écart 12 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   17
+  ],
+  "pos": [
+   6.8,
+   0.233,
+   -2.433
+  ],
+  "text": "Grillage 24 po",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   18
+  ],
+  "pos": [
+   1.034,
+   0.457,
+   0.949
+  ],
+  "text": "32 po min.",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   18
+  ],
+  "pos": [
+   2.249,
+   0.457,
+   0.243
+  ],
+  "text": "72 po min.",
+  "kind": "cote"
+ },
+ {
+  "steps": [
+   18
+  ],
+  "pos": [
+   0.12,
+   0.343,
+   -0.484
+  ],
+  "text": "9 po (12 po max.)",
+  "kind": "cote"
+ }
+]

@@ -222,7 +222,12 @@ self.addEventListener('fetch', (e) => {
   // Vidéos et audio : jamais interceptés (lecture en continu par plages
   // « Range », trop lourds pour le cache) — le navigateur les sert directement.
   if (path.includes('/videos/') || path.includes('/audio/')) return;
-  const isMedia = path.includes('/pdf/') || path.includes('/images/pages/') || path.includes('/images/figures/');
+  // Outil 3D (plancher-3d/, three.js dans vendor/three/) : rangé avec les
+  // médias (cache persistant) dès le premier affichage, pour rester disponible
+  // hors ligne après un déploiement sans re-télécharger le modèle de 2,5 Mo.
+  // Correspondance exacte du ?v= : un fichier révisé change d'URL.
+  const is3d = path.includes('/plancher-3d/') || path.includes('/vendor/three/');
+  const isMedia = is3d || path.includes('/pdf/') || path.includes('/images/pages/') || path.includes('/images/figures/');
   const cacheName = isMedia ? MEDIA : VERSION;
 
   // Navigations / index.html : réseau d'abord — c'est lui qui versionne tout
@@ -270,7 +275,7 @@ self.addEventListener('fetch', (e) => {
   // js/css : ils sont mis en cache SOUS LEUR URL VERSIONNÉE à l'installation,
   // donc la correspondance doit ignorer le ?v= — sinon chaque déploiement les
   // re-télécharge tous alors qu'ils sont déjà là, à l'octet près.
-  const bare = /\.(js|css)$/.test(path) ? { ignoreSearch: true } : undefined;
+  const bare = /\.(js|css)$/.test(path) && !is3d ? { ignoreSearch: true } : undefined;
   e.respondWith(
     caches.match(req, bare).then((hit) => hit ||
       fetch(req).then((res) => {
