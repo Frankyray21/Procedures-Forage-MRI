@@ -110,13 +110,15 @@ function preparer(root) {
 }
 
 /* Serrage des planches (étape 7), comme la vidéo de formation : les planches 1
-   à 10 sont posées avec un petit écart (exagéré pour qu'il se voie). Le dernier
+   à 10 sont posées avec un petit écart. En vrai, le serrage les déplace de
+   moins d'un pouce au total ; ici ≈ 2 po (0,2 po par joint, ecart en mètres),
+   juste assez exagéré pour que le mouvement se voie. Le dernier
    3 × 8 (rang 11) est posé plus loin et vissé ; les coins enfoncés entre lui et la
    planche 10 ferment les écarts vers la première planche (vissée) ; la planche
    devant les coins est vissée ; les tire-fonds du dernier 3 × 8 sont retirés, les
    coins enlevés, et il reprend sa place ; puis la pose continue. Instants en s. */
 const SERRAGE = {
-  etape: 7, tension: 10, ancre: 11, ecart: 0.025, place: 0.05, P8: 8 * 0.0254,
+  etape: 7, tension: 10, ancre: 11, ecart: 0.2 * 0.0254, place: 0.05, P8: 8 * 0.0254,
   t: { ancre: [0, 0.5], visA: [1.0, 1.4], coins: [1.8, 2.3], serre: [2.6, 4.6], visT: [5.0, 5.4],
     devisse: [6.6, 7.2], sortie: [7.4, 7.9], retour: [7.8, 8.5], suite: 8.8 },
   duree: 11,
