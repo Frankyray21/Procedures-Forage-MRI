@@ -1899,3 +1899,4 @@ html.p3d-on,html.p3d-on body{overflow:hidden}
   .p3d-b{min-height:56px;font-size:1.15rem}
 }
 html.p3d-on .cbbtn,html.p3d-on .cbpanel,html.p3d-on .newver{display:none!important}
+.p3d-d{margin-top:.35rem;font-size:.86rem;line-height:1.4;color:var(--dim)}

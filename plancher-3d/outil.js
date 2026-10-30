@@ -18,12 +18,14 @@ import { RoomEnvironment } from '../vendor/three/RoomEnvironment.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=1';
-const ETIQUETTES = 'plancher-etiquettes.json?v=1';
+const MODELE = 'plancher.glb?v=2';
+const ETIQUETTES = 'plancher-etiquettes.json?v=2';
 const ORANGE = new THREE.Color(0xff8a1f);
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
-const TOTAL = ETAPES.length - 1;   // étapes numérotées (sans « Avant de commencer »)
+const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
+// Clé des étiquettes d'un écran : son numéro, ou 'v8' pour l'écran de la variante 8 pi.
+const cleDe = (e) => (e.variante ? 'v8' : e.n);
 
 let charge = null;                 // { scene, etiquettes } gardés entre deux ouvertures
 
@@ -50,14 +52,18 @@ function chargerModele(onProgress) {
 /* Repère les pièces d'étape (extras s), les objets propres à une étape
    (extras o : outils, laser, cotes) et les cotes (extras d, dessinées
    par-dessus la scène). Ordre de pose : seq, puis le long du plancher, en
-   travers, de bas en haut (comme le montage du site pieces-3d). */
+   travers, de bas en haut (comme le montage du site pieces-3d).
+   Variante 6 × 6 de 8 pi : pièces v8 (ordre de pose), affichées seulement sur
+   l'écran de la variante, où les pièces de 16 pi remplacées (x8) et les
+   planches (pl) sont enlevées pour voir la structure. */
 function preparer(root) {
-  const pieces = [], seules = [];
+  const pieces = [], seules = [], v8 = [];
   root.updateMatrixWorld(true);
   const box = new THREE.Box3(), c = new THREE.Vector3();
   root.traverse((o) => {
     const u = o.userData || {};
     if (u.o) seules.push(o);
+    else if (u.v8) { u.cible = o.position.clone(); v8.push(o); }
     else if (u.s !== undefined) {
       box.setFromObject(o).getCenter(c);
       u.centre = c.toArray();
@@ -84,6 +90,7 @@ function preparer(root) {
   });
   root.userData.pieces = pieces;
   root.userData.seules = seules;
+  root.userData.v8 = v8.sort((a, b) => a.userData.v8 - b.userData.v8);
 }
 
 /* Matériau en surbrillance (orange), un par matériau d'origine. */
@@ -124,6 +131,7 @@ export function ouvrir(hote, { fermer } = {}) {
         '<div class="p3d-num"></div>' +
         '<h2 class="p3d-t"></h2>' +
         '<p class="p3d-x"></p>' +
+        '<p class="p3d-d"></p>' +
         '<div class="p3d-btns">' +
           '<button type="button" class="p3d-b p3d-prev">Précédente</button>' +
           '<button type="button" class="p3d-b p3d-next">Suivante</button>' +
@@ -142,9 +150,11 @@ export function ouvrir(hote, { fermer } = {}) {
   function panneau() {
     const e = ETAPES[idx];
     $('.p3d-prog i').style.width = (100 * e.n / TOTAL) + '%';
-    $('.p3d-num').textContent = e.n === 0 ? 'Avant de commencer' : 'Étape ' + e.n + ' sur ' + TOTAL;
+    $('.p3d-num').textContent = e.variante ? 'Variante' : e.n === 0 ? 'Avant de commencer' : 'Étape ' + e.n + ' sur ' + TOTAL;
     $('.p3d-t').textContent = e.n === 0 ? 'Inspection et matériel de sécurité' : e.titre;
     $('.p3d-x').textContent = e.texte;
+    $('.p3d-d').textContent = e.detail || '';
+    $('.p3d-d').hidden = !e.detail;
     bPrev.disabled = idx === 0;
     bNext.disabled = idx === ETAPES.length - 1;
     $('.p3d-pan').scrollTop = 0;
@@ -240,7 +250,7 @@ export function ouvrir(hote, { fermer } = {}) {
      chevauche une autre déjà placée remonte au-dessus d'elle. */
   const pv = new THREE.Vector3();
   function placerEtiquettes() {
-    const n = ETAPES[idx].n;
+    const n = cleDe(ETAPES[idx]);
     const w = vue.clientWidth, h = vue.clientHeight;
     const vues = [];
     for (const e of etiq) {
@@ -276,14 +286,18 @@ export function ouvrir(hote, { fermer } = {}) {
     try { localStorage.setItem(CLE, String(idx)); } catch (e) {}
     panneau();
     if (!root) return;
-    const n = ETAPES[idx].n;
+    const e = ETAPES[idx], n = e.n, v8 = !!e.variante;
     for (let k = tweens.length - 1; k >= 0; k--) if (tweens[k].pose) { tweens[k].fin(); tweens.splice(k, 1); }
     frais.forEach((o) => surligner(o, false));
     outils.forEach((o) => surligner(o, false));
     const pieces = root.userData.pieces;
-    for (const o of pieces) { o.visible = o.userData.s <= n; o.position.copy(o.userData.cible); }
-    for (const o of root.userData.seules) o.visible = o.userData.o.includes(n);
-    frais = pieces.filter((o) => o.userData.s === n);
+    for (const o of pieces) {
+      o.visible = o.userData.s <= n && !(v8 && (o.userData.x8 || o.userData.pl));
+      o.position.copy(o.userData.cible);
+    }
+    for (const o of root.userData.v8) { o.visible = v8; o.position.copy(o.userData.cible); }
+    for (const o of root.userData.seules) o.visible = !v8 && o.userData.o.includes(n);
+    frais = v8 ? root.userData.v8 : pieces.filter((o) => o.userData.s === n);
     frais.forEach((o) => surligner(o, true));
     // Outils propres à l'étape (coins de serrage, niveau, laser) aussi en orange.
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
@@ -345,7 +359,7 @@ export function ouvrir(hote, { fermer } = {}) {
       scene.add(root);
       // Étiquettes propres à l'outil (etapes.js), en plus de celles du modèle.
       const extra = [];
-      for (const e of ETAPES) for (const l of e.etiquettes || []) extra.push({ steps: [e.n], kind: 'note', ...l });
+      for (const e of ETAPES) for (const l of e.etiquettes || []) extra.push({ steps: [cleDe(e)], kind: 'note', ...l });
       creerEtiquettes(c.etiquettes.concat(extra));
       msg.remove();
       etape(idx);

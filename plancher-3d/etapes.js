@@ -9,6 +9,10 @@
    entre toujours en entier.
    etiquettes : étiquettes propres à l'outil ({ pos, text }), en plus de
    celles du modèle.
+   variante : écran de la variante 6 × 6 de 8 pi (après l'étape 11, comme
+   l'encart de la vidéo) ; pas compté dans « Étape N sur 18 ». La structure de
+   l'étape n y est montrée sans les planches, les pièces de 16 pi remplacées
+   par les 6 × 6 de 8 pi (posés en orange). detail : ligne en petit sous le texte.
    Étiquettes : plancher-etiquettes.json (notes et cotes, avec leurs étapes),
    exporté avec le .glb depuis le dépôt pieces-3d
    (scripts/export-plancher-app.mjs). */
@@ -50,6 +54,17 @@ export const ETAPES = [
     texte: 'Les madriers de la section 2 se posent sur les soutiens, dans le prolongement de ceux de la section 1, à environ 32 po centre. Au joint, de chaque côté du plancher, un bout de 6 × 6 de 24 po est vissé dans les madriers des deux sections. Les soutiens sont toujours enlignés vis-à-vis les croisements. Dans un creux, on monte une cage : des bouts de 24 à 36 po empilés croisés.',
     cam: { tgt: [6.2, -0.15, 0.9], dir: [0.5, 0.5, 0.71], r: 3.0 },
     etiquettes: [{ pos: [4.877, 0.2, 2.21], text: 'Bois de jonction vissé dans les 2 sections' }] },
+  { n: 11, variante: true, titre: 'Variante : 6 × 6 de 8 pi',
+    texte: 'Deux 6 × 6 de 8 pi bout à bout par ligne, parfaitement de niveau, le joint toujours sur un blocage ou un soutien. Jonction des deux sections doublée : un 6 × 6 sous chaque section.',
+    detail: 'Variante courante sur le chantier · les deux sections en 8 pi, soutiens compris · même cadrage 16 × 16 pi, 32 po centre',
+    cam: { tgt: [4.4, -0.1, 0.6], dir: [0.3, 0.62, 0.72], r: 3.3 },
+    etiquettes: [
+      { pos: [2.438, -0.03, 2.362], text: 'Joint sur un blocage, jamais dans le vide' },
+      { pos: [1.4, 0.152, 2.362], text: 'Les deux 6 × 6 de 8 pi parfaitement de niveau' },
+      { pos: [4.877, -0.076, 0.4], text: 'Jonction doublée : un 6 × 6 sous chaque section' },
+      { pos: [7.315, -0.02, 2.362], text: 'Section 2 : joint sur un soutien' },
+      { pos: [4.877, 0.107, -2.21], text: 'Bout de 6 × 6 de 24 po le long des madriers de rive' },
+    ] },
   { n: 12, titre: 'Couvrir la section 2',
     texte: 'Couvre la section 2 en répétant les étapes 6 et 7, du bout côté galerie (d\'où arrive le bois) vers la jonction. Les deux planches de jonction sont posées et vissées à la fin : les deux sections sont jointes.',
     cam: { tgt: [7.07, 0, 0], dir: [0.69, 0.42, 0.59], r: 3.4 } },

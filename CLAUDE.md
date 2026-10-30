@@ -66,3 +66,7 @@ pieces-3d : `node scripts/export-plancher-app.mjs plancher.glb plancher-etiquett
 Après un réexport, monter leur `?v=` dans `outil.js` (MODELE, ETIQUETTES) :
 ils sont gardés dans le cache persistant des médias du service worker.
 `outil.js` et `etapes.js` suivent le `?v=` du site (bump-version suffit).
+Écran « Variante : 6 × 6 de 8 pi » (après l'étape 11) : pièces de 8 pi et
+pièces de 16 pi remplacées marquées dans le .glb par l'export (fonctions
+variante8, jonction8, variante8Sec2 de pieces-3d, branche
+plancher-montage-pieces tant qu'elle n'est pas sur main).
