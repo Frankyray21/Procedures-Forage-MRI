@@ -18,8 +18,8 @@ import { RoomEnvironment } from '../vendor/three/RoomEnvironment.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=2';
-const ETIQUETTES = 'plancher-etiquettes.json?v=2';
+const MODELE = 'plancher.glb?v=3';
+const ETIQUETTES = 'plancher-etiquettes.json?v=3';
 const ORANGE = new THREE.Color(0xff8a1f);
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
@@ -91,7 +91,37 @@ function preparer(root) {
   root.userData.pieces = pieces;
   root.userData.seules = seules;
   root.userData.v8 = v8.sort((a, b) => a.userData.v8 - b.userData.v8);
+  // Serrage des planches (étape 7) : planches de la section 1 par rang de pose,
+  // coins de serrage, tire-fonds de la planche devant les coins, et une copie de
+  // ces tire-fonds pour le dernier 3 × 8 (vissé le temps du serrage).
+  const planches = [];
+  for (const o of pieces) if (o.userData.ord !== undefined) planches[o.userData.ord] = o;
+  const coins = seules.find((o) => !o.userData.d && o.userData.o.length === 1 && o.userData.o[0] === SERRAGE.etape);
+  const visT = pieces.find((o) => o.userData.s === SERRAGE.etape);
+  if (planches[SERRAGE.ancre] && coins && visT) {
+    if (!coins.userData.cible) coins.userData.cible = coins.position.clone();
+    const visA = visT.clone();
+    visA.userData = {};
+    visA.position.x += planches[SERRAGE.ancre].userData.cible.x - planches[SERRAGE.tension].userData.cible.x;
+    visA.visible = false;
+    root.add(visA);
+    root.userData.serrage = { planches, coins, visT, visA, visA0: visA.position.clone() };
+  }
 }
+
+/* Serrage des planches (étape 7), comme la vidéo de formation : les planches 1
+   à 10 sont posées avec un petit écart (exagéré pour qu'il se voie). Le dernier
+   3 × 8 (rang 11) est posé plus loin et vissé ; les coins enfoncés entre lui et la
+   planche 10 ferment les écarts vers la première planche (vissée) ; la planche
+   devant les coins est vissée ; les tire-fonds du dernier 3 × 8 sont retirés, les
+   coins enlevés, et il reprend sa place ; puis la pose continue. Instants en s. */
+const SERRAGE = {
+  etape: 7, tension: 10, ancre: 11, ecart: 0.025, place: 0.05, P8: 8 * 0.0254,
+  t: { ancre: [0, 0.5], visA: [1.0, 1.4], coins: [1.8, 2.3], serre: [2.6, 4.6], visT: [5.0, 5.4],
+    devisse: [6.6, 7.2], sortie: [7.4, 7.9], retour: [7.8, 8.5], suite: 8.8 },
+  duree: 11,
+};
+const lisse = (k) => k * k * (3 - 2 * k);
 
 /* Matériau en surbrillance (orange), un par matériau d'origine. */
 const surb = new Map();
@@ -297,12 +327,19 @@ export function ouvrir(hote, { fermer } = {}) {
     }
     for (const o of root.userData.v8) { o.visible = v8; o.position.copy(o.userData.cible); }
     for (const o of root.userData.seules) o.visible = !v8 && o.userData.o.includes(n);
+    const sr = root.userData.serrage;
+    if (sr) { sr.visA.visible = false; sr.coins.position.copy(sr.coins.userData.cible); }
     frais = v8 ? root.userData.v8 : pieces.filter((o) => o.userData.s === n);
     frais.forEach((o) => surligner(o, true));
     // Outils propres à l'étape (coins de serrage, niveau, laser) aussi en orange.
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
     outils.forEach((o) => surligner(o, true));
-    if (anime && frais.length) {
+    if (anime && sr && !v8 && n === SERRAGE.etape) {
+      serrer(sr);
+      const ajout = [sr.planches[SERRAGE.ancre], sr.visA];
+      ajout.forEach((o) => surligner(o, true));
+      frais = frais.concat(ajout);
+    } else if (anime && frais.length) {
       const pasMs = Math.max(35, Math.min(320, 2600 / frais.length));
       const t0 = performance.now();
       frais.forEach((o, k) => {
@@ -319,6 +356,57 @@ export function ouvrir(hote, { fermer } = {}) {
     }
     allerA(ETAPES[idx].cam, !anime);
     sale = true;
+  }
+
+  /* Animation du serrage (voir SERRAGE) : une seule pose qui dure toute la séquence. */
+  function serrer(sr) {
+    const T = SERRAGE.t, P = sr.planches, nT = SERRAGE.tension, nA = SERRAGE.ancre;
+    const sp = (t, [a, b]) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    const x0 = (i) => P[i].userData.cible.x;
+    const face0 = x0(nT) - SERRAGE.P8 / 2;   // face de la planche 10 où sont posés les coins du modèle
+    function etat(t) {
+      const k = lisse(sp(t, T.serre));
+      const lache = (i) => i * SERRAGE.ecart * (1 - k);
+      const ancre = (nT * SERRAGE.ecart + SERRAGE.place) * (1 - lisse(sp(t, T.retour)));
+      P.forEach((o, i) => {
+        if (!o || i === 0) return;
+        o.position.copy(o.userData.cible);
+        if (i <= nA) o.position.x -= i === nA ? ancre : lache(i);
+        if (i === nA) o.position.y += 0.35 * Math.pow(1 - sp(t, T.ancre), 3);
+        if (i > nA) {
+          const t0 = T.suite + (i - nA - 1) * 0.12;
+          o.visible = t >= t0;
+          o.position.y += 0.35 * Math.pow(1 - Math.min(1, Math.max(0, (t - t0) / 0.38)), 3);
+        }
+      });
+      // Tire-fonds temporaires du dernier 3 × 8 : posés, puis retirés (ils remontent).
+      const haut = sp(t, T.devisse);
+      sr.visA.visible = t >= T.visA[0] && haut < 1;
+      sr.visA.position.copy(sr.visA0);
+      sr.visA.position.x -= ancre;
+      sr.visA.position.y += 0.25 * (1 - sp(t, T.visA)) + 0.12 * haut;
+      // Coins : insérés au-dessus de l'écart, enfoncés, puis enlevés.
+      const sortie = sp(t, T.sortie), entre = sp(t, T.coins);
+      const xAvant = x0(nT) - lache(nT) - SERRAGE.P8 / 2, xArriere = x0(nA) - ancre + SERRAGE.P8 / 2;
+      sr.coins.visible = t >= T.coins[0] && sortie < 1;
+      sr.coins.position.copy(sr.coins.userData.cible);
+      sr.coins.position.x += (xAvant + xArriere) / 2 - face0;
+      sr.coins.position.y += 0.25 * (1 - entre) - 0.06 * k + 0.35 * sortie;
+      // Tire-fonds de la planche devant les coins, une fois les planches serrées.
+      sr.visT.visible = t >= T.visT[0];
+      sr.visT.position.copy(sr.visT.userData.cible);
+      sr.visT.position.y += 0.25 * (1 - sp(t, T.visT));
+    }
+    etat(0);
+    tweens.push({ pose: true, debut: performance.now(), duree: SERRAGE.duree * 1000,
+      pas(e) { etat(e * SERRAGE.duree); },
+      fin() {
+        P.forEach((o) => { if (o) { o.visible = true; o.position.copy(o.userData.cible); } });
+        sr.visA.visible = false;
+        sr.coins.visible = false;
+        sr.visT.visible = true;
+        sr.visT.position.copy(sr.visT.userData.cible);
+      } });
   }
 
   bPrev.addEventListener('click', () => etape(idx - 1));

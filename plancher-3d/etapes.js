@@ -40,7 +40,7 @@ export const ETAPES = [
     cam: { tgt: [2.4, 0.1, 0.5], dir: [-0.62, 0.55, 0.56], r: 2.6 } },
   { n: 7, titre: 'Resserrer les planches',
     texte: 'Vers la moitié de la section, visse la dernière planche avec un tire-fond à chaque bout, puis enfonce des coins de bois pour mettre les planches en tension. Visse la planche devant les coins, puis retire les tire-fonds de la dernière planche pour libérer les coins. Sans ça, des écarts s\'ouvrent à la longue.',
-    cam: { tgt: [2.2, 0.24, 0.5], dir: [0.7, 0.6, 0.38], r: 0.5 } },
+    cam: { tgt: [2.9, 0.23, 1.15], dir: [0.3, 0.78, 0.55], r: 1.25 } },
   { n: 8, titre: 'Laisser deux planches libres',
     texte: 'Au bout de la section 1, au centre du plancher, laisse environ deux planches libres. Cet espace sert à partir la structure de la section 2. On les visse à la fin pour joindre les deux sections.',
     cam: { tgt: [4.58, 0.1, 0.3], dir: [0.52, 0.37, 0.77], r: 1.8 } },
