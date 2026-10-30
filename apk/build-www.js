@@ -99,7 +99,7 @@ for (const f of scripts.concat(extraFiles)) copyFile(f);
 
 /* ---- médias et ressources ---- */
 // videos/ et audio/ : formations embarquées (lues hors ligne sous terre).
-for (const d of ['vendor', 'icons', 'images', 'pdf', 'videos', 'audio']) copyDir(d);
+for (const d of ['vendor', 'plancher-3d', 'icons', 'images', 'pdf', 'videos', 'audio']) copyDir(d);
 
 /* ---- couche APK ---- */
 copySrc('apk-boot.js');

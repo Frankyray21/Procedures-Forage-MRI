@@ -55,3 +55,14 @@ static content to Pages » se termine en succès, et le dire.
   liste `APP_FILES` d'`app.js` ET la liste CORE de `service-worker.js`.
 - Tester le rendu mobile (~412 px de large) : la barre d'app et les listes ne
   doivent jamais déborder horizontalement.
+
+## Outil 3D du plancher (PRO-DD-ST-003)
+
+Bouton « Voir en 3D » de la fiche → route `#/3d/pro-dd-st-003`, module
+`plancher-3d/outil.js` chargé à la demande (three.js copié dans
+`vendor/three/`, pas de CDN). Textes et cadrages : `plancher-3d/etapes.js`.
+Le modèle (`plancher.glb`) et `plancher-etiquettes.json` viennent du dépôt
+pieces-3d : `node scripts/export-plancher-app.mjs plancher.glb plancher-etiquettes.json`.
+Après un réexport, monter leur `?v=` dans `outil.js` (MODELE, ETIQUETTES) :
+ils sont gardés dans le cache persistant des médias du service worker.
+`outil.js` et `etapes.js` suivent le `?v=` du site (bump-version suffit).

@@ -100,7 +100,7 @@ function enOrange(m) {
 }
 function surligner(obj, on) {
   obj.traverse((m) => {
-    if (!m.isMesh) return;
+    if (!m.isMesh || m.material.isMeshBasicMaterial) return;   // cotes et faisceau laser : couleur gardée
     if (on) {
       if (!m.userData.mat0) m.userData.mat0 = m.material;
       m.material = enOrange(m.userData.mat0);
@@ -270,7 +270,7 @@ export function ouvrir(hote, { fermer } = {}) {
   }
 
   // ------------------------------------------------------------ étapes
-  let root = null, frais = [];
+  let root = null, frais = [], outils = [];
   function etape(i, { anime = true } = {}) {
     idx = Math.max(0, Math.min(ETAPES.length - 1, i));
     try { localStorage.setItem(CLE, String(idx)); } catch (e) {}
@@ -279,11 +279,15 @@ export function ouvrir(hote, { fermer } = {}) {
     const n = ETAPES[idx].n;
     for (let k = tweens.length - 1; k >= 0; k--) if (tweens[k].pose) { tweens[k].fin(); tweens.splice(k, 1); }
     frais.forEach((o) => surligner(o, false));
+    outils.forEach((o) => surligner(o, false));
     const pieces = root.userData.pieces;
     for (const o of pieces) { o.visible = o.userData.s <= n; o.position.copy(o.userData.cible); }
     for (const o of root.userData.seules) o.visible = o.userData.o.includes(n);
     frais = pieces.filter((o) => o.userData.s === n);
     frais.forEach((o) => surligner(o, true));
+    // Outils propres à l'étape (coins de serrage, niveau, laser) aussi en orange.
+    outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
+    outils.forEach((o) => surligner(o, true));
     if (anime && frais.length) {
       const pasMs = Math.max(35, Math.min(320, 2600 / frais.length));
       const t0 = performance.now();
@@ -362,6 +366,7 @@ export function ouvrir(hote, { fermer } = {}) {
     document.removeEventListener('keydown', clavier);
     controls.dispose();
     frais.forEach((o) => surligner(o, false));
+    outils.forEach((o) => surligner(o, false));
     if (root) { for (const o of root.userData.pieces) { o.visible = true; o.position.copy(o.userData.cible); } scene.remove(root); }
     env.dispose();
     pmrem.dispose();
