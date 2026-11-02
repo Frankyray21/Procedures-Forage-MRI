@@ -18,8 +18,8 @@ import { RoomEnvironment } from '../vendor/three/RoomEnvironment.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=3';
-const ETIQUETTES = 'plancher-etiquettes.json?v=3';
+const MODELE = 'plancher.glb?v=4';
+const ETIQUETTES = 'plancher-etiquettes.json?v=4';
 const ORANGE = new THREE.Color(0xff8a1f);
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
