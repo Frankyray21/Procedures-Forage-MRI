@@ -275,7 +275,7 @@ export function ouvrir(hote, { fermer } = {}) {
       el.className = 'p3d-lb ' + (l.kind === 'cote' ? 'p3d-cote' : 'p3d-note');
       el.textContent = l.text;
       calque.appendChild(el);
-      return { el, pos: new THREE.Vector3(...l.pos), steps: l.steps };
+      return { el, pos: new THREE.Vector3(...l.pos), steps: l.steps, fen: l.fen };
     });
   }
   /* Étiquettes de l'étape posées sur leur point ; une étiquette qui en
@@ -287,6 +287,9 @@ export function ouvrir(hote, { fermer } = {}) {
     const vues = [];
     for (const e of etiq) {
       let on = e.steps.includes(n);
+      // Étiquette d'une phase de l'animation (fen : fenêtres [début, fin] en ms depuis
+      // l'arrivée à l'étape) : affichée seulement pendant ces fenêtres.
+      if (on && e.fen) { const t = performance.now() - animT0; on = e.fen.some(([a, b]) => t >= a && t < b); }
       if (on) {
         pv.copy(e.pos).project(camera);
         on = pv.z < 1 && pv.x > -1.1 && pv.x < 1.1 && pv.y > -1.1 && pv.y < 1.1;
@@ -312,7 +315,7 @@ export function ouvrir(hote, { fermer } = {}) {
   }
 
   // ------------------------------------------------------------ étapes
-  let root = null, frais = [], outils = [];
+  let root = null, frais = [], outils = [], animT0 = 0;
   function etape(i, { anime = true } = {}) {
     idx = Math.max(0, Math.min(ETAPES.length - 1, i));
     try { localStorage.setItem(CLE, String(idx)); } catch (e) {}
@@ -336,7 +339,9 @@ export function ouvrir(hote, { fermer } = {}) {
     // Outils propres à l'étape (coins de serrage, niveau, laser) aussi en orange.
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
     outils.forEach((o) => surligner(o, true));
-    if (anime && sr && !v8 && n === SERRAGE.etape) {
+    if (anime && !v8 && e.jonction) {
+      jonction(e, frais);
+    } else if (anime && sr && !v8 && n === SERRAGE.etape) {
       serrer(sr);
       const ajout = [sr.planches[SERRAGE.ancre], sr.visA];
       ajout.forEach((o) => surligner(o, true));
@@ -411,6 +416,54 @@ export function ouvrir(hote, { fermer } = {}) {
       } });
   }
 
+  /* Étape 11 : pose du bois de jonction, expliquée pas à pas. Les pièces de l'étape se
+     posent ; la caméra s'approche de la jonction (madrier de rive) ; seuls le 3 × 6 et
+     ses tire-fonds restent en orange ; le 3 × 6 se pose contre le madrier, à cheval sur
+     le joint, puis un tire-fond entre dans chaque section ; retour à la vue de l'étape. */
+  function jonction(e, frais) {
+    const J = e.jonction, t0 = performance.now();
+    animT0 = t0;
+    const pres = (o) => Math.abs(o.userData.centre[0] - J.x) < 0.4 && Math.abs(o.userData.centre[2]) > J.zMin;
+    const bois = frais.filter((o) => pres(o) && o.userData.q === 3);
+    const vis = frais.filter((o) => pres(o) && o.userData.q === 4);
+    const reste = frais.filter((o) => !bois.includes(o) && !vis.includes(o));
+    // Le côté vu par la caméra d'abord.
+    const cote = (o) => (Math.sign(o.userData.centre[2]) === Math.sign(J.cam.tgt[2]) ? 0 : 1);
+    bois.sort((a, b) => cote(a) - cote(b));
+    vis.sort((a, b) => cote(a) - cote(b) || a.userData.centre[0] - b.userData.centre[0]);
+    const pasMs = Math.max(35, Math.min(200, 2400 / Math.max(1, reste.length)));
+    const plus = (debut, duree, pas, fin) => tweens.push({ pose: true, debut, duree, pas, fin: fin || (() => {}) });
+    reste.forEach((o, k) => {
+      const chute = o.userData.nd ? 0 : 0.45;
+      o.visible = false;
+      plus(t0 + k * pasMs, 380, (x) => { o.visible = true; o.position.copy(o.userData.cible); o.position.y += chute * Math.pow(1 - x, 3); },
+        () => { o.visible = true; o.position.copy(o.userData.cible); });
+    });
+    const T = J.t;
+    let fait = false;
+    // Gros plan : le reste de l'étape perd son orange.
+    plus(t0 + T.approche, 1, () => { if (fait) return; fait = true; reste.forEach((o) => surligner(o, false)); allerA(J.cam); });
+    bois.forEach((o, k) => {
+      o.visible = false;
+      plus(t0 + T.bois + k * 900, 700, (x) => { o.visible = true; o.position.copy(o.userData.cible); o.position.y += 0.35 * Math.pow(1 - x, 3); },
+        () => { o.visible = true; o.position.copy(o.userData.cible); });
+    });
+    vis.forEach((o, k) => {
+      const dz = -Math.sign(o.userData.centre[2]) * 0.3; // part de l'intérieur du plancher et entre dans le madrier
+      o.visible = false;
+      plus(t0 + T.vis + k * 700, 650, (x) => { o.visible = true; o.position.copy(o.userData.cible); o.position.z += dz * (1 - x); },
+        () => { o.visible = true; o.position.copy(o.userData.cible); });
+    });
+    // Zoom sur le 3 × 6 pendant le vissage, puis on recule pour voir la pièce en entier.
+    let zoom = false, recul = false;
+    if (J.zoom) {
+      plus(t0 + T.zoom, 1, () => { if (zoom) return; zoom = true; allerA(J.zoom); });
+      plus(t0 + T.recul, 1, () => { if (recul) return; recul = true; allerA(J.cam); });
+    }
+    let retour = false;
+    plus(t0 + T.retour, 1, () => { if (retour) return; retour = true; allerA(e.cam); });
+  }
+
   bPrev.addEventListener('click', () => etape(idx - 1));
   bNext.addEventListener('click', () => etape(idx + 1));
   function clavier(e) {
@@ -449,7 +502,7 @@ export function ouvrir(hote, { fermer } = {}) {
       scene.add(root);
       // Étiquettes propres à l'outil (etapes.js), en plus de celles du modèle.
       const extra = [];
-      for (const e of ETAPES) for (const l of e.etiquettes || []) extra.push({ steps: [cleDe(e)], kind: 'note', ...l });
+      for (const e of ETAPES) for (const l of [...(e.etiquettes || []), ...((e.jonction && e.jonction.etiquettes) || [])]) extra.push({ steps: [cleDe(e)], kind: 'note', ...l });
       creerEtiquettes(c.etiquettes.concat(extra));
       msg.remove();
       etape(idx);
