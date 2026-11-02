@@ -503,7 +503,7 @@
    0.114,
    0.05
   ],
-  "text": "Hauteur 9 po (12 po max.)",
+  "text": "9 po sous le dessus du plancher (12 po max.)",
   "kind": "cote"
  },
  {
@@ -602,5 +602,77 @@
   ],
   "text": "9 po (12 po max.)",
   "kind": "cote"
+ },
+ {
+  "steps": [
+   "marches"
+  ],
+  "pos": [
+   15.603600000000002,
+   0.26501197341072896,
+   -1.9
+  ],
+  "text": "2 marches : plancher à 18 po",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "marches"
+  ],
+  "pos": [
+   15.603600000000002,
+   0.48244479815685143,
+   0
+  ],
+  "text": "3 marches : plancher à 27 po",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "marches"
+  ],
+  "pos": [
+   15.603600000000002,
+   0.692683385879129,
+   1.9
+  ],
+  "text": "4 marches : plancher à 36 po",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "pos": [
+   15.953600000000002,
+   0.26762945553535866,
+   -1.75
+  ],
+  "text": "2 marches : plancher à 18 po, 1re marche 16 po × 9 po",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "pos": [
+   15.953600000000002,
+   0.021425542595989763,
+   0.15
+  ],
+  "text": "Côté sans marche : garde-corps",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "pos": [
+   15.953600000000002,
+   0.008283385879129065,
+   2
+  ],
+  "text": "Contre la foreuse : dernière planche à 3 po de la tour",
+  "kind": "note"
  }
 ]
