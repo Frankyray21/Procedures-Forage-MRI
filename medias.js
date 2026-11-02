@@ -35,5 +35,16 @@ window.MEDIAS = {
     "desc": "Podcast : une discussion qui parle de la procédure PRO-DD-ST-002 (vider le tube carottier) et des pièges à éviter — à écouter en complément du document officiel."
    }
   ]
+ },
+ "pro-dd-st-003": {
+  "videos": [
+   {
+    "id": "ddst003v1",
+    "src": "videos/pro-dd-st-003.mp4",
+    "poster": "images/videos/pro-dd-st-003.jpg",
+    "titre": "Fabrication du plancher étape par étape (animation 3D)",
+    "duree": "8 min 24 s"
+   }
+  ]
  }
 };
