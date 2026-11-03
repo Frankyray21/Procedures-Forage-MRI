@@ -223,7 +223,7 @@ export const ETAPES = [
     stm: { 1: { angle: 0, glisse: 0, recul: 0 }, 2: { angle: 10, glisse: 0, recul: 0 }, 3: { angle: 15, glisse: 0.9, recul: 0.626 } },
     // Nom du cas affiché dans le panneau (pas de texte dans la 3D).
     nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher de 9 po, sans marche', 3: 'Forage montant à 15° : plancher de 18 po, 2 marches, garde-corps' },
-    cam: { tgt: [1.95, 0.95, 0.75], dir: [0.42, 0.45, 0.79], r: 2.4 } },
+    cam: { tgt: [1.95, 0.95, 0.13], dir: [0.42, 0.45, 0.79], r: 2.4 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',
