@@ -569,30 +569,6 @@
  },
  {
   "steps": [
-   18
-  ],
-  "pos": [
-   2.656,
-   0.686,
-   0.114
-  ],
-  "text": "32 po min.",
-  "kind": "cote"
- },
- {
-  "steps": [
-   18
-  ],
-  "pos": [
-   3.812,
-   0.686,
-   -1.16
-  ],
-  "text": "72 po min.",
-  "kind": "cote"
- },
- {
-  "steps": [
    "marches"
   ],
   "cas": 2,
@@ -628,6 +604,110 @@
    0.9595999999999999
   ],
   "text": "4 marches : plancher à 36 po du sol",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 1,
+  "pos": [
+   2.5648,
+   0.5072,
+   -1.1600000000000001
+  ],
+  "text": "Forage à l'horizontale : plancher à 9 po, sans marche",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 1,
+  "pos": [
+   2.1584,
+   0.47719999999999996,
+   -0.24560000000000015
+  ],
+  "text": "Moins de 3 po de la foreuse : le pied ne passe pas",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 2,
+  "pos": [
+   2.5648,
+   0.7358,
+   -1.4004813220625096
+  ],
+  "text": "Forage montant (15°) : plancher à 18 po, 2 marches, garde-corps",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 2,
+  "pos": [
+   2.1584,
+   0.7058,
+   -0.48608132206250965
+  ],
+  "text": "Moins de 3 po de la foreuse : le pied ne passe pas",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 2,
+  "pos": [
+   2.0500000000000003,
+   0.8266,
+   0.549
+  ],
+  "text": "Axe de bascule arrière : l'avance monte à 15°",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 3,
+  "pos": [
+   2.5648,
+   0.9643999999999999,
+   -1.48509245925864
+  ],
+  "text": "Forage ascendant de plus de 20° (25°) : plancher à 27 po, 3 marches",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 3,
+  "pos": [
+   2.1584,
+   0.9343999999999999,
+   -0.5706924592586401
+  ],
+  "text": "Moins de 3 po de la foreuse : le pied ne passe pas",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 3,
+  "pos": [
+   2.0500000000000003,
+   0.8266,
+   0.369
+  ],
+  "text": "Axe de bascule arrière : l'avance monte à 25°",
   "kind": "note"
  }
 ]

@@ -203,24 +203,23 @@ export const ETAPES = [
       'Grillage de 24 po fixé au bas du mur, le long du plancher.',
     ],
     cam: { tgt: [6.6, 0, -2.75], dir: [-0.12, 0.77, 0.63], r: 1.3 } },
-  { n: 18, titre: 'Plancher secondaire',
+  { n: 18, groupe: 'secondaire', etiquette: 'Étape 18 sur 18', titre: 'Plancher secondaire',
     texte: [
-      'À côté de la tour de la foreuse : au moins 32 × 72 po.',
-      '2 marches : 1re marche de 16 po de profondeur (deux 3 × 8) et 9 po de haut.',
-      'Bouts sans marche : garde-corps fixé solidement.',
-      'Côté foreuse : dernière planche à 3 po de la foreuse, le long des patins ; 2 planches vissées.',
-      'À chaque changement d\'angle : ajuster. Pas de bois plané.',
+      'À côté de la tour : au moins 32 × 72 po, collé à la foreuse (moins de 3 po : le pied ne passe pas).',
+      'Forage à l\'horizontale : plancher à 9 po, sans marche.',
+      'Forage montant : 2 marches (1re de 16 po × 9 po), garde-corps aux bouts sans marche.',
+      'Plus de 2 marches : forage ascendant de plus de 20° (ex. 25°), l\'avance bascule sur l\'axe arrière.',
+      '2 planches vissées. À chaque changement d\'angle : ajuster. Pas de bois plané.',
     ],
     // Foreuse STM-1500 allégée (stm1500.glb), chargée à la demande sur cet écran.
     foreuse: true,
-    etiquettes: [
-      { pos: [1.6, 1.95, -1.56], text: 'Foreuse STM-1500' },
-      { pos: [2.66, 0.76, -1.21], text: 'Plancher secondaire : 18 po, 32 × 72 po' },
-      { pos: [3.27, 0.36, -0.66], text: '1re marche : 16 po × 9 po' },
-      { pos: [2.66, 1.8, -2.08], text: 'Bout sans marche : garde-corps' },
-      { pos: [2.29, 0.74, -0.34], text: 'Dernière planche à 3 po de la foreuse' },
-    ],
-    cam: { tgt: [2.4, 0.75, -1.1], dir: [0.82, 0.52, 0.24], r: 1.8 } },
+    // Les trois montages l'un après l'autre (ms) : la foreuse se place (sol : recul, glisse de
+    // la poutre, bascule de l'avance sur l'axe arrière), puis le plancher se pose (pas entre deux
+    // rangs). stm : angle (°), glisse de la poutre (m), Z du milieu du traîneau (m), comme
+    // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1 (Z = −0,76).
+    cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
+    stm: { 1: { angle: 0, glisse: 0, z: -0.76 }, 2: { angle: 15, glisse: 1.6, z: 0.545 }, 3: { angle: 25, glisse: 1.6, z: 0.365 } },
+    cam: { tgt: [2.15, 0.95, -0.75], dir: [0.86, 0.42, 0.29], r: 2.15 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',

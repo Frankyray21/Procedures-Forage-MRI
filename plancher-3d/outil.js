@@ -21,11 +21,11 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=15';
-const ETIQUETTES = 'plancher-etiquettes.json?v=15';
+const MODELE = 'plancher.glb?v=16';
+const ETIQUETTES = 'plancher-etiquettes.json?v=16';
 // Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
 // chargée seulement à l'écran qui la montre (étape 18), puis gardée.
-const FOREUSE = 'stm1500.glb?v=2';
+const FOREUSE = 'stm1500.glb?v=3';
 let foreuse = null;
 function chargerForeuse() {
   if (!foreuse) foreuse = new Promise((resolve, reject) => {
@@ -446,6 +446,8 @@ export function ouvrir(hote, { fermer } = {}) {
     profondeur(root, 1);
     casCourant = 0;
     const cycle = grp === 'marches' && e.cycle && root.userData.marches;
+    const cycleS = grp === 'secondaire' && e.cycle;
+    if (cycleS) for (const o of pieces) if (o.userData.s === n) o.visible = false;   // plancher secondaire fixe : remplacé par les 3 montages
     if (cycle) {
       for (const o of pieces) if (o.userData.esc) o.visible = false;
       for (const o of root.userData.marches.appuis) o.visible = false;   // remplacés par ceux du cas
@@ -465,10 +467,14 @@ export function ouvrir(hote, { fermer } = {}) {
       stm = o;
       if (o.parent !== scene) scene.add(o);
       o.visible = !!ETAPES[idx].foreuse;
+      const cf = ETAPES[idx].stm;
+      poserForeuse(cf ? cf[casCourant] || cf[1] : { angle: 0, glisse: 0, z: -0.76 });
       sale = true;
     }).catch(() => {});
     if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
-    if (cycle) {
+    if (cycleS) {
+      secondaires(e, anime);
+    } else if (cycle) {
       marches(e, anime);
     } else if (anime && !v8 && !grp && e.truc) {
       truc(e, frais);
@@ -652,6 +658,51 @@ export function ouvrir(hote, { fermer } = {}) {
     let c1 = false, c2 = false;
     tweens.push({ pose: true, debut: t0 + D - 400, duree: 1, pas() { if (!c1) { c1 = true; allerA(cam); } }, fin() {} });
     tweens.push({ pose: true, debut: t0 + D + T.fin, duree: 1, pas() { if (!c2) { c2 = true; allerA(e.cam); } }, fin() {} });
+  }
+
+  /* Pose de la STM-1500 (stm1500.glb : groupes stm-fixe, stm-support à l'axe de bascule arrière,
+     stm-poutre enfant du support) : recul du traîneau (Z), glisse de la poutre le long de
+     l'avance, bascule de l'avance vers le haut sur l'axe arrière. */
+  function poserForeuse(p) {
+    if (!stm) return;
+    const sup = stm.getObjectByName('stm-support'), pou = stm.getObjectByName('stm-poutre');
+    stm.position.z = p.z + 0.76;
+    if (sup) sup.rotation.x = (p.angle * Math.PI) / 180;
+    if (pou) pou.position.z = -p.glisse;
+    sale = true;
+  }
+
+  /* Écran du plancher secondaire (étape 18) : les montages l'un après l'autre (sans marche,
+     2 marches, 3 marches). La foreuse se place pour l'angle de forage du montage, puis le
+     plancher secondaire se pose, pièce par pièce selon leur rang. */
+  function secondaires(e, anime) {
+    const C = e.cycle, t0 = horloge;
+    animT0 = t0;
+    const parCas = new Map(C.cas.map((n) => [n, frais.filter((o) => o.userData.cas === n)]));
+    const rangs = [...new Set(frais.map((o) => o.userData.m))].sort((a, b) => a - b);
+    const sp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    const mix = (a, b, k) => ({ angle: a.angle + (b.angle - a.angle) * k, glisse: a.glisse + (b.glisse - a.glisse) * k, z: a.z + (b.z - a.z) * k });
+    function etat(t) {
+      const k = Math.min(C.cas.length - 1, Math.floor(t / C.duree)), n = C.cas[k], tl = t - k * C.duree;
+      casCourant = n;
+      const avant = e.stm[k === 0 ? n : C.cas[k - 1]], ici = e.stm[n];
+      // D'abord le recul et la glisse, puis la bascule (ou l'inverse en redescendant).
+      const a = lisse(sp(tl, 0, C.sol * 0.5)), b = lisse(sp(tl, C.sol * 0.5, C.sol));
+      const angle = (x) => avant.angle + (ici.angle - avant.angle) * x;
+      const place = mix(avant, ici, ici.angle >= avant.angle ? a : b);   // recul et glisse
+      poserForeuse({ ...place, angle: angle(ici.angle >= avant.angle ? b : a) });
+      for (const [c, liste] of parCas) for (const o of liste) {
+        o.position.copy(o.userData.cible);
+        if (c !== n) { o.visible = false; continue; }
+        const d = C.sol + 200 + rangs.indexOf(o.userData.m) * C.pas;
+        o.visible = tl >= d;
+        o.position.y += 0.35 * Math.pow(1 - sp(tl, d, d + 450), 3);
+      }
+      sale = true;
+    }
+    if (!anime) { etat(C.cas.length * C.duree); return; }
+    etat(0);
+    tweens.push({ pose: true, debut: t0, duree: C.cas.length * C.duree, pas(x) { etat(x * C.cas.length * C.duree); }, fin() {} });
   }
 
   /* Écran des cas de marches : un cas après l'autre (2, 3, puis 4 marches). Le sol se creuse
