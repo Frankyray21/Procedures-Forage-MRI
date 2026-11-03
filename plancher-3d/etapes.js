@@ -28,8 +28,18 @@ export const ETAPES = [
   { n: 1, titre: 'Marquer la position du plancher',
     texte: [
       'Plan de forage en main : plancher placé selon la position de la foreuse.',
-      'Ligne de référence à la peinture, bien droite.',
+      'Laser Bosch au sol : il projette la ligne de référence.',
+      'Tracer la ligne à la peinture sur la ligne du laser.',
       'Dimensions : 16 × 32 pi.',
+    ],
+    // Animation du laser Bosch (outil.js, laser()) : pose de l'appareil sur la rive (Z = −W/2) au
+    // bout du plancher, faisceau, puis la peinture tracée en suivant la ligne (ms depuis l'arrivée).
+    laser: { z: -2.4384, t: { pose: 700, faisceau: 2200, peinture: 3000, fin: 8000, reste: 1500 },
+      cam: { tgt: [9.4, 0.1, -2.35], dir: [0.55, 0.45, 0.7], r: 1.6 },
+      cam2: { tgt: [6.2, 0, -2.2], dir: [0.75, 0.55, 0.37], r: 4.2 } },
+    etiquettes: [
+      { pos: [10.3, 0.3, -2.44], text: 'Laser Bosch : ligne de référence projetée au sol', fen: [[700, 3000]] },
+      { pos: [6.5, 0.1, -2.44], text: 'Tracer à la peinture sur la ligne du laser', fen: [[3000, 8000]] },
     ],
     cam: { tgt: [4.9, 0, 0], dir: [0.35, 0.85, 0.4], r: 5.6 } },
   { n: 2, titre: 'Trouver le point le plus haut',

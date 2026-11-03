@@ -297,6 +297,7 @@ export function ouvrir(hote, { fermer } = {}) {
 
   // ------------------------------------------------------------ rendu
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  renderer.localClippingEnabled = true;   // peinture tracée progressivement (étape 1)
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -478,10 +479,14 @@ export function ouvrir(hote, { fermer } = {}) {
       sale = true;
     }).catch(() => {});
     if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
+    if (laserG) laserG.visible = false;
+    planPeinture.constant = 1e3;
     if (cycleS) {
       secondaires(e, anime);
     } else if (cycle) {
       marches(e, anime);
+    } else if (anime && !v8 && !grp && e.laser) {
+      laser(e, frais);
     } else if (anime && !v8 && !grp && e.truc) {
       truc(e, frais);
     } else if (anime && !v8 && !grp && e.jonction) {
@@ -528,6 +533,103 @@ export function ouvrir(hote, { fermer } = {}) {
     majCtl();
    
     sale = true;
+  }
+
+  /* Étape 1 : la ligne de référence au laser Bosch. Le laser de ligne est posé au sol au bout du
+     plancher, sur la rive ; il projette sa ligne rouge le long de la rive (éventail vertical), puis on
+     trace la ligne à la peinture en suivant le laser (la peinture apparaît derrière la canette, plan de
+     coupe). La caméra suit de près, puis revient à la vue de l'étape. */
+  let laserG = null;
+  const planPeinture = new THREE.Plane(new THREE.Vector3(1, 0, 0), 1e3);
+  function laser(e, frais) {
+    const T = e.laser.t, t0 = horloge;
+    animT0 = t0;
+    const peinture = frais[0];
+    if (!peinture) return;
+    surligner(peinture, false);
+    peinture.traverse((m) => {
+      if (!m.isMesh || m.userData.coupe) return;
+      m.material = m.material.clone();
+      m.material.clippingPlanes = [planPeinture];
+      m.userData.coupe = true;
+    });
+    // Profil du sol le long de la rive : sommets de la peinture sur la ligne Z = −W/2.
+    const Z = e.laser.z, prof = [], v = new THREE.Vector3();
+    peinture.updateMatrixWorld(true);
+    peinture.traverse((m) => {
+      if (!m.isMesh) return;
+      const a = m.geometry.attributes.position;
+      for (let i = 0; i < a.count; i++) {
+        v.fromBufferAttribute(a, i).applyMatrix4(m.matrixWorld);
+        if (Math.abs(v.z - Z) < 0.02 && v.y > -2) prof.push([v.x, v.y]);
+      }
+    });
+    prof.sort((p, q) => p[0] - q[0]);
+    const solA = (x) => {   // hauteur de la ligne de peinture en x (plus proche sommet)
+      let b = prof[0] || [x, 0];
+      for (const p of prof) if (Math.abs(p[0] - x) < Math.abs(b[0] - x)) b = p;
+      return b[1];
+    };
+    const [xa, xb] = [prof.length ? prof[0][0] : -0.3, prof.length ? prof[prof.length - 1][0] : 10.05];
+    const xl = xb + 0.25, yl = solA(xb);
+    if (!laserG) {
+      laserG = new THREE.Group();
+      const bleu = new THREE.MeshStandardMaterial({ color: 0x0b5a86, metalness: 0.2, roughness: 0.5 });
+      const noir = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.7 });
+      const verre = new THREE.MeshBasicMaterial({ color: 0xff3b2a });
+      const corps = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.11, 0.11), bleu); corps.position.y = 0.085;
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.03, 20), noir); base.position.y = 0.015;
+      const tete = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 0.06), verre); tete.position.set(-0.04, 0.1, 0);
+      const poignee = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.08), noir); poignee.position.y = 0.15;
+      const appareil = new THREE.Group(); appareil.add(corps, base, tete, poignee); appareil.name = 'appareil';
+      appareil.scale.setScalar(1.6);   // un peu plus gros que nature, pour bien le voir
+      // Faisceau : ligne au sol (rouge vif) et éventail vertical, construits de la tête vers la peinture.
+      const n = 60, ligne = new Float32Array((n + 1) * 3), evt = new Float32Array(n * 9);
+      const gL = new THREE.BufferGeometry(); gL.setAttribute('position', new THREE.BufferAttribute(ligne, 3));
+      const gE = new THREE.BufferGeometry(); gE.setAttribute('position', new THREE.BufferAttribute(evt, 3));
+      const trait = new THREE.Line(gL, new THREE.LineBasicMaterial({ color: 0xff2a1a }));
+      const eventail = new THREE.Mesh(gE, new THREE.MeshBasicMaterial({ color: 0xff2a1a, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false }));
+      const bombe = new THREE.Group();
+      const cyl = new THREE.Mesh(new THREE.CylinderGeometry(0.033, 0.033, 0.2, 16), new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: 0.4 }));
+      const bouchon = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.03, 12), new THREE.MeshStandardMaterial({ color: 0xff3d1f, roughness: 0.5 }));
+      cyl.position.y = 0.1; bouchon.position.y = -0.015; bombe.add(cyl, bouchon); bombe.rotation.z = 0.35;
+      laserG.add(appareil, trait, eventail, bombe);
+      laserG.userData = { appareil, trait, eventail, bombe, n };
+      scene.add(laserG);
+    }
+    const { appareil, trait, eventail, bombe, n } = laserG.userData;
+    appareil.position.set(xl, yl, Z);
+    const head = new THREE.Vector3(xl - 0.09, yl + 0.16, Z);
+    const sp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    function etat(t) {
+      laserG.visible = true;
+      appareil.visible = t >= 0;
+      appareil.position.y = yl + 0.35 * Math.pow(1 - lisse(sp(t, 0, T.pose)), 3);
+      // Faisceau qui s'allonge de la tête vers le bout de la galerie (X petit).
+      const k = lisse(sp(t, T.pose, T.faisceau)), xf = xl - 0.06 - k * (xl - 0.06 - (xa - 0.25));
+      const L = trait.geometry.attributes.position.array, E = eventail.geometry.attributes.position.array;
+      for (let i = 0; i <= n; i++) { const x = xl - 0.06 + (xf - xl + 0.06) * (i / n); L[3 * i] = x; L[3 * i + 1] = solA(x) + 0.004; L[3 * i + 2] = Z; }
+      for (let i = 0; i < n; i++) {
+        E.set([head.x, head.y, head.z, L[3 * i], L[3 * i + 1], Z, L[3 * i + 3], L[3 * i + 4], Z], 9 * i);
+      }
+      trait.visible = eventail.visible = k > 0;
+      trait.geometry.attributes.position.needsUpdate = true; eventail.geometry.attributes.position.needsUpdate = true;
+      trait.geometry.computeBoundingSphere(); eventail.geometry.computeBoundingSphere();
+      // Peinture : la bombe suit la ligne du laser, du laser vers le front de taille.
+      const kp = sp(t, T.peinture, T.fin), xp = xb + 0.3 - kp * (xb + 0.3 - (xa - 0.1));
+      planPeinture.constant = kp <= 0 ? -1e3 : kp >= 1 ? 1e3 : -xp;
+      bombe.visible = kp > 0 && kp < 1;
+      bombe.position.set(xp, solA(xp) + 0.12, Z + 0.06);
+      sale = true;
+    }
+    etat(0);
+    tweens.push({ pose: true, debut: t0, duree: T.fin + T.reste, pas(x) { etat(x * (T.fin + T.reste)); }, fin() { etat(T.fin + T.reste); } });
+    // Caméra : près du laser, puis le long de la ligne, puis la vue de l'étape.
+    let c1 = false, c2 = false;
+    tweens.push({ pose: true, debut: t0, duree: 1, pas() { if (!c1) { c1 = true; allerA(e.laser.cam); } }, fin() {} });
+    let c3 = false;
+    tweens.push({ pose: true, debut: t0 + T.peinture, duree: 1, pas() { if (!c2) { c2 = true; allerA(e.laser.cam2); } }, fin() {} });
+    tweens.push({ pose: true, debut: t0 + T.fin, duree: 1, pas() { if (!c3) { c3 = true; allerA(e.cam); } }, fin() {} });
   }
 
   /* Étape 15, le truc des 2 × 4 de 8 pi, animé sur une vraie section de garde-corps (celle
