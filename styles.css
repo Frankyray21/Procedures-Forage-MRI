@@ -1902,7 +1902,7 @@ html.p3d-on .cbbtn,html.p3d-on .cbpanel,html.p3d-on .newver{display:none!importa
 .p3d-ctl{position:absolute;left:8px;right:8px;bottom:8px;display:flex;align-items:center;gap:6px;padding:4px 6px;
   border-radius:14px;background:rgba(13,17,23,.78);border:1px solid #2c3642;backdrop-filter:blur(4px)}
 .p3d-ctl[hidden]{display:none}
-.p3d-c{flex:0 0 auto;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;
+.p3d-c{flex:0 0 auto;width:44px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;
   background:transparent;border:0;color:#fff;padding:0}
 .p3d-c svg{width:26px;height:26px}
 .p3d-jouer{background:var(--g-red);border:1.5px solid var(--brand)}

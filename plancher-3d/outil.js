@@ -235,6 +235,7 @@ export function ouvrir(hote, { fermer } = {}) {
         '<div class="p3d-ctl" hidden>' +
           '<button type="button" class="p3d-c p3d-recul" aria-label="Reculer de 3 secondes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6L4 12l7 6zM20 6l-7 6 7 6z" fill="currentColor"/></svg></button>' +
           '<button type="button" class="p3d-c p3d-jouer" aria-label="Pause"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="p3d-ic-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/><path class="p3d-ic-jouer" d="M8 5l11 7-11 7z" fill="currentColor"/></svg></button>' +
+          '<button type="button" class="p3d-c p3d-avance" aria-label="Avancer de 3 secondes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 6l7 6-7 6zM4 6l7 6-7 6z" fill="currentColor"/></svg></button>' +
           '<input type="range" class="p3d-temps" min="0" max="1000" step="10" value="0" aria-label="Position dans l\'animation">' +
           '<button type="button" class="p3d-c p3d-rejouer" aria-label="Rejouer l\'animation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.6 4.7" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M3 4.5l2.6 5.6 5.4-2.8z" fill="currentColor"/></svg></button>' +
         '</div>' +
@@ -847,7 +848,8 @@ export function ouvrir(hote, { fermer } = {}) {
     plus(t0 + T.retour, 1, () => { if (retour) return; retour = true; allerA(e.cam); });
   }
 
-  /* Contrôle de l'animation : pause, reculer de 3 s, barre de position, rejouer. */
+  /* Contrôle de l'animation, comme une vidéo : reculer de 3 s, lecture / pause, avancer de 3 s,
+     barre de position, rejouer. */
   const ctl = $('.p3d-ctl'), temps = $('.p3d-temps'), bJouer = $('.p3d-jouer');
   function position() { return Math.max(0, Math.min(dureeEtape, horloge - debutEtape)); }
   function majCtl() {
@@ -864,6 +866,7 @@ export function ouvrir(hote, { fermer } = {}) {
     majCtl();
   });
   $('.p3d-recul').addEventListener('click', () => sauter(position() - 3000));
+  $('.p3d-avance').addEventListener('click', () => sauter(position() + 3000));
   $('.p3d-rejouer').addEventListener('click', () => { const p = enPause; sauter(0); enPause = p; majCtl(); });
   let reprendre = false;
   temps.addEventListener('pointerdown', () => { reprendre = !enPause; enPause = true; majCtl(); });
