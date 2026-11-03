@@ -1884,7 +1884,8 @@ html.p3d-on,html.p3d-on body{overflow:hidden}
 .p3d-num{margin-top:.5rem;font-family:var(--font-display);font-weight:700;font-size:.95rem;letter-spacing:.04em;
   text-transform:uppercase;color:var(--accent-l);display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .55rem .25rem 0;background:none;border:0;cursor:pointer;min-height:36px}
 .p3d-num svg{width:18px;height:18px}
-.p3d-menu{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;background:#0d1117}
+.p3d-menu{position:absolute;top:0;bottom:0;left:0;width:min(100%,420px);z-index:20;display:flex;flex-direction:column;background:#0d1117;
+  border-right:2px solid var(--brand);box-shadow:8px 0 24px rgba(0,0,0,.5)}
 .p3d-menu[hidden]{display:none}
 .p3d-menu-t{display:flex;align-items:center;justify-content:space-between;padding:max(12px,env(safe-area-inset-top)) 14px 10px;border-bottom:2px solid var(--brand)}
 .p3d-menu-t b{font-family:var(--font-display);font-weight:800;font-size:1.35rem;color:#fff}
