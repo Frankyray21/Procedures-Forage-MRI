@@ -1899,4 +1899,15 @@ html.p3d-on,html.p3d-on body{overflow:hidden}
   .p3d-b{min-height:56px;font-size:1.15rem}
 }
 html.p3d-on .cbbtn,html.p3d-on .cbpanel,html.p3d-on .newver{display:none!important}
+.p3d-ctl{position:absolute;left:8px;right:8px;bottom:8px;display:flex;align-items:center;gap:6px;padding:4px 6px;
+  border-radius:14px;background:rgba(13,17,23,.78);border:1px solid #2c3642;backdrop-filter:blur(4px)}
+.p3d-ctl[hidden]{display:none}
+.p3d-c{flex:0 0 auto;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;
+  background:transparent;border:0;color:#fff;padding:0}
+.p3d-c svg{width:26px;height:26px}
+.p3d-jouer{background:var(--g-red);border:1.5px solid var(--brand)}
+.p3d-ic-jouer{display:none}
+.p3d-arret .p3d-ic-jouer{display:inline}
+.p3d-arret .p3d-ic-pause{display:none}
+.p3d-temps{flex:1 1 auto;min-width:0;height:44px;margin:0;accent-color:var(--brand);touch-action:none}
 .p3d-d{margin-top:.35rem;font-size:.86rem;line-height:1.4;color:var(--dim)}

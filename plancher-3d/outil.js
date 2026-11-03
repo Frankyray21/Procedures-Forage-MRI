@@ -2,7 +2,7 @@
    haut (tourner à un doigt, zoomer à deux doigts), le panneau de l'étape en
    bas (en paysage : à droite). À chaque étape, les pièces des étapes
    précédentes sont en place, celles de l'étape se posent une à une en
-   surbrillance orange, la caméra se place et les étiquettes de l'étape
+   contour rouge, la caméra se place et les étiquettes de l'étape
    s'affichent.
    Module chargé à la demande par app.js (route #/3d/pro-dd-st-003). Tout est
    servi depuis le site (three.js dans vendor/three) : le service worker le
@@ -13,6 +13,9 @@ import * as THREE from '../vendor/three/three.module.min.js';
 import { GLTFLoader } from '../vendor/three/GLTFLoader.js';
 import { OrbitControls } from '../vendor/three/OrbitControls.js';
 import { RoomEnvironment } from '../vendor/three/RoomEnvironment.js';
+import { LineSegments2 } from '../vendor/three/LineSegments2.js';
+import { LineSegmentsGeometry } from '../vendor/three/LineSegmentsGeometry.js';
+import { LineMaterial } from '../vendor/three/LineMaterial.js';
 // Textes et cadrages : même numéro de version que ce module (app.js le charge
 // avec le ?v= du site), pour qu'une correction de texte arrive avec le déploiement.
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
@@ -20,7 +23,6 @@ const { ETAPES } = await import('./etapes.js?v=' + V);
 
 const MODELE = 'plancher.glb?v=5';
 const ETIQUETTES = 'plancher-etiquettes.json?v=5';
-const ORANGE = new THREE.Color(0xff8a1f);
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
@@ -108,6 +110,34 @@ function preparer(root) {
     visA.visible = false;
     root.add(visA);
     root.userData.serrage = { planches, coins, visT, visA, visA0: visA.position.clone() };
+    // Étape 12, même geste au centre : planche de référence (rang 0 de la section 1, vissée),
+    // planches libres du centre, puis la planche de la section 2 qui touche le centre (vissée
+    // le temps du serrage). Copie des coins et des tire-fonds de l'étape 7, placée au centre.
+    const P12 = [planches[0], ...pieces.filter((o) => o.userData.s === 12 && o.userData.pl && o.userData.q === 1)
+      .sort((a, b) => a.userData.centre[0] - b.userData.centre[0])];
+    const bout = P12[P12.length - 1];
+    const ancre12 = pieces.filter((o) => o.userData.s === 12 && o.userData.pl && !o.userData.q && o.userData.centre[0] > bout.userData.centre[0])
+      .sort((a, b) => a.userData.centre[0] - b.userData.centre[0])[0];
+    const vis12 = pieces.find((o) => o.userData.s === 12 && o.userData.q === 2);
+    const suite12 = pieces.filter((o) => o.userData.s === 12 && o.userData.pl && !o.userData.q && o.userData.centre[0] > bout.userData.centre[0])
+      .sort((a, b) => a.userData.centre[0] - b.userData.centre[0])[1];
+    if (P12.length > 1 && ancre12 && vis12 && suite12) {
+      // La planche d'appui est déplacée le temps du serrage (comme le dernier 3 × 8 de l'étape 7) :
+      // la planche suivante de la section 2 ne se pose qu'après, quand elle a repris sa place.
+      P12.push(ancre12, suite12);
+      const face = bout.userData.centre[0] + SERRAGE.P8 / 2;   // face de la dernière planche du centre
+      const c12 = coins.clone();
+      c12.userData = { cible: coins.userData.cible.clone() };
+      c12.userData.cible.x += face - (planches[SERRAGE.tension].userData.cible.x - SERRAGE.P8 / 2);
+      c12.visible = false;
+      root.add(c12);
+      const vA = visT.clone();
+      vA.userData = {};
+      vA.position.x += ancre12.userData.cible.x - planches[SERRAGE.tension].userData.cible.x;
+      vA.visible = false;
+      root.add(vA);
+      root.userData.serrage12 = { planches: P12, coins: c12, visT: vis12, visA: vA, visA0: vA.position.clone(), face0: face };
+    }
   }
 }
 
@@ -120,32 +150,30 @@ function preparer(root) {
    devant les coins est vissée ; les tire-fonds du dernier 3 × 8 sont retirés, les
    coins enlevés, et il reprend sa place ; puis la pose continue. Instants en s. */
 const SERRAGE = {
-  etape: 7, tension: 10, ancre: 11, ecart: 0.2 * 0.0254, place: 0.05, P8: 8 * 0.0254,
+  etape: 7, tension: 10, ancre: 11, sens: -1, ecart: 0.2 * 0.0254, place: 0.05, P8: 8 * 0.0254,
   t: { ancre: [0, 0.5], visA: [1.0, 1.4], coins: [1.8, 2.3], serre: [2.6, 4.6], visT: [5.0, 5.4],
     devisse: [6.6, 7.2], sortie: [7.4, 7.9], retour: [7.8, 8.5], suite: 8.8 },
   duree: 11,
 };
 const lisse = (k) => k * k * (3 - 2 * k);
 
-/* Matériau en surbrillance (orange), un par matériau d'origine. */
-const surb = new Map();
-function enOrange(m) {
-  let h = surb.get(m);
-  if (!h) {
-    h = m.clone();
-    if (h.color) h.color.lerp(ORANGE, 0.55);
-    if (h.emissive) { h.emissive.copy(ORANGE); h.emissiveIntensity = 0.32; }
-    surb.set(m, h);
-  }
-  return h;
-}
+/* Nouvelles pièces : couleur du bois gardée, contour rouge (arêtes de chaque pièce),
+   en trait épais (largeur en pixels, la même de près comme de loin). */
+const traitMat = new LineMaterial({ color: 0xe3262b, linewidth: 2.5 });
+const aretes = new Map();   // arêtes partagées par géométrie
 function surligner(obj, on) {
   obj.traverse((m) => {
-    if (!m.isMesh || m.material.isMeshBasicMaterial) return;   // cotes et faisceau laser : couleur gardée
-    if (on) {
-      if (!m.userData.mat0) m.userData.mat0 = m.material;
-      m.material = enOrange(m.userData.mat0);
-    } else if (m.userData.mat0) m.material = m.userData.mat0;
+    // Cotes et faisceau laser : pas de contour ; le trait lui-même est un maillage (LineSegments2).
+    if (!m.isMesh || m.isLineSegments2 || m.material.isMeshBasicMaterial) return;
+    let l = m.userData.trait;
+    if (on && !l) {
+      let g = aretes.get(m.geometry);
+      if (!g) { g = new LineSegmentsGeometry().fromEdgesGeometry(new THREE.EdgesGeometry(m.geometry, 35)); aretes.set(m.geometry, g); }
+      l = m.userData.trait = new LineSegments2(g, traitMat);
+      l.raycast = () => {};
+      m.add(l);
+    }
+    if (l) l.visible = on;
   });
 }
 
@@ -159,6 +187,12 @@ export function ouvrir(hote, { fermer } = {}) {
         '<div class="p3d-etiq" aria-hidden="true"></div>' +
         '<button type="button" class="p3d-fermer" aria-label="Fermer la 3D"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>' +
         '<div class="p3d-msg">Chargement de la 3D…</div>' +
+        '<div class="p3d-ctl" hidden>' +
+          '<button type="button" class="p3d-c p3d-recul" aria-label="Reculer de 3 secondes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6L4 12l7 6zM20 6l-7 6 7 6z" fill="currentColor"/></svg></button>' +
+          '<button type="button" class="p3d-c p3d-jouer" aria-label="Pause"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="p3d-ic-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/><path class="p3d-ic-jouer" d="M8 5l11 7-11 7z" fill="currentColor"/></svg></button>' +
+          '<input type="range" class="p3d-temps" min="0" max="1000" step="10" value="0" aria-label="Position dans l\'animation">' +
+          '<button type="button" class="p3d-c p3d-rejouer" aria-label="Rejouer l\'animation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.6 4.7" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M3 4.5l2.6 5.6 5.4-2.8z" fill="currentColor"/></svg></button>' +
+        '</div>' +
       '</div>' +
       '<div class="p3d-pan">' +
         '<div class="p3d-prog" aria-hidden="true"><i></i></div>' +
@@ -226,12 +260,17 @@ export function ouvrir(hote, { fermer } = {}) {
 
   let sale = true;
   const tweens = [];
+  /* Horloge de l'animation (ms) : avance avec l'écran sauf en pause. Toutes les
+     animations d'étape s'y règlent, ce qui permet pause, recul et retour au début. */
+  let horloge = 0, dernier = null, enPause = false, sautCam = false;
+  let debutEtape = 0, dureeEtape = 0;
   controls.addEventListener('change', () => { sale = true; });
 
   function taille() {
     const w = vue.clientWidth, h = vue.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
+    traitMat.resolution.set(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     sale = true;
@@ -252,7 +291,7 @@ export function ouvrir(hote, { fermer } = {}) {
   }
   function allerA(cam, instant) {
     const to = cadrage(cam);
-    if (instant) {
+    if (instant || sautCam) {
       camera.position.copy(to.pos);
       controls.target.copy(to.tgt);
       controls.update();
@@ -261,7 +300,7 @@ export function ouvrir(hote, { fermer } = {}) {
     }
     const p0 = camera.position.clone(), t0 = controls.target.clone();
     for (let i = tweens.length - 1; i >= 0; i--) if (tweens[i].cam) tweens.splice(i, 1);
-    tweens.push({ cam: true, debut: performance.now(), duree: 900, pas(k) {
+    tweens.push({ cam: true, debut: horloge, duree: 900, pas(k) {
       const e = ease(k);
       camera.position.lerpVectors(p0, to.pos, e);
       controls.target.lerpVectors(t0, to.tgt, e);
@@ -285,13 +324,17 @@ export function ouvrir(hote, { fermer } = {}) {
   const pv = new THREE.Vector3();
   function placerEtiquettes() {
     const n = cleDe(ETAPES[idx]);
+    let finFen = 0;
+    for (const e of etiq) if (e.fen && e.steps.includes(n)) for (const [, b] of e.fen) finFen = Math.max(finFen, b);
     const w = vue.clientWidth, h = vue.clientHeight;
     const vues = [];
     for (const e of etiq) {
       let on = e.steps.includes(n);
       // Étiquette d'une phase de l'animation (fen : fenêtres [début, fin] en ms depuis
       // l'arrivée à l'étape) : affichée seulement pendant ces fenêtres.
-      if (on && e.fen) { const t = performance.now() - animT0; on = e.fen.some(([a, b]) => t >= a && t < b); }
+      if (on && e.fen) { const t = horloge - animT0; on = e.fen.some(([a, b]) => t >= a && t < b); }
+      // Pendant une animation commentée (étiquettes à fenêtres), les autres étiquettes attendent la fin.
+      else if (on && finFen) on = horloge - animT0 >= finFen;
       if (on) {
         pv.copy(e.pos).project(camera);
         on = pv.z < 1 && pv.x > -1.1 && pv.x < 1.1 && pv.y > -1.1 && pv.y < 1.1;
@@ -318,13 +361,17 @@ export function ouvrir(hote, { fermer } = {}) {
 
   // ------------------------------------------------------------ étapes
   let root = null, frais = [], outils = [], animT0 = 0;
-  function etape(i, { anime = true } = {}) {
+  function etape(i, { anime = true, saut = null } = {}) {
+    if (i !== idx || saut === null) enPause = false;   // nouvel écran : l'animation repart
     idx = Math.max(0, Math.min(ETAPES.length - 1, i));
     try { localStorage.setItem(CLE, String(idx)); } catch (e) {}
     panneau();
     if (!root) return;
     const e = ETAPES[idx], n = e.n, v8 = !!e.variante, grp = e.groupe || null;
     for (let k = tweens.length - 1; k >= 0; k--) if (tweens[k].pose) { tweens[k].fin(); tweens.splice(k, 1); }
+    debutEtape = animT0 = horloge;
+    const sr12 = root.userData.serrage12;
+    if (sr12) { sr12.coins.visible = false; sr12.visA.visible = false; }
     frais.forEach((o) => surligner(o, false));
     outils.forEach((o) => surligner(o, false));
     const pieces = root.userData.pieces;
@@ -339,7 +386,7 @@ export function ouvrir(hote, { fermer } = {}) {
     if (sr) { sr.visA.visible = false; sr.coins.position.copy(sr.coins.userData.cible); }
     frais = v8 ? root.userData.v8 : grp ? root.userData.cas.filter((o) => o.userData.grp === grp && !o.userData.b) : pieces.filter((o) => o.userData.s === n);
     frais.forEach((o) => surligner(o, true));
-    // Outils propres à l'étape (coins de serrage, niveau, laser) aussi en orange.
+    // Outils propres à l'étape (coins de serrage, niveau, laser) aussi avec un contour rouge.
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
     outils.forEach((o) => surligner(o, true));
     if (anime && !v8 && !grp && e.jonction) {
@@ -347,13 +394,13 @@ export function ouvrir(hote, { fermer } = {}) {
     } else if (anime && !v8 && !grp && e.reprise) {
       reprise(e, frais);
     } else if (anime && sr && !v8 && !grp && n === SERRAGE.etape) {
-      serrer(sr);
+      serrer(sr, SERRAGE, horloge);
       const ajout = [sr.planches[SERRAGE.ancre], sr.visA];
       ajout.forEach((o) => surligner(o, true));
       frais = frais.concat(ajout);
     } else if (anime && frais.length) {
       const pasMs = Math.max(35, Math.min(320, 2600 / frais.length));
-      const t0 = performance.now();
+      const t0 = horloge;
       frais.forEach((o, k) => {
         const chute = o.userData.nd ? 0 : 0.45;
         o.visible = false;
@@ -369,40 +416,60 @@ export function ouvrir(hote, { fermer } = {}) {
           fin() { o.visible = true; o.position.copy(o.userData.cible); } });
       });
     }
+    if (saut !== null) sautCam = true;
     allerA(ETAPES[idx].cam, !anime);
+    // Durée de l'animation de l'écran (barre de contrôle) : fin de la dernière pose.
+    dureeEtape = 0;
+    for (const tw of tweens) if (tw.pose || tw.cam) dureeEtape = Math.max(dureeEtape, tw.debut + tw.duree - debutEtape);
+    ctl.hidden = !anime || dureeEtape < 1200;
+    temps.max = String(Math.round(dureeEtape));
+    // Saut à un instant de l'animation (recul, barre) : l'écran est reconstruit depuis le
+    // début, puis toutes les poses déjà commencées sont appliquées dans l'ordre.
+    if (saut !== null) {
+      horloge = debutEtape + Math.max(0, Math.min(saut, dureeEtape));
+      appliquer(true);
+      sautCam = false;
+    }
+    majCtl();
+   
     sale = true;
   }
 
-  /* Animation du serrage (voir SERRAGE) : une seule pose qui dure toute la séquence. */
-  function serrer(sr) {
-    const T = SERRAGE.t, P = sr.planches, nT = SERRAGE.tension, nA = SERRAGE.ancre;
+  /* Animation du serrage (voir SERRAGE) : une seule pose qui dure toute la séquence.
+     C : réglages (SERRAGE à l'étape 7, ceux de la reprise à l'étape 12) ; sens : côté
+     où s'ouvrent les écarts (-1 : vers le début du plancher ; +1 : vers la section 2). */
+  function serrer(sr, C, debut) {
+    const T = C.t, P = sr.planches, nT = C.tension, nA = C.ancre, s = C.sens;
     const sp = (t, [a, b]) => Math.min(1, Math.max(0, (t - a) / (b - a)));
     const x0 = (i) => P[i].userData.cible.x;
-    const face0 = x0(nT) - SERRAGE.P8 / 2;   // face de la planche 10 où sont posés les coins du modèle
+    const face0 = sr.face0 !== undefined ? sr.face0 : x0(nT) + s * SERRAGE.P8 / 2;   // face où sont posés les coins du modèle
     function etat(t) {
       const k = lisse(sp(t, T.serre));
-      const lache = (i) => i * SERRAGE.ecart * (1 - k);
-      const ancre = (nT * SERRAGE.ecart + SERRAGE.place) * (1 - lisse(sp(t, T.retour)));
+      const lache = (i) => i * C.ecart * (1 - k);
+      const ancre = (nT * C.ecart + C.place) * (1 - lisse(sp(t, T.retour)));
       P.forEach((o, i) => {
         if (!o || i === 0) return;
         o.position.copy(o.userData.cible);
-        if (i <= nA) o.position.x -= i === nA ? ancre : lache(i);
+        if (i <= nA) o.position.x += s * (i === nA ? ancre : lache(i));
         if (i === nA) o.position.y += 0.35 * Math.pow(1 - sp(t, T.ancre), 3);
+        // Étape 12 : les planches du centre puis la planche d'appui se posent pendant la séquence.
+        if (T.libres && i <= nA) o.visible = t >= (i === nA ? T.ancre[0] : T.libres[0] + (i - 1) * 0.4);
+        if (i < nA && T.libres) o.position.y += 0.3 * Math.pow(1 - sp(t, [T.libres[0] + (i - 1) * 0.4, T.libres[0] + (i - 1) * 0.4 + 0.45]), 3);
         if (i > nA) {
           const t0 = T.suite + (i - nA - 1) * 0.12;
           o.visible = t >= t0;
           o.position.y += 0.35 * Math.pow(1 - Math.min(1, Math.max(0, (t - t0) / 0.38)), 3);
         }
       });
-      // Tire-fonds temporaires du dernier 3 × 8 : posés, puis retirés (ils remontent).
+      // Tire-fonds temporaires de la planche d'appui : posés, puis retirés (ils remontent).
       const haut = sp(t, T.devisse);
       sr.visA.visible = t >= T.visA[0] && haut < 1;
       sr.visA.position.copy(sr.visA0);
-      sr.visA.position.x -= ancre;
+      sr.visA.position.x += s * ancre;
       sr.visA.position.y += 0.25 * (1 - sp(t, T.visA)) + 0.12 * haut;
       // Coins : insérés au-dessus de l'écart, enfoncés, puis enlevés.
       const sortie = sp(t, T.sortie), entre = sp(t, T.coins);
-      const xAvant = x0(nT) - lache(nT) - SERRAGE.P8 / 2, xArriere = x0(nA) - ancre + SERRAGE.P8 / 2;
+      const xAvant = x0(nT) + s * (lache(nT) + SERRAGE.P8 / 2), xArriere = x0(nA) + s * (ancre - SERRAGE.P8 / 2);
       sr.coins.visible = t >= T.coins[0] && sortie < 1;
       sr.coins.position.copy(sr.coins.userData.cible);
       sr.coins.position.x += (xAvant + xArriere) / 2 - face0;
@@ -412,9 +479,9 @@ export function ouvrir(hote, { fermer } = {}) {
       sr.visT.position.copy(sr.visT.userData.cible);
       sr.visT.position.y += 0.25 * (1 - sp(t, T.visT));
     }
-    etat(0);
-    tweens.push({ pose: true, debut: performance.now(), duree: SERRAGE.duree * 1000,
-      pas(e) { etat(e * SERRAGE.duree); },
+    if (debut <= horloge) etat(0);
+    tweens.push({ pose: true, debut, duree: C.duree * 1000,
+      pas(e) { etat(e * C.duree); },
       fin() {
         P.forEach((o) => { if (o) { o.visible = true; o.position.copy(o.userData.cible); } });
         sr.visA.visible = false;
@@ -426,10 +493,10 @@ export function ouvrir(hote, { fermer } = {}) {
 
   /* Étape 11 : pose du bois de jonction, expliquée pas à pas. Les pièces de l'étape se
      posent ; la caméra s'approche de la jonction (madrier de rive) ; seuls le 3 × 6 et
-     ses tire-fonds restent en orange ; le 3 × 6 se pose contre le madrier, à cheval sur
+     ses tire-fonds restent avec un contour rouge ; le 3 × 6 se pose contre le madrier, à cheval sur
      le joint, puis un tire-fond entre dans chaque section ; retour à la vue de l'étape. */
   function jonction(e, frais) {
-    const J = e.jonction, t0 = performance.now();
+    const J = e.jonction, t0 = horloge;
     animT0 = t0;
     const pres = (o) => Math.abs(o.userData.centre[0] - J.x) < 0.4 && Math.abs(o.userData.centre[2]) > J.zMin;
     const bois = frais.filter((o) => pres(o) && o.userData.q === 3);
@@ -449,7 +516,7 @@ export function ouvrir(hote, { fermer } = {}) {
     });
     const T = J.t;
     let fait = false;
-    // Gros plan : le reste de l'étape perd son orange.
+    // Gros plan : le reste de l'étape perd son contour.
     plus(t0 + T.approche, 1, () => { if (fait) return; fait = true; reste.forEach((o) => surligner(o, false)); allerA(J.cam); });
     bois.forEach((o, k) => {
       o.visible = false;
@@ -473,15 +540,18 @@ export function ouvrir(hote, { fermer } = {}) {
   }
 
   /* Étape 12 : la section 2 se couvre du bout du plancher vers le centre ; au centre,
-     l'espace ne tombe pas juste : les planches libres du centre (section 1) sont replacées
-     vers le début du plancher en les resserrant, puis vissées dans les deux sections. */
+     l'espace ne tombe pas juste : les planches libres du centre sont resserrées vers le
+     début du plancher avec des coins, comme à l'étape 7. La planche de la section 2 qui
+     touche le centre est vissée le temps du serrage ; les coins enfoncés entre elle et
+     les planches du centre ferment les écarts ; les planches du centre sont vissées dans
+     les deux sections ; puis on retire tire-fonds et coins, la planche reprend sa place. */
   function reprise(e, frais) {
-    const R = e.reprise, T = R.t, t0 = performance.now();
+    const R = e.reprise, T = R.t, t0 = horloge;
+    const sr = root.userData.serrage12;
     animT0 = t0;
-    const centre = frais.filter((o) => o.userData.pl && o.userData.q === 1);   // planches libres du centre
-    const vis = frais.filter((o) => o.userData.q === 2);                        // leurs tire-fonds
-    const sec2 = frais.filter((o) => !centre.includes(o) && !vis.includes(o))
-      .sort((a, b) => b.userData.centre[0] - a.userData.centre[0]);           // du bout vers le centre
+    const P = sr ? sr.planches : [];
+    const pris = new Set([...P, sr && sr.visT]);
+    const sec2 = frais.filter((o) => !pris.has(o)).sort((a, b) => b.userData.centre[0] - a.userData.centre[0]);   // du bout vers le centre
     const plus = (debut, duree, pas, fin) => tweens.push({ pose: true, debut, duree, pas, fin: fin || (() => {}) });
     const pasMs = Math.max(40, Math.min(220, T.couvert / Math.max(1, sec2.length)));
     sec2.forEach((o, k) => {
@@ -491,23 +561,39 @@ export function ouvrir(hote, { fermer } = {}) {
     });
     let fait = false;
     plus(t0 + T.approche, 1, () => { if (fait) return; fait = true; sec2.forEach((o) => surligner(o, false)); allerA(R.cam); });
-    // Planches du centre : posées décalées vers la section 2 (l'espace ne tombe pas juste),
-    // puis poussées vers le début du plancher (X négatif) jusqu'à être serrées.
-    centre.forEach((o, k) => {
-      o.visible = false;
-      plus(t0 + T.centre + k * 500, 500, (x) => { o.visible = true; o.position.copy(o.userData.cible); o.position.x += R.ecart * (k + 1); o.position.y += 0.3 * Math.pow(1 - x, 3); },
-        () => { o.visible = true; o.position.copy(o.userData.cible); });
-      plus(t0 + T.serre, 1800, (x) => { o.position.copy(o.userData.cible); o.position.x += R.ecart * (k + 1) * (1 - lisse(x)); },
-        () => { o.position.copy(o.userData.cible); });
-    });
-    vis.forEach((o) => {
-      o.visible = false;
-      plus(t0 + T.vis, 500, (x) => { o.visible = true; o.position.copy(o.userData.cible); o.position.y += 0.25 * (1 - x); },
-        () => { o.visible = true; o.position.copy(o.userData.cible); });
-    });
+    if (sr) {
+      // Contour rouge : planches du centre, planche d'appui, coins et tire-fonds.
+      [P[P.length - 2], P[P.length - 1], sr.coins, sr.visA].forEach((o) => surligner(o, true));
+      for (let i = 1; i < P.length; i++) P[i].visible = false;
+      sr.visT.visible = false;
+      serrer(sr, { ...R.serrage, tension: P.length - 3, ancre: P.length - 2, sens: 1 }, t0 + T.centre);
+    }
     let retour = false;
     plus(t0 + T.retour, 1, () => { if (retour) return; retour = true; allerA(e.cam); });
   }
+
+  /* Contrôle de l'animation : pause, reculer de 3 s, barre de position, rejouer. */
+  const ctl = $('.p3d-ctl'), temps = $('.p3d-temps'), bJouer = $('.p3d-jouer');
+  function position() { return Math.max(0, Math.min(dureeEtape, horloge - debutEtape)); }
+  function majCtl() {
+    const fin = position() >= dureeEtape;
+    const arret = enPause || fin;
+    ctl.classList.toggle('p3d-arret', arret);
+    bJouer.setAttribute('aria-label', arret ? (fin ? 'Rejouer' : 'Lecture') : 'Pause');
+    temps.value = String(Math.round(position()));
+  }
+  function sauter(ms) { if (root) etape(idx, { saut: ms }); }
+  bJouer.addEventListener('click', () => {
+    if (position() >= dureeEtape) { enPause = false; sauter(0); return; }
+    enPause = !enPause;
+    majCtl();
+  });
+  $('.p3d-recul').addEventListener('click', () => sauter(position() - 3000));
+  $('.p3d-rejouer').addEventListener('click', () => { const p = enPause; sauter(0); enPause = p; majCtl(); });
+  let reprendre = false;
+  temps.addEventListener('pointerdown', () => { reprendre = !enPause; enPause = true; majCtl(); });
+  temps.addEventListener('input', () => sauter(Number(temps.value)));
+  temps.addEventListener('change', () => { if (reprendre) { enPause = false; reprendre = false; majCtl(); } });
 
   bPrev.addEventListener('click', () => etape(idx - 1));
   bNext.addEventListener('click', () => etape(idx + 1));
@@ -515,23 +601,34 @@ export function ouvrir(hote, { fermer } = {}) {
     if (e.key === 'ArrowRight') etape(idx + 1);
     else if (e.key === 'ArrowLeft') etape(idx - 1);
     else if (e.key === 'Escape') fermer && fermer();
+    else if (e.key === ' ' && !ctl.hidden && e.target.tagName !== 'BUTTON') { e.preventDefault(); bJouer.click(); }
   }
   document.addEventListener('keydown', clavier);
   $('.p3d-fermer').addEventListener('click', () => { fermer && fermer(); });
 
   // ------------------------------------------------------------ boucle
   let raf = 0;
-  function boucle(t) {
-    raf = requestAnimationFrame(boucle);
-    if (controls.update()) sale = true;
-    for (let k = tweens.length - 1; k >= 0; k--) {
-      const tw = tweens[k];
-      const e = (t - tw.debut) / tw.duree;
-      if (e < 0) continue;
+  /* Applique les poses commencées à l'instant de l'horloge, dans l'ordre de leur début
+     (une pièce peut en avoir plusieurs : chute, puis glissement). */
+  function appliquer(tout) {
+    const actifs = tweens.filter((tw) => horloge >= tw.debut).sort((a, b) => a.debut - b.debut);
+    for (const tw of actifs) {
+      const e = (horloge - tw.debut) / tw.duree;
       tw.pas(Math.min(1, e));
       sale = true;
-      if (e >= 1) tweens.splice(k, 1);
+      if (e >= 1) tweens.splice(tweens.indexOf(tw), 1);
     }
+    if (tout) sale = true;
+  }
+  let posCtl = -1;
+  function boucle(t) {
+    raf = requestAnimationFrame(boucle);
+    if (dernier !== null && !enPause) horloge += t - dernier;
+    dernier = t;
+    if (controls.update()) sale = true;
+    appliquer(false);
+    const p = Math.round(position() / 50);
+    if (!ctl.hidden && p !== posCtl) { posCtl = p; majCtl(); }
     if (!sale) return;
     sale = false;
     renderer.render(scene, camera);

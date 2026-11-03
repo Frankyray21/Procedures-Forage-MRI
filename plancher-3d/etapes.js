@@ -12,7 +12,7 @@
    variante : écran de la variante 6 × 6 de 8 pi (après l'étape 11, comme
    l'encart de la vidéo) ; pas compté dans « Étape N sur 18 ». La structure de
    l'étape n y est montrée sans les planches, les pièces de 16 pi remplacées
-   par les 6 × 6 de 8 pi (posés en orange). detail : ligne en petit sous le texte.
+   par les 6 × 6 de 8 pi (posés avec un contour rouge). detail : ligne en petit sous le texte.
    Étiquettes : plancher-etiquettes.json (notes et cotes, avec leurs étapes),
    exporté avec le .glb depuis le dépôt pieces-3d
    (scripts/export-plancher-app.mjs). */
@@ -78,14 +78,20 @@ export const ETAPES = [
       { pos: [4.877, 0.107, -2.21], text: 'Bout de 3 × 6 de 24 po à la jonction des sections' },
     ] },
   { n: 12, titre: 'Couvrir la section 2',
-    texte: 'Couvre la section 2 en partant du bout du plancher vers le centre, en répétant les étapes 6 et 7. Au centre, l\'espace qui reste ne tombe pas juste : reprends les planches libres du centre (celles de la section 1) et replace-les vers le début du plancher en les resserrant avec les coins. Visse ensuite les planches de jonction dans les deux sections.',
-    // Animation (ms) : couverture du bout vers le centre, puis reprise des planches du centre.
-    reprise: { ecart: 0.05, cam: { tgt: [4.55, 0.2, 0.9], dir: [0.45, 0.62, 0.64], r: 1.05 },
-      t: { couvert: 3200, approche: 3800, centre: 5000, serre: 6400, vis: 8600, retour: 11500 },
+    texte: 'Couvre la section 2 en partant du bout du plancher vers le centre, en répétant les étapes 6 et 7. Au centre, l\'espace qui reste ne tombe pas juste : pose les planches libres du centre sans les visser, visse la dernière planche de la section 2 le temps du serrage, puis enfonce les coins pour resserrer les planches du centre vers le début du plancher. Visse les planches du centre dans les deux sections, puis retire les tire-fonds temporaires et les coins.',
+    // Animation (ms) : couverture du bout vers le centre, puis serrage des planches du
+    // centre avec les coins, comme à l'étape 7 (serrage : instants en s depuis centre).
+    reprise: { cam: { tgt: [4.82, 0.2, 1.6], dir: [0.22, 0.72, 0.66], r: 0.72 },
+      t: { couvert: 3200, approche: 3600, centre: 4600, retour: 15400 },
+      serrage: { ecart: 1.2 * 0.0254, place: 0.05, duree: 10.2,   // écart exagéré pour qu'il se voie
+        t: { libres: [0, 0.45], ancre: [1.2, 1.7], visA: [2.0, 2.4], coins: [2.8, 3.3], serre: [3.6, 5.6], visT: [6.0, 6.4],
+          devisse: [7.4, 8.0], sortie: [8.2, 8.7], retour: [8.6, 9.3], suite: 9.5 } },
       etiquettes: [
-        { pos: [4.6, 0.32, 0.4], text: 'L\'espace au centre ne tombe pas juste', fen: [[5000, 6400]] },
-        { pos: [4.6, 0.32, 0.4], text: 'Replacer vers le début du plancher en resserrant', fen: [[6400, 8600]] },
-        { pos: [4.6, 0.32, 0.4], text: 'Visser dans les deux sections', fen: [[8600, 11500]] },
+        { pos: [4.67, 0.24, 1.6], text: 'Planches du centre posées sans les visser : l\'espace ne tombe pas juste', fen: [[4600, 5800]] },
+        { pos: [4.98, 0.24, 1.6], text: 'Planche de la section 2 vissée le temps du serrage', fen: [[5800, 7400]] },
+        { pos: [4.9, 0.26, 1.6], text: 'Coins enfoncés : les planches se resserrent vers le début du plancher', fen: [[7400, 10600]] },
+        { pos: [4.67, 0.24, 1.6], text: 'Visser les planches du centre', fen: [[10600, 12000]] },
+        { pos: [4.98, 0.24, 1.6], text: 'Retirer les tire-fonds et les coins : la planche reprend sa place', fen: [[12000, 15000]] },
       ] },
     cam: { tgt: [7.07, 0, 0], dir: [0.69, 0.42, 0.59], r: 3.4 } },
   { n: 13, titre: 'Couper au ras',
