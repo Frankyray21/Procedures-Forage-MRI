@@ -217,13 +217,13 @@ export const ETAPES = [
     foreuse: true,
     // Les trois cas l'un après l'autre (ms) : à l'horizontale (pas de plancher), 10° (9 po), 15° (18 po) : la foreuse se place (sol : recul, glisse de
     // la poutre, bascule de l'avance sur l'axe arrière), puis le plancher se pose (pas entre deux
-    // rangs). stm : angle (°), glisse de la poutre (m), Z du milieu du traîneau (m), comme
-    // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1 (Z = 0,535), l'avant vers Z positif.
+    // rangs). stm : angle (°), glisse de la poutre (m), recul de la foreuse sur son axe (m), comme
+    // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1, l'avant vers le front de taille.
     cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
-    stm: { 1: { angle: 0, glisse: 0, z: 0.535 }, 2: { angle: 10, glisse: 0, z: 0.535 }, 3: { angle: 15, glisse: 0.9, z: -0.091 } },
+    stm: { 1: { angle: 0, glisse: 0, recul: 0 }, 2: { angle: 10, glisse: 0, recul: 0 }, 3: { angle: 15, glisse: 0.9, recul: 0.626 } },
     // Nom du cas affiché dans le panneau (pas de texte dans la 3D).
     nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher de 9 po, sans marche', 3: 'Forage montant à 15° : plancher de 18 po, 2 marches, garde-corps' },
-    cam: { tgt: [2.15, 0.95, 0.75], dir: [0.86, 0.42, -0.29], r: 2.15 } },
+    cam: { tgt: [1.95, 0.95, 0.75], dir: [0.42, 0.45, 0.79], r: 2.4 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',

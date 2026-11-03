@@ -21,11 +21,11 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=24';
-const ETIQUETTES = 'plancher-etiquettes.json?v=24';
+const MODELE = 'plancher.glb?v=25';
+const ETIQUETTES = 'plancher-etiquettes.json?v=25';
 // Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
 // chargée seulement à l'écran qui la montre (étape 18), puis gardée.
-const FOREUSE = 'stm1500.glb?v=6';
+const FOREUSE = 'stm1500.glb?v=7';
 let foreuse = null;
 function chargerForeuse() {
   if (!foreuse) foreuse = new Promise((resolve, reject) => {
@@ -474,7 +474,7 @@ export function ouvrir(hote, { fermer } = {}) {
       o.visible = !!ETAPES[idx].foreuse;
       if (jambes) jambes.forEach((j) => { if (j.g.parent !== scene) scene.add(j.g); });
       const cf = ETAPES[idx].stm;
-      poserForeuse(cf ? cf[casCourant] || cf[1] : { angle: 0, glisse: 0, z: 0.535 });
+      poserForeuse(cf ? cf[casCourant] || cf[1] : { angle: 0, glisse: 0, recul: 0 });
       sale = true;
     }).catch(() => {});
     if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
@@ -666,17 +666,19 @@ export function ouvrir(hote, { fermer } = {}) {
     tweens.push({ pose: true, debut: t0 + D + T.fin, duree: 1, pas() { if (!c2) { c2 = true; allerA(e.cam); } }, fin() {} });
   }
 
-  /* Pose de la STM-1500 (stm1500.glb : groupes stm-fixe, stm-support à l'axe de bascule arrière,
-     stm-poutre enfant du support) : recul du traîneau (Z), glisse de la poutre le long de
-     l'avance, bascule de l'avance vers le haut sur l'axe arrière. */
+  /* Pose de la STM-1500 (stm1500.glb : nœud « stm1500 » posé sur le plancher, l'avant vers le front
+     de taille ; groupes stm-fixe, stm-support à l'axe de bascule arrière, stm-poutre enfant du
+     support, dans le repère du modèle : +X vers l'avant, Y vers le haut) : recul du traîneau sur
+     son axe, glisse de la poutre le long de l'avance, bascule de l'avance vers le haut. */
+  const avantF = new THREE.Vector3();
   function poserForeuse(p) {
     if (!stm) return;
+    const pose = stm.getObjectByName('stm1500') || stm;
     const sup = stm.getObjectByName('stm-support'), pou = stm.getObjectByName('stm-poutre');
-    // Le .glb est exporté au cas 1 (Z = 0,535), l'avant de l'avance vers Z positif : la bascule
-    // lève ce côté (rotation négative autour de X) et la poutre glisse vers Z positif.
-    stm.position.z = p.z - 0.535;
-    if (sup) sup.rotation.x = -(p.angle * Math.PI) / 180;
-    if (pou) pou.position.z = p.glisse;
+    avantF.set(1, 0, 0).applyQuaternion(pose.quaternion);
+    stm.position.copy(avantF).multiplyScalar(-(p.recul || 0));
+    if (sup) sup.rotation.z = (p.angle * Math.PI) / 180;
+    if (pou) pou.position.x = p.glisse;
     poserJambes(p.angle > 3);
     sale = true;
   }
@@ -732,7 +734,7 @@ export function ouvrir(hote, { fermer } = {}) {
     const parCas = new Map(C.cas.map((n) => [n, frais.filter((o) => o.userData.cas === n)]));
     const rangs = [...new Set(frais.map((o) => o.userData.m))].sort((a, b) => a - b);
     const sp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
-    const mix = (a, b, k) => ({ angle: a.angle + (b.angle - a.angle) * k, glisse: a.glisse + (b.glisse - a.glisse) * k, z: a.z + (b.z - a.z) * k });
+    const mix = (a, b, k) => ({ angle: a.angle + (b.angle - a.angle) * k, glisse: a.glisse + (b.glisse - a.glisse) * k, recul: a.recul + (b.recul - a.recul) * k });
     function etat(t) {
       const k = Math.min(C.cas.length - 1, Math.floor(t / C.duree)), n = C.cas[k], tl = t - k * C.duree;
       if (e.nomsCas && casCourant !== n) { const d = $('.p3d-casn'); d.textContent = e.nomsCas[n]; d.hidden = false; }
