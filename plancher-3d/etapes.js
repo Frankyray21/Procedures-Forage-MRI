@@ -198,17 +198,18 @@ export const ETAPES = [
       'Côté escalier : main courante à 36 po au-dessus des nez, lisse intermédiaire à mi-hauteur.',
     ],
     cam: { tgt: [10.15, 0.35, 0.96], dir: [0.74, 0.36, -0.57], r: 1.35 } },
-  { n: 17, titre: 'Grillage au bas du mur',
+  { n: 17, titre: 'Écart avec la paroi',
     texte: [
-      'Écart plancher-mur de 12 po ou moins : le pied peut y passer.',
-      'Grillage de 24 po fixé au bas du mur, le long du plancher.',
+      'Le plancher se monte près de la paroi, comme sous terre.',
+      'Écart de 12 po ou moins : rien à ajouter.',
+      'Plus de 12 po : garde-corps, comme au bout du plancher.',
     ],
-    cam: { tgt: [6.6, 0, -2.75], dir: [-0.12, 0.77, 0.63], r: 1.3 } },
+    cam: { tgt: [6.6, 0, -2.5], dir: [-0.12, 0.77, 0.63], r: 1.3 } },
   { n: 18, groupe: 'secondaire', etiquette: 'Étape 18 sur 18', titre: 'Plancher secondaire',
     texte: [
-      'Pour travailler à la bonne hauteur : changer les tiges et manipuler le tube carotier à la taille.',
-      'Forage à l\'horizontale : serre-tiges déjà à la taille, pas de plancher secondaire.',
-      'Forage montant : le serre-tiges monte, plancher de 9 po sans marche, puis 18 po avec 2 marches et garde-corps.',
+      'À l\'arrière de la tête de forage : là où l\'on ajoute les tiges et sort le tube carotier.',
+      'Forage à l\'horizontale : pas de plancher secondaire.',
+      'Forage montant : plancher de 9 po sans marche, puis 18 po avec 2 marches et garde-corps.',
       'Au moins 32 × 72 po, collé à la foreuse (moins de 3 po : le pied ne passe pas), 2 planches vissées.',
       'À chaque changement d\'angle : ajuster. Pas de bois plané.',
     ],
@@ -217,12 +218,12 @@ export const ETAPES = [
     // Les trois cas l'un après l'autre (ms) : à l'horizontale (pas de plancher), 10° (9 po), 15° (18 po) : la foreuse se place (sol : recul, glisse de
     // la poutre, bascule de l'avance sur l'axe arrière), puis le plancher se pose (pas entre deux
     // rangs). stm : angle (°), glisse de la poutre (m), Z du milieu du traîneau (m), comme
-    // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1 (Z = −0,76).
+    // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1 (Z = 0,535), l'avant vers Z positif.
     cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
-    stm: { 1: { angle: 0, glisse: 0, z: -0.76 }, 2: { angle: 10, glisse: 0, z: -0.76 }, 3: { angle: 15, glisse: 0.9, z: -0.134 } },
+    stm: { 1: { angle: 0, glisse: 0, z: 0.535 }, 2: { angle: 10, glisse: 0, z: 0.535 }, 3: { angle: 15, glisse: 0.9, z: -0.091 } },
     // Nom du cas affiché dans le panneau (pas de texte dans la 3D).
     nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher de 9 po, sans marche', 3: 'Forage montant à 15° : plancher de 18 po, 2 marches, garde-corps' },
-    cam: { tgt: [2.15, 0.95, -0.75], dir: [0.86, 0.42, 0.29], r: 2.15 } },
+    cam: { tgt: [2.15, 0.95, 0.75], dir: [0.86, 0.42, -0.29], r: 2.15 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',

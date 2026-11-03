@@ -21,11 +21,11 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=22';
-const ETIQUETTES = 'plancher-etiquettes.json?v=22';
+const MODELE = 'plancher.glb?v=24';
+const ETIQUETTES = 'plancher-etiquettes.json?v=24';
 // Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
 // chargée seulement à l'écran qui la montre (étape 18), puis gardée.
-const FOREUSE = 'stm1500.glb?v=4';
+const FOREUSE = 'stm1500.glb?v=6';
 let foreuse = null;
 function chargerForeuse() {
   if (!foreuse) foreuse = new Promise((resolve, reject) => {
@@ -470,7 +470,7 @@ export function ouvrir(hote, { fermer } = {}) {
       o.visible = !!ETAPES[idx].foreuse;
       if (jambes) jambes.forEach((j) => { if (j.g.parent !== scene) scene.add(j.g); });
       const cf = ETAPES[idx].stm;
-      poserForeuse(cf ? cf[casCourant] || cf[1] : { angle: 0, glisse: 0, z: -0.76 });
+      poserForeuse(cf ? cf[casCourant] || cf[1] : { angle: 0, glisse: 0, z: 0.535 });
       sale = true;
     }).catch(() => {});
     if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
@@ -668,9 +668,11 @@ export function ouvrir(hote, { fermer } = {}) {
   function poserForeuse(p) {
     if (!stm) return;
     const sup = stm.getObjectByName('stm-support'), pou = stm.getObjectByName('stm-poutre');
-    stm.position.z = p.z + 0.76;
-    if (sup) sup.rotation.x = (p.angle * Math.PI) / 180;
-    if (pou) pou.position.z = -p.glisse;
+    // Le .glb est exporté au cas 1 (Z = 0,535), l'avant de l'avance vers Z positif : la bascule
+    // lève ce côté (rotation négative autour de X) et la poutre glisse vers Z positif.
+    stm.position.z = p.z - 0.535;
+    if (sup) sup.rotation.x = -(p.angle * Math.PI) / 180;
+    if (pou) pou.position.z = p.glisse;
     poserJambes(p.angle > 3);
     sale = true;
   }

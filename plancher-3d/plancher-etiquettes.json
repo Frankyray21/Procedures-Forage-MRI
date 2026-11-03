@@ -550,21 +550,9 @@
   "pos": [
    6,
    0.499,
-   -2.591
+   -2.503
   ],
-  "text": "Écart 12 po",
-  "kind": "cote"
- },
- {
-  "steps": [
-   17
-  ],
-  "pos": [
-   6.8,
-   0.233,
-   -2.433
-  ],
-  "text": "Grillage 24 po",
+  "text": "Moins de 12 po",
   "kind": "cote"
  },
  {
