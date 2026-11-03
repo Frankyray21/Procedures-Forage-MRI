@@ -613,10 +613,10 @@
   "cas": 1,
   "pos": [
    2.5648,
-   0.5072,
-   -1.1600000000000001
+   0.27859999999999996,
+   -1.464
   ],
-  "text": "Forage à l'horizontale : plancher à 9 po, sans marche",
+  "text": "Forage à l'horizontale : pas de plancher secondaire",
   "kind": "note"
  },
  {
@@ -625,11 +625,11 @@
   ],
   "cas": 1,
   "pos": [
-   2.1584,
-   0.47719999999999996,
-   -0.24560000000000015
+   1.6,
+   1.5836000000000001,
+   -1.464
   ],
-  "text": "Moins de 3 po de la foreuse : le pied ne passe pas",
+  "text": "Serre-tiges à 1,24 m de là où l'on se tient : tiges et tube carotier à la taille",
   "kind": "note"
  },
  {
@@ -639,10 +639,10 @@
   "cas": 2,
   "pos": [
    2.5648,
-   0.7358,
-   -1.4004813220625096
+   0.5072,
+   -1.464
   ],
-  "text": "Forage montant (15°) : plancher à 18 po, 2 marches, garde-corps",
+  "text": "Forage montant (10°) : plancher secondaire de 9 po, sans marche",
   "kind": "note"
  },
  {
@@ -651,11 +651,11 @@
   ],
   "cas": 2,
   "pos": [
-   2.1584,
-   0.7058,
-   -0.48608132206250965
+   1.6,
+   1.7622439873485622,
+   -1.464
   ],
-  "text": "Moins de 3 po de la foreuse : le pied ne passe pas",
+  "text": "Serre-tiges à 1,19 m de là où l'on se tient : tiges et tube carotier à la taille",
   "kind": "note"
  },
  {
@@ -666,9 +666,9 @@
   "pos": [
    2.0500000000000003,
    0.8266,
-   0.549
+   -0.756
   ],
-  "text": "Axe de bascule arrière : l'avance monte à 15°",
+  "text": "Axe de bascule arrière : l'avance monte à 10°",
   "kind": "note"
  },
  {
@@ -679,7 +679,7 @@
   "pos": [
    1.2000000000000002,
    1.2286,
-   -0.955
+   -2.26
   ],
   "text": "Pattes de forage (jambes) : du traîneau à la poutre",
   "kind": "note"
@@ -691,10 +691,10 @@
   "cas": 3,
   "pos": [
    2.5648,
-   0.9643999999999999,
-   -1.48509245925864
+   0.7358,
+   -1.464
   ],
-  "text": "Forage ascendant de plus de 20° (25°) : plancher à 27 po, 3 marches",
+  "text": "Forage montant (15°) : plancher à 18 po, 2 marches, garde-corps",
   "kind": "note"
  },
  {
@@ -703,11 +703,11 @@
   ],
   "cas": 3,
   "pos": [
-   2.1584,
-   0.9343999999999999,
-   -0.5706924592586401
+   1.6,
+   2.075521146352089,
+   -1.464
   ],
-  "text": "Moins de 3 po de la foreuse : le pied ne passe pas",
+  "text": "Serre-tiges à 1,27 m de là où l'on se tient : tiges et tube carotier à la taille",
   "kind": "note"
  },
  {
@@ -718,9 +718,9 @@
   "pos": [
    2.0500000000000003,
    0.8266,
-   0.369
+   -0.13
   ],
-  "text": "Axe de bascule arrière : l'avance monte à 25°",
+  "text": "Axe de bascule arrière : l'avance monte à 15°",
   "kind": "note"
  },
  {
@@ -731,7 +731,7 @@
   "pos": [
    1.2000000000000002,
    1.2286,
-   -1.135
+   -1.634
   ],
   "text": "Pattes de forage (jambes) : du traîneau à la poutre",
   "kind": "note"

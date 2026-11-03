@@ -205,20 +205,20 @@ export const ETAPES = [
     cam: { tgt: [6.6, 0, -2.75], dir: [-0.12, 0.77, 0.63], r: 1.3 } },
   { n: 18, groupe: 'secondaire', etiquette: 'Étape 18 sur 18', titre: 'Plancher secondaire',
     texte: [
-      'À côté de la tour : au moins 32 × 72 po, collé à la foreuse (moins de 3 po : le pied ne passe pas).',
-      'Forage à l\'horizontale : plancher à 9 po, sans marche.',
-      'Forage montant : 2 marches (1re de 16 po × 9 po), garde-corps aux bouts sans marche.',
-      'Plus de 2 marches : forage ascendant de plus de 20° (ex. 25°), l\'avance bascule sur l\'axe arrière.',
-      '2 planches vissées. À chaque changement d\'angle : ajuster. Pas de bois plané.',
+      'Pour travailler à la bonne hauteur : changer les tiges et manipuler le tube carotier à la taille.',
+      'Forage à l\'horizontale : serre-tiges déjà à la taille, pas de plancher secondaire.',
+      'Forage montant : le serre-tiges monte, plancher de 9 po sans marche, puis 18 po avec 2 marches et garde-corps.',
+      'Au moins 32 × 72 po, collé à la foreuse (moins de 3 po : le pied ne passe pas), 2 planches vissées.',
+      'À chaque changement d\'angle : ajuster. Pas de bois plané.',
     ],
     // Foreuse STM-1500 allégée (stm1500.glb), chargée à la demande sur cet écran.
     foreuse: true,
-    // Les trois montages l'un après l'autre (ms) : la foreuse se place (sol : recul, glisse de
+    // Les trois cas l'un après l'autre (ms) : à l'horizontale (pas de plancher), 10° (9 po), 15° (18 po) : la foreuse se place (sol : recul, glisse de
     // la poutre, bascule de l'avance sur l'axe arrière), puis le plancher se pose (pas entre deux
     // rangs). stm : angle (°), glisse de la poutre (m), Z du milieu du traîneau (m), comme
     // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1 (Z = −0,76).
     cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
-    stm: { 1: { angle: 0, glisse: 0, z: -0.76 }, 2: { angle: 15, glisse: 1.6, z: 0.545 }, 3: { angle: 25, glisse: 1.6, z: 0.365 } },
+    stm: { 1: { angle: 0, glisse: 0, z: -0.76 }, 2: { angle: 10, glisse: 0, z: -0.76 }, 3: { angle: 15, glisse: 0.9, z: -0.134 } },
     cam: { tgt: [2.15, 0.95, -0.75], dir: [0.86, 0.42, 0.29], r: 2.15 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
