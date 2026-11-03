@@ -251,7 +251,7 @@ export function ouvrir(hote, { fermer } = {}) {
       '</div>' +
       '<div class="p3d-pan">' +
         '<div class="p3d-prog" aria-hidden="true"><i></i></div>' +
-        '<button type="button" class="p3d-num" aria-haspopup="dialog" aria-label="Voir toutes les étapes"><span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
+        '<button type="button" class="p3d-num" aria-haspopup="dialog" aria-label="Voir toutes les étapes" style="display:inline-flex;align-items:center;gap:4px;background:none;border:0;padding:4px 8px 4px 0;margin-top:.5rem;cursor:pointer;color:inherit;font:inherit"><span></span><svg viewBox="0 0 24 24" width="16" height="16" style="width:16px;height:16px;flex:0 0 16px" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
         '<h2 class="p3d-t"></h2>' +
         '<p class="p3d-casn" hidden></p>' +
         '<div class="p3d-truc" hidden><b>Truc</b><p></p></div>' +
