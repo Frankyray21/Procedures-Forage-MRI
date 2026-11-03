@@ -78,20 +78,18 @@ export const ETAPES = [
       { pos: [4.877, 0.107, -2.21], text: 'Bout de 3 × 6 de 24 po à la jonction des sections' },
     ] },
   { n: 12, titre: 'Couvrir la section 2',
-    texte: 'Couvre la section 2 en partant du bout du plancher vers le centre, en répétant les étapes 6 et 7. Au centre, l\'espace qui reste ne tombe pas juste : pose les planches libres du centre sans les visser, visse la dernière planche de la section 2 le temps du serrage, puis enfonce les coins pour resserrer les planches du centre vers le début du plancher. Visse les planches du centre dans les deux sections, puis retire les tire-fonds temporaires et les coins.',
-    // Animation (ms) : couverture du bout vers le centre, puis serrage des planches du
-    // centre avec les coins, comme à l'étape 7 (serrage : instants en s depuis centre).
-    reprise: { cam: { tgt: [4.82, 0.2, 1.6], dir: [0.22, 0.72, 0.66], r: 0.72 },
-      t: { couvert: 3200, approche: 3600, centre: 4600, retour: 15400 },
-      serrage: { ecart: 1.2 * 0.0254, place: 0.05, duree: 10.2,   // écart exagéré pour qu'il se voie
-        t: { libres: [0, 0.45], ancre: [1.2, 1.7], visA: [2.0, 2.4], coins: [2.8, 3.3], serre: [3.6, 5.6], visT: [6.0, 6.4],
-          devisse: [7.4, 8.0], sortie: [8.2, 8.7], retour: [8.6, 9.3], suite: 9.5 } },
+    texte: 'Couvre la section 2 en partant du bout du plancher vers le centre, en répétant les étapes 6 et 7. Au centre, l\'espace qui reste ne tombe pas juste : pose une planche libre contre la section 2 et visse-la le temps du serrage, puis enfonce les coins pour replacer les planches du centre de la section 1 vers le début du plancher en les resserrant. Retire les coins et les tire-fonds, pose la 2e planche libre et visse les planches du centre dans les deux sections.',
+    // Animation (ms) : couverture du bout vers le centre, puis les planches de la section 1
+    // près du centre replacées vers le début du plancher avec les coins (écart exagéré).
+    reprise: { cam: { tgt: [4.3, 0.2, 1.6], dir: [0.12, 0.72, 0.68], r: 1.0 }, ecart: 0.4 * 0.0254,
+      t: { couvert: 3200, approche: 3600, libre1: [4600, 5100], visA: [5500, 5900], coins: [6400, 6900], serre: [7200, 9200],
+        sortie: [9600, 10100], devisse: [10200, 10700], libre2: [10900, 11400], vis: [11800, 12200], fin: 12300, retour: 13600 },
       etiquettes: [
-        { pos: [4.67, 0.24, 1.6], text: 'Planches du centre posées sans les visser : l\'espace ne tombe pas juste', fen: [[4600, 5800]] },
-        { pos: [4.98, 0.24, 1.6], text: 'Planche de la section 2 vissée le temps du serrage', fen: [[5800, 7400]] },
-        { pos: [4.9, 0.26, 1.6], text: 'Coins enfoncés : les planches se resserrent vers le début du plancher', fen: [[7400, 10600]] },
-        { pos: [4.67, 0.24, 1.6], text: 'Visser les planches du centre', fen: [[10600, 12000]] },
-        { pos: [4.98, 0.24, 1.6], text: 'Retirer les tire-fonds et les coins : la planche reprend sa place', fen: [[12000, 15000]] },
+        { pos: [4.6, 0.24, 1.6], text: 'Section 2 couverte du bout vers le centre : l\'espace au centre ne tombe pas juste', fen: [[3800, 5500]] },
+        { pos: [4.776, 0.24, 1.6], text: 'Planche libre contre la section 2, vissée le temps du serrage', fen: [[5500, 7200]] },
+        { pos: [4.3, 0.26, 1.6], text: 'Coins enfoncés : les planches de la section 1 sont replacées vers le début du plancher', fen: [[7200, 9600]] },
+        { pos: [4.57, 0.24, 1.6], text: 'L\'espace est juste : poser la 2e planche libre', fen: [[9600, 11800]] },
+        { pos: [4.67, 0.24, 1.6], text: 'Visser les planches du centre dans les deux sections', fen: [[11800, 13600]] },
       ] },
     cam: { tgt: [7.07, 0, 0], dir: [0.69, 0.42, 0.59], r: 3.4 } },
   { n: 13, titre: 'Couper au ras',

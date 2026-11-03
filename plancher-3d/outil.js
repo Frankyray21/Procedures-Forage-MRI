@@ -110,33 +110,26 @@ function preparer(root) {
     visA.visible = false;
     root.add(visA);
     root.userData.serrage = { planches, coins, visT, visA, visA0: visA.position.clone() };
-    // Étape 12, même geste au centre : planche de référence (rang 0 de la section 1, vissée),
-    // planches libres du centre, puis la planche de la section 2 qui touche le centre (vissée
-    // le temps du serrage). Copie des coins et des tire-fonds de l'étape 7, placée au centre.
-    const P12 = [planches[0], ...pieces.filter((o) => o.userData.s === 12 && o.userData.pl && o.userData.q === 1)
-      .sort((a, b) => a.userData.centre[0] - b.userData.centre[0])];
-    const bout = P12[P12.length - 1];
-    const ancre12 = pieces.filter((o) => o.userData.s === 12 && o.userData.pl && !o.userData.q && o.userData.centre[0] > bout.userData.centre[0])
-      .sort((a, b) => a.userData.centre[0] - b.userData.centre[0])[0];
+    // Étape 12 : au centre, les planches de la section 1 près du centre (rangs 0 à 9, entre la
+    // planche vissée à l'étape 7 et le centre) sont replacées vers le début du plancher avec des
+    // coins. Planches libres du centre (q 1) : la 1re, contre la section 2, est vissée le temps du
+    // serrage (copie des tire-fonds de l'étape 7) ; la 2e se pose dans l'espace gagné.
+    const libres = pieces.filter((o) => o.userData.s === 12 && o.userData.pl && o.userData.q === 1)
+      .sort((a, b) => b.userData.centre[0] - a.userData.centre[0]);
     const vis12 = pieces.find((o) => o.userData.s === 12 && o.userData.q === 2);
-    const suite12 = pieces.filter((o) => o.userData.s === 12 && o.userData.pl && !o.userData.q && o.userData.centre[0] > bout.userData.centre[0])
-      .sort((a, b) => a.userData.centre[0] - b.userData.centre[0])[1];
-    if (P12.length > 1 && ancre12 && vis12 && suite12) {
-      // La planche d'appui est déplacée le temps du serrage (comme le dernier 3 × 8 de l'étape 7) :
-      // la planche suivante de la section 2 ne se pose qu'après, quand elle a repris sa place.
-      P12.push(ancre12, suite12);
-      const face = bout.userData.centre[0] + SERRAGE.P8 / 2;   // face de la dernière planche du centre
+    const sec1 = planches.slice(0, SERRAGE.tension);
+    if (libres.length === 2 && vis12 && sec1.every(Boolean)) {
       const c12 = coins.clone();
-      c12.userData = { cible: coins.userData.cible.clone() };
-      c12.userData.cible.x += face - (planches[SERRAGE.tension].userData.cible.x - SERRAGE.P8 / 2);
+      const bc = new THREE.Box3().setFromObject(coins).getCenter(new THREE.Vector3());
+      c12.userData = { cible: coins.userData.cible.clone(), dx: bc.x - coins.position.x };
       c12.visible = false;
       root.add(c12);
       const vA = visT.clone();
       vA.userData = {};
-      vA.position.x += ancre12.userData.cible.x - planches[SERRAGE.tension].userData.cible.x;
+      vA.position.x += libres[0].userData.cible.x - planches[SERRAGE.tension].userData.cible.x;
       vA.visible = false;
       root.add(vA);
-      root.userData.serrage12 = { planches: P12, coins: c12, visT: vis12, visA: vA, visA0: vA.position.clone(), face0: face };
+      root.userData.serrage12 = { libres, sec1, coins: c12, visA: vA, visA0: vA.position.clone(), vis: vis12 };
     }
   }
 }
@@ -371,7 +364,7 @@ export function ouvrir(hote, { fermer } = {}) {
     for (let k = tweens.length - 1; k >= 0; k--) if (tweens[k].pose) { tweens[k].fin(); tweens.splice(k, 1); }
     debutEtape = animT0 = horloge;
     const sr12 = root.userData.serrage12;
-    if (sr12) { sr12.coins.visible = false; sr12.visA.visible = false; }
+    if (sr12) { sr12.coins.visible = false; sr12.visA.visible = false; sr12.sec1.forEach((o) => surligner(o, false)); }
     frais.forEach((o) => surligner(o, false));
     outils.forEach((o) => surligner(o, false));
     const pieces = root.userData.pieces;
@@ -539,20 +532,19 @@ export function ouvrir(hote, { fermer } = {}) {
     plus(t0 + T.retour, 1, () => { if (retour) return; retour = true; allerA(e.cam); });
   }
 
-  /* Étape 12 : la section 2 se couvre du bout du plancher vers le centre ; au centre,
-     l'espace ne tombe pas juste : les planches libres du centre sont resserrées vers le
-     début du plancher avec des coins, comme à l'étape 7. La planche de la section 2 qui
-     touche le centre est vissée le temps du serrage ; les coins enfoncés entre elle et
-     les planches du centre ferment les écarts ; les planches du centre sont vissées dans
-     les deux sections ; puis on retire tire-fonds et coins, la planche reprend sa place. */
+  /* Étape 12 : la section 2 se couvre du bout du plancher vers le centre. Au centre,
+     l'espace ne tombe pas juste : les planches de la section 1 près du centre ne sont pas
+     assez serrées. Une planche libre est posée contre la section 2 et vissée le temps du
+     serrage ; les coins enfoncés entre elle et la section 1 replacent ces planches vers le
+     début du plancher en les resserrant ; on retire coins et tire-fonds, la 2e planche
+     libre entre dans l'espace gagné, puis on visse les planches du centre. */
   function reprise(e, frais) {
     const R = e.reprise, T = R.t, t0 = horloge;
     const sr = root.userData.serrage12;
     animT0 = t0;
-    const P = sr ? sr.planches : [];
-    const pris = new Set([...P, sr && sr.visT]);
-    const sec2 = frais.filter((o) => !pris.has(o)).sort((a, b) => b.userData.centre[0] - a.userData.centre[0]);   // du bout vers le centre
     const plus = (debut, duree, pas, fin) => tweens.push({ pose: true, debut, duree, pas, fin: fin || (() => {}) });
+    const pris = new Set(sr ? [...sr.libres, sr.vis] : []);
+    const sec2 = frais.filter((o) => !pris.has(o)).sort((a, b) => b.userData.centre[0] - a.userData.centre[0]);   // du bout vers le centre
     const pasMs = Math.max(40, Math.min(220, T.couvert / Math.max(1, sec2.length)));
     sec2.forEach((o, k) => {
       o.visible = false;
@@ -562,11 +554,49 @@ export function ouvrir(hote, { fermer } = {}) {
     let fait = false;
     plus(t0 + T.approche, 1, () => { if (fait) return; fait = true; sec2.forEach((o) => surligner(o, false)); allerA(R.cam); });
     if (sr) {
-      // Contour rouge : planches du centre, planche d'appui, coins et tire-fonds.
-      [P[P.length - 2], P[P.length - 1], sr.coins, sr.visA].forEach((o) => surligner(o, true));
-      for (let i = 1; i < P.length; i++) P[i].visible = false;
-      sr.visT.visible = false;
-      serrer(sr, { ...R.serrage, tension: P.length - 3, ancre: P.length - 2, sens: 1 }, t0 + T.centre);
+      const { libres, sec1, coins, visA, vis } = sr;
+      [coins, visA].forEach((o) => surligner(o, true));
+      sec1.forEach((o) => surligner(o, true));
+      const n = sec1.length, E = R.ecart;
+      const ms = (a) => t0 + a;
+      const sp = (t, [a, b]) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+      // État au temps t (ms depuis t0) : un seul calcul pour tout le serrage.
+      function etat(t) {
+        const k = lisse(sp(t, T.serre));
+        // Planches de la section 1 : écarts ouverts vers le centre (rang 0 = la plus au centre), refermés par les coins.
+        sec1.forEach((o, i) => { o.position.copy(o.userData.cible); o.position.x += (n - i) * E * (1 - k); });
+        const [l1, l2] = libres;
+        l1.visible = t >= T.libre1[0];
+        l1.position.copy(l1.userData.cible);
+        l1.position.y += 0.35 * Math.pow(1 - sp(t, T.libre1), 3);
+        l2.visible = t >= T.libre2[0];
+        l2.position.copy(l2.userData.cible);
+        l2.position.y += 0.35 * Math.pow(1 - sp(t, T.libre2), 3);
+        visA.visible = t >= T.visA[0] && sp(t, T.devisse) < 1;
+        visA.position.copy(sr.visA0);
+        visA.position.y += 0.25 * (1 - sp(t, T.visA)) + 0.12 * sp(t, T.devisse);
+        // Coins au milieu de l'écart entre la planche libre vissée et la section 1.
+        const faceL = l1.userData.cible.x - SERRAGE.P8 / 2;
+        const faceS = sec1[0].position.x + SERRAGE.P8 / 2;
+        const sortie = sp(t, T.sortie);
+        coins.visible = t >= T.coins[0] && sortie < 1;
+        coins.position.copy(coins.userData.cible);
+        coins.position.x = (faceL + faceS) / 2 - coins.userData.dx;
+        coins.position.y += 0.25 * (1 - sp(t, T.coins)) - 0.06 * k + 0.35 * sortie;
+        vis.visible = t >= T.vis[0];
+        vis.position.copy(vis.userData.cible);
+        vis.position.y += 0.25 * (1 - sp(t, T.vis));
+      }
+      etat(0);
+      plus(ms(T.libre1[0]) - 1, T.fin - T.libre1[0] + 1, (x) => etat(T.libre1[0] - 1 + x * (T.fin - T.libre1[0] + 1)),
+        () => {
+          sec1.forEach((o) => o.position.copy(o.userData.cible));
+          libres.forEach((o) => { o.visible = true; o.position.copy(o.userData.cible); });
+          visA.visible = false; coins.visible = false;
+          vis.visible = true; vis.position.copy(vis.userData.cible);
+        });
+      // Le contour rouge quitte la section 1 une fois les planches replacées.
+      plus(ms(T.libre2[0]), 1, () => sec1.forEach((o) => surligner(o, false)));
     }
     let retour = false;
     plus(t0 + T.retour, 1, () => { if (retour) return; retour = true; allerA(e.cam); });
