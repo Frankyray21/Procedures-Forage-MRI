@@ -607,36 +607,39 @@
   "steps": [
    "marches"
   ],
+  "cas": 2,
   "pos": [
-   15.603600000000002,
-   0.26501197341072896,
-   -1.9
+   9.5036,
+   0.17003730685831397,
+   0.9595999999999999
   ],
-  "text": "2 marches : plancher à 18 po",
+  "text": "2 marches : plancher à 18 po du sol",
   "kind": "note"
  },
  {
   "steps": [
    "marches"
   ],
+  "cas": 3,
   "pos": [
-   15.603600000000002,
-   0.48244479815685143,
-   0
+   9.5036,
+   0.39863730685831394,
+   0.9595999999999999
   ],
-  "text": "3 marches : plancher à 27 po",
+  "text": "3 marches : plancher à 27 po du sol",
   "kind": "note"
  },
  {
   "steps": [
    "marches"
   ],
+  "cas": 4,
   "pos": [
-   15.603600000000002,
-   0.692683385879129,
-   1.9
+   9.5036,
+   0.6272373068583139,
+   0.9595999999999999
   ],
-  "text": "4 marches : plancher à 36 po",
+  "text": "4 marches : plancher à 36 po du sol",
   "kind": "note"
  },
  {

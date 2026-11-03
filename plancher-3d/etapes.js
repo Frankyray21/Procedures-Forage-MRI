@@ -99,8 +99,11 @@ export const ETAPES = [
     texte: 'Le plancher dépasse 12 po de haut : il faut des marches de 16 po de profondeur au moins (deux 3 × 8), de 36 à 60 po de large et de 12 po de haut au plus. Mesure à partir du dessus du plancher : chaque marche se vise 9 po plus bas. On les monte de bas en haut, chaque module sur deux appuis seulement, les côtés (rien au milieu) : 3 × 8 à plat pour le module du bas, bouts de 6 × 6 au-dessus.',
     cam: { tgt: [10.0, 0.0, 0.85], dir: [0.74, 0.36, -0.57], r: 1.15 } },
   { n: 14, groupe: 'marches', etiquette: 'Cas de marches', titre: 'Marches : 2, 3 ou 4 marches',
-    texte: 'Une marche par 9 po de hauteur, mesurés à partir du dessus du plancher : plancher à 18 po, 2 marches ; à 27 po, 3 marches ; à 36 po, 4 marches. Chaque module repose sur celui d\'en dessous et recule de 16 po. Les modules s\'empilent : au démantèlement, on les récupère pour le prochain plancher.',
-    cam: { tgt: [16.15, 0.35, 0.1], dir: [0.78, 0.48, 0.4], r: 2.05 } },
+    texte: 'Une marche par 9 po de hauteur, mesurés à partir du dessus du plancher : plancher à 18 po du sol, 2 marches ; à 27 po, 3 marches ; à 36 po, 4 marches. Chaque module repose sur celui d\'en dessous et recule de 16 po. Les modules s\'empilent : au démantèlement, on les récupère pour le prochain plancher.',
+    // Les trois cas au bout du vrai plancher, l'un après l'autre (ms) : le sol se met à la
+    // hauteur du cas (sol), puis les modules se posent (pas entre deux rangs).
+    cycle: { cas: [2, 3, 4], duree: 5200, sol: 1100, pas: 450 },
+    cam: { tgt: [10.05, -0.12, 0.96], dir: [0.55, 0.42, -0.72], r: 1.15 } },
   { n: 15, titre: 'Garde-corps et coup de pied',
     texte: 'Plancher de plus de 12 po de haut avec un vide : garde-corps selon l\'article 12 du RSST, avec la lisse du haut entre 1 et 1,2 m et une lisse intermédiaire à mi-hauteur. La lisse inférieure (coup de pied) est un 2 × 4 posé sur chant, au ras du plancher, partout où les travailleurs ont accès.',
     detail: 'Truc : un 2 × 4 de 8 pi coupé en deux donne deux montants de 48 po, la bonne hauteur sans mesurer. Avec quatre 2 × 4 de 8 pi, on fait une section de garde-corps de 8 pi : les deux montants, la lisse du haut, la lisse du milieu et le coup de pied.',

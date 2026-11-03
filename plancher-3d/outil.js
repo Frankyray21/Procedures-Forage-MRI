@@ -21,8 +21,8 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=5';
-const ETIQUETTES = 'plancher-etiquettes.json?v=5';
+const MODELE = 'plancher.glb?v=6';
+const ETIQUETTES = 'plancher-etiquettes.json?v=6';
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
@@ -95,6 +95,7 @@ function preparer(root) {
   root.userData.seules = seules;
   root.userData.v8 = v8.sort((a, b) => a.userData.v8 - b.userData.v8);
   root.userData.cas = cas;
+  preparerMarches(root, pieces, cas);
   // Serrage des planches (étape 7) : planches de la section 1 par rang de pose,
   // coins de serrage, tire-fonds de la planche devant les coins, et une copie de
   // ces tire-fonds pour le dernier 3 × 8 (vissé le temps du serrage).
@@ -131,6 +132,61 @@ function preparer(root) {
       root.userData.serrage12 = { libres, coins: c12, visA: vA, visA0: vA.position.clone(), vis: vis12 };
     }
   }
+}
+
+/* Écran des cas de marches (2, 3 ou 4) : l'escalier de chaque cas est posé au bout du vrai
+   plancher. Le plancher ne bouge pas ; c'est la profondeur du sol sous le plancher qui change
+   (sol de la galerie et appuis étirés en hauteur depuis le dessous des madriers, y = 0), pour
+   que le dessus du plancher soit à n × 9 po du sol aux marches. À l'entrée, où les madriers
+   sont presque au sol, rien ne change. */
+const MARCHE = 9 * 0.0254;
+function preparerMarches(root, pieces, cas) {
+  const m = cas.filter((o) => o.userData.grp === 'marches');
+  if (!m.length) return;
+  const box = new THREE.Box3();
+  let sol = Infinity, xL = Infinity;
+  for (const o of m) { box.setFromObject(o); sol = Math.min(sol, box.min.y); xL = Math.min(xL, box.min.x); }
+  // Appuis du plancher (sous les madriers) et vraies marches (étape 14, cachées sur cet écran).
+  const appuis = [];
+  for (const o of pieces) {
+    box.setFromObject(o);
+    if (o.userData.s >= 1 && o.userData.s <= 14 && box.max.y <= 0.003) { o.userData.s0 = o.scale.clone(); appuis.push(o); }
+    if (o.userData.s === 14 && o.userData.centre[0] > xL - 0.02) o.userData.esc = true;
+  }
+  // Sol et parois de la galerie (maillages « rock » du décor) : sommets sous y = 0 étirés ;
+  // le reste du décor (barricade, armoire…) suit le sol sous lui.
+  const coques = [], decor = [];
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    for (let q = o; q && q !== root; q = q.parent) { const u = q.userData || {}; if ((u.s !== undefined && u.s > 0) || u.o || u.v8 || u.grp) return; }
+    box.setFromObject(o);
+    if (/^rock/.test(o.material.name) && o.geometry.attributes.position.count > 1000) {
+      o.geometry = o.geometry.clone();
+      coques.push({ o, y0: Float32Array.from(o.geometry.attributes.position.array) });
+    } else if (box.min.y < 0.05) decor.push({ o, y: o.position.y, bas: Math.min(0, box.min.y) });
+  });
+  root.userData.marches = { sol, xL, appuis, coques, decor, f: 1 };
+}
+/** Profondeur du sol multipliée par f (1 : le vrai sol). */
+function profondeur(root, f) {
+  const M = root.userData.marches;
+  if (!M || Math.abs(M.f - f) < 1e-6) return;
+  M.f = f;
+  for (const o of M.appuis) {
+    o.position.y = o.userData.cible.y * f;
+    o.scale.y = o.userData.s0.y * f;
+  }
+  for (const { o, y0 } of M.coques) {
+    const a = o.geometry.attributes.position, e = o.matrixWorld.elements, sy = e[5], ty = e[13];
+    for (let i = 1; i < y0.length; i += 3) {
+      const yw = y0[i] * sy + ty;
+      a.array[i] = yw < 0 ? (yw * f - ty) / sy : y0[i];
+    }
+    a.needsUpdate = true;
+    o.geometry.computeVertexNormals();
+    o.geometry.computeBoundingSphere();
+  }
+  for (const d of M.decor) d.o.position.y = d.y + (f - 1) * d.bas;
 }
 
 /* Serrage des planches (étape 7), comme la vidéo de formation : les planches 1
@@ -308,7 +364,7 @@ export function ouvrir(hote, { fermer } = {}) {
       el.className = 'p3d-lb ' + (l.kind === 'cote' ? 'p3d-cote' : 'p3d-note');
       el.textContent = l.text;
       calque.appendChild(el);
-      return { el, pos: new THREE.Vector3(...l.pos), steps: l.steps, fen: l.fen };
+      return { el, pos: new THREE.Vector3(...l.pos), steps: l.steps, fen: l.fen, cas: l.cas };
     });
   }
   /* Étiquettes de l'étape posées sur leur point ; une étiquette qui en
@@ -324,6 +380,7 @@ export function ouvrir(hote, { fermer } = {}) {
       let on = e.steps.includes(n);
       // Étiquette d'une phase de l'animation (fen : fenêtres [début, fin] en ms depuis
       // l'arrivée à l'étape) : affichée seulement pendant ces fenêtres.
+      if (on && e.cas) on = e.cas === casCourant;
       if (on && e.fen) { const t = horloge - animT0; on = e.fen.some(([a, b]) => t >= a && t < b); }
       // Pendant une animation commentée (étiquettes à fenêtres), les autres étiquettes attendent la fin.
       else if (on && finFen) on = horloge - animT0 >= finFen;
@@ -352,7 +409,7 @@ export function ouvrir(hote, { fermer } = {}) {
   }
 
   // ------------------------------------------------------------ étapes
-  let root = null, frais = [], outils = [], animT0 = 0;
+  let root = null, frais = [], outils = [], animT0 = 0, casCourant = 0;
   function etape(i, { anime = true, saut = null } = {}) {
     if (i !== idx || saut === null) enPause = false;   // nouvel écran : l'animation repart
     idx = Math.max(0, Math.min(ETAPES.length - 1, i));
@@ -373,6 +430,10 @@ export function ouvrir(hote, { fermer } = {}) {
     }
     for (const o of root.userData.v8) { o.visible = v8; o.position.copy(o.userData.cible); }
     for (const o of root.userData.cas) { o.visible = o.userData.grp === grp; o.position.copy(o.userData.cible); }
+    profondeur(root, 1);
+    casCourant = 0;
+    const cycle = grp === 'marches' && e.cycle && root.userData.marches;
+    if (cycle) for (const o of pieces) if (o.userData.esc) o.visible = false;
     for (const o of root.userData.seules) o.visible = !v8 && !grp && o.userData.o.includes(n);
     const sr = root.userData.serrage;
     if (sr) { sr.visA.visible = false; sr.coins.position.copy(sr.coins.userData.cible); }
@@ -381,7 +442,9 @@ export function ouvrir(hote, { fermer } = {}) {
     // Outils propres à l'étape (coins de serrage, niveau, laser) aussi avec un contour rouge.
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
     outils.forEach((o) => surligner(o, true));
-    if (anime && !v8 && !grp && e.jonction) {
+    if (cycle) {
+      marches(e, anime);
+    } else if (anime && !v8 && !grp && e.jonction) {
       jonction(e, frais);
     } else if (anime && !v8 && !grp && e.reprise) {
       reprise(e, frais);
@@ -425,6 +488,37 @@ export function ouvrir(hote, { fermer } = {}) {
     majCtl();
    
     sale = true;
+  }
+
+  /* Écran des cas de marches : un cas après l'autre (2, 3, puis 4 marches). Le sol se creuse
+     ou remonte sous le plancher jusqu'à la bonne hauteur, puis l'escalier du cas se pose,
+     module par module, au bout du plancher. Sans animation : le dernier cas. */
+  function marches(e, anime) {
+    const C = e.cycle, M = root.userData.marches, t0 = horloge;
+    animT0 = t0;
+    // Plancher à n × 9 po du sol : le sol aux marches est à (n - 1) × 9 po sous y = 0 (dessus du plancher à 9 po).
+    const fDe = (n) => ((n - 1) * MARCHE) / -M.sol;
+    const dy = (n) => -(n - 1) * MARCHE - M.sol;              // l'escalier du cas suit le sol
+    const parCas = new Map(C.cas.map((n) => [n, frais.filter((o) => o.userData.cas === n)]));
+    const rangs = [...new Set(frais.map((o) => o.userData.m))].sort((a, b) => a - b);
+    const sp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    function etat(t) {
+      const k = Math.min(C.cas.length - 1, Math.floor(t / C.duree)), n = C.cas[k], tl = t - k * C.duree;
+      casCourant = n;
+      const f0 = k === 0 ? 1 : fDe(C.cas[k - 1]);
+      profondeur(root, f0 + (fDe(n) - f0) * lisse(sp(tl, 0, C.sol)));
+      for (const [c, liste] of parCas) for (const o of liste) {
+        o.position.copy(o.userData.cible);
+        if (c !== n) { o.visible = false; continue; }
+        const d = C.sol + 200 + rangs.indexOf(o.userData.m) * C.pas;
+        o.visible = tl >= d;
+        o.position.y += dy(n) + 0.35 * Math.pow(1 - sp(tl, d, d + 450), 3);
+      }
+      sale = true;
+    }
+    if (!anime) { etat(C.cas.length * C.duree); return; }
+    etat(0);
+    tweens.push({ pose: true, debut: t0, duree: C.cas.length * C.duree, pas(x) { etat(x * C.cas.length * C.duree); }, fin() {} });
   }
 
   /* Animation du serrage (voir SERRAGE) : une seule pose qui dure toute la séquence.
@@ -678,7 +772,8 @@ export function ouvrir(hote, { fermer } = {}) {
       // Étiquettes propres à l'outil (etapes.js), en plus de celles du modèle.
       const extra = [];
       for (const e of ETAPES) for (const l of [...(e.etiquettes || []), ...((e.jonction && e.jonction.etiquettes) || []), ...((e.reprise && e.reprise.etiquettes) || [])]) extra.push({ steps: [cleDe(e)], kind: 'note', ...l });
-      creerEtiquettes(c.etiquettes.concat(extra));
+      // Cas de marches : l'étiquette suit l'escalier posé au bout du plancher (dessus à 9 po + marge).
+      creerEtiquettes(c.etiquettes.map((l) => (l.cas ? { ...l, pos: [l.pos[0], MARCHE + 0.07, l.pos[2]] } : l)).concat(extra));
       msg.remove();
       etape(idx);
     })
@@ -699,7 +794,7 @@ export function ouvrir(hote, { fermer } = {}) {
     controls.dispose();
     frais.forEach((o) => surligner(o, false));
     outils.forEach((o) => surligner(o, false));
-    if (root) { for (const o of root.userData.pieces) { o.visible = true; o.position.copy(o.userData.cible); } scene.remove(root); }
+    if (root) { profondeur(root, 1); for (const o of root.userData.pieces) { o.visible = true; o.position.copy(o.userData.cible); } scene.remove(root); }
     env.dispose();
     pmrem.dispose();
     renderer.dispose();
