@@ -21,8 +21,8 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=21';
-const ETIQUETTES = 'plancher-etiquettes.json?v=21';
+const MODELE = 'plancher.glb?v=22';
+const ETIQUETTES = 'plancher-etiquettes.json?v=22';
 // Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
 // chargée seulement à l'écran qui la montre (étape 18), puis gardée.
 const FOREUSE = 'stm1500.glb?v=4';
