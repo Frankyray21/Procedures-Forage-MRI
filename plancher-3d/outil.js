@@ -541,8 +541,9 @@ export function ouvrir(hote, { fermer } = {}) {
   /* Démantèlement, dans l'ordre sécuritaire de la procédure : d'abord le plancher secondaire
      (récupérable) ; puis les planches, du fond de la galerie vers la sortie (on recule toujours sur du
      plancher encore en place), tire-fonds à mesure, chaque garde-corps et les marches seulement avec les
-     planches qu'ils protègent (jamais de bord sans protection) ; puis les 6 × 6, soutiens et blocages
-     (grosses pièces : toujours à deux) ; enfin la clôture orange et la carte de ruban rouge devant le
+     planches qu'ils protègent (jamais de bord sans protection) ; puis les 6 × 6, soutiens et blocages,
+     de la sortie vers le fond, sur le sol déjà dégagé : on n'enjambe jamais le bois (grosses pièces :
+     toujours à deux) ; enfin la clôture orange et la carte de ruban rouge devant le
      front de taille. Chaque pièce se lève, part vers la sortie (X positif) et disparaît. */
   let clotureG = null;
   function demonter(e) {
@@ -553,7 +554,7 @@ export function ouvrir(hote, { fermer } = {}) {
     const parX = (a, b) => (Math.abs(c(a)[0] - c(b)[0]) > 0.05 ? c(a)[0] - c(b)[0] : c(b)[1] - c(a)[1]);
     const A = vus.filter((o) => o.userData.s === 18).sort((a, b) => c(b)[1] - c(a)[1]);
     const B = vus.filter((o) => [6, 7, 12, 13, 14, 15, 16].includes(o.userData.s)).sort(parX);
-    const C = vus.filter((o) => !A.includes(o) && !B.includes(o)).sort(parX);
+    const C = vus.filter((o) => !A.includes(o) && !B.includes(o)).sort((a, b) => -parX(a, b) || c(b)[1] - c(a)[1]);   // de la sortie vers le fond
     const plan = new Map();
     for (const [liste, [a, b]] of [[A, T.a], [B, T.b], [C, T.c]]) {
       const pas = liste.length > 1 ? (b - a - 600) / (liste.length - 1) : 0;

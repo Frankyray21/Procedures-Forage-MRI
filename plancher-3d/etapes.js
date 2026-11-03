@@ -238,7 +238,8 @@ export const ETAPES = [
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',
       'Puis les planches, du fond vers la sortie, tire-fonds à mesure ; garde-corps et marches en dernier.',
-      'Puis les 6 × 6 : grosses pièces toujours à deux. Laver les madriers à l\'eau.',
+      'Puis les 6 × 6, de la sortie vers le fond : ne jamais enjamber le bois. Grosses pièces à deux.',
+      'Laver les madriers à l\'eau.',
       'Attention : la boue sous le plancher est glissante.',
     ],
     // Animation (outil.js, demonter()) : fenêtres en ms depuis l'arrivée à l'écran — a : plancher
@@ -248,8 +249,9 @@ export const ETAPES = [
       { pos: [2.2, 1.0, 0.3], text: '1. Plancher secondaire d\'abord : récupérable', fen: [[400, 3400]] },
       { pos: [4.5, 0.6, -1.2], text: '2. Planches du fond vers la sortie, tire-fonds à mesure', fen: [[3400, 8600]] },
       { pos: [9.6, 1.3, 0.8], text: 'Garde-corps et marches en dernier : jamais de bord sans protection', fen: [[8600, 11400]] },
-      { pos: [4.5, 0.3, 1.2], text: '3. Les 6 × 6 : grosses pièces toujours à deux', fen: [[11400, 15400]] },
-      { pos: [6.5, 0.15, -1.0], text: 'Attention : boue glissante sous le plancher', fen: [[15400, 19400]] },
+      { pos: [8.5, 0.3, 1.2], text: '3. Les 6 × 6 de la sortie vers le fond : ne jamais enjamber le bois', fen: [[11400, 14400]] },
+      { pos: [5.5, 0.3, -1.2], text: 'Grosses pièces : toujours à deux', fen: [[14400, 16900]] },
+      { pos: [6.5, 0.15, -1.0], text: 'Attention : boue glissante sous le plancher', fen: [[16900, 19400]] },
       { pos: [0.8, 1.3, 0], text: 'Clôture orange et carte de ruban rouge : trou non arpenté, non cimenté', fen: [[19600, 1e9]] },
     ],
     detail: 'Après le démantèlement : clôture orange et carte de ruban rouge (trou non arpenté et non cimenté, date de l\'installation, nom du superviseur).',
