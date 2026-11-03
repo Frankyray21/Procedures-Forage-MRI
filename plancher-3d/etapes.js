@@ -205,19 +205,22 @@ export const ETAPES = [
     cam: { tgt: [6.6, 0, -2.75], dir: [-0.12, 0.77, 0.63], r: 1.3 } },
   { n: 18, titre: 'Plancher secondaire',
     texte: [
-      'À côté de la tour : au moins 32 × 72 po, 12 po de haut au plus.',
-      'Rien en porte-à-faux.',
-      '2 planches près de la foreuse vissées ; la dernière à 3 po de la tour ou moins.',
-      'À chaque changement d\'angle : les ajuster. Pas de bois plané.',
+      'À côté de la tour de la foreuse : au moins 32 × 72 po.',
+      '2 marches : 1re marche de 16 po de profondeur (deux 3 × 8) et 9 po de haut.',
+      'Bouts sans marche : garde-corps fixé solidement.',
+      'Côté foreuse : dernière planche à 3 po de la foreuse, le long des patins ; 2 planches vissées.',
+      'À chaque changement d\'angle : ajuster. Pas de bois plané.',
     ],
-    cam: { tgt: [0.9, 0.35, 0.3], dir: [0.67, 0.43, 0.61], r: 1.6 } },
-  { n: 18, groupe: 'secondaire', etiquette: 'Cas du plancher secondaire', titre: 'Plancher secondaire : 3 cas',
-    texte: [
-      'Avec 2 marches : 1re marche de 16 po de profondeur et 9 po de haut.',
-      'Côté sans marche : garde-corps fixé solidement.',
-      'Contre la foreuse : 2 dernières planches vissées, la dernière à 3 po de la tour.',
+    // Foreuse STM-1500 allégée (stm1500.glb), chargée à la demande sur cet écran.
+    foreuse: true,
+    etiquettes: [
+      { pos: [1.6, 1.95, -1.1], text: 'Foreuse STM-1500' },
+      { pos: [2.66, 0.76, -0.75], text: 'Plancher secondaire : 18 po, 32 × 72 po' },
+      { pos: [3.27, 0.36, -0.2], text: '1re marche : 16 po × 9 po' },
+      { pos: [2.66, 1.8, -1.62], text: 'Bout sans marche : garde-corps' },
+      { pos: [2.29, 0.74, 0.12], text: 'Dernière planche à 3 po de la foreuse' },
     ],
-    cam: { tgt: [16.15, 0.3, 0.1], dir: [0.78, 0.5, 0.38], r: 2.2 } },
+    cam: { tgt: [2.4, 0.75, -0.65], dir: [0.82, 0.52, 0.24], r: 1.8 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',

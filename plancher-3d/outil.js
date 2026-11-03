@@ -21,8 +21,18 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=12';
-const ETIQUETTES = 'plancher-etiquettes.json?v=12';
+const MODELE = 'plancher.glb?v=14';
+const ETIQUETTES = 'plancher-etiquettes.json?v=14';
+// Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
+// chargée seulement à l'écran qui la montre (étape 18), puis gardée.
+const FOREUSE = 'stm1500.glb?v=1';
+let foreuse = null;
+function chargerForeuse() {
+  if (!foreuse) foreuse = new Promise((resolve, reject) => {
+    new GLTFLoader().load(new URL(FOREUSE, base).href, (g) => resolve(g.scene), undefined, reject);
+  });
+  return foreuse;
+}
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
@@ -412,7 +422,7 @@ export function ouvrir(hote, { fermer } = {}) {
   }
 
   // ------------------------------------------------------------ étapes
-  let root = null, frais = [], outils = [], animT0 = 0, casCourant = 0;
+  let root = null, frais = [], outils = [], animT0 = 0, casCourant = 0, stm = null;
   function etape(i, { anime = true, saut = null } = {}) {
     if (i !== idx || saut === null) enPause = false;   // nouvel écran : l'animation repart
     idx = Math.max(0, Math.min(ETAPES.length - 1, i));
@@ -449,6 +459,14 @@ export function ouvrir(hote, { fermer } = {}) {
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
     outils.forEach((o) => surligner(o, true));
     if (root.userData.trucPlanche) root.userData.trucPlanche.visible = false;
+    // Foreuse STM-1500 : seulement sur l'écran qui la demande.
+    if (e.foreuse || stm) chargerForeuse().then((o) => {
+      if (fini) return;
+      stm = o;
+      if (o.parent !== scene) scene.add(o);
+      o.visible = !!ETAPES[idx].foreuse;
+      sale = true;
+    }).catch(() => {});
     if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
     if (cycle) {
       marches(e, anime);
@@ -948,6 +966,7 @@ export function ouvrir(hote, { fermer } = {}) {
     controls.dispose();
     frais.forEach((o) => surligner(o, false));
     outils.forEach((o) => surligner(o, false));
+    if (stm) scene.remove(stm);
     if (root) { profondeur(root, 1); for (const o of root.userData.pieces) { o.visible = true; o.position.copy(o.userData.cible); } scene.remove(root); }
     env.dispose();
     pmrem.dispose();
