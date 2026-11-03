@@ -243,6 +243,7 @@ export function ouvrir(hote, { fermer } = {}) {
         '<div class="p3d-prog" aria-hidden="true"><i></i></div>' +
         '<div class="p3d-num"></div>' +
         '<h2 class="p3d-t"></h2>' +
+        '<div class="p3d-truc" hidden><b>Truc</b><p></p></div>' +
         '<p class="p3d-x"></p>' +
         '<p class="p3d-d"></p>' +
         '<div class="p3d-btns">' +
@@ -266,6 +267,8 @@ export function ouvrir(hote, { fermer } = {}) {
     $('.p3d-num').textContent = e.variante ? 'Variante' : e.groupe ? (e.etiquette || 'À savoir') : e.n === 0 ? 'Avant de commencer' : 'Étape ' + e.n + ' sur ' + TOTAL;
     $('.p3d-t').textContent = e.n === 0 ? 'Inspection et matériel de sécurité' : e.titre;
     $('.p3d-x').textContent = e.texte;
+    $('.p3d-truc p').textContent = e.truc ? e.truc.texte : '';
+    $('.p3d-truc').hidden = !e.truc;
     $('.p3d-d').textContent = e.detail || '';
     $('.p3d-d').hidden = !e.detail;
     bPrev.disabled = idx === 0;
@@ -361,7 +364,7 @@ export function ouvrir(hote, { fermer } = {}) {
       el.className = 'p3d-lb ' + (l.kind === 'cote' ? 'p3d-cote' : 'p3d-note');
       el.textContent = l.text;
       calque.appendChild(el);
-      return { el, pos: new THREE.Vector3(...l.pos), steps: l.steps, fen: l.fen, cas: l.cas };
+      return { el, pos: new THREE.Vector3(...l.pos), steps: l.steps, fen: l.fen, cas: l.cas, cle: l.cle };
     });
   }
   /* Étiquettes de l'étape posées sur leur point ; une étiquette qui en
@@ -442,8 +445,11 @@ export function ouvrir(hote, { fermer } = {}) {
     // Outils propres à l'étape (coins de serrage, niveau, laser) aussi avec un contour rouge.
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
     outils.forEach((o) => surligner(o, true));
+    if (root.userData.trucPlanche) root.userData.trucPlanche.visible = false;
     if (cycle) {
       marches(e, anime);
+    } else if (anime && !v8 && !grp && e.truc) {
+      truc(e, frais);
     } else if (anime && !v8 && !grp && e.jonction) {
       jonction(e, frais);
     } else if (anime && !v8 && !grp && e.reprise) {
@@ -488,6 +494,132 @@ export function ouvrir(hote, { fermer } = {}) {
     majCtl();
    
     sale = true;
+  }
+
+  /* Étape 15, le truc des 2 × 4 de 8 pi, animé sur une vraie section de garde-corps (celle
+     des montants les plus près du point visé par la caméra) : un 2 × 4 de 8 pi se pose sur le
+     plancher, il est coupé en deux, les deux moitiés se lèvent et deviennent les montants de
+     48 po ; puis trois autres 2 × 4 de 8 pi deviennent la lisse du haut, la lisse du milieu et
+     le coup de pied. Les autres pièces de l'étape se posent d'abord, comme d'habitude. */
+  function etiquettesTruc(U) {
+    const T = U.t, D = T.debut, L3 = D + T.lisse, P = T.pasLisse;
+    return [
+      ['Un 2 × 4 de 8 pi', D, D + T.coupe],
+      ['Coupé en deux : 2 montants de 48 po, la bonne hauteur sans mesurer', D + T.coupe, D + T.lisse],
+      ['2e 2 × 4 de 8 pi : la lisse du haut', L3, L3 + P],
+      ['3e 2 × 4 de 8 pi : la lisse du milieu', L3 + P, L3 + 2 * P],
+      ['4e 2 × 4 de 8 pi : le coup de pied', L3 + 2 * P, L3 + 3 * P],
+      ['Quatre 2 × 4 de 8 pi = une section de garde-corps de 8 pi', L3 + 3 * P, D + T.fin],
+    ].map(([text, a, b], k) => ({ text, fen: [[a, b]], cle: 'truc' + k, pos: [0, 0, 0] }));
+  }
+  function sectionTruc(frais, vise) {
+    const bx = new THREE.Box3(), sz = new THREE.Vector3(), c = new THREE.Vector3();
+    const info = frais.map((o) => { bx.setFromObject(o); bx.getSize(sz); bx.getCenter(c); return { o, sz: sz.clone(), c: c.clone(), min: bx.min.y }; });
+    const poteaux = info.filter((p) => p.sz.y > 1.1 && p.sz.x < 0.15 && p.sz.z < 0.15);
+    let best = null;
+    for (const a of poteaux) for (const b of poteaux) {
+      if (a === b) continue;
+      const enX = Math.abs(a.c.z - b.c.z) < 0.03, enZ = Math.abs(a.c.x - b.c.x) < 0.03;
+      if (!enX && !enZ) continue;
+      const d = enX ? b.c.x - a.c.x : b.c.z - a.c.z;
+      if (d < 0.5 || d > 2.6) continue;
+      if (poteaux.some((p) => p !== a && p !== b && (enX ? Math.abs(p.c.z - a.c.z) < 0.03 && p.c.x > a.c.x && p.c.x < b.c.x : Math.abs(p.c.x - a.c.x) < 0.03 && p.c.z > a.c.z && p.c.z < b.c.z))) continue;
+      const m = a.c.clone().add(b.c).multiplyScalar(0.5);
+      const dist = Math.hypot(m.x - vise[0], m.z - vise[2]);
+      if (!best || dist < best.dist) best = { a, b, enX, d, m, dist };
+    }
+    if (!best) return null;
+    const { a, b, enX, d, m } = best;
+    const u = (p) => (enX ? p.x : p.z), w = (p) => (enX ? p.z : p.x);
+    const lisses = info.filter((p) => p !== a && p !== b && (enX ? p.sz.x : p.sz.z) > 0.8 * d
+      && u(p.c) > u(a.c) - 0.05 && u(p.c) < u(b.c) + 0.05 && Math.abs(w(p.c) - w(a.c)) < 0.2)
+      .sort((p, q) => q.c.y - p.c.y).slice(0, 3);
+    if (lisses.length < 3) return null;
+    // Vers l'intérieur du plancher.
+    const dedans = enX ? -Math.sign(a.c.z) : (a.c.x > 4.877 ? -1 : 1);
+    return { poteaux: [a, b], lisses, enX, m, dedans };
+  }
+  function truc(e, frais) {
+    const U = e.truc, T = U.t, t0 = horloge;
+    animT0 = t0;
+    const S = sectionTruc(frais, ETAPES[idx].cam.tgt);
+    const pris = S ? new Set([...S.poteaux, ...S.lisses].map((p) => p.o)) : new Set();
+    const autres = frais.filter((o) => !pris.has(o));
+    const pasMs = Math.max(35, Math.min(320, 2400 / Math.max(1, autres.length)));
+    autres.forEach((o, k) => {
+      const chute = o.userData.nd ? 0 : 0.45;
+      o.visible = false;
+      tweens.push({ pose: true, debut: t0 + k * pasMs, duree: 380,
+        pas(x) { o.visible = true; o.position.copy(o.userData.cible); o.position.y += chute * Math.pow(1 - x, 3); },
+        fin() { o.visible = true; o.position.copy(o.userData.cible); } });
+    });
+    if (!S) return;
+    const D = T.debut, DECK = 9 * 0.0254, P4 = 1.5 * 0.0254, L4 = 3.5 * 0.0254, H8 = 96 * 0.0254;
+    const ax = S.enX ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, 1);       // le long du garde-corps
+    const ded = (S.enX ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0)).multiplyScalar(S.dedans);
+    const tas = S.m.clone().addScaledVector(ded, 0.75);                                // où l'on pose et coupe le bois
+    tas.y = DECK;
+    // Planche de 8 pi, du même bois que les montants.
+    let mat = null;
+    S.poteaux[0].o.traverse((k) => { if (!mat && k.isMesh && !k.isLineSegments2) mat = k.userData.mat0 || k.material; });
+    if (!root.userData.trucPlanche) { root.userData.trucPlanche = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), mat); root.add(root.userData.trucPlanche); }
+    const pl = root.userData.trucPlanche;
+    pl.material = mat;
+    pl.scale.set(S.enX ? H8 : P4, L4, S.enX ? P4 : H8);
+    surligner(pl, true);
+    // Montants couchés : rotation de 90° autour de l'axe horizontal perpendiculaire au garde-corps.
+    const couche = new THREE.Quaternion().setFromAxisAngle(S.enX ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0), Math.PI / 2);
+    const poteaux = S.poteaux.map((p, k) => ({ o: p.o, q0: p.o.quaternion.clone(), q1: couche.clone().multiply(p.o.quaternion), s: k === 0 ? -1 : 1 }));
+    const sp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    const v = new THREE.Vector3();
+    function etat(t) {
+      // 1. le 2 × 4 de 8 pi se pose.
+      pl.visible = t >= D && t < D + T.coupe;
+      pl.position.copy(tas).setY(DECK + L4 / 2 + 0.35 * Math.pow(1 - sp(t, D, D + T.planche), 3));
+      // 2. coupé en deux : deux montants couchés qui s'écartent ; 3. ils se lèvent jusqu'à leur place.
+      poteaux.forEach((p, k) => {
+        const o = p.o;
+        o.visible = t >= D + T.coupe;
+        const couche0 = tas.clone().addScaledVector(ax, p.s * (H8 / 4 + 0.08 * sp(t, D + T.coupe, D + T.coupe + 500)));
+        couche0.y = DECK + L4 / 2;
+        const lv = lisse(sp(t, D + T.debout + k * 350, D + T.debout + k * 350 + 1300));
+        v.lerpVectors(couche0, o.userData.cible, lv);
+        v.y += 0.25 * Math.sin(Math.PI * lv);
+        o.position.copy(v);
+        o.quaternion.slerpQuaternions(p.q1, p.q0, lv);
+      });
+      // 4. les trois lisses, une à une : posées sur le plancher, puis mises en place.
+      S.lisses.forEach((l, k) => {
+        const o = l.o, a = D + T.lisse + k * T.pasLisse;
+        o.visible = t >= a;
+        const au = tas.clone().addScaledVector(ded, 0.12 * (k + 1));
+        au.y = DECK + (o.userData.cible.y - l.min);
+        const x = lisse(sp(t, a + 450, a + 1250));
+        v.lerpVectors(au, o.userData.cible, x);
+        v.y += 0.3 * Math.pow(1 - sp(t, a, a + 400), 3) + 0.2 * Math.sin(Math.PI * x);
+        o.position.copy(v);
+      });
+      sale = true;
+    }
+    // Étiquettes du truc : posées au-dessus du tas, puis de la section.
+    for (const el of etiq) {
+      if (!el.cle || !el.cle.startsWith('truc')) continue;
+      const k = Number(el.cle.slice(4));
+      el.pos.copy(k < 2 ? tas : S.m).setY(k < 2 ? DECK + 0.25 : 1.25 + (k === 5 ? 0.15 : 0));
+    }
+    etat(0);
+    tweens.push({ pose: true, debut: t0, duree: D + T.fin, pas(x) { etat(x * (D + T.fin)); },
+      fin() {
+        pl.visible = false;
+        poteaux.forEach((p) => { p.o.visible = true; p.o.position.copy(p.o.userData.cible); p.o.quaternion.copy(p.q0); });
+        S.lisses.forEach((l) => { l.o.visible = true; l.o.position.copy(l.o.userData.cible); });
+      } });
+    // Caméra : la section vue de l'intérieur du plancher, puis retour à la vue de l'étape.
+    const cam = { tgt: S.m.clone().addScaledVector(ded, 0.45).setY(0.75).toArray(),
+      dir: ded.clone().multiplyScalar(0.8).add(new THREE.Vector3(0, 0.5, 0)).addScaledVector(ax, 0.35).toArray(), r: 1.45 };
+    let c1 = false, c2 = false;
+    tweens.push({ pose: true, debut: t0 + D - 400, duree: 1, pas() { if (!c1) { c1 = true; allerA(cam); } }, fin() {} });
+    tweens.push({ pose: true, debut: t0 + D + T.fin, duree: 1, pas() { if (!c2) { c2 = true; allerA(e.cam); } }, fin() {} });
   }
 
   /* Écran des cas de marches : un cas après l'autre (2, 3, puis 4 marches). Le sol se creuse
@@ -776,6 +908,7 @@ export function ouvrir(hote, { fermer } = {}) {
       scene.add(root);
       // Étiquettes propres à l'outil (etapes.js), en plus de celles du modèle.
       const extra = [];
+      for (const e of ETAPES) if (e.truc) for (const l of etiquettesTruc(e.truc)) extra.push({ steps: [cleDe(e)], kind: 'note', ...l });
       for (const e of ETAPES) for (const l of [...(e.etiquettes || []), ...((e.jonction && e.jonction.etiquettes) || []), ...((e.reprise && e.reprise.etiquettes) || [])]) extra.push({ steps: [cleDe(e)], kind: 'note', ...l });
       // Cas de marches : l'étiquette suit l'escalier posé au bout du plancher (dessus à 9 po + marge).
       creerEtiquettes(c.etiquettes.map((l) => (l.cas ? { ...l, pos: [l.pos[0], MARCHE + 0.07, l.pos[2]] } : l)).concat(extra));

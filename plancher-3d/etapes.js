@@ -106,7 +106,10 @@ export const ETAPES = [
     cam: { tgt: [10.05, -0.12, 0.96], dir: [0.55, 0.42, -0.72], r: 1.15 } },
   { n: 15, titre: 'Garde-corps et coup de pied',
     texte: 'Plancher de plus de 12 po de haut avec un vide : garde-corps selon l\'article 12 du RSST, avec la lisse du haut entre 1 et 1,2 m et une lisse intermédiaire à mi-hauteur. La lisse inférieure (coup de pied) est un 2 × 4 posé sur chant, au ras du plancher, partout où les travailleurs ont accès.',
-    detail: 'Truc : un 2 × 4 de 8 pi coupé en deux donne deux montants de 48 po, la bonne hauteur sans mesurer. Avec quatre 2 × 4 de 8 pi, on fait une section de garde-corps de 8 pi : les deux montants, la lisse du haut, la lisse du milieu et le coup de pied.',
+    // Truc mis en évidence (encadré sous le titre) et animé dans la 3D sur une vraie section :
+    // un 2 × 4 de 8 pi coupé en deux devient les 2 montants, puis 3 autres 2 × 4 de 8 pi les lisses.
+    truc: { texte: 'Un 2 × 4 de 8 pi coupé en deux donne deux montants de 48 po : la bonne hauteur sans mesurer. Avec quatre 2 × 4 de 8 pi, on fait une section de garde-corps de 8 pi : les deux montants, la lisse du haut, la lisse du milieu et le coup de pied.',
+      t: { debut: 3000, planche: 600, coupe: 1700, debout: 2900, lisse: 5000, pasLisse: 1500, fin: 10200 } },
     cam: { tgt: [9.9, 0.55, 0.2], dir: [0.74, 0.36, -0.57], r: 2.0 } },
   { n: 16, titre: 'Mains courantes',
     texte: 'Plus d\'une marche : des mains courantes des deux côtés de l\'escalier. Un montant 2 × 4 en haut, au bord du plancher, et un en bas, au nez de la dernière marche, juste à l\'extérieur de l\'escalier. Sur la face des montants côté escalier, deux 2 × 4 droits suivent la pente des marches : la main courante à 36 po au-dessus des nez et une lisse intermédiaire à mi-hauteur.',

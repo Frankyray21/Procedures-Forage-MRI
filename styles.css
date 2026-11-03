@@ -1910,4 +1910,10 @@ html.p3d-on .cbbtn,html.p3d-on .cbpanel,html.p3d-on .newver{display:none!importa
 .p3d-arret .p3d-ic-jouer{display:inline}
 .p3d-arret .p3d-ic-pause{display:none}
 .p3d-temps{flex:1 1 auto;min-width:0;height:44px;margin:0;accent-color:var(--brand);touch-action:none}
+.p3d-truc{margin:.35rem 0 .55rem;padding:.55rem .75rem .6rem;border-radius:10px;background:rgba(242,194,48,.12);
+  border:1.5px solid #f2c230;border-left-width:5px}
+.p3d-truc[hidden]{display:none}
+.p3d-truc b{display:inline-block;margin-bottom:.2rem;padding:.05rem .45rem;border-radius:5px;background:#f2c230;color:#111;
+  font-family:var(--font-display);font-weight:800;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase}
+.p3d-truc p{margin:0;font-size:1rem;line-height:1.4;color:#fff}
 .p3d-d{margin-top:.35rem;font-size:.86rem;line-height:1.4;color:var(--dim)}
