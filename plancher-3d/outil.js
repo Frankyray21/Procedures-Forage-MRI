@@ -480,11 +480,14 @@ export function ouvrir(hote, { fermer } = {}) {
     }).catch(() => {});
     if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
     if (laserG) laserG.visible = false;
+    if (clotureG) clotureG.visible = false;
     planPeinture.constant = 1e3;
     if (cycleS) {
       secondaires(e, anime);
     } else if (cycle) {
       marches(e, anime);
+    } else if (anime && grp === 'demantelement' && e.demontage) {
+      demonter(e);
     } else if (anime && !v8 && !grp && e.laser) {
       laser(e, frais);
     } else if (anime && !v8 && !grp && e.truc) {
@@ -533,6 +536,76 @@ export function ouvrir(hote, { fermer } = {}) {
     majCtl();
    
     sale = true;
+  }
+
+  /* Démantèlement, dans l'ordre sécuritaire de la procédure : d'abord le plancher secondaire
+     (récupérable) ; puis les planches, du fond de la galerie vers la sortie (on recule toujours sur du
+     plancher encore en place), tire-fonds à mesure, chaque garde-corps et les marches seulement avec les
+     planches qu'ils protègent (jamais de bord sans protection) ; puis les 6 × 6, soutiens et blocages
+     (grosses pièces : toujours à deux) ; enfin la clôture orange et la carte de ruban rouge devant le
+     front de taille. Chaque pièce se lève, part vers la sortie (X positif) et disparaît. */
+  let clotureG = null;
+  function demonter(e) {
+    const T = e.demontage.t, t0 = horloge;
+    animT0 = t0;
+    const vus = root.userData.pieces.filter((o) => o.visible && o.userData.s >= 3);
+    const c = (o) => o.userData.centre;
+    const parX = (a, b) => (Math.abs(c(a)[0] - c(b)[0]) > 0.05 ? c(a)[0] - c(b)[0] : c(b)[1] - c(a)[1]);
+    const A = vus.filter((o) => o.userData.s === 18).sort((a, b) => c(b)[1] - c(a)[1]);
+    const B = vus.filter((o) => [6, 7, 12, 13, 14, 15, 16].includes(o.userData.s)).sort(parX);
+    const C = vus.filter((o) => !A.includes(o) && !B.includes(o)).sort(parX);
+    const plan = new Map();
+    for (const [liste, [a, b]] of [[A, T.a], [B, T.b], [C, T.c]]) {
+      const pas = liste.length > 1 ? (b - a - 600) / (liste.length - 1) : 0;
+      liste.forEach((o, k) => plan.set(o, a + k * pas));
+    }
+    // Clôture orange et carte de ruban rouge devant le front de taille (trou non arpenté, non cimenté).
+    if (!clotureG) {
+      clotureG = new THREE.Group();
+      const orange = new THREE.MeshStandardMaterial({ color: 0xff6a00, roughness: 0.7, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
+      const bois = new THREE.MeshStandardMaterial({ color: 0x6e6e6e, roughness: 0.6 });
+      const ray = new THREE.Raycaster(), haut = new THREE.Vector3(), bas = new THREE.Vector3(0, -1, 0);
+      const sol = (x, z) => {
+        haut.set(x, 3, z); ray.set(haut, bas);
+        const h = ray.intersectObject(root, true).find((i) => { for (let q = i.object; q; q = q.parent) if (!q.visible) return false; return !i.object.isLineSegments2; });
+        return h ? h.point.y : 0;
+      };
+      const zs = [-1.9, -0.95, 0, 0.95, 1.9], X = 0.75;
+      clotureG.userData.sol = sol;
+      clotureG.userData.poser = () => {
+        while (clotureG.children.length) clotureG.remove(clotureG.children[0]);
+        const ys = zs.map((z) => sol(X, z));
+        zs.forEach((z, i) => {
+          const pq = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.25, 8), bois);
+          pq.position.set(X, ys[i] + 0.5, z); clotureG.add(pq);
+          if (i) {
+            const w = z - zs[i - 1], y0 = (ys[i] + ys[i - 1]) / 2;
+            const filet = new THREE.Mesh(new THREE.PlaneGeometry(w, 1.0, 1, 1), orange);
+            filet.rotation.y = Math.PI / 2; filet.position.set(X, y0 + 0.55, (z + zs[i - 1]) / 2); clotureG.add(filet);
+          }
+        });
+        const carte = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.2, 0.28), new THREE.MeshStandardMaterial({ color: 0xd8141a, roughness: 0.6 }));
+        carte.position.set(X + 0.03, ys[2] + 0.85, 0.45); clotureG.add(carte);
+      };
+      scene.add(clotureG);
+    }
+    let pose = false;
+    function etat(t) {
+      for (const [o, d] of plan) {
+        const p = Math.min(1, Math.max(0, (t - d) / 600));
+        o.position.copy(o.userData.cible);
+        o.visible = p < 1;
+        o.position.y += 0.45 * lisse(Math.min(1, p * 2));
+        o.position.x += 1.4 * lisse(Math.max(0, p * 2 - 1));
+      }
+      const k = Math.min(1, Math.max(0, (t - T.e[0]) / 900));
+      if (k > 0 && !pose) { root.updateMatrixWorld(true); clotureG.userData.poser(); pose = true; }
+      clotureG.visible = k > 0;
+      clotureG.position.y = 0.6 * Math.pow(1 - lisse(k), 3);
+      sale = true;
+    }
+    etat(0);
+    tweens.push({ pose: true, debut: t0, duree: T.e[1], pas(x) { etat(x * T.e[1]); }, fin() { etat(T.e[1]); } });
   }
 
   /* Étape 1 : la ligne de référence au laser Bosch. Le laser de ligne est posé au sol au bout du

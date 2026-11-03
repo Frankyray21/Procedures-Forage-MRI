@@ -237,9 +237,20 @@ export const ETAPES = [
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',
-      'Puis le plancher principal : planches du fond d\'abord, tire-fonds à mesure, puis les 6 × 6.',
-      'Laver les madriers à l\'eau.',
+      'Puis les planches, du fond vers la sortie, tire-fonds à mesure ; garde-corps et marches en dernier.',
+      'Puis les 6 × 6 : grosses pièces toujours à deux. Laver les madriers à l\'eau.',
       'Attention : la boue sous le plancher est glissante.',
+    ],
+    // Animation (outil.js, demonter()) : fenêtres en ms depuis l'arrivée à l'écran — a : plancher
+    // secondaire, b : planches, garde-corps et marches, c : 6 × 6, soutiens et blocages, e : clôture.
+    demontage: { t: { a: [400, 3400], b: [3400, 11400], c: [11400, 19400], e: [19600, 21800] } },
+    etiquettes: [
+      { pos: [2.2, 1.0, 0.3], text: '1. Plancher secondaire d\'abord : récupérable', fen: [[400, 3400]] },
+      { pos: [4.5, 0.6, -1.2], text: '2. Planches du fond vers la sortie, tire-fonds à mesure', fen: [[3400, 8600]] },
+      { pos: [9.6, 1.3, 0.8], text: 'Garde-corps et marches en dernier : jamais de bord sans protection', fen: [[8600, 11400]] },
+      { pos: [4.5, 0.3, 1.2], text: '3. Les 6 × 6 : grosses pièces toujours à deux', fen: [[11400, 15400]] },
+      { pos: [6.5, 0.15, -1.0], text: 'Attention : boue glissante sous le plancher', fen: [[15400, 19400]] },
+      { pos: [0.8, 1.3, 0], text: 'Clôture orange et carte de ruban rouge : trou non arpenté, non cimenté', fen: [[19600, 1e9]] },
     ],
     detail: 'Après le démantèlement : clôture orange et carte de ruban rouge (trou non arpenté et non cimenté, date de l\'installation, nom du superviseur).',
     cam: { tgt: [4.9, 0.2, 0], dir: [0.55, 0.62, 0.56], r: 5.4 } },
