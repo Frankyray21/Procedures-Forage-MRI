@@ -245,7 +245,7 @@ export function ouvrir(hote, { fermer } = {}) {
         '<div class="p3d-num"></div>' +
         '<h2 class="p3d-t"></h2>' +
         '<div class="p3d-truc" hidden><b>Truc</b><p></p></div>' +
-        '<p class="p3d-x"></p>' +
+        '<ul class="p3d-x"></ul>' +
         '<p class="p3d-d"></p>' +
         '<div class="p3d-btns">' +
           '<button type="button" class="p3d-b p3d-prev">Précédente</button>' +
@@ -267,7 +267,9 @@ export function ouvrir(hote, { fermer } = {}) {
     $('.p3d-prog i').style.width = (100 * e.n / TOTAL) + '%';
     $('.p3d-num').textContent = e.variante ? 'Variante' : e.groupe ? (e.etiquette || 'À savoir') : e.n === 0 ? 'Avant de commencer' : 'Étape ' + e.n + ' sur ' + TOTAL;
     $('.p3d-t').textContent = e.n === 0 ? 'Inspection et matériel de sécurité' : e.titre;
-    $('.p3d-x').textContent = e.texte;
+    // Texte de l'écran : une liste de points courts.
+    const ul = $('.p3d-x');
+    ul.replaceChildren(...[].concat(e.texte).map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
     $('.p3d-truc p').textContent = e.truc ? e.truc.texte : '';
     $('.p3d-truc').hidden = !e.truc;
     $('.p3d-d').textContent = e.detail || '';
