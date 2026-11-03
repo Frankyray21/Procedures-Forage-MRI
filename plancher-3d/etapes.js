@@ -140,8 +140,9 @@ export const ETAPES = [
       'Retirer coins et tire-fonds, poser la 2e planche libre, visser le centre.',
     ],
     // Animation (ms) : la section 2 se couvre du bout vers le centre sans être serrée, puis les
-    // coins la resserrent vers le bout du plancher (écart exagéré pour qu'il se voie).
-    reprise: { cam: { tgt: [4.95, 0.2, 1.6], dir: [0.12, 0.72, 0.68], r: 1.0 }, ecart: 0.2 * 0.0254,
+    // coins la resserrent vers le bout du plancher : 1 po au plus au total, comme en vrai
+    // (écart réparti sur les 23 joints de la section 2).
+    reprise: { cam: { tgt: [4.95, 0.2, 1.6], dir: [0.12, 0.72, 0.68], r: 1.0 }, ecart: (1 / 23) * 0.0254,
       t: { couvert: 3200, approche: 3600, libre1: [4600, 5100], visA: [5500, 5900], coins: [6400, 6900], serre: [7200, 9200],
         sortie: [9600, 10100], devisse: [10200, 10700], libre2: [10900, 11400], vis: [11800, 12200], fin: 12300, retour: 13600 },
       etiquettes: [
