@@ -21,8 +21,8 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=9';
-const ETIQUETTES = 'plancher-etiquettes.json?v=9';
+const MODELE = 'plancher.glb?v=10';
+const ETIQUETTES = 'plancher-etiquettes.json?v=10';
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)

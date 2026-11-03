@@ -109,7 +109,7 @@ export const ETAPES = [
     detail: 'Truc : un 2 × 4 de 8 pi coupé en deux donne deux montants de 48 po, la bonne hauteur sans mesurer. Avec quatre 2 × 4 de 8 pi, on fait une section de garde-corps de 8 pi : les deux montants, la lisse du haut, la lisse du milieu et le coup de pied.',
     cam: { tgt: [9.9, 0.55, 0.2], dir: [0.74, 0.36, -0.57], r: 2.0 } },
   { n: 16, titre: 'Mains courantes',
-    texte: 'Plus d\'une marche : des mains courantes des deux côtés de l\'escalier, montées comme les garde-corps. Un montant 2 × 4 en haut, au bord du plancher, et un en bas, au nez de la dernière marche. La main courante, un 2 × 4 droit vissé sur les montants, suit la pente des marches, à 36 po au-dessus des nez.',
+    texte: 'Plus d\'une marche : des mains courantes des deux côtés de l\'escalier. Un montant 2 × 4 en haut, au bord du plancher, et un en bas, au nez de la dernière marche, juste à l\'extérieur de l\'escalier. Sur la face des montants côté escalier, deux 2 × 4 droits suivent la pente des marches : la main courante à 36 po au-dessus des nez et une lisse intermédiaire à mi-hauteur.',
     cam: { tgt: [10.15, 0.35, 0.96], dir: [0.74, 0.36, -0.57], r: 1.35 } },
   { n: 17, titre: 'Grillage au bas du mur',
     texte: 'Si l\'écart entre le plancher et le mur est de 12 po ou moins, le pied peut passer dans le trou. Fixe un grillage de 24 po de haut au bas du mur, le long du plancher : il ferme l\'écart et évite les blessures.',
