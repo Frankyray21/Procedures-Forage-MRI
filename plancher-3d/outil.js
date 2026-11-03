@@ -446,6 +446,7 @@ export function ouvrir(hote, { fermer } = {}) {
     outils = root.userData.seules.filter((o) => o.visible && !o.userData.d);
     outils.forEach((o) => surligner(o, true));
     if (root.userData.trucPlanche) root.userData.trucPlanche.visible = false;
+    if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
     if (cycle) {
       marches(e, anime);
     } else if (anime && !v8 && !grp && e.truc) {
@@ -497,15 +498,16 @@ export function ouvrir(hote, { fermer } = {}) {
   }
 
   /* Étape 15, le truc des 2 × 4 de 8 pi, animé sur une vraie section de garde-corps (celle
-     des montants les plus près du point visé par la caméra) : un 2 × 4 de 8 pi se pose sur le
-     plancher, il est coupé en deux, les deux moitiés se lèvent et deviennent les montants de
-     48 po ; puis trois autres 2 × 4 de 8 pi deviennent la lisse du haut, la lisse du milieu et
-     le coup de pied. Les autres pièces de l'étape se posent d'abord, comme d'habitude. */
+     des montants les plus près du point visé par la caméra) : un 2 × 4 de 8 pi est dressé
+     debout à la place du premier montant (il dépasse nettement le garde-corps), coupé au
+     milieu ; la moitié du bas est le premier montant de 48 po, celle du haut va à la place du
+     second ; puis trois autres 2 × 4 de 8 pi deviennent la lisse du haut, la lisse du milieu
+     et le coup de pied. Les autres pièces de l'étape se posent d'abord, comme d'habitude. */
   function etiquettesTruc(U) {
     const T = U.t, D = T.debut, L3 = D + T.lisse, P = T.pasLisse;
     return [
-      ['Un 2 × 4 de 8 pi', D, D + T.coupe],
-      ['Coupé en deux : 2 montants de 48 po, la bonne hauteur sans mesurer', D + T.coupe, D + T.lisse],
+      ['Un 2 × 4 de 8 pi debout', D, D + T.planche + 200],
+      ['Coupé au milieu : 2 montants de 48 po, la bonne hauteur sans mesurer', D + T.planche + 200, D + T.lisse],
       ['2e 2 × 4 de 8 pi : la lisse du haut', L3, L3 + P],
       ['3e 2 × 4 de 8 pi : la lisse du milieu', L3 + P, L3 + 2 * P],
       ['4e 2 × 4 de 8 pi : le coup de pied', L3 + 2 * P, L3 + 3 * P],
@@ -557,37 +559,42 @@ export function ouvrir(hote, { fermer } = {}) {
     const D = T.debut, DECK = 9 * 0.0254, P4 = 1.5 * 0.0254, L4 = 3.5 * 0.0254, H8 = 96 * 0.0254;
     const ax = S.enX ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, 1);       // le long du garde-corps
     const ded = (S.enX ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0)).multiplyScalar(S.dedans);
-    const tas = S.m.clone().addScaledVector(ded, 0.75);                                // où l'on pose et coupe le bois
+    const tas = S.m.clone().addScaledVector(ded, 0.75);                                // où l'on pose les lisses
     tas.y = DECK;
-    // Planche de 8 pi, du même bois que les montants.
+    // Le 2 × 4 de 8 pi, debout à la place du premier montant (même bois, deux fois plus haut).
+    const [pa, pb] = S.poteaux;
     let mat = null;
-    S.poteaux[0].o.traverse((k) => { if (!mat && k.isMesh && !k.isLineSegments2) mat = k.userData.mat0 || k.material; });
+    pa.o.traverse((k) => { if (!mat && k.isMesh && !k.isLineSegments2) mat = k.userData.mat0 || k.material; });
     if (!root.userData.trucPlanche) { root.userData.trucPlanche = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), mat); root.add(root.userData.trucPlanche); }
     const pl = root.userData.trucPlanche;
     pl.material = mat;
-    pl.scale.set(S.enX ? H8 : P4, L4, S.enX ? P4 : H8);
+    pl.scale.set(pa.sz.x, H8, pa.sz.z);
     surligner(pl, true);
-    // Montants couchés : rotation de 90° autour de l'axe horizontal perpendiculaire au garde-corps.
-    const couche = new THREE.Quaternion().setFromAxisAngle(S.enX ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0), Math.PI / 2);
-    const poteaux = S.poteaux.map((p, k) => ({ o: p.o, q0: p.o.quaternion.clone(), q1: couche.clone().multiply(p.o.quaternion), s: k === 0 ? -1 : 1 }));
+    const bas = pa.min;                                   // pied du montant
+    // Trait de coupe, au milieu du 2 × 4.
+    if (!root.userData.trucCoupe) {
+      root.userData.trucCoupe = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xe3262b }));
+      root.add(root.userData.trucCoupe);
+    }
+    const tc = root.userData.trucCoupe;
+    tc.scale.set(pa.sz.x + 0.03, 0.012, pa.sz.z + 0.03);
     const sp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
     const v = new THREE.Vector3();
     function etat(t) {
-      // 1. le 2 × 4 de 8 pi se pose.
+      // 1. le 2 × 4 de 8 pi se dresse à la place du premier montant ; 2. trait de coupe au milieu.
       pl.visible = t >= D && t < D + T.coupe;
-      pl.position.copy(tas).setY(DECK + L4 / 2 + 0.35 * Math.pow(1 - sp(t, D, D + T.planche), 3));
-      // 2. coupé en deux : deux montants couchés qui s'écartent ; 3. ils se lèvent jusqu'à leur place.
-      poteaux.forEach((p, k) => {
-        const o = p.o;
-        o.visible = t >= D + T.coupe;
-        const couche0 = tas.clone().addScaledVector(ax, p.s * (H8 / 4 + 0.08 * sp(t, D + T.coupe, D + T.coupe + 500)));
-        couche0.y = DECK + L4 / 2;
-        const lv = lisse(sp(t, D + T.debout + k * 350, D + T.debout + k * 350 + 1300));
-        v.lerpVectors(couche0, o.userData.cible, lv);
-        v.y += 0.25 * Math.sin(Math.PI * lv);
-        o.position.copy(v);
-        o.quaternion.slerpQuaternions(p.q1, p.q0, lv);
-      });
+      pl.position.copy(pa.o.userData.cible).setY(bas + H8 / 2 + 0.4 * Math.pow(1 - sp(t, D, D + T.planche), 3));
+      tc.visible = t >= D + T.planche && t < D + T.coupe + 400 && Math.floor((t - D) / 180) % 2 === 0;
+      tc.position.copy(pa.o.userData.cible).setY(bas + H8 / 2);
+      // 3. coupé : la moitié du bas est le premier montant ; celle du haut va à la place du second.
+      pa.o.visible = t >= D + T.coupe;
+      pa.o.position.copy(pa.o.userData.cible);
+      pb.o.visible = t >= D + T.coupe;
+      const haut = pa.o.userData.cible.clone().setY(pb.o.userData.cible.y + H8 / 2);
+      const lv = lisse(sp(t, D + T.debout, D + T.debout + 1600));
+      v.lerpVectors(haut, pb.o.userData.cible, lv);
+      v.y += 0.35 * Math.sin(Math.PI * lv) + 0.06 * sp(t, D + T.coupe, D + T.coupe + 400) * (1 - lv);
+      pb.o.position.copy(v);
       // 4. les trois lisses, une à une : posées sur le plancher, puis mises en place.
       S.lisses.forEach((l, k) => {
         const o = l.o, a = D + T.lisse + k * T.pasLisse;
@@ -605,18 +612,19 @@ export function ouvrir(hote, { fermer } = {}) {
     for (const el of etiq) {
       if (!el.cle || !el.cle.startsWith('truc')) continue;
       const k = Number(el.cle.slice(4));
-      el.pos.copy(k < 2 ? tas : S.m).setY(k < 2 ? DECK + 0.25 : 1.25 + (k === 5 ? 0.15 : 0));
+      el.pos.copy(k < 2 ? pa.o.userData.cible : S.m).setY(k < 2 ? bas + (k === 0 ? H8 + 0.08 : H8 / 2 + 0.1) : 1.25 + (k === 5 ? 0.15 : 0));
     }
     etat(0);
     tweens.push({ pose: true, debut: t0, duree: D + T.fin, pas(x) { etat(x * (D + T.fin)); },
       fin() {
         pl.visible = false;
-        poteaux.forEach((p) => { p.o.visible = true; p.o.position.copy(p.o.userData.cible); p.o.quaternion.copy(p.q0); });
+        tc.visible = false;
+        S.poteaux.forEach((p) => { p.o.visible = true; p.o.position.copy(p.o.userData.cible); });
         S.lisses.forEach((l) => { l.o.visible = true; l.o.position.copy(l.o.userData.cible); });
       } });
     // Caméra : la section vue de l'intérieur du plancher, puis retour à la vue de l'étape.
-    const cam = { tgt: S.m.clone().addScaledVector(ded, 0.45).setY(0.75).toArray(),
-      dir: ded.clone().multiplyScalar(0.8).add(new THREE.Vector3(0, 0.5, 0)).addScaledVector(ax, 0.35).toArray(), r: 1.45 };
+    const cam = { tgt: S.m.clone().addScaledVector(ded, 0.4).setY(0.95).toArray(),
+      dir: ded.clone().multiplyScalar(0.85).add(new THREE.Vector3(0, 0.35, 0)).addScaledVector(ax, 0.3).toArray(), r: 1.7 };
     let c1 = false, c2 = false;
     tweens.push({ pose: true, debut: t0 + D - 400, duree: 1, pas() { if (!c1) { c1 = true; allerA(cam); } }, fin() {} });
     tweens.push({ pose: true, debut: t0 + D + T.fin, duree: 1, pas() { if (!c2) { c2 = true; allerA(e.cam); } }, fin() {} });
