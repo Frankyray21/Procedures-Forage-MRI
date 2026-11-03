@@ -16,6 +16,7 @@ import { RoomEnvironment } from '../vendor/three/RoomEnvironment.js';
 import { LineSegments2 } from '../vendor/three/LineSegments2.js';
 import { LineSegmentsGeometry } from '../vendor/three/LineSegmentsGeometry.js';
 import { LineMaterial } from '../vendor/three/LineMaterial.js';
+import { clone as clonerSquelette } from '../vendor/three/SkeletonUtils.js';
 // Textes et cadrages : même numéro de version que ce module (app.js le charge
 // avec le ?v= du site), pour qu'une correction de texte arrive avec le déploiement.
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
@@ -33,6 +34,113 @@ function chargerForeuse() {
   });
   return foreuse;
 }
+// Travailleur réaliste (avatar Ready Player Me des exemples three.js), habillé en mineur dans l'app
+// (casque, lampe frontale, veste haute visibilité, bottes) et posé par cinématique inverse ;
+// chargé seulement aux écrans qui en montrent.
+const TRAVAILLEUR = 'travailleur.glb?v=1';
+let travailleur = null;
+function chargerTravailleur() {
+  if (!travailleur) travailleur = new Promise((resolve, reject) => {
+    new GLTFLoader().load(new URL(TRAVAILLEUR, base).href, (g) => resolve(g.scene), undefined, reject);
+  });
+  return travailleur;
+}
+function habiller(m) {
+  const os = {};
+  m.traverse((o) => { if (o.isBone) os[o.name] = o; });
+  m.userData.os = os;
+  m.updateMatrixWorld(true);
+  const bleu = new THREE.MeshStandardMaterial({ color: 0x24324f, roughness: 0.85 });
+  m.traverse((o) => {
+    if (!o.isMesh) return;
+    o.frustumCulled = false;
+    if (/Headwear/.test(o.name)) o.visible = false;           // chapeau d'origine
+    if (/Outfit_(Top|Bottom)/.test(o.name)) o.material = bleu;  // habit de travail
+    if (/Footwear/.test(o.name)) o.material = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.6 });   // bottes
+  });
+  const v = new THREE.Vector3();
+  const casque = new THREE.Group();
+  const jaune = new THREE.MeshStandardMaterial({ color: 0xf3c316, roughness: 0.45 });
+  const calotte = new THREE.Mesh(new THREE.SphereGeometry(0.118, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), jaune); calotte.scale.set(1, 0.95, 1.12);
+  const bord = new THREE.Mesh(new THREE.CylinderGeometry(0.135, 0.135, 0.012, 28), jaune); bord.scale.set(1, 1, 1.18); bord.position.set(0, 0.004, 0.012);
+  const lampe = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.03, 14), new THREE.MeshStandardMaterial({ color: 0x222222 }));
+  lampe.rotation.x = Math.PI / 2; lampe.position.set(0, 0.05, 0.13);
+  const verre = new THREE.Mesh(new THREE.CircleGeometry(0.017, 14), new THREE.MeshBasicMaterial({ color: 0xfff6d0 })); verre.position.set(0, 0.05, 0.146);
+  casque.add(calotte, bord, lampe, verre);
+  os.HeadTop_End.getWorldPosition(v); casque.position.set(v.x, v.y - 0.115, v.z - 0.005);
+  m.add(casque); m.updateMatrixWorld(true); os.Head.attach(casque);
+  const veste = new THREE.Group();
+  const orange = new THREE.MeshStandardMaterial({ color: 0xff6f0f, roughness: 0.7, side: THREE.DoubleSide });
+  const bande = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, emissive: 0x777777, roughness: 0.3, side: THREE.DoubleSide });
+  const tronc = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.178, 0.44, 28, 1, true), orange); tronc.scale.set(1.08, 1, 0.9);
+  veste.add(tronc);
+  for (const y of [-0.08, 0.05]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.193, 0.19, 0.035, 28, 1, true), bande); b.scale.set(1.09, 1, 0.91); b.position.y = y; veste.add(b); }
+  os.Spine1.getWorldPosition(v); veste.position.set(v.x, v.y + 0.04, v.z + 0.02);
+  m.add(veste); m.updateMatrixWorld(true); os.Spine1.attach(veste);
+  m.userData.repos = new Map();
+  m.traverse((o) => { if (o.isBone) m.userData.repos.set(o, [o.quaternion.clone(), o.position.clone()]); });
+  return m;
+}
+/* Poses par cinématique inverse à deux os (bras, jambes), dans le repère du personnage (il regarde
+   +Z) : « debout », « marche » (phase en tours), « porter » (6 × 6 sur l'épaule droite, en marchant),
+   « genoux ». */
+const ikA = new THREE.Vector3(), ikB = new THREE.Vector3(), ikC = new THREE.Vector3(), ikQ = new THREE.Quaternion(), ikW = new THREE.Quaternion(), ikP = new THREE.Quaternion();
+function viserOs(os, enfant, cible) {
+  os.updateWorldMatrix(true, true);
+  os.getWorldPosition(ikA); enfant.getWorldPosition(ikB);
+  const v1 = ikB.sub(ikA).normalize(), v2 = cible.clone().sub(ikA).normalize();
+  ikQ.setFromUnitVectors(v1, v2);
+  os.getWorldQuaternion(ikW); os.parent.getWorldQuaternion(ikP);
+  os.quaternion.copy(ikP.invert().multiply(ikQ.multiply(ikW)));
+  os.updateWorldMatrix(false, true);
+}
+function ik2(b1, b2, b3, cible, pole) {
+  b1.updateWorldMatrix(true, true);
+  const A = b1.getWorldPosition(new THREE.Vector3()), B = b2.getWorldPosition(ikB), C = b3.getWorldPosition(ikC);
+  const a = A.distanceTo(B), b = B.distanceTo(C);
+  const AT = cible.clone().sub(A), d = Math.min(Math.max(AT.length(), Math.abs(a - b) + 1e-3), a + b - 1e-3), n = AT.normalize();
+  const x = (a * a - b * b + d * d) / (2 * d), h = Math.sqrt(Math.max(0, a * a - x * x));
+  const p = pole.clone().sub(n.clone().multiplyScalar(n.dot(pole))).normalize();
+  viserOs(b1, b2, A.clone().add(n.clone().multiplyScalar(x)).add(p.multiplyScalar(h)));
+  viserOs(b2, b3, A.clone().add(n.multiplyScalar(d)));
+}
+function poserTravailleur(m, pose, phase = 0, opt = {}) {
+  const os = m.userData.os;
+  for (const [o, [q, p]] of m.userData.repos) { o.quaternion.copy(q); o.position.copy(p); }
+  m.updateMatrixWorld(true);
+  const L = (x, y, z) => m.localToWorld(new THREE.Vector3(x, y, z));
+  const wq = m.getWorldQuaternion(new THREE.Quaternion());
+  const D = (x, y, z) => new THREE.Vector3(x, y, z).applyQuaternion(wq);
+  const bras = (s, main, pole) => { const c = s < 0 ? 'Right' : 'Left'; ik2(os[c + 'Arm'], os[c + 'ForeArm'], os[c + 'Hand'], main, pole || D(s * 0.3, -0.2, -1)); };
+  const jambe = (s, pied, pole) => { const c = s < 0 ? 'Right' : 'Left'; ik2(os[c + 'UpLeg'], os[c + 'Leg'], os[c + 'Foot'], pied, pole || D(0, 0, 1)); };
+  if (pose === 'genoux') {
+    os.Hips.position.y -= 0.42 / Math.max(1e-6, os.Hips.parent.getWorldScale(ikA).y); m.updateMatrixWorld(true);
+    jambe(1, L(0.1, 0.12, 0.42)); jambe(-1, L(-0.1, 0.1, -0.35), D(0, -0.2, 1));
+    bras(1, L(0.18, 0.35, 0.5)); bras(-1, L(-0.12, 0.3, 0.55));
+    return;
+  }
+  if (pose === 'accroupi') {
+    // Soulever avec les jambes : dos droit, genoux pliés, la charge près du corps (opt.a : profondeur 0 à 1).
+    const a = opt.a ?? 1;
+    os.Hips.position.y -= (0.48 * a) / Math.max(1e-6, os.Hips.parent.getWorldScale(ikA).y); m.updateMatrixWorld(true);
+    jambe(1, L(0.14, 0.1, 0.08)); jambe(-1, L(-0.14, 0.1, -0.06));
+    if (opt.main) { bras(-1, opt.main.clone(), D(-1, 0, -0.3)); bras(1, opt.main2 || opt.main.clone(), D(1, 0, -0.3)); }
+    return;
+  }
+  const pas = pose === 'debout' || pose === 'travail' ? 0 : 0.28, s1 = Math.sin(phase * Math.PI * 2);
+  for (const s of [1, -1]) {
+    const lev = pose === 'debout' ? 0 : Math.max(0, s * Math.cos(phase * Math.PI * 2)) * 0.09;
+    jambe(s, L(s * 0.1, 0.1 + lev, s * s1 * pas));
+  }
+  if (pose === 'travail' && opt.main) {
+    // Mains au point de travail (entre la taille et les coudes), dos droit.
+    bras(1, opt.main.clone().add(D(0.12, 0, 0)), D(0.6, -1, 0)); bras(-1, opt.main.clone().add(D(-0.12, 0, 0)), D(-0.6, -1, 0));
+    return;
+  }
+  if (pose === 'porter') { bras(-1, L(-0.2, 1.62, 0.22), D(-1, -0.6, 0)); bras(1, L(0.22, 0.85, -s1 * 0.12)); }
+  else { const sw = pose === 'debout' ? 0 : 0.15; bras(1, L(0.2, 0.86, 0.04 - s1 * sw)); bras(-1, L(-0.2, 0.86, 0.04 + s1 * sw)); }
+}
+
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
@@ -481,6 +589,14 @@ export function ouvrir(hote, { fermer } = {}) {
     if (root.userData.trucCoupe) root.userData.trucCoupe.visible = false;
     if (laserG) laserG.visible = false;
     if (clotureG) clotureG.visible = false;
+    for (const t of travs) t.visible = false;
+    if (poutreDemo) poutreDemo.visible = false;
+    majTrav = null;
+    if (e.travailleurs) chargerTravailleur().then((g) => {
+      if (fini) return;
+      while (travs.length < 3) { const t = habiller(clonerSquelette(g)); t.visible = false; scene.add(t); travs.push(t); }
+      if (majTrav) majTrav();
+    }).catch(() => {});
     planPeinture.constant = 1e3;
     if (cycleS) {
       secondaires(e, anime);
@@ -545,6 +661,20 @@ export function ouvrir(hote, { fermer } = {}) {
      de la sortie vers le fond, sur le sol déjà dégagé : on n'enjambe jamais le bois (grosses pièces :
      toujours à deux) ; enfin la clôture orange et la carte de ruban rouge devant le
      front de taille. Chaque pièce se lève, part vers la sortie (X positif) et disparaît. */
+  // Travailleurs (instances habillées, réutilisées d'un écran à l'autre) et 6 × 6 porté à deux.
+  const travs = [];
+  let poutreDemo = null, majTrav = null;
+  const rayS = new THREE.Raycaster(), hautS = new THREE.Vector3(), basS = new THREE.Vector3(0, -1, 0);
+  function solSous(x, z) {   // dessus de ce qui est visible sous (x, z) : sol, bois encore en place
+    hautS.set(x, 3, z); rayS.set(hautS, basS);
+    const h = rayS.intersectObject(root, true).find((i) => { for (let q = i.object; q; q = q.parent) if (!q.visible) return false; return !i.object.isLineSegments2 && !i.object.userData.d; });
+    return h ? h.point.y : 0;
+  }
+  function placer(t, x, y, z, ry, pose, phase, opt) {
+    t.visible = true; t.position.set(x, y, z); t.rotation.set(0, ry, 0);
+    t.updateMatrixWorld(true);
+    poserTravailleur(t, pose, phase, opt);
+  }
   let clotureG = null;
   function demonter(e) {
     const T = e.demontage.t, t0 = horloge;
@@ -599,6 +729,46 @@ export function ouvrir(hote, { fermer } = {}) {
         o.position.y += 0.45 * lisse(Math.min(1, p * 2));
         o.position.x += 1.4 * lisse(Math.max(0, p * 2 - 1));
       }
+      // Travailleurs : à genoux au bord des planches qui restent (ils reculent vers la sortie) ;
+      // puis deux qui portent un 6 × 6 sur l'épaule, sur le sol déjà dégagé, vers la sortie.
+      if (travs.length) {
+        for (const tr of travs) tr.visible = false;
+        if (poutreDemo) poutreDemo.visible = false;
+        if (t >= T.b[0] && t < T.b[1]) {
+          let xf = 0;
+          for (const o of B) if (t >= plan.get(o)) xf = Math.max(xf, c(o)[0]);
+          placer(travs[0], Math.min(xf + 0.55, 9.3), 0.2286, -0.6, -Math.PI / 2, 'genoux');
+        }
+        const p0 = T.c[0] + 0.5 * (T.c[1] - T.c[0]), p1 = T.c[1] - 300;   // une fois la moitié dégagée : rien à enjamber
+        if (t >= p0 && t < p1) {
+          if (!poutreDemo) {
+            poutreDemo = new THREE.Mesh(new THREE.BoxGeometry(4.75, 0.14, 0.14), new THREE.MeshStandardMaterial({ color: 0xb98a56, roughness: 0.85 }));
+            scene.add(poutreDemo);
+          }
+          // D'abord soulever à deux avec les jambes (dos droit, la charge près du corps), puis marcher.
+          const lev = 1400, kL = Math.min(1, (t - p0) / lev), k2 = Math.max(0, (t - p0 - lev) / (p1 - p0 - lev));
+          const xc = 10.6 + 2.8 * k2, z = 1.25, ph = (xc - 10.6) / 1.12;
+          const yA = solSous(xc + 2.05, z), yB = solSous(xc - 2.05, z);
+          if (kL < 1) {
+            const mon = lisse(Math.max(0, (kL - 0.3) / 0.7));       // la poutre monte, les jambes se déplient
+            for (const [i, dx, y] of [[1, 2.05, yA], [2, -2.05, yB]]) {
+              const yb = y + 0.07 + (1.6 - 0.07) * mon;
+              placer(travs[i], xc + dx, y, z, Math.PI / 2, mon < 0.55 ? 'accroupi' : 'porter', 0,
+                { a: 1 - mon / 0.55, main: new THREE.Vector3(xc + dx + 0.12, yb, z + 0.17), main2: new THREE.Vector3(xc + dx - 0.12, yb, z + 0.17) });
+            }
+            poutreDemo.visible = true;
+            poutreDemo.position.set(xc, (yA + yB) / 2 + 0.07 + (1.53) * mon, z + 0.17);
+            poutreDemo.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), new THREE.Vector3(4.1, yA - yB, 0).normalize());
+          } else {
+          for (const [i, dx] of [[1, 2.05], [2, -2.05]]) placer(travs[i], xc + dx, i === 1 ? yA : yB, z, Math.PI / 2, 'porter', ph + (i === 2 ? 0.5 : 0));
+          // Le 6 × 6 repose sur l'épaule droite des deux : il suit la pente du sol entre eux.
+          const pA = new THREE.Vector3(xc + 2.05, travs[1].position.y + 1.6, z + 0.17), pB = new THREE.Vector3(xc - 2.05, travs[2].position.y + 1.6, z + 0.17);
+          poutreDemo.visible = true;
+          poutreDemo.position.addVectors(pA, pB).multiplyScalar(0.5);
+          poutreDemo.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), pA.sub(pB).normalize());
+          }
+        }
+      }
       const k = Math.min(1, Math.max(0, (t - T.e[0]) / 900));
       if (k > 0 && !pose) { root.updateMatrixWorld(true); clotureG.userData.poser(); pose = true; }
       clotureG.visible = k > 0;
@@ -606,6 +776,7 @@ export function ouvrir(hote, { fermer } = {}) {
       sale = true;
     }
     etat(0);
+    majTrav = () => etat(Math.min(horloge - t0, T.e[1]));
     tweens.push({ pose: true, debut: t0, duree: T.e[1], pas(x) { etat(x * T.e[1]); }, fin() { etat(T.e[1]); } });
   }
 
@@ -962,8 +1133,17 @@ export function ouvrir(hote, { fermer } = {}) {
         o.visible = tl >= d;
         o.position.y += 0.35 * Math.pow(1 - sp(tl, d, d + 450), 3);
       }
+      // Travailleur à l'arrière de la tête de forage, face à la foreuse, debout sur le plancher
+      // (principal au cas 1, secondaire une fois posé aux autres cas).
+      if (travs.length && e.trav) {
+        const lc = parCas.get(n) || [], q = e.trav[n];
+        const prete = lc.length ? Math.max(...lc.map((o) => C.sol + 200 + rangs.indexOf(o.userData.m) * C.pas)) + 450 : C.sol;
+        if (q && tl >= prete) placer(travs[0], q.p[0], q.p[1], q.p[2], Math.PI, 'travail', 0, { main: new THREE.Vector3(...q.main) });
+        else travs[0].visible = false;
+      }
       sale = true;
     }
+    majTrav = () => etat(Math.min(horloge - t0, C.cas.length * C.duree));
     if (!anime) { etat(C.cas.length * C.duree); return; }
     etat(0);
     tweens.push({ pose: true, debut: t0, duree: C.cas.length * C.duree, pas(x) { etat(x * C.cas.length * C.duree); }, fin() {} });
