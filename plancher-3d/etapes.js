@@ -107,8 +107,8 @@ export const ETAPES = [
   { n: 15, titre: 'Garde-corps et coup de pied',
     texte: 'Plancher de plus de 12 po de haut avec un vide : garde-corps selon l\'article 12 du RSST, avec la lisse du haut entre 1 et 1,2 m et une lisse intermédiaire à mi-hauteur. La lisse inférieure (coup de pied) est un 2 × 4 posé sur chant, au ras du plancher, partout où les travailleurs ont accès.',
     // Truc mis en évidence (encadré sous le titre) et animé dans la 3D sur une vraie section :
-    // un 2 × 4 de 8 pi coupé en deux devient les 2 montants, puis 3 autres 2 × 4 de 8 pi les lisses.
-    truc: { texte: 'Un 2 × 4 de 8 pi coupé en deux donne deux montants de 48 po : la bonne hauteur sans mesurer. Avec quatre 2 × 4 de 8 pi, on fait une section de garde-corps de 8 pi : les deux montants, la lisse du haut, la lisse du milieu et le coup de pied.',
+    // un 2 × 4 de 8 pi coupé en deux devient les 2 montants (milieu et bout), puis 3 autres 2 × 4 de 8 pi les lisses.
+    truc: { texte: 'Un 2 × 4 de 8 pi coupé en deux donne deux montants de 48 po : la bonne hauteur sans mesurer. Un montant tous les 4 pi : avec quatre 2 × 4 de 8 pi, on fait une section de garde-corps de 8 pi, soit les deux montants (au milieu et au bout), la lisse du haut, la lisse du milieu et le coup de pied, gardées entières.',
       t: { debut: 3000, planche: 600, coupe: 1700, debout: 2900, lisse: 5000, pasLisse: 1500, fin: 10200 } },
     cam: { tgt: [9.9, 0.55, 0.2], dir: [0.74, 0.36, -0.57], r: 2.0 } },
   { n: 16, titre: 'Mains courantes',

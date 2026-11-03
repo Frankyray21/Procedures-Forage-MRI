@@ -21,8 +21,8 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=11';
-const ETIQUETTES = 'plancher-etiquettes.json?v=11';
+const MODELE = 'plancher.glb?v=12';
+const ETIQUETTES = 'plancher-etiquettes.json?v=12';
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
@@ -498,16 +498,15 @@ export function ouvrir(hote, { fermer } = {}) {
   }
 
   /* Étape 15, le truc des 2 × 4 de 8 pi, animé sur une vraie section de garde-corps (celle
-     des montants les plus près du point visé par la caméra) : un 2 × 4 de 8 pi est dressé
-     debout à la place du premier montant (il dépasse nettement le garde-corps), coupé au
-     milieu ; la moitié du bas est le premier montant de 48 po, celle du haut va à la place du
-     second ; puis trois autres 2 × 4 de 8 pi deviennent la lisse du haut, la lisse du milieu
+     de 8 pi la plus près du point visé par la caméra) : un 2 × 4 de 8 pi est dressé debout à
+     la place du montant du milieu (il dépasse nettement le garde-corps), coupé au milieu ; la
+     moitié du bas est le montant du milieu (au 4 pi), celle du haut va au bout de la section ; puis trois autres 2 × 4 de 8 pi deviennent la lisse du haut, la lisse du milieu
      et le coup de pied. Les autres pièces de l'étape se posent d'abord, comme d'habitude. */
   function etiquettesTruc(U) {
     const T = U.t, D = T.debut, L3 = D + T.lisse, P = T.pasLisse;
     return [
       ['Un 2 × 4 de 8 pi debout', D, D + T.planche + 200],
-      ['Coupé au milieu : 2 montants de 48 po, la bonne hauteur sans mesurer', D + T.planche + 200, D + T.lisse],
+      ['Coupé au milieu : 2 montants de 48 po, un au 4 pi et un au bout', D + T.planche + 200, D + T.lisse],
       ['2e 2 × 4 de 8 pi : la lisse du haut', L3, L3 + P],
       ['3e 2 × 4 de 8 pi : la lisse du milieu', L3 + P, L3 + 2 * P],
       ['4e 2 × 4 de 8 pi : le coup de pied', L3 + 2 * P, L3 + 3 * P],
@@ -518,30 +517,32 @@ export function ouvrir(hote, { fermer } = {}) {
     const bx = new THREE.Box3(), sz = new THREE.Vector3(), c = new THREE.Vector3();
     const info = frais.map((o) => { bx.setFromObject(o); bx.getSize(sz); bx.getCenter(c); return { o, sz: sz.clone(), c: c.clone(), min: bx.min.y }; });
     const poteaux = info.filter((p) => p.sz.y > 1.1 && p.sz.x < 0.15 && p.sz.z < 0.15);
+    // Section de 8 pi : deux montants à environ 8 pi l'un de l'autre, sur le même bord, avec un
+    // montant au milieu (tous les 4 pi). La plus près du point visé.
     let best = null;
     for (const a of poteaux) for (const b of poteaux) {
       if (a === b) continue;
       const enX = Math.abs(a.c.z - b.c.z) < 0.03, enZ = Math.abs(a.c.x - b.c.x) < 0.03;
       if (!enX && !enZ) continue;
       const d = enX ? b.c.x - a.c.x : b.c.z - a.c.z;
-      if (d < 0.5 || d > 2.6) continue;
-      if (poteaux.some((p) => p !== a && p !== b && (enX ? Math.abs(p.c.z - a.c.z) < 0.03 && p.c.x > a.c.x && p.c.x < b.c.x : Math.abs(p.c.x - a.c.x) < 0.03 && p.c.z > a.c.z && p.c.z < b.c.z))) continue;
+      if (d < 2.2 || d > 2.6) continue;
+      const entre = poteaux.filter((p) => p !== a && p !== b && (enX ? Math.abs(p.c.z - a.c.z) < 0.03 && p.c.x > a.c.x && p.c.x < b.c.x : Math.abs(p.c.x - a.c.x) < 0.03 && p.c.z > a.c.z && p.c.z < b.c.z));
+      if (entre.length !== 1) continue;
       const m = a.c.clone().add(b.c).multiplyScalar(0.5);
       const dist = Math.hypot(m.x - vise[0], m.z - vise[2]);
-      // Une section pleine de 8 pi d'abord (celle que fait le truc), puis la plus près.
-      const plein = d > 2.2;
-      if (!best || (plein && !best.plein) || (plein === best.plein && dist < best.dist)) best = { a, b, enX, d, m, dist, plein };
+      if (!best || dist < best.dist) best = { a, b, enX, d, m, dist, mil: entre[0] };
     }
     if (!best) return null;
     const { a, b, enX, d, m } = best;
     const u = (p) => (enX ? p.x : p.z), w = (p) => (enX ? p.z : p.x);
-    const lisses = info.filter((p) => p !== a && p !== b && (enX ? p.sz.x : p.sz.z) > 0.8 * d
+    const lisses = info.filter((p) => p !== a && p !== b && p !== best.mil && (enX ? p.sz.x : p.sz.z) > 0.8 * d
       && u(p.c) > u(a.c) - 0.05 && u(p.c) < u(b.c) + 0.05 && Math.abs(w(p.c) - w(a.c)) < 0.2)
       .sort((p, q) => q.c.y - p.c.y).slice(0, 3);
     if (lisses.length < 3) return null;
     // Vers l'intérieur du plancher.
     const dedans = enX ? -Math.sign(a.c.z) : (a.c.x > 4.877 ? -1 : 1);
-    return { poteaux: [a, b], lisses, enX, m, dedans };
+    // Le 2 × 4 coupé donne le montant du milieu et celui du bout ; celui du début est déjà là.
+    return { poteaux: [best.mil, b], lisses, enX, m, dedans };
   }
   function truc(e, frais) {
     const U = e.truc, T = U.t, t0 = horloge;
