@@ -214,13 +214,13 @@ export const ETAPES = [
     // Foreuse STM-1500 allégée (stm1500.glb), chargée à la demande sur cet écran.
     foreuse: true,
     etiquettes: [
-      { pos: [1.6, 1.95, -1.1], text: 'Foreuse STM-1500' },
-      { pos: [2.66, 0.76, -0.75], text: 'Plancher secondaire : 18 po, 32 × 72 po' },
-      { pos: [3.27, 0.36, -0.2], text: '1re marche : 16 po × 9 po' },
-      { pos: [2.66, 1.8, -1.62], text: 'Bout sans marche : garde-corps' },
-      { pos: [2.29, 0.74, 0.12], text: 'Dernière planche à 3 po de la foreuse' },
+      { pos: [1.6, 1.95, -1.56], text: 'Foreuse STM-1500' },
+      { pos: [2.66, 0.76, -1.21], text: 'Plancher secondaire : 18 po, 32 × 72 po' },
+      { pos: [3.27, 0.36, -0.66], text: '1re marche : 16 po × 9 po' },
+      { pos: [2.66, 1.8, -2.08], text: 'Bout sans marche : garde-corps' },
+      { pos: [2.29, 0.74, -0.34], text: 'Dernière planche à 3 po de la foreuse' },
     ],
-    cam: { tgt: [2.4, 0.75, -0.65], dir: [0.82, 0.52, 0.24], r: 1.8 } },
+    cam: { tgt: [2.4, 0.75, -1.1], dir: [0.82, 0.52, 0.24], r: 1.8 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',
