@@ -229,16 +229,9 @@ export const ETAPES = [
     // la poutre, bascule de l'avance sur l'axe arrière), puis le plancher se pose (pas entre deux
     // rangs). stm : angle (°), glisse de la poutre (m), recul de la foreuse sur son axe (m), comme
     // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1, l'avant vers le front de taille.
-    cycle: { cas: [1, 2, 3], duree: 9000, sol: 2200, pas: 380 },
+    cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
     stm: { 1: { angle: 0, glisse: 0, recul: 0 }, 2: { angle: 10, glisse: 0, recul: 0 }, 3: { angle: 15, glisse: 0.9, recul: 0.626 } },
     // Nom du cas affiché dans le panneau (pas de texte dans la 3D).
-    // Travailleur debout à l'arrière de la tête (pieds : x, y, z) : plancher principal (9 po) au cas 1,
-    // plancher secondaire de 9 po puis 18 po aux cas 2 et 3, vis-à-vis de l'arrière de la tête.
-    travailleurs: true,
-    // Ergonomie : mains au point de travail (arrière de la tête, côté travailleur), entre la taille et les
-    // coudes, dos droit ; le plancher secondaire ramène ce point à cette hauteur quand l'avance monte.
-    trav: { 1: { p: [1.99, 0.2286, 0.14], main: [1.99, 1.47, -0.28] }, 2: { p: [2.10, 0.4572, 0.14], main: [2.10, 1.43, -0.28] },
-      3: { p: [1.91, 0.6858, 0.14], main: [1.91, 1.64, -0.28] } },
     nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher de 9 po, sans marche', 3: 'Forage montant à 15° : plancher de 18 po, 2 marches, garde-corps' },
     cam: { tgt: [1.95, 0.95, 0.13], dir: [0.42, 0.45, 0.79], r: 2.4 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
@@ -251,15 +244,14 @@ export const ETAPES = [
     ],
     // Animation (outil.js, demonter()) : fenêtres en ms depuis l'arrivée à l'écran — a : plancher
     // secondaire, b : planches, garde-corps et marches, c : 6 × 6, soutiens et blocages, e : clôture.
-    travailleurs: true,
     demontage: { t: { a: [400, 3400], b: [3400, 11400], c: [11400, 19400], e: [19600, 21800] } },
     etiquettes: [
       { pos: [2.2, 1.0, 0.3], text: '1. Plancher secondaire d\'abord : récupérable', fen: [[400, 3400]] },
       { pos: [4.5, 0.6, -1.2], text: '2. Planches du fond vers la sortie, tire-fonds à mesure', fen: [[3400, 8600]] },
       { pos: [9.6, 1.3, 0.8], text: 'Garde-corps et marches en dernier : jamais de bord sans protection', fen: [[8600, 11400]] },
       { pos: [8.5, 0.3, 1.2], text: '3. Les 6 × 6 de la sortie vers le fond : ne jamais enjamber le bois', fen: [[11400, 14400]] },
-      { pos: [5.5, 0.3, -1.2], text: 'Grosses pièces à deux : soulever avec les jambes, dos droit', fen: [[15400, 17700]] },
-      { pos: [6.5, 0.15, -1.0], text: 'Attention : boue glissante sous le plancher', fen: [[17700, 19400]] },
+      { pos: [5.5, 0.3, -1.2], text: 'Grosses pièces : toujours à deux', fen: [[14400, 16900]] },
+      { pos: [6.5, 0.15, -1.0], text: 'Attention : boue glissante sous le plancher', fen: [[16900, 19400]] },
       { pos: [0.8, 1.3, 0], text: 'Clôture orange et carte de ruban rouge : trou non arpenté, non cimenté', fen: [[19600, 1e9]] },
     ],
     detail: 'Après le démantèlement : clôture orange et carte de ruban rouge (trou non arpenté et non cimenté, date de l\'installation, nom du superviseur).',
