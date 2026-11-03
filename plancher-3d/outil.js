@@ -251,7 +251,7 @@ export function ouvrir(hote, { fermer } = {}) {
       '</div>' +
       '<div class="p3d-pan">' +
         '<div class="p3d-prog" aria-hidden="true"><i></i></div>' +
-        '<div class="p3d-num"></div>' +
+        '<button type="button" class="p3d-num" aria-haspopup="dialog" aria-label="Voir toutes les étapes"><span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
         '<h2 class="p3d-t"></h2>' +
         '<p class="p3d-casn" hidden></p>' +
         '<div class="p3d-truc" hidden><b>Truc</b><p></p></div>' +
@@ -261,6 +261,10 @@ export function ouvrir(hote, { fermer } = {}) {
           '<button type="button" class="p3d-b p3d-prev">Précédente</button>' +
           '<button type="button" class="p3d-b p3d-next">Suivante</button>' +
         '</div>' +
+      '</div>' +
+      '<div class="p3d-menu" role="dialog" aria-label="Toutes les étapes" hidden>' +
+        '<div class="p3d-menu-t"><b>Toutes les étapes</b><button type="button" class="p3d-menu-x" aria-label="Fermer la liste">✕</button></div>' +
+        '<ol class="p3d-menu-l"></ol>' +
       '</div>' +
     '</div>';
   const $ = (s) => hote.querySelector(s);
@@ -275,7 +279,7 @@ export function ouvrir(hote, { fermer } = {}) {
   function panneau() {
     const e = ETAPES[idx];
     $('.p3d-prog i').style.width = (100 * e.n / TOTAL) + '%';
-    $('.p3d-num').textContent = e.variante ? 'Variante' : e.groupe ? (e.etiquette || 'À savoir') : e.n === 0 ? 'Avant de commencer' : 'Étape ' + e.n + ' sur ' + TOTAL;
+    $('.p3d-num span').textContent = e.variante ? 'Variante' : e.groupe ? (e.etiquette || 'À savoir') : e.n === 0 ? 'Avant de commencer' : 'Étape ' + e.n + ' sur ' + TOTAL;
     $('.p3d-t').textContent = e.n === 0 ? 'Inspection et matériel de sécurité' : e.titre;
     // Texte de l'écran : une liste de points courts.
     const ul = $('.p3d-x');
@@ -992,12 +996,35 @@ export function ouvrir(hote, { fermer } = {}) {
   temps.addEventListener('input', () => sauter(Number(temps.value)));
   temps.addEventListener('change', () => { if (reprendre) { enPause = false; reprendre = false; majCtl(); } });
 
+  /* Liste de toutes les étapes (touche « Étape N sur 18 ») : aller directement à une étape. */
+  const menu = $('.p3d-menu'), liste = $('.p3d-menu-l');
+  const nomEcran = (e) => (e.variante ? 'Variante' : e.groupe ? (e.etiquette || 'À savoir') : e.n === 0 ? 'Avant de commencer' : 'Étape ' + e.n);
+  function ouvrirMenu() {
+    liste.replaceChildren(...ETAPES.map((e, i) => {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'p3d-menu-i' + (i === idx ? ' p3d-ici' : '') + (e.variante || (e.groupe && e.groupe !== 'secondaire') ? ' p3d-sous' : '');
+      const n = document.createElement('span'); n.textContent = nomEcran(e);
+      const t = document.createElement('b'); t.textContent = e.n === 0 ? 'Inspection et matériel de sécurité' : e.titre;
+      b.append(n, t);
+      b.addEventListener('click', () => { fermerMenu(); etape(i); });
+      li.append(b);
+      return li;
+    }));
+    menu.hidden = false;
+    const ici = liste.querySelector('.p3d-ici');
+    if (ici) ici.scrollIntoView({ block: 'center' });
+  }
+  function fermerMenu() { menu.hidden = true; }
+  $('.p3d-num').addEventListener('click', ouvrirMenu);
+  $('.p3d-menu-x').addEventListener('click', fermerMenu);
   bPrev.addEventListener('click', () => etape(idx - 1));
   bNext.addEventListener('click', () => etape(idx + 1));
   function clavier(e) {
     if (e.key === 'ArrowRight') etape(idx + 1);
     else if (e.key === 'ArrowLeft') etape(idx - 1);
-    else if (e.key === 'Escape') fermer && fermer();
+    else if (e.key === 'Escape') { if (!menu.hidden) fermerMenu(); else if (fermer) fermer(); }
     else if (e.key === ' ' && !ctl.hidden && e.target.tagName !== 'BUTTON') { e.preventDefault(); bJouer.click(); }
   }
   document.addEventListener('keydown', clavier);
