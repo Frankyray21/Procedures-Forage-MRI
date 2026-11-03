@@ -21,8 +21,8 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=20';
-const ETIQUETTES = 'plancher-etiquettes.json?v=20';
+const MODELE = 'plancher.glb?v=21';
+const ETIQUETTES = 'plancher-etiquettes.json?v=21';
 // Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
 // chargée seulement à l'écran qui la montre (étape 18), puis gardée.
 const FOREUSE = 'stm1500.glb?v=4';
@@ -254,6 +254,7 @@ export function ouvrir(hote, { fermer } = {}) {
         '<div class="p3d-prog" aria-hidden="true"><i></i></div>' +
         '<div class="p3d-num"></div>' +
         '<h2 class="p3d-t"></h2>' +
+        '<p class="p3d-casn" hidden></p>' +
         '<div class="p3d-truc" hidden><b>Truc</b><p></p></div>' +
         '<ul class="p3d-x"></ul>' +
         '<p class="p3d-d"></p>' +
@@ -282,6 +283,7 @@ export function ouvrir(hote, { fermer } = {}) {
     ul.replaceChildren(...[].concat(e.texte).map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
     $('.p3d-truc p').textContent = e.truc ? e.truc.texte : '';
     $('.p3d-truc').hidden = !e.truc;
+    $('.p3d-casn').hidden = true;
     $('.p3d-d').textContent = e.detail || '';
     $('.p3d-d').hidden = !e.detail;
     bPrev.disabled = idx === 0;
@@ -728,6 +730,7 @@ export function ouvrir(hote, { fermer } = {}) {
     const mix = (a, b, k) => ({ angle: a.angle + (b.angle - a.angle) * k, glisse: a.glisse + (b.glisse - a.glisse) * k, z: a.z + (b.z - a.z) * k });
     function etat(t) {
       const k = Math.min(C.cas.length - 1, Math.floor(t / C.duree)), n = C.cas[k], tl = t - k * C.duree;
+      if (e.nomsCas && casCourant !== n) { const d = $('.p3d-casn'); d.textContent = e.nomsCas[n]; d.hidden = false; }
       casCourant = n;
       const avant = e.stm[k === 0 ? n : C.cas[k - 1]], ici = e.stm[n];
       // D'abord le recul et la glisse, puis la bascule (ou l'inverse en redescendant).

@@ -605,44 +605,5 @@
   ],
   "text": "4 marches : plancher à 36 po du sol",
   "kind": "note"
- },
- {
-  "steps": [
-   "secondaire"
-  ],
-  "cas": 1,
-  "pos": [
-   2.5648,
-   0.27859999999999996,
-   -1.464
-  ],
-  "text": "Horizontal : pas de plancher secondaire",
-  "kind": "note"
- },
- {
-  "steps": [
-   "secondaire"
-  ],
-  "cas": 2,
-  "pos": [
-   2.5648,
-   0.5072,
-   -1.464
-  ],
-  "text": "10° : plancher de 9 po, sans marche",
-  "kind": "note"
- },
- {
-  "steps": [
-   "secondaire"
-  ],
-  "cas": 3,
-  "pos": [
-   2.5648,
-   0.7358,
-   -1.464
-  ],
-  "text": "15° : plancher de 18 po, 2 marches",
-  "kind": "note"
  }
 ]

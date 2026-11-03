@@ -219,6 +219,8 @@ export const ETAPES = [
     // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1 (Z = −0,76).
     cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
     stm: { 1: { angle: 0, glisse: 0, z: -0.76 }, 2: { angle: 10, glisse: 0, z: -0.76 }, 3: { angle: 15, glisse: 0.9, z: -0.134 } },
+    // Nom du cas affiché dans le panneau (pas de texte dans la 3D).
+    nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher de 9 po, sans marche', 3: 'Forage montant à 15° : plancher de 18 po, 2 marches, garde-corps' },
     cam: { tgt: [2.15, 0.95, -0.75], dir: [0.86, 0.42, 0.29], r: 2.15 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [

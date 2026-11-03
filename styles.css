@@ -1918,4 +1918,6 @@ html.p3d-on .cbbtn,html.p3d-on .cbpanel,html.p3d-on .newver{display:none!importa
 .p3d-truc b{display:inline-block;margin-bottom:.2rem;padding:.05rem .45rem;border-radius:5px;background:#f2c230;color:#111;
   font-family:var(--font-display);font-weight:800;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase}
 .p3d-truc p{margin:0;font-size:1rem;line-height:1.4;color:#fff}
+.p3d-casn{margin:.1rem 0 .4rem;padding:.3rem .6rem;border-radius:8px;background:#26303b;font-weight:700;color:#fff;font-size:1rem}
+.p3d-casn[hidden]{display:none}
 .p3d-d{margin-top:.35rem;font-size:.86rem;line-height:1.4;color:var(--dim)}
