@@ -21,8 +21,8 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=6';
-const ETIQUETTES = 'plancher-etiquettes.json?v=6';
+const MODELE = 'plancher.glb?v=7';
+const ETIQUETTES = 'plancher-etiquettes.json?v=7';
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
@@ -136,12 +136,13 @@ function preparer(root) {
 
 /* Écran des cas de marches (2, 3 ou 4) : l'escalier de chaque cas est posé au bout du vrai
    plancher. Le plancher ne bouge pas ; c'est la profondeur du sol sous le plancher qui change
-   (sol de la galerie et appuis étirés en hauteur depuis le dessous des madriers, y = 0), pour
-   que le dessus du plancher soit à n × 9 po du sol aux marches. À l'entrée, où les madriers
-   sont presque au sol, rien ne change. */
+   (sol de la galerie creusé sous le dessous des madriers, y = 0), pour que le dessus du
+   plancher soit à n × 9 po du sol aux marches. À l'entrée, où les madriers sont presque au
+   sol, rien ne change. Les appuis de chaque cas (extras ap) sont montés par pieces-3d sur ce
+   sol, selon les règles du montage (blocages, 6 × 6, coins) : ils remplacent les vrais appuis. */
 const MARCHE = 9 * 0.0254;
 function preparerMarches(root, pieces, cas) {
-  const m = cas.filter((o) => o.userData.grp === 'marches');
+  const m = cas.filter((o) => o.userData.grp === 'marches' && !o.userData.ap);
   if (!m.length) return;
   const box = new THREE.Box3();
   let sol = Infinity, xL = Infinity;
@@ -150,7 +151,7 @@ function preparerMarches(root, pieces, cas) {
   const appuis = [];
   for (const o of pieces) {
     box.setFromObject(o);
-    if (o.userData.s >= 1 && o.userData.s <= 14 && box.max.y <= 0.003) { o.userData.s0 = o.scale.clone(); appuis.push(o); }
+    if (o.userData.s >= 1 && o.userData.s <= 14 && box.max.y <= 0.003) appuis.push(o);
     if (o.userData.s === 14 && o.userData.centre[0] > xL - 0.02) o.userData.esc = true;
   }
   // Sol et parois de la galerie (maillages « rock » du décor) : sommets sous y = 0 étirés ;
@@ -172,10 +173,6 @@ function profondeur(root, f) {
   const M = root.userData.marches;
   if (!M || Math.abs(M.f - f) < 1e-6) return;
   M.f = f;
-  for (const o of M.appuis) {
-    o.position.y = o.userData.cible.y * f;
-    o.scale.y = o.userData.s0.y * f;
-  }
   for (const { o, y0 } of M.coques) {
     const a = o.geometry.attributes.position, e = o.matrixWorld.elements, sy = e[5], ty = e[13];
     for (let i = 1; i < y0.length; i += 3) {
@@ -433,7 +430,10 @@ export function ouvrir(hote, { fermer } = {}) {
     profondeur(root, 1);
     casCourant = 0;
     const cycle = grp === 'marches' && e.cycle && root.userData.marches;
-    if (cycle) for (const o of pieces) if (o.userData.esc) o.visible = false;
+    if (cycle) {
+      for (const o of pieces) if (o.userData.esc) o.visible = false;
+      for (const o of root.userData.marches.appuis) o.visible = false;   // remplacés par ceux du cas
+    }
     for (const o of root.userData.seules) o.visible = !v8 && !grp && o.userData.o.includes(n);
     const sr = root.userData.serrage;
     if (sr) { sr.visA.visible = false; sr.coins.position.copy(sr.coins.userData.cible); }
@@ -499,6 +499,9 @@ export function ouvrir(hote, { fermer } = {}) {
     // Plancher à n × 9 po du sol : le sol aux marches est à (n - 1) × 9 po sous y = 0 (dessus du plancher à 9 po).
     const fDe = (n) => ((n - 1) * MARCHE) / -M.sol;
     const dy = (n) => -(n - 1) * MARCHE - M.sol;              // l'escalier du cas suit le sol
+    const ap = frais.filter((o) => o.userData.ap);
+    ap.forEach((o) => surligner(o, false));                   // appuis : pas de contour, seul l'escalier est nouveau
+    frais = frais.filter((o) => !o.userData.ap);
     const parCas = new Map(C.cas.map((n) => [n, frais.filter((o) => o.userData.cas === n)]));
     const rangs = [...new Set(frais.map((o) => o.userData.m))].sort((a, b) => a - b);
     const sp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
@@ -507,6 +510,8 @@ export function ouvrir(hote, { fermer } = {}) {
       casCourant = n;
       const f0 = k === 0 ? 1 : fDe(C.cas[k - 1]);
       profondeur(root, f0 + (fDe(n) - f0) * lisse(sp(tl, 0, C.sol)));
+      // Appuis du cas : en place une fois le sol à la bonne profondeur.
+      for (const o of ap) o.visible = o.userData.cas === n && tl >= C.sol;
       for (const [c, liste] of parCas) for (const o of liste) {
         o.position.copy(o.userData.cible);
         if (c !== n) { o.visible = false; continue; }
