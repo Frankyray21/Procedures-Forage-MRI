@@ -21,8 +21,8 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=10';
-const ETIQUETTES = 'plancher-etiquettes.json?v=10';
+const MODELE = 'plancher.glb?v=11';
+const ETIQUETTES = 'plancher-etiquettes.json?v=11';
 const FOV = 42;
 const CLE = 'p3d_etape';           // dernière étape vue, reprise à la réouverture
 const TOTAL = Math.max(...ETAPES.map((e) => e.n));   // étapes numérotées (sans « Avant de commencer » ni la variante)
@@ -528,7 +528,9 @@ export function ouvrir(hote, { fermer } = {}) {
       if (poteaux.some((p) => p !== a && p !== b && (enX ? Math.abs(p.c.z - a.c.z) < 0.03 && p.c.x > a.c.x && p.c.x < b.c.x : Math.abs(p.c.x - a.c.x) < 0.03 && p.c.z > a.c.z && p.c.z < b.c.z))) continue;
       const m = a.c.clone().add(b.c).multiplyScalar(0.5);
       const dist = Math.hypot(m.x - vise[0], m.z - vise[2]);
-      if (!best || dist < best.dist) best = { a, b, enX, d, m, dist };
+      // Une section pleine de 8 pi d'abord (celle que fait le truc), puis la plus près.
+      const plein = d > 2.2;
+      if (!best || (plein && !best.plein) || (plein === best.plein && dist < best.dist)) best = { a, b, enX, d, m, dist, plein };
     }
     if (!best) return null;
     const { a, b, enX, d, m } = best;
