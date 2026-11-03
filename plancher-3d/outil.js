@@ -38,28 +38,12 @@ function chargerForeuse() {
 // (casque, lampe frontale, veste haute visibilité, bottes) et posé par cinématique inverse ;
 // chargé seulement aux écrans qui en montrent.
 const TRAVAILLEUR = 'travailleur.glb?v=1';
-// Marche en capture de mouvement (personnage Mixamo des exemples three.js), retargetée sur le
-// squelette du travailleur (rotations des os, hauteur des hanches ; marche sur place, l'app déplace
-// le travailleur à la vitesse de ses pas).
-const ANIM_MARCHE = 'travailleur-marche.json?v=1';
 let travailleur = null;
 function chargerTravailleur() {
-  if (!travailleur) travailleur = Promise.all([
-    new Promise((resolve, reject) => new GLTFLoader().load(new URL(TRAVAILLEUR, base).href, (g) => resolve(g.scene), undefined, reject)),
-    fetch(new URL(ANIM_MARCHE, base).href).then((r) => r.json()),
-  ]).then(([scene, marche]) => ({ scene, marche }));
+  if (!travailleur) travailleur = new Promise((resolve, reject) => {
+    new GLTFLoader().load(new URL(TRAVAILLEUR, base).href, (g) => resolve(g.scene), undefined, reject);
+  });
   return travailleur;
-}
-const PAS_M = 1.46;   // distance d'un cycle de marche (deux pas), m
-function animerMarche(m, A) {
-  const c = A.clips.Walk, tr = [];
-  for (const b of A.os) if (m.getObjectByName(b)) tr.push(new THREE.QuaternionKeyframeTrack(b + '.quaternion', c.temps, c.rot[b]));
-  const hips = m.userData.os.Hips, s = hips.parent.getWorldScale(new THREE.Vector3()).y, p0 = hips.position;
-  const vals = []; c.temps.forEach((t, i) => vals.push(p0.x, p0.y + c.hipsY[i] / s, p0.z));
-  tr.push(new THREE.VectorKeyframeTrack('Hips.position', c.temps, vals));
-  const mix = new THREE.AnimationMixer(m);
-  mix.clipAction(new THREE.AnimationClip('marche', c.duree, tr)).play();
-  m.userData.mix = mix; m.userData.dureeMarche = c.duree;
 }
 function habiller(m) {
   const os = {};
@@ -143,19 +127,10 @@ function poserTravailleur(m, pose, phase = 0, opt = {}) {
     if (opt.main) { bras(-1, opt.main.clone(), D(-1, 0, -0.3)); bras(1, opt.main2 || opt.main.clone(), D(1, 0, -0.3)); }
     return;
   }
-  const pas = pose === 'debout' || pose === 'travail' || opt.surPlace ? 0 : 0.28, s1 = Math.sin(phase * Math.PI * 2);
-  if (pas && m.userData.mix) {
-    // Marche : jambes, bassin et tronc de la capture de mouvement.
-    m.userData.mix.setTime((((phase % 1) + 1) % 1) * m.userData.dureeMarche);
-    m.updateMatrixWorld(true);
-    if (pose === 'marche' && !opt.main) return;
-  } else for (const s of [1, -1]) {
-    const lev = pas ? Math.max(0, s * Math.cos(phase * Math.PI * 2)) * 0.09 : 0;
+  const pas = pose === 'debout' || pose === 'travail' ? 0 : 0.28, s1 = Math.sin(phase * Math.PI * 2);
+  for (const s of [1, -1]) {
+    const lev = pose === 'debout' ? 0 : Math.max(0, s * Math.cos(phase * Math.PI * 2)) * 0.09;
     jambe(s, L(s * 0.1, 0.1 + lev, s * s1 * pas));
-  }
-  if (opt.main && pose !== 'travail') {   // mains sur la pièce portée (points monde)
-    bras(-1, opt.main, opt.pole || D(-1, -0.5, -0.3)); bras(1, opt.main2 || opt.main, opt.pole2 || D(1, -0.5, -0.3));
-    return;
   }
   if (pose === 'travail' && opt.main) {
     // Mains au point de travail (entre la taille et les coudes), dos droit.
@@ -619,7 +594,7 @@ export function ouvrir(hote, { fermer } = {}) {
     majTrav = null;
     if (e.travailleurs) chargerTravailleur().then((g) => {
       if (fini) return;
-      while (travs.length < 3) { const t = habiller(clonerSquelette(g.scene)); animerMarche(t, g.marche); t.visible = false; scene.add(t); travs.push(t); }
+      while (travs.length < 3) { const t = habiller(clonerSquelette(g)); t.visible = false; scene.add(t); travs.push(t); }
       if (majTrav) majTrav();
     }).catch(() => {});
     planPeinture.constant = 1e3;
@@ -679,26 +654,20 @@ export function ouvrir(hote, { fermer } = {}) {
     sale = true;
   }
 
-  /* Démantèlement, réaliste et dans l'ordre sécuritaire de la procédure :
-     1. le plancher secondaire d'abord (récupérable) : chaque pièce portée à la pile, à la sortie ;
-     2. les planches du fond de la galerie vers la sortie (on recule toujours sur du plancher en place),
-        tire-fonds retirés à mesure, chaque planche de 16 pi portée à deux (soulever avec les jambes,
-        dos droit, charge près du corps ; à l'épaule, du même côté), par l'escalier ; les garde-corps et les
-        marches en dernier, avec les planches qu'ils protègent ;
-     3. les 6 × 6, soutiens et blocages, de la sortie vers le fond, sur le sol déjà dégagé : on n'enjambe
-        jamais le bois ; grosses pièces à deux ;
-     4. la clôture orange et la carte de ruban rouge devant le front de taille.
-     Une pièce de chaque étape est montrée en temps réel avec les travailleurs (marche en capture de
-     mouvement) ; les autres suivent la même méthode en accéléré. Tout le bois finit rangé à la pile. */
+  /* Démantèlement, dans l'ordre sécuritaire de la procédure : d'abord le plancher secondaire
+     (récupérable) ; puis les planches, du fond de la galerie vers la sortie (on recule toujours sur du
+     plancher encore en place), tire-fonds à mesure, chaque garde-corps et les marches seulement avec les
+     planches qu'ils protègent (jamais de bord sans protection) ; puis les 6 × 6, soutiens et blocages,
+     de la sortie vers le fond, sur le sol déjà dégagé : on n'enjambe jamais le bois (grosses pièces :
+     toujours à deux) ; enfin la clôture orange et la carte de ruban rouge devant le
+     front de taille. Chaque pièce se lève, part vers la sortie (X positif) et disparaît. */
+  // Travailleurs (instances habillées, réutilisées d'un écran à l'autre) et 6 × 6 porté à deux.
   const travs = [];
   let poutreDemo = null, majTrav = null;
   const rayS = new THREE.Raycaster(), hautS = new THREE.Vector3(), basS = new THREE.Vector3(0, -1, 0);
-  function solSous(x, z, depuis = 3) {   // dessus de ce qui est visible sous (x, z) : sol, bois en place
-    hautS.set(x, depuis, z); rayS.set(hautS, basS);
-    const h = rayS.intersectObject(root, true).find((i) => {
-      for (let q = i.object; q; q = q.parent) if (!q.visible || q.userData.porte) return false;
-      return !i.object.isLineSegments2 && !i.object.userData.d;
-    });
+  function solSous(x, z) {   // dessus de ce qui est visible sous (x, z) : sol, bois encore en place
+    hautS.set(x, 3, z); rayS.set(hautS, basS);
+    const h = rayS.intersectObject(root, true).find((i) => { for (let q = i.object; q; q = q.parent) if (!q.visible) return false; return !i.object.isLineSegments2 && !i.object.userData.d; });
     return h ? h.point.y : 0;
   }
   function placer(t, x, y, z, ry, pose, phase, opt) {
@@ -706,353 +675,37 @@ export function ouvrir(hote, { fermer } = {}) {
     t.updateMatrixWorld(true);
     poserTravailleur(t, pose, phase, opt);
   }
-  // Pièce déplacée : son centre en p, tournée de ry autour de la verticale (et inclinée de rz).
-  const qY = new THREE.Quaternion(), vO = new THREE.Vector3();
-  function deplacer(o, p, ry = 0, rz = 0, rx = 0) {
-    if (!o.userData.q0) o.userData.q0 = o.quaternion.clone();
-    qY.setFromEuler(new THREE.Euler(rx, ry, rz, 'YXZ'));
-    vO.fromArray(o.userData.centre).sub(o.userData.cible).applyQuaternion(qY);
-    o.position.copy(p).sub(vO);
-    o.quaternion.copy(qY).multiply(o.userData.q0);
-  }
-  function remettre(o) { o.position.copy(o.userData.cible); if (o.userData.q0) o.quaternion.copy(o.userData.q0); o.userData.porte = false; }
-  // Trajet en ligne brisée [[x, z], …] : point et cap à la distance d.
-  function trajet(pts) {
-    const seg = [];
-    let L = 0;
-    for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); seg.push([L, l, pts[i - 1], pts[i]]); L += l; }
-    const at = (d) => {
-      d = Math.min(Math.max(d, 0), L);
-      for (const [a, l, p, q] of seg) if (d <= a + l || seg[seg.length - 1][0] === a) { const k = l ? (d - a) / l : 0; return [p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k]; }
-      return pts[pts.length - 1];
-    };
-    const cap = (d) => { const a = at(d - 0.35), b = at(d + 0.35); return Math.atan2(b[0] - a[0], b[1] - a[1]); };
-    return { L, at, cap };
-  }
   let clotureG = null;
   function demonter(e) {
-    const t0 = horloge;
+    const T = e.demontage.t, t0 = horloge;
     animT0 = t0;
-    const L = 9.7536, DK = 0.2286, VIT = 1.1;   // longueur du plancher, dessus, vitesse de marche (m/s)
     const vus = root.userData.pieces.filter((o) => o.visible && o.userData.s >= 3);
     const c = (o) => o.userData.centre;
-    const taille = (o) => { const b = new THREE.Box3().setFromObject(o), v = new THREE.Vector3(); b.getSize(v); return v; };
-    for (const o of vus) { remettre(o); if (!o.userData.dim) o.userData.dim = taille(o).toArray(); }
-    const vis = (o) => o.userData.dim[0] < 0.05 && o.userData.dim[1] > 0.12;   // rangées de tire-fonds
     const parX = (a, b) => (Math.abs(c(a)[0] - c(b)[0]) > 0.05 ? c(a)[0] - c(b)[0] : c(b)[1] - c(a)[1]);
     const A = vus.filter((o) => o.userData.s === 18).sort((a, b) => c(b)[1] - c(a)[1]);
     const B = vus.filter((o) => [6, 7, 12, 13, 14, 15, 16].includes(o.userData.s)).sort(parX);
     const C = vus.filter((o) => !A.includes(o) && !B.includes(o)).sort((a, b) => -parX(a, b) || c(b)[1] - c(a)[1]);   // de la sortie vers le fond
-    // ---- Pile de rangement à la sortie : planches (X), 6 × 6 (X), petites pièces au bout.
-    const zones = {
-      planche: { x: L + 2.0 + 2.45, z0: -2.15, z1: -0.65, y: null, z: -2.15, h: 0 },
-      madrier: { x: L + 2.0 + 2.45, z0: 0.95, z1: 2.15, y: null, z: 0.95, h: 0 },
-      court: { x0: L + 7.05, x1: L + 8.35, z0: -2.1, z1: 2.1, x: L + 7.05, z: -2.1, y: null, ligne: 0, h: 0 },
-    };
-    for (const zn of Object.values(zones)) zn.y = solSous(zn.x0 !== undefined ? (zn.x0 + zn.x1) / 2 : zn.x, ((zn.z0 + zn.z1) / 2));
-    const place = new Map();
-    function ranger(o) {
-      const [sx, sy, sz] = o.userData.dim, long = Math.max(sx, sz);
-      if (vis(o)) return null;
-      if (long > 2.5) {
-        const zn = sy > 0.12 && Math.min(sx, sz) > 0.12 ? zones.madrier : zones.planche;
-        const w = Math.min(sx, sz), h = sy;
-        if (zn.z + w > zn.z1) { zn.z = zn.z0; zn.y += zn.h + 0.002; zn.h = 0; }
-        const r = { p: new THREE.Vector3(zn.x, zn.y + h / 2, zn.z + w / 2), ry: sz > sx ? Math.PI / 2 : 0 };
-        zn.z += w + 0.012; zn.h = Math.max(zn.h, h);
-        return r;
-      }
-      // Couchée à plat : une pièce debout (montant) est d'abord basculée sur le côté.
-      // (la plus petite dimension à la verticale : basculée autour de Z ou de X)
-      const mn = Math.min(sx, sy, sz), couche = sy > mn + 1e-3 && sx <= sz ? Math.PI / 2 : 0, coucheX = sy > mn + 1e-3 && sz < sx ? Math.PI / 2 : 0;
-      const [dx, dy, dz] = couche ? [sy, sx, sz] : coucheX ? [sx, sz, sy] : [sx, sy, sz];
-      const zn = zones.court, rot = dx > dz ? Math.PI / 2 : 0, ax = Math.min(dx, dz), az = Math.max(dx, dz);
-      if (zn.z + az > zn.z1) { zn.z = zn.z0; zn.x += zn.ligne + 0.02; zn.ligne = 0; }
-      if (zn.x + ax > zn.x1) { zn.x = zn.x0; zn.z = zn.z0; zn.y += zn.h + 0.002; zn.h = 0; }
-      const r = { p: new THREE.Vector3(zn.x + ax / 2, zn.y + dy / 2, zn.z + az / 2), ry: rot, rz: couche, rx: coucheX };
-      zn.z += az + 0.02; zn.ligne = Math.max(zn.ligne, ax); zn.h = Math.max(zn.h, dy);
-      return r;
-    }
-    // ---- Programme : actes en temps réel (travailleurs) et passages accélérés.
-    const actes = [], acc = [], cams = [], lab = {};
-    let tc = 300;
-    const accelere = (liste, pas = 90, duree = 650) => {
-      const a = tc;
-      for (const o of liste) { const r = ranger(o); place.set(o, r); acc.push({ o, d: tc, duree, r }); tc += pas; }
-      tc += duree;
-      (lab.acc = lab.acc || []).push([a, tc]);
-      return [a, tc];
-    };
-    // Points de passage : l'escalier (au bout du plancher, côté Z positif) et l'allée de la pile.
-    const ESC = 0.96, ALLEE = 0.2;
-    // 1. Plancher secondaire : un travailleur porte une planche de 72 po à l'épaule jusqu'à la pile.
-    const pa = A.filter((o) => Math.max(...o.userData.dim) > 1.5 && o.userData.dim[1] < 0.1).sort((a, b) => c(b)[1] - c(a)[1] || c(b)[2] - c(a)[2])[0];
-    if (pa) {
-      const r = ranger(pa); place.set(pa, r);
-      const p = c(pa), zT = p[2] + 0.62, debut = tc;
-      const chemin = trajet([[p[0], zT], [p[0] + 0.8, ESC], [L - 0.3, ESC], [L + 1.4, ESC], [r.p.x - 3.4, ALLEE], [zones.court.x0 - 0.45, ALLEE], [zones.court.x0 - 0.45, r.p.z]]);
-      const D = { penche: 1100, leve: 1200, epaule: 900, marche: (chemin.L / VIT) * 1000, pose: 1300 };
-      actes.push({ debut, fin: debut + D.penche + D.leve + D.epaule + D.marche + D.pose, f(t) {
-        const tr = travs[0], yP = solSous(p[0], zT, 1.2);
-        let u = t;
-        if (u < D.penche + D.leve) {   // se pencher en pliant les jambes, puis se relever avec la planche
-          const k = u < D.penche ? lisse(u / D.penche) : 1 - lisse((u - D.penche) / D.leve);
-          const yb = u < D.penche ? p[1] : p[1] + (yP + 0.95 - p[1]) * lisse((u - D.penche) / D.leve);
-          const zb = u < D.penche ? p[2] : p[2] + (zT - 0.32 - p[2]) * lisse((u - D.penche) / D.leve);
-          if (u >= D.penche) { pa.userData.porte = true; deplacer(pa, new THREE.Vector3(p[0], yb, zb)); }
-          placer(tr, p[0], yP, zT, Math.PI, 'accroupi', 0, { a: k, main: new THREE.Vector3(p[0] - 0.28, yb + 0.03, zb), main2: new THREE.Vector3(p[0] + 0.28, yb + 0.03, zb) });
-          return;
-        }
-        u -= D.penche + D.leve;
-        pa.userData.porte = true;
-        const epaule = (x, y, z, ry, k) => {   // la planche monte sur l'épaule droite, dans le sens de la marche
-          const dir = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)), dr = new THREE.Vector3(-Math.cos(ry), 0, Math.sin(ry));
-          const bas = new THREE.Vector3(x, y + 0.95, z).addScaledVector(dir, 0.32), haut = new THREE.Vector3(x, y + 1.6, z).addScaledVector(dr, 0.17);
-          const pp = bas.lerp(haut, k);
-          deplacer(pa, pp, (ry - Math.PI / 2) * (k < 1 ? k : 1));
-          return { pp, dir, dr };
-        };
-        if (u < D.epaule) {
-          const k = lisse(u / D.epaule), ry = Math.PI + (Math.PI / 2 - Math.PI) * k;   // se tourne vers la sortie
-          const { pp, dir } = epaule(p[0], yP, zT, ry, k);
-          placer(tr, p[0], yP, zT, ry, 'porter', 0, { surPlace: true, main: pp.clone().addScaledVector(dir, 0.18), main2: pp.clone().addScaledVector(dir, 0.42) });
-          return;
-        }
-        u -= D.epaule;
-        if (u < D.marche) {
-          const d = (u / 1000) * VIT, [x, z] = chemin.at(d), ry = chemin.cap(d), y = solSous(x, z, 1.15);
-          const { pp, dir } = epaule(x, y, z, ry, 1);
-          placer(tr, x, y, z, ry, 'porter', d / PAS_M, { main: pp.clone().addScaledVector(dir, 0.18), main2: pp.clone().addScaledVector(dir, 0.42) });
-          return;
-        }
-        u -= D.marche;
-        const [x, z] = chemin.at(chemin.L), y = solSous(x, z, 1.15), k = lisse(Math.min(1, u / D.pose));
-        const s0 = epaule(x, y, z, Math.PI / 2, 1).pp, pp = s0.lerp(r.p, k), th = r.ry * k;
-        deplacer(pa, pp, th);
-        const ax = new THREE.Vector3(Math.cos(th), 0, -Math.sin(th)).multiplyScalar(0.25);
-        placer(tr, x, y, z, Math.PI / 2, 'accroupi', 0, { a: Math.sin(k * Math.PI / 2) * 0.85, main: pp.clone().sub(ax).setY(pp.y + 0.03), main2: pp.clone().add(ax).setY(pp.y + 0.03) });
-        if (k >= 1) pa.userData.porte = false;
-      } });
-      lab.a = [debut, debut + 4000];
-      pa.userData.finActe = actes[actes.length - 1].fin;
-      cams.push([debut, { tgt: [p[0] + 0.5, 0.9, p[2] + 0.6], dir: [0.55, 0.45, 0.7], r: 3.4 }]);
-      cams.push([debut + D.penche + D.leve + D.epaule + D.marche * 0.45, { tgt: [L + 3.5, 0.6, 0.6], dir: [0.2, 0.55, 0.81], r: 5.2 }]);
-      tc = actes[actes.length - 1].fin + 200;
-    }
-    accelere(A.filter((o) => o !== pa));
-    // 2. Planches : tire-fonds retirés par un travailleur à genoux ; la 1re planche (au fond) portée à deux.
-    const planches = B.filter((o) => !vis(o) && o.userData.dim[2] > 4);
-    const pb = planches[0];
-    const visB = B.filter(vis);
-    let debutB = tc;
-    if (pb) {
-      const r = ranger(pb); place.set(pb, r);
-      const p = c(pb), xT = p[0] + 0.5, zs = [p[2] + 1.2, p[2] - 1.2], debut = tc;
-      // Après la rotation, la planche est dans le sens de la galerie, au-dessus de l'allée de l'escalier.
-      const c1 = [p[0] + 1.75, ESC];
-      const chemin = trajet([c1, [L - 1.0, ESC], [L + 2.6, ESC], [L + 3.2, ALLEE], [r.p.x, ALLEE]]);
-      const D = { visse: 1800, penche: 1100, leve: 1200, tourne: 2600, epaule: 900, marche: (chemin.L / VIT) * 1000, cote: 1400, pose: 1300 };
-      const fin = debut + D.visse + D.penche + D.leve + D.tourne + D.epaule + D.marche + D.cote + D.pose;
-      actes.push({ debut, fin, f(t) {
-        const [t1, t2] = [travs[0], travs[1]], t3 = travs[2];
-        let u = t;
-        // Travailleur à genoux : tire-fonds de la 1re planche (visse), puis il recule avec le front.
-        if (u < D.visse) {
-          const osc = Math.sin(u / 90) * 0.02;
-          for (const o of visB) if (c(o)[0] < p[0] + 0.4) o.visible = u < D.visse * 0.8;
-          placer(t3, p[0] + 0.45, DK, p[2] - 1.85, -Math.PI / 2, 'genoux', 0, { main: new THREE.Vector3(p[0] + 0.05 + osc, DK + 0.12, p[2] - 1.9), main2: new THREE.Vector3(p[0] + 0.05 - osc, DK + 0.12, p[2] - 1.8) });
-          placer(t1, xT, DK, zs[0], -Math.PI / 2, 'debout'); placer(t2, xT, DK, zs[1], -Math.PI / 2, 'debout');
-          return;
-        }
-        for (const o of visB) if (c(o)[0] < p[0] + 0.4) o.visible = false;
-        placer(t3, p[0] + 0.95, DK, p[2] - 1.85, -Math.PI / 2, 'genoux');
-        u -= D.visse;
-        if (u < D.penche + D.leve) {
-          const k = u < D.penche ? lisse(u / D.penche) : 1 - lisse((u - D.penche) / D.leve);
-          const lv = u < D.penche ? 0 : lisse((u - D.penche) / D.leve);
-          const pp = new THREE.Vector3(p[0] + (xT - 0.34 - p[0]) * lv, p[1] + (DK + 0.95 - p[1]) * lv, p[2]);
-          if (lv > 0) { pb.userData.porte = true; deplacer(pb, pp); }
-          zs.forEach((z, i) => placer([t1, t2][i], xT, DK, z, -Math.PI / 2, 'accroupi', 0, { a: k, main: new THREE.Vector3(pp.x, pp.y + 0.04, z - 0.22), main2: new THREE.Vector3(pp.x, pp.y + 0.04, z + 0.22) }));
-          return;
-        }
-        u -= D.penche + D.leve;
-        pb.userData.porte = true;
-        // Tourner la planche dans le sens de la galerie en avançant (elle passe de Z à X).
-        const tenir = (ctr, ang, k2, ry1, ry2, ph1, ph2, surPlace) => {
-          const ax = new THREE.Vector3(Math.sin(ang), 0, Math.cos(ang));   // axe de la planche
-          const ends = [ctr.clone().addScaledVector(ax, 1.2), ctr.clone().addScaledVector(ax, -1.2)];
-          ends.forEach((pt, i) => {
-            const ry = i ? ry2 : ry1, f = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)), dr = new THREE.Vector3(-Math.cos(ry), 0, Math.sin(ry));
-            // Pieds : sous la prise, derrière la planche (à la taille) ou dessous (à l'épaule).
-            const pied = pt.clone().addScaledVector(f, -0.34 * (1 - k2)).addScaledVector(dr, -0.17 * k2);
-            const y = solSous(pied.x, pied.z, 1.15);
-            const main = pt.clone().addScaledVector(ax, i ? 0.22 : -0.22), main2 = pt.clone().addScaledVector(ax, i ? -0.08 : 0.08);
-            placer([t1, t2][i], pied.x, y, pied.z, ry, surPlace ? 'porter' : 'porter', i ? ph2 : ph1, { surPlace, main, main2 });
-          });
-        };
-        if (u < D.tourne) {
-          const k = lisse(u / D.tourne), ctr = new THREE.Vector3(p[0] + (c1[0] - p[0]) * k, DK + 0.95, p[2] + (c1[1] - p[2]) * k);
-          const ang = Math.PI / 2 * (1 - k) * 0 + (k * Math.PI / 2);   // Z → X
-          deplacer(pb, ctr, ang - 0 * Math.PI / 2 + 0);
-          const ry = -Math.PI / 2 + (Math.PI) * k;   // de face à la planche (−X) vers la sortie (+X)
-          const d = Math.hypot(c1[0] - p[0], c1[1] - p[2]) * k + 1.2 * (Math.PI / 2) * k;
-          tenir(ctr, Math.PI * k / 2 + 0, 0, ry, ry, d / PAS_M, d / PAS_M + 0.5, false);
-          return;
-        }
-        u -= D.tourne;
-        const hauteur = (k) => DK + 0.95 + (0.65) * k;
-        if (u < D.epaule) {
-          const k = lisse(u / D.epaule), ctr = new THREE.Vector3(c1[0], hauteur(k), c1[1]);
-          deplacer(pb, ctr, Math.PI / 2);
-          tenir(ctr, Math.PI / 2, k, Math.PI / 2, Math.PI / 2, 0, 0.5, true);
-          return;
-        }
-        u -= D.epaule;
-        const pose = (x, z, yv) => { const ctr = new THREE.Vector3(x, yv, z); deplacer(pb, ctr, Math.PI / 2); return ctr; };
-        if (u < D.marche) {
-          const d = (u / 1000) * VIT, [x, z] = chemin.at(d), ang = chemin.cap(d);
-          const yA = solSous(x + 1.2 * Math.sin(ang), z + 1.2 * Math.cos(ang), 1.15), yB = solSous(x - 1.2 * Math.sin(ang), z - 1.2 * Math.cos(ang), 1.15);
-          const ctr = new THREE.Vector3(x, (yA + yB) / 2 + 1.6, z);
-          deplacer(pb, ctr, ang, 0, -Math.atan2(yA - yB, 2.4));
-          tenir(ctr, ang, 1, ang, ang, d / PAS_M, d / PAS_M + 0.5, false);
-          return;
-        }
-        u -= D.marche;
-        const [xf, zf] = chemin.at(chemin.L);
-        if (u < D.cote) {   // pas de côté jusqu'à la pile
-          const k = lisse(u / D.cote), z = zf + (r.p.z + 0.4 - zf) * k, ctr = pose(xf, z, solSous(xf, z, 1.15) + 1.6);
-          tenir(ctr, Math.PI / 2, 1, Math.PI / 2, Math.PI / 2, k * 0.6, k * 0.6 + 0.5, false);
-          return;
-        }
-        u -= D.cote;
-        const k = lisse(Math.min(1, u / D.pose)), zp = r.p.z + 0.4, yb = solSous(xf, zp, 1.15);
-        const ctr = new THREE.Vector3(xf, yb + 1.6, zp).lerp(r.p, k);
-        deplacer(pb, ctr, Math.PI / 2 + (r.ry - Math.PI / 2) * k);
-        [t1, t2].forEach((tr, i) => placer(tr, xf + (i ? -1.2 : 1.2), yb, zp + 0.35, Math.PI, 'accroupi', 0, { a: Math.sin(k * Math.PI / 2) * 0.85, main: ctr.clone().add(new THREE.Vector3(i ? -1.4 : 1.0, 0.04, 0)), main2: ctr.clone().add(new THREE.Vector3(i ? -1.0 : 1.4, 0.04, 0)) }));
-        if (k >= 1) pb.userData.porte = false;
-      } });
-      lab.b0 = [debut, debut + D.visse + 400];
-      lab.b1 = [debut + D.visse, debut + D.visse + D.penche + D.leve + D.tourne + D.epaule + 1500];
-      cams.push([debut, { tgt: [p[0] + 0.9, 0.7, p[2]], dir: [0.62, 0.5, 0.6], r: 4.6 }]);
-      cams.push([debut + D.visse + D.penche + D.leve + D.tourne + D.epaule + D.marche * 0.5, { tgt: [L + 2.0, 0.7, 0.2], dir: [0.3, 0.5, 0.81], r: 6.2 }]);
-      tc = fin + 200;
-      debutB = debut;
-      pb.userData.finActe = fin;
-    }
-    // Reste des planches (du fond vers la sortie), garde-corps et marches en dernier : accéléré, avec le
-    // travailleur à genoux qui retire les tire-fonds au front des planches qui restent.
-    const restB = B.filter((o) => o !== pb);
-    const [aB, bB] = accelere(restB);
-    lab.b2 = [bB - 2500, bB];
-    actes.push({ debut: aB, fin: bB, f(t) {
-      let xf = 0;
-      for (const a of acc) if (restB.includes(a.o) && aB + t >= a.d) xf = Math.max(xf, c(a.o)[0]);
-      if (xf < L - 0.6) placer(travs[2], Math.max(xf + 0.55, 1.2), DK, -1.85, -Math.PI / 2, 'genoux');
-      placer(travs[0], L + 1.2, solSous(L + 1.2, 0.5), 0.5, -Math.PI / 2, 'debout');
-      placer(travs[1], L + 1.4, solSous(L + 1.4, 1.5), 1.5, -Math.PI / 2, 'debout');
-    } });
-    // 3. Les 6 × 6 et appuis, de la sortie vers le fond. Démonstration avec le premier 6 × 6 dont le
-    // couloir vers la sortie est déjà dégagé (rien à enjamber).
-    const longs = C.filter((o) => o.userData.dim[0] > 4 && o.userData.dim[1] > 0.12);
-    let k0 = C.length, pc = null;
-    for (const m of longs) {
-      const i = C.indexOf(m), avant = new Set(C.slice(0, i)), cm = c(m);
-      const bloque = C.some((o) => !avant.has(o) && o !== m && c(o)[0] > cm[0] - 2.8 && Math.abs(c(o)[2] - (cm[2] + 0.45)) < 0.35 + o.userData.dim[2] / 2);
-      if (!bloque) { k0 = i; pc = m; break; }
-    }
-    accelere(C.slice(0, k0));
-    if (pc) {
-      const r = ranger(pc); place.set(pc, r);
-      const p = c(pc), zT = p[2] + 0.45, debut = tc;
-      const xs = [p[0] + 1.6, p[0] - 1.6];
-      const yT = xs.map((x) => solSous(x, zT, 1.15));
-      const c2 = [p[0], zT - 0.17];   // sous l'épaule droite (côté −Z quand on va vers +X)
-      const chemin = trajet([[p[0], zT], [L + 1.0, zT], [L + 2.2, ALLEE + 0.6], [r.p.x, ALLEE + 0.6]]);
-      const D = { penche: 1100, leve: 1200, epaule: 1100, marche: (chemin.L / VIT) * 1000, cote: 1200, pose: 1300 };
-      const fin = debut + D.penche + D.leve + D.epaule + D.marche + D.cote + D.pose;
-      actes.push({ debut, fin, f(t) {
-        const [t1, t2] = [travs[0], travs[1]];
-        let u = t;
-        placer(travs[2], L + 1.4, solSous(L + 1.4, -0.3), -0.3, -Math.PI / 2, 'debout');
-        if (u < D.penche + D.leve) {
-          const k = u < D.penche ? lisse(u / D.penche) : 1 - lisse((u - D.penche) / D.leve);
-          const lv = u < D.penche ? 0 : lisse((u - D.penche) / D.leve);
-          const yb = p[1] + ((yT[0] + yT[1]) / 2 + 0.95 - p[1]) * lv, zb = p[2] + (zT - 0.32 - p[2]) * lv;
-          if (lv > 0) { pc.userData.porte = true; deplacer(pc, new THREE.Vector3(p[0], yb, zb)); }
-          xs.forEach((x, i) => placer([t1, t2][i], x, yT[i], zT, Math.PI, 'accroupi', 0, { a: k, main: new THREE.Vector3(x - 0.22, yb + 0.06, zb), main2: new THREE.Vector3(x + 0.22, yb + 0.06, zb) }));
-          return;
-        }
-        u -= D.penche + D.leve;
-        pc.userData.porte = true;
-        const tenir = (x, z, k2, ry, ph, surPlace) => {
-          xs.forEach((_, i) => {
-            const xi = x + (i ? -1.6 : 1.6), y = solSous(xi, z, 1.15);
-            const f = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)), dr = new THREE.Vector3(-Math.cos(ry), 0, Math.sin(ry));
-            const pt = new THREE.Vector3(xi, y + 0.95 + 0.65 * k2, z).addScaledVector(f, -0.32 * (1 - k2)).addScaledVector(dr, 0);
-            void pt;
-          });
-          const yA = solSous(x + 1.6, z, 1.15), yB = solSous(x - 1.6, z, 1.15);
-          const dr = new THREE.Vector3(-Math.cos(ry), 0, Math.sin(ry)), f = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry));
-          const ctr = new THREE.Vector3(x, (yA + yB) / 2 + 0.95 + 0.65 * k2, z).addScaledVector(f, 0.32 * (1 - k2)).addScaledVector(dr, 0.17 * k2);
-          deplacer(pc, ctr, 0, Math.atan2(yA - yB, 3.2));
-          [[t1, 1.6, yA], [t2, -1.6, yB]].forEach(([tr, dx, y], i) => {
-            const hp = ctr.clone().add(new THREE.Vector3(dx, (i ? -1 : 1) * (yA - yB) / 2, 0));
-            placer(tr, x + dx, y, z, ry, 'porter', ph + (i ? 0.5 : 0), { surPlace, main: hp.clone().add(new THREE.Vector3(-0.1, 0, 0)), main2: hp.clone().add(new THREE.Vector3(0.18, 0, 0)) });
-          });
-        };
-        if (u < D.epaule) {   // se tourner vers la sortie en montant le 6 × 6 sur l'épaule droite
-          const k = lisse(u / D.epaule), ry = Math.PI + (Math.PI / 2 - Math.PI) * k;
-          tenir(p[0], zT, k, ry, 0, true);
-          return;
-        }
-        u -= D.epaule;
-        if (u < D.marche) {
-          const d = (u / 1000) * VIT, [x, z] = chemin.at(d);
-          tenir(x, z, 1, Math.PI / 2, d / PAS_M, false);
-          return;
-        }
-        u -= D.marche;
-        const [xf, zf] = chemin.at(chemin.L);
-        if (u < D.cote) { const k = lisse(u / D.cote); tenir(xf, zf + (r.p.z - 0.4 - zf) * k, 1, Math.PI / 2, k * 0.6, false); return; }
-        u -= D.cote;
-        const k = lisse(Math.min(1, u / D.pose)), zp = r.p.z - 0.4, yb = solSous(xf, zp, 1.15);
-        const ctr = new THREE.Vector3(xf, yb + 1.6, zp + 0.17).lerp(r.p, k);
-        deplacer(pc, ctr, r.ry * k);
-        [t1, t2].forEach((tr, i) => placer(tr, xf + (i ? -1.6 : 1.6), yb, zp, 0, 'accroupi', 0, { a: Math.sin(k * Math.PI / 2) * 0.85, main: ctr.clone().add(new THREE.Vector3((i ? -1.6 : 1.6) - 0.22, 0.06, 0)), main2: ctr.clone().add(new THREE.Vector3((i ? -1.6 : 1.6) + 0.22, 0.06, 0)) }));
-        if (k >= 1) pc.userData.porte = false;
-      } });
-      lab.c1 = [debut, debut + D.penche + D.leve + D.epaule + 1500];
-      lab.c2 = [debut + D.penche + D.leve, fin];
-      cams.push([debut, { tgt: [p[0] + 0.8, 0.5, zT], dir: [0.6, 0.48, 0.64], r: 5.0 }]);
-      tc = fin + 200;
-      pc.userData.finActe = fin;
-    }
-    const [aC, bC] = accelere(C.slice(k0 + 1), 45);
-    lab.boue = [aC, bC];
-    actes.push({ debut: aC, fin: bC, f() {
-      placer(travs[0], L + 1.2, solSous(L + 1.2, 0.5), 0.5, -Math.PI / 2, 'debout');
-      placer(travs[1], L + 1.4, solSous(L + 1.4, 1.5), 1.5, -Math.PI / 2, 'debout');
-      placer(travs[2], L + 1.4, solSous(L + 1.4, -0.3), -0.3, -Math.PI / 2, 'debout');
-    } });
-    // 4. Clôture orange et carte de ruban rouge.
-    const E = [tc + 300, tc + 2600];
-    lab.e = [E[0], 1e9];
-    cams.push([aC, { tgt: [9.5, 0.3, 0], dir: [0.18, 0.78, 0.6], r: 8.5 }]);
-    const total = E[1];
-    // Étiquettes : fenêtres calculées ici (clés « dem-… » de etapes.js).
-    for (const it of etiq) if (it.cle && it.cle.startsWith('dem-')) {
-      const k = it.cle.slice(4), f = lab[k];
-      it.fen = f ? (Array.isArray(f[0]) ? f : [f]) : [[0, 0]];
+    const plan = new Map();
+    for (const [liste, [a, b]] of [[A, T.a], [B, T.b], [C, T.c]]) {
+      const pas = liste.length > 1 ? (b - a - 600) / (liste.length - 1) : 0;
+      liste.forEach((o, k) => plan.set(o, a + k * pas));
     }
     // Clôture orange et carte de ruban rouge devant le front de taille (trou non arpenté, non cimenté).
     if (!clotureG) {
       clotureG = new THREE.Group();
       const orange = new THREE.MeshStandardMaterial({ color: 0xff6a00, roughness: 0.7, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
       const bois = new THREE.MeshStandardMaterial({ color: 0x6e6e6e, roughness: 0.6 });
+      const ray = new THREE.Raycaster(), haut = new THREE.Vector3(), bas = new THREE.Vector3(0, -1, 0);
+      const sol = (x, z) => {
+        haut.set(x, 3, z); ray.set(haut, bas);
+        const h = ray.intersectObject(root, true).find((i) => { for (let q = i.object; q; q = q.parent) if (!q.visible) return false; return !i.object.isLineSegments2; });
+        return h ? h.point.y : 0;
+      };
       const zs = [-1.9, -0.95, 0, 0.95, 1.9], X = 0.75;
+      clotureG.userData.sol = sol;
       clotureG.userData.poser = () => {
         while (clotureG.children.length) clotureG.remove(clotureG.children[0]);
-        const ys = zs.map((z) => solSous(X, z));
+        const ys = zs.map((z) => sol(X, z));
         zs.forEach((z, i) => {
           const pq = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.25, 8), bois);
           pq.position.set(X, ys[i] + 0.5, z); clotureG.add(pq);
@@ -1067,38 +720,64 @@ export function ouvrir(hote, { fermer } = {}) {
       };
       scene.add(clotureG);
     }
-    let cloturePosee = false;
-    const enActe = new Set([pa, pb, pc].filter(Boolean));
+    let pose = false;
     function etat(t) {
-      // Pièces : en place, en cours de déplacement, ou rangées à la pile.
-      for (const o of vus) { remettre(o); o.visible = true; }
-      for (const a of acc) {
-        const k = Math.min(1, Math.max(0, (t - a.d) / a.duree));
-        if (k <= 0) continue;
-        if (!a.r) { a.o.visible = false; continue; }   // tire-fonds : retirés
-        const p0 = new THREE.Vector3().fromArray(c(a.o)), p1 = a.r.p, kk = lisse(k);
-        const pp = p0.clone().lerp(p1, kk); pp.y += Math.sin(kk * Math.PI) * 1.2;
-        deplacer(a.o, pp, a.r.ry * kk, (a.r.rz || 0) * kk, (a.r.rx || 0) * kk);
+      for (const [o, d] of plan) {
+        const p = Math.min(1, Math.max(0, (t - d) / 600));
+        o.position.copy(o.userData.cible);
+        o.visible = p < 1;
+        o.position.y += 0.45 * lisse(Math.min(1, p * 2));
+        o.position.x += 1.4 * lisse(Math.max(0, p * 2 - 1));
       }
-      for (const o of enActe) { const r = place.get(o); if (r && t >= o.userData.finActe) deplacer(o, r.p, r.ry, r.rz || 0, r.rx || 0); }
-      for (const tr of travs) tr.visible = false;
-      if (travs.length) for (const a of actes) if (t >= a.debut && t < a.fin) a.f(t - a.debut);
-      // Après son acte, la pièce montrée reste à la pile ; les travailleurs restent près de la pile.
-      const kE = Math.min(1, Math.max(0, (t - E[0]) / 900));
-      if (kE > 0 && !cloturePosee) { root.updateMatrixWorld(true); clotureG.userData.poser(); cloturePosee = true; }
-      clotureG.visible = kE > 0;
-      clotureG.position.y = 0.6 * Math.pow(1 - lisse(kE), 3);
-      if (travs.length && t >= E[0]) {
-        placer(travs[0], L + 1.2, solSous(L + 1.2, 0.5), 0.5, -Math.PI / 2, 'debout');
-        placer(travs[1], L + 1.4, solSous(L + 1.4, 1.5), 1.5, -Math.PI / 2, 'debout');
-        placer(travs[2], L + 1.4, solSous(L + 1.4, -0.3), -0.3, -Math.PI / 2, 'debout');
+      // Travailleurs : à genoux au bord des planches qui restent (ils reculent vers la sortie) ;
+      // puis deux qui portent un 6 × 6 sur l'épaule, sur le sol déjà dégagé, vers la sortie.
+      if (travs.length) {
+        for (const tr of travs) tr.visible = false;
+        if (poutreDemo) poutreDemo.visible = false;
+        if (t >= T.b[0] && t < T.b[1]) {
+          let xf = 0;
+          for (const o of B) if (t >= plan.get(o)) xf = Math.max(xf, c(o)[0]);
+          placer(travs[0], Math.min(xf + 0.55, 9.3), 0.2286, -0.6, -Math.PI / 2, 'genoux');
+        }
+        const p0 = T.c[0] + 0.5 * (T.c[1] - T.c[0]), p1 = T.c[1] - 300;   // une fois la moitié dégagée : rien à enjamber
+        if (t >= p0 && t < p1) {
+          if (!poutreDemo) {
+            poutreDemo = new THREE.Mesh(new THREE.BoxGeometry(4.75, 0.14, 0.14), new THREE.MeshStandardMaterial({ color: 0xb98a56, roughness: 0.85 }));
+            scene.add(poutreDemo);
+          }
+          // D'abord soulever à deux avec les jambes (dos droit, la charge près du corps), puis marcher.
+          const lev = 1400, kL = Math.min(1, (t - p0) / lev), k2 = Math.max(0, (t - p0 - lev) / (p1 - p0 - lev));
+          const xc = 10.6 + 2.8 * k2, z = 1.25, ph = (xc - 10.6) / 1.12;
+          const yA = solSous(xc + 2.05, z), yB = solSous(xc - 2.05, z);
+          if (kL < 1) {
+            const mon = lisse(Math.max(0, (kL - 0.3) / 0.7));       // la poutre monte, les jambes se déplient
+            for (const [i, dx, y] of [[1, 2.05, yA], [2, -2.05, yB]]) {
+              const yb = y + 0.07 + (1.6 - 0.07) * mon;
+              placer(travs[i], xc + dx, y, z, Math.PI / 2, mon < 0.55 ? 'accroupi' : 'porter', 0,
+                { a: 1 - mon / 0.55, main: new THREE.Vector3(xc + dx + 0.12, yb, z + 0.17), main2: new THREE.Vector3(xc + dx - 0.12, yb, z + 0.17) });
+            }
+            poutreDemo.visible = true;
+            poutreDemo.position.set(xc, (yA + yB) / 2 + 0.07 + (1.53) * mon, z + 0.17);
+            poutreDemo.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), new THREE.Vector3(4.1, yA - yB, 0).normalize());
+          } else {
+          for (const [i, dx] of [[1, 2.05], [2, -2.05]]) placer(travs[i], xc + dx, i === 1 ? yA : yB, z, Math.PI / 2, 'porter', ph + (i === 2 ? 0.5 : 0));
+          // Le 6 × 6 repose sur l'épaule droite des deux : il suit la pente du sol entre eux.
+          const pA = new THREE.Vector3(xc + 2.05, travs[1].position.y + 1.6, z + 0.17), pB = new THREE.Vector3(xc - 2.05, travs[2].position.y + 1.6, z + 0.17);
+          poutreDemo.visible = true;
+          poutreDemo.position.addVectors(pA, pB).multiplyScalar(0.5);
+          poutreDemo.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), pA.sub(pB).normalize());
+          }
+        }
       }
+      const k = Math.min(1, Math.max(0, (t - T.e[0]) / 900));
+      if (k > 0 && !pose) { root.updateMatrixWorld(true); clotureG.userData.poser(); pose = true; }
+      clotureG.visible = k > 0;
+      clotureG.position.y = 0.6 * Math.pow(1 - lisse(k), 3);
       sale = true;
     }
     etat(0);
-    majTrav = () => etat(Math.min(horloge - t0, total));
-    for (const [d, cam] of cams) { let fait = false; tweens.push({ pose: true, debut: t0 + d, duree: 1, pas() { if (!fait) { fait = true; allerA(cam); } }, fin() {} }); }
-    tweens.push({ pose: true, debut: t0, duree: total, pas(x) { etat(x * total); }, fin() { etat(total); } });
+    majTrav = () => etat(Math.min(horloge - t0, T.e[1]));
+    tweens.push({ pose: true, debut: t0, duree: T.e[1], pas(x) { etat(x * T.e[1]); }, fin() { etat(T.e[1]); } });
   }
 
   /* Étape 1 : la ligne de référence au laser Bosch. Le laser de ligne est posé au sol au bout du
