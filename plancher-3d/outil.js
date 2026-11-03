@@ -25,7 +25,7 @@ const MODELE = 'plancher.glb?v=25';
 const ETIQUETTES = 'plancher-etiquettes.json?v=25';
 // Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
 // chargée seulement à l'écran qui la montre (étape 18), puis gardée.
-const FOREUSE = 'stm1500.glb?v=7';
+const FOREUSE = 'stm1500.glb?v=8';
 let foreuse = null;
 function chargerForeuse() {
   if (!foreuse) foreuse = new Promise((resolve, reject) => {
@@ -679,8 +679,42 @@ export function ouvrir(hote, { fermer } = {}) {
     stm.position.copy(avantF).multiplyScalar(-(p.recul || 0));
     if (sup) sup.rotation.z = (p.angle * Math.PI) / 180;
     if (pou) pou.position.x = p.glisse;
+    deformerSouples(sup, pou);
     poserJambes(p.angle > 3);
     sale = true;
+  }
+  /* Boyaux et câble du treuil (groupe stm-souple, repère du modèle) : chaque sommet suit le traîneau,
+     le support ou la poutre selon son attribut « _poids » (part du support, part de la poutre), pour
+     rester raccordé quand l'avance glisse et bascule. */
+  let souples = null, pivot0 = null;
+  const mS = new THREE.Matrix4(), mP = new THREE.Matrix4(), mT = new THREE.Matrix4(), vA = new THREE.Vector3(), vS = new THREE.Vector3(), vP = new THREE.Vector3();
+  function deformerSouples(sup, pou) {
+    if (!sup || !pou) return;
+    if (!souples) {
+      souples = [];
+      stm.getObjectByName('stm-souple')?.traverse((o) => {
+        const g = o.geometry;
+        if (o.isMesh && g.attributes._poids) souples.push({ g, base: g.attributes.position.array.slice(), w: g.attributes._poids.array });
+      });
+      pivot0 = sup.position.clone();
+    }
+    sup.updateMatrix(); pou.updateMatrix();
+    mT.makeTranslation(-pivot0.x, -pivot0.y, -pivot0.z);
+    mS.multiplyMatrices(sup.matrix, mT);
+    mP.multiplyMatrices(sup.matrix, pou.matrix).multiply(mT);
+    for (const s of souples) {
+      const a = s.g.attributes.position.array, b = s.base, w = s.w;
+      for (let k = 0, n = b.length / 3; k < n; k++) {
+        const ws = w[2 * k], wp = w[2 * k + 1], wf = 1 - ws - wp;
+        vA.set(b[3 * k], b[3 * k + 1], b[3 * k + 2]);
+        vS.copy(vA).applyMatrix4(mS); vP.copy(vA).applyMatrix4(mP);
+        a[3 * k] = wf * vA.x + ws * vS.x + wp * vP.x;
+        a[3 * k + 1] = wf * vA.y + ws * vS.y + wp * vP.y;
+        a[3 * k + 2] = wf * vA.z + ws * vS.z + wp * vP.z;
+      }
+      s.g.attributes.position.needsUpdate = true;
+      s.g.computeBoundingSphere();
+    }
   }
   /* Jambes UM-064-400D (pattes de forage, page 1.10 du manuel) : de l'oreille avant du traîneau à
      la poutre levée. Ajustables : tracées entre les deux ancrages (nœuds jambe-bas/haut du .glb) ;
