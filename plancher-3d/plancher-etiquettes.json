@@ -675,6 +675,19 @@
   "steps": [
    "secondaire"
   ],
+  "cas": 2,
+  "pos": [
+   1.2000000000000002,
+   1.2286,
+   -0.955
+  ],
+  "text": "Pattes de forage (jambes) : du traîneau à la poutre",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
   "cas": 3,
   "pos": [
    2.5648,
@@ -708,6 +721,19 @@
    0.369
   ],
   "text": "Axe de bascule arrière : l'avance monte à 25°",
+  "kind": "note"
+ },
+ {
+  "steps": [
+   "secondaire"
+  ],
+  "cas": 3,
+  "pos": [
+   1.2000000000000002,
+   1.2286,
+   -1.135
+  ],
+  "text": "Pattes de forage (jambes) : du traîneau à la poutre",
   "kind": "note"
  }
 ]

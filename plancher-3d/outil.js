@@ -21,11 +21,11 @@ import { LineMaterial } from '../vendor/three/LineMaterial.js';
 const V = new URL(import.meta.url).searchParams.get('v') || '0';
 const { ETAPES } = await import('./etapes.js?v=' + V);
 
-const MODELE = 'plancher.glb?v=16';
-const ETIQUETTES = 'plancher-etiquettes.json?v=16';
+const MODELE = 'plancher.glb?v=17';
+const ETIQUETTES = 'plancher-etiquettes.json?v=17';
 // Foreuse STM-1500 allégée (pieces-3d : scripts/export-stm-app.mjs), posée sur le plancher ;
 // chargée seulement à l'écran qui la montre (étape 18), puis gardée.
-const FOREUSE = 'stm1500.glb?v=3';
+const FOREUSE = 'stm1500.glb?v=4';
 let foreuse = null;
 function chargerForeuse() {
   if (!foreuse) foreuse = new Promise((resolve, reject) => {
@@ -467,6 +467,7 @@ export function ouvrir(hote, { fermer } = {}) {
       stm = o;
       if (o.parent !== scene) scene.add(o);
       o.visible = !!ETAPES[idx].foreuse;
+      if (jambes) jambes.forEach((j) => { if (j.g.parent !== scene) scene.add(j.g); });
       const cf = ETAPES[idx].stm;
       poserForeuse(cf ? cf[casCourant] || cf[1] : { angle: 0, glisse: 0, z: -0.76 });
       sale = true;
@@ -669,7 +670,50 @@ export function ouvrir(hote, { fermer } = {}) {
     stm.position.z = p.z + 0.76;
     if (sup) sup.rotation.x = (p.angle * Math.PI) / 180;
     if (pou) pou.position.z = -p.glisse;
+    poserJambes(p.angle > 3);
     sale = true;
+  }
+  /* Jambes UM-064-400D (pattes de forage, page 1.10 du manuel) : de l'oreille avant du traîneau à
+     la poutre levée. Ajustables : tracées entre les deux ancrages (nœuds jambe-bas/haut du .glb) ;
+     section du bas, section centrale, section ajustable filetée, goupilles rouges aux bouts.
+     Pas posées à 0°. */
+  let jambes = null;
+  const jA = new THREE.Vector3(), jB = new THREE.Vector3(), jD = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
+  function poserJambes(on) {
+    if (!jambes) {
+      jambes = [];
+      const noir = new THREE.MeshStandardMaterial({ color: 0x1b1b1b, metalness: 0.4, roughness: 0.55 });
+      const acier = new THREE.MeshStandardMaterial({ color: 0x9aa0a6, metalness: 0.8, roughness: 0.35 });
+      const rouge = new THREE.MeshStandardMaterial({ color: 0xc8231e, metalness: 0.3, roughness: 0.5 });
+      const cyl = (r, m) => new THREE.Mesh(new THREE.CylinderGeometry(r, r, 1, 16), m);
+      for (const c of ['g', 'd']) {
+        const bas = stm.getObjectByName('jambe-bas-' + c), haut = stm.getObjectByName('jambe-haut-' + c);
+        if (!bas || !haut) continue;
+        const g = new THREE.Group();
+        const parts = [
+          { o: cyl(0.032, noir), a: 0.0, b: 0.48 },      // section du bas
+          { o: cyl(0.041, noir), a: 0.44, b: 0.86 },     // section centrale
+          { o: cyl(0.018, acier), a: 0.84, b: 0.98 },    // section ajustable filetée
+        ];
+        for (const q of parts) g.add(q.o);
+        const goupilles = [cyl(0.012, rouge), cyl(0.012, rouge)];
+        goupilles.forEach((o) => g.add(o));
+        scene.add(g);
+        jambes.push({ g, bas, haut, parts, goupilles });
+      }
+    }
+    stm.updateMatrixWorld(true);
+    for (const j of jambes) {
+      j.g.visible = on && stm.visible;
+      if (!j.g.visible) continue;
+      j.bas.getWorldPosition(jA); j.haut.getWorldPosition(jB);
+      jD.subVectors(jB, jA);
+      const L = jD.length();
+      j.g.position.copy(jA);
+      j.g.quaternion.setFromUnitVectors(Y, jD.normalize());
+      for (const q of j.parts) { q.o.scale.set(1, (q.b - q.a) * L, 1); q.o.position.set(0, ((q.a + q.b) / 2) * L, 0); }
+      j.goupilles.forEach((o, k) => { o.scale.set(1, 0.14, 1); o.rotation.set(0, 0, Math.PI / 2); o.position.set(0, k ? L : 0, 0); });
+    }
   }
 
   /* Écran du plancher secondaire (étape 18) : les montages l'un après l'autre (sans marche,
@@ -1018,6 +1062,7 @@ export function ouvrir(hote, { fermer } = {}) {
     frais.forEach((o) => surligner(o, false));
     outils.forEach((o) => surligner(o, false));
     if (stm) scene.remove(stm);
+    if (jambes) jambes.forEach((j) => scene.remove(j.g));
     if (root) { profondeur(root, 1); for (const o of root.userData.pieces) { o.visible = true; o.position.copy(o.userData.cible); } scene.remove(root); }
     env.dispose();
     pmrem.dispose();
