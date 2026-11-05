@@ -229,8 +229,12 @@ export const ETAPES = [
     // la poutre, bascule de l'avance sur l'axe arrière), puis le plancher se pose (pas entre deux
     // rangs). stm : angle (°), glisse de la poutre (m), recul de la foreuse sur son axe (m), comme
     // SECONDAIRES de pieces-3d ; le .glb est exporté au cas 1, l'avant vers le front de taille.
+    // Glisse limitée à 5 cm dès que l'avance est basculée : au-delà, la tour de poulie arrière de la poutre
+    // descend dans le tambour du treuil (mesuré sur stm1500.glb : jeu > 4 cm de 0 à 15° à 0,05 m, contact
+    // dès 0,15 m). À 15°, la foreuse avance donc de 15 cm (recul négatif ; avant du traîneau à ~10 cm du
+    // front de taille) au lieu de glisser la poutre de 0,9 m.
     cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
-    stm: { 1: { angle: 0, glisse: 0, recul: 0 }, 2: { angle: 10, glisse: 0, recul: 0 }, 3: { angle: 15, glisse: 0.9, recul: 0.626 } },
+    stm: { 1: { angle: 0, glisse: 0, recul: 0 }, 2: { angle: 10, glisse: 0, recul: 0 }, 3: { angle: 15, glisse: 0.05, recul: -0.15 } },
     // Nom du cas affiché dans le panneau (pas de texte dans la 3D).
     nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher de 9 po, sans marche', 3: 'Forage montant à 15° : plancher de 18 po, 2 marches, garde-corps' },
     cam: { tgt: [1.95, 0.95, 0.13], dir: [0.42, 0.45, 0.79], r: 2.4 } },
