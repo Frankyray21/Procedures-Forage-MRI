@@ -129,7 +129,8 @@ export const ETAPES = [
     texte: [
       'Deux 6 × 6 de 8 pi bout à bout, parfaitement de niveau.',
       'Joint toujours sur un blocage ou un soutien.',
-      'Chaque joint : un 3 × 6 de 24 po vissé des deux côtés (sinon les coins écartent les 6 × 6).',
+      'Joints des madriers de rive et du milieu seulement : un 3 × 6 de 24 po vissé des deux côtés.',
+      'Au serrage (étape 7), visser la planche temporaire seulement dans ces 3 madriers.',
       'Jonction doublée : un 6 × 6 sous chaque section.',
     ],
     detail: 'Variante courante sur le chantier · les deux sections en 8 pi, soutiens compris · même cadrage 16 × 16 pi, 32 po centre',
@@ -139,28 +140,42 @@ export const ETAPES = [
       { pos: [1.4, 0.152, 2.362], text: 'Les deux 6 × 6 de 8 pi parfaitement de niveau' },
       { pos: [4.877, -0.076, 0.4], text: 'Jonction doublée : un 6 × 6 sous chaque section' },
       { pos: [7.315, -0.02, 2.362], text: 'Section 2 : joint sur un soutien' },
-      { pos: [2.438, 0.17, 1.69], text: '3 × 6 vissé à chaque joint' },
+      { pos: [2.438, 0.17, 0.114], text: '3 × 6 aux joints : rives et milieu seulement' },
       { pos: [4.877, 0.107, -2.21], text: 'Bout de 3 × 6 de 24 po à la jonction des sections' },
     ] },
   { n: 12, titre: 'Couvrir la section 2',
     texte: [
-      'Couvrir du bout du plancher vers le centre, sans serrer.',
-      'Au centre : poser la planche libre contre la section 1 et la visser le temps du serrage.',
-      'Coins enfoncés : la section 2 se resserre vers le bout.',
-      'Retirer coins et tire-fonds, poser la 2e planche libre, visser le centre.',
+      'Couvrir du bout du plancher vers le centre avec les 3 × 8, sans serrer : on marche dessus pour placer les planches.',
+      'Rendu au centre : replacer chaque planche, en repartant de la section 1 vers le bout.',
+      'En chemin, refaire l\'étape 7 pour resserrer : planche vissée le temps du serrage, coins, planche devant les coins vissée.',
+      'Visser les planches du centre et celle du bout.',
     ],
-    // Animation (ms) : la section 2 se couvre du bout vers le centre sans être serrée, puis les
-    // coins la resserrent vers le bout du plancher : 1 po au plus au total, comme en vrai
-    // (écart réparti sur les 23 joints de la section 2).
-    reprise: { cam: { tgt: [4.95, 0.2, 1.6], dir: [0.12, 0.72, 0.68], r: 1.0 }, ecart: (1 / 23) * 0.0254,
-      t: { couvert: 3200, approche: 3600, libre1: [4600, 5100], visA: [5500, 5900], coins: [6400, 6900], serre: [7200, 9200],
-        sortie: [9600, 10100], devisse: [10200, 10700], libre2: [10900, 11400], vis: [11800, 12200], fin: 12300, retour: 13600 },
+    // Animation (ms), façon du chantier : la section 2 se couvre du bout vers le centre, planches
+    // posées sans serrer (écart par joint, ecart, jusqu'à nLache joints) ; rendu au centre, chaque
+    // planche est replacée en repartant de la section 1 (les 2 planches de jonction, puis la section 2
+    // vers le bout), presque serrée (residu par joint) ; à la 11e (tension), l'étape 7 est refaite :
+    // la suivante (ancre) vissée le temps du serrage, coins, planches resserrées contre la section 1,
+    // planche devant les coins vissée, coins et tire-fonds retirés ; puis on replace le reste jusqu'au bout.
+    reprise: { tension: 10, ecart: 0.2 * 0.0254, nLache: 10, residu: 0.05 * 0.0254,
+      t: { couvert: 3000, libres: [4300, 4700], relais1: [5100, 260], dur: 420, visA: [7900, 8300], coins: [8600, 9100],
+        serre: [9400, 11200], visT: [11500, 11900], sortie: [12200, 12700], devisse: [12800, 13300], ancre: [13400, 13900],
+        relais2: [14100, 160], dur2: 360, visFin: [16800, 17300], fin: 17400 },
+      cams: [
+        [3200, { tgt: [4.95, 0.2, 1.6], dir: [0.12, 0.72, 0.68], r: 1.0 }],
+        [4900, { tgt: [5.85, 0.2, 1.4], dir: [0.3, 0.72, 0.62], r: 1.7 }],
+        [7500, { tgt: [6.72, 0.25, 1.95], dir: [0.12, 0.5, 0.86], r: 0.7 }],
+        [13900, { tgt: [8.0, 0.2, 1.0], dir: [0.42, 0.64, 0.64], r: 2.4 }],
+        [18400, null],
+      ],
       etiquettes: [
-        { pos: [5.0, 0.24, 1.6], text: 'Section 2 posée du bout vers le centre, pas encore serrée : l\'espace au centre ne tombe pas juste', fen: [[3800, 5500]] },
-        { pos: [4.572, 0.24, 1.6], text: 'Planche libre contre la section 1, vissée le temps du serrage', fen: [[5500, 7200]] },
-        { pos: [5.1, 0.26, 1.6], text: 'Coins enfoncés : les planches de la section 2 se resserrent vers le bout du plancher', fen: [[7200, 9600]] },
-        { pos: [4.776, 0.24, 1.6], text: 'L\'espace est juste : poser la 2e planche libre', fen: [[9600, 11800]] },
-        { pos: [4.67, 0.24, 1.6], text: 'Visser les planches du centre dans les deux sections', fen: [[11800, 13600]] },
+        { pos: [5.3, 0.25, 1.6], text: 'Section 2 couverte du bout vers le centre, sans serrer : on marche dessus pour placer les planches', fen: [[3300, 4300]] },
+        { pos: [5.2, 0.25, 1.6], text: 'Rendu au centre : on replace chaque planche, de la section 1 vers le bout', fen: [[4300, 7600]] },
+        { pos: [6.81, 0.3, 2.3], text: 'Étape 7 refaite : cette planche vissée le temps du serrage', fen: [[7600, 8600]] },
+        { pos: [6.7, 0.3, 1.65], text: 'Coins enfoncés : les planches se resserrent contre la section 1', fen: [[8600, 11500]] },
+        { pos: [6.6, 0.3, 2.3], text: 'Planche devant les coins vissée', fen: [[11500, 12200]] },
+        { pos: [6.75, 0.3, 1.9], text: 'Coins et tire-fonds temporaires retirés', fen: [[12200, 13900]] },
+        { pos: [8.2, 0.25, 1.2], text: 'On continue de replacer les planches jusqu\'au bout', fen: [[13900, 16800]] },
+        { pos: [7.3, 0.25, 1.0], text: 'Planches du centre et du bout vissées', fen: [[16800, 18400]] },
       ] },
     cam: { tgt: [7.07, 0, 0], dir: [0.69, 0.42, 0.59], r: 3.4 } },
   { n: 13, titre: 'Couper au ras',
@@ -219,10 +234,12 @@ export const ETAPES = [
     texte: [
       'À l\'arrière de la tête de forage : là où l\'on ajoute les tiges et sort le tube carotier.',
       'Forage à l\'horizontale : pas de plancher secondaire.',
-      'Forage montant : plancher de 9 po sans marche, puis 18 po avec 2 marches et garde-corps.',
-      'Au moins 32 × 72 po, collé à la foreuse (moins de 3 po : le pied ne passe pas), 2 planches vissées.',
-      'À chaque changement d\'angle : ajuster. Pas de bois plané.',
+      'Une marche : plancher standard d\'au moins 32 × 72 po, 9 po de haut, collé à la tour.',
+      '2 marches : dessous, un plancher plus long et plus large de 16 po ; le standard par-dessus.',
+      'Côté poulies : une marche, jamais de garde-corps. Au bout sans marche : garde-corps et coup de pied.',
+      'Planches vissées aux 2 bouts ; 6 × 6 qui dépassent de 6 po (poignée, appui pour la barre).',
     ],
+    detail: 'À chaque changement d\'angle : ajuster. Pas de bois plané.',
     // Foreuse STM-1500 allégée (stm1500.glb), chargée à la demande sur cet écran.
     foreuse: true,
     // Les trois cas l'un après l'autre (ms) : à l'horizontale (pas de plancher), 10° (9 po), 15° (18 po) : la foreuse se place (sol : recul, glisse de
@@ -236,8 +253,26 @@ export const ETAPES = [
     cycle: { cas: [1, 2, 3], duree: 7200, sol: 2200, pas: 380 },
     stm: { 1: { angle: 0, glisse: 0, recul: 0 }, 2: { angle: 10, glisse: 0, recul: 0 }, 3: { angle: 15, glisse: 0.05, recul: -0.15 } },
     // Nom du cas affiché dans le panneau (pas de texte dans la 3D).
-    nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher de 9 po, sans marche', 3: 'Forage montant à 15° : plancher de 18 po, 2 marches, garde-corps' },
+    nomsCas: { 1: 'Forage à l\'horizontale : pas de plancher secondaire', 2: 'Forage montant à 10° : plancher standard de 9 po (une marche)', 3: 'Forage montant à 15° : 2 marches (18 po), garde-corps et coup de pied' },
     cam: { tgt: [1.95, 0.95, 0.13], dir: [0.42, 0.45, 0.79], r: 2.4 } },
+  // À savoir (après l'étape 18) : la planche collée à la foreuse, taillée selon la tour (extra t du
+  // .glb), au montage de 18 po. cle : étiquettes propres à cet écran (pas celles de l'étape 18) ;
+  // surligne : contour rouge et teinte seulement sur les pièces qui ont cet extra, posées après le reste.
+  { n: 18, groupe: 'secondaire', cle: 'taillee', sous: true, etiquette: 'À savoir', titre: 'Planche taillée selon la tour',
+    texte: [
+      'La planche du plancher secondaire collée à la foreuse est taillée selon la forme de la tour.',
+      'Le pied ne peut pas glisser sous la tour, ni entre la tour et le plancher.',
+      'Les 6 × 6 avancent sous la planche taillée pour la porter.',
+    ],
+    foreuse: true,
+    // Le montage de 18 po se pose vite, puis la planche taillée seule (outil.js, secondaires()).
+    cycle: { cas: [3], duree: 5600, sol: 100, pas: 200 },
+    stm: { 3: { angle: 15, glisse: 0.05, recul: -0.15 } },
+    surligne: 't',
+    etiquettes: [
+      { pos: [2.35, 0.72, -0.1], text: 'Planche taillée selon la tour : le pied ne glisse pas dessous', fen: [[3600, 1e9]] },
+    ],
+    cam: { tgt: [1.8, 0.68, -0.12], dir: [0.24, 0.85, 0.46], r: 0.72 } },
   { n: 18, groupe: 'demantelement', etiquette: 'Démantèlement', titre: 'Démantèlement',
     texte: [
       'Après le départ de la foreuse : d\'abord le plancher secondaire (récupérable, comme les marches).',
